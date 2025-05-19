@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace BusinessLogic.Dominio
 {
     public class Category
-    {     
+    {
 
-        public int CategoryId { get; set; }
-        public string Name { get; set; }
+        private int CategoryId { get; set; }
+        private string Name { get; set; }
 
     }
 }

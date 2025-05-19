@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public class OrderItem
+    public class PurchaseItem
     {
-        private int OrderItemId { get; set; }
+        private int PurchaseItemId { get; set; }
         private int Quantity { get; set; }
         private decimal UnitPrice { get; set; }
         private Product Product { get; set; }
-       
     }
-
 }
