@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLogic.Dominio
+{
+    public class SubCategory
+    {
+        private int SubCategoryId { get; set; }
+        private string Name { get; set; }
+        private Category Category { get; set; } 
+    }
+}
