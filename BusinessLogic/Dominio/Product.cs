@@ -8,16 +8,17 @@ namespace BusinessLogic.Dominio
 {
     public class Product
     {
-        public int ProductId { get; set; }
-        public string InternalCode { get; set; }
-        public string Barcode { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public string Image { get; set; }
-        public int Stock { get; set; }
-        public string UnitType { get; set; }
-        public string TemperatureCondition { get; set; }
-        public string Observation { get; set; }
-        public SubCategory SubCategory { get; set; }
+        private int ProductId { get; set; }
+        private string InternalCode { get; set; }
+        private string Barcode { get; set; }
+        private string Name { get; set; }
+        private decimal Price { get; set; }
+        private string Image { get; set; }
+        private int Stock { get; set; }
+        private string UnitType { get; set; }
+        private string TemperatureCondition { get; set; }
+        private string Observation { get; set; }
+        private SubCategory SubCategory { get; set; }
+        private List<Supplier> Suppliers { get; set; } = new List<Supplier>();
     }
 }

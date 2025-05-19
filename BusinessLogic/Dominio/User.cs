@@ -8,12 +8,12 @@ namespace BusinessLogic.Dominio
 {
     public class User
     {
-        public int UserId { get; set; }
-        public string Name { get; set; } 
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public Boolean isEnabled { get; set; }
-        public Role Role { get; set; }
-        public List<Request> Requests { get; set; } = new List<Request>();
+        private int UserId { get; set; }
+        private string Name { get; set; }
+        private string Username { get; set; }
+        private string Password { get; set; }
+        private Boolean isEnabled { get; set; }
+        private Role Role { get; set; }
+        private List<Request> Requests { get; set; } = new List<Request>();
     }
 }

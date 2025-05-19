@@ -6,23 +6,23 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public class Client
+    public class Supplier
     {
-        private int ClientId { get; set; }
+        private int SupplierId { get; set; }
         private string Name { get; set; }
         private string RUT { get; set; }
-        private string RazonSocial { get; set; }
+        private string BusinessName { get; set; }
         private string Address { get; set; }
         private string MapsAddress { get; set; }
-        private string Schedule { get; set; }
         private string Phone { get; set; }
         private string ContactName { get; set; }
         private string Email { get; set; }
-        private string Observation { get; set; }
         private string BankAccount { get; set; }
-        private int LoanedCrates { get; set; }
-        private List<Request> Requests { get; set; } = new List<Request>();
-        private Zone Zone { get; set; }
-        private List<Receipt> Receipts { get; set; } = new List<Receipt>();
+        private string Observation { get; set; }
+        private List<Product> Products { get; set; } = new List<Product>();
+        private List<Payment> Payments { get; set; } = new List<Payment>();
+        private List<Purchase> Purchases { get; set; } = new List<Purchase>();
+        private List<Day> DaysToDeliver { get; set; } = new List<Day>();
+
     }
 }

@@ -8,9 +8,9 @@ namespace BusinessLogic.Dominio
 {
     public class CreditNote
     {
-        public int CreditNoteId { get; set; }
-        public DateTime IssueDate { get; set; }
+        private int CreditNoteId { get; set; }
+        private DateTime IssueDate { get; set; }
 
-        public ReturnRequest ReturnRequest { get; set; }
+        private ReturnRequest ReturnRequest { get; set; }
     }
 }

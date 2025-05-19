@@ -8,8 +8,8 @@ namespace BusinessLogic.Dominio
 {
     public class SubCategory
     {
-        public int SubCategoryId { get; set; }
-        public string Name { get; set; }
-        public Category Category { get; set; } 
+        private int SubCategoryId { get; set; }
+        private string Name { get; set; }
+        private Category Category { get; set; } 
     }
 }

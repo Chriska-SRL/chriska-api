@@ -8,12 +8,12 @@ namespace BusinessLogic.Dominio
 {
     public class SaleItem
     {
-        public int SaleItemId { get; set; }
-       
-        public int Quantity { get; set; }
-        public decimal UnitPrice { get; set; }
+        private int SaleItemId { get; set; }
 
-        public Product Product { get; set; }
+        private int Quantity { get; set; }
+        private decimal UnitPrice { get; set; }
+
+        private Product Product { get; set; }
 
     }
 }

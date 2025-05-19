@@ -8,9 +8,9 @@ namespace BusinessLogic.Dominio
 {
     public class Role
     {
-        public int RoleId { get; set; }
-        public string Name { get; set; }
-        public Permission Permission { get; set; }
+        private int RoleId { get; set; }
+        private string Name { get; set; }
+        private Permission Permission { get; set; }
 
 
     }
