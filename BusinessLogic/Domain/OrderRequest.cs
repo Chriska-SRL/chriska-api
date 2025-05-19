@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public class ReturnRequest: Request
+    public class OrderRequest : Request
     {
-        private CreditNote CreditNote { get; set; } 
+       public Order Order { get; set; } 
+
     }
 }

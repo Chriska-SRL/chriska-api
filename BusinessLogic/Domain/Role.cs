@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public class ProductStock
+    public class Role
     {
-        private int Id { get; set; }
-        private int Quantity { get; set; }
-        private Product Product { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public Permission Permission { get; set; }
+
+
     }
 }

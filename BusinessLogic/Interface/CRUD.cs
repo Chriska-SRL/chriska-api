@@ -12,7 +12,6 @@ namespace BusinessLogic.Interface
         T Read(int id);
         void Update(T entity);
         void Delete(int id);
-    
-    
+       
     }
 }

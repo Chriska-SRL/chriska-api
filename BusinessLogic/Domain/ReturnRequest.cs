@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public class Role
+    public class ReturnRequest: Request
     {
-        private int RoleId { get; set; }
-        private string Name { get; set; }
-        private Permission Permission { get; set; }
-
-
+        public CreditNote CreditNote { get; set; } 
     }
 }
