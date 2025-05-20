@@ -8,21 +8,21 @@ namespace BusinessLogic.Dominio
 {
     public class Client
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string RUT { get; set; }
-        public string RazonSocial { get; set; }
-        public string Address { get; set; }
-        public string MapsAddress { get; set; }
-        public string Schedule { get; set; }
-        public string Phone { get; set; }
-        public string ContactName { get; set; }
-        public string Email { get; set; }
-        public string Observation { get; set; }
-        public string BankAccount { get; set; }
-        public int LoanedCrates { get; set; }
-        public List<Request> Requests { get; set; } = new List<Request>();
-        public Zone Zone { get; set; }
-        public List<Receipt> Receipts { get; set; } = new List<Receipt>();
+        private int Id { get; set; }
+        private string Name { get; set; }
+        private string RUT { get; set; }
+        private string RazonSocial { get; set; }
+        private string Address { get; set; }
+        private string MapsAddress { get; set; }
+        private string Schedule { get; set; }
+        private string Phone { get; set; }
+        private string ContactName { get; set; }
+        private string Email { get; set; }
+        private string Observation { get; set; }
+        private string BankAccount { get; set; }
+        private int LoanedCrates { get; set; }
+        private List<Request> Requests { get; set; } = new List<Request>();
+        private Zone Zone { get; set; }
+        private List<Receipt> Receipts { get; set; } = new List<Receipt>();
     }
 }

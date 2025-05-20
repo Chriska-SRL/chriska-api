@@ -9,17 +9,17 @@ namespace BusinessLogic.Dominio
 {
     public class Order
     {
-        public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public string ClientName { get; set; }
-        public int Crates { get; set; }
-        public string Status { get; set; }
-        public Delivery Delivery { get; set; }
-        public List<OrderItem> OrderItems { get; set; }
-        public Sale Sale { get; set; } = new Sale();
-        public User PreparedBy { get; set; } = new User();
-        public User DeliveredBy { get; set; } = new User();
-        public OrderRequest OrderRequest { get; set; } 
+        private int Id { get; set; }
+        private DateTime Date { get; set; }
+        private string ClientName { get; set; }
+        private int Crates { get; set; }
+        private string Status { get; set; }
+        private Delivery Delivery { get; set; }
+        private List<OrderItem> OrderItems { get; set; }
+        private Sale Sale { get; set; } = new Sale();
+        private User PreparedBy { get; set; } = new User();
+        private User DeliveredBy { get; set; } = new User();
+        private OrderRequest OrderRequest { get; set; } 
 
     }
 }

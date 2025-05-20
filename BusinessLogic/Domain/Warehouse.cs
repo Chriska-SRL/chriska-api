@@ -8,10 +8,10 @@ namespace BusinessLogic.Dominio
 {
     public class Warehouse
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string Address { get; set; }
-        public List<Shelve> Shelves { get; set; } = new List<Shelve>();
+        private int Id { get; set; }
+        private string Name { get; set; }
+        private string Description { get; set; }
+        private string Address { get; set; }
+        private List<Shelve> Shelves { get; set; } = new List<Shelve>();
     }
 }

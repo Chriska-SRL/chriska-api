@@ -8,9 +8,9 @@ namespace BusinessLogic.Dominio
 {
     public class Zone
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public List<Day> Days { get; set; }
+        private int Id { get; set; }
+        private string Name { get; set; }
+        private string Description { get; set; }
+        private List<Day> Days { get; set; }
     }
 }

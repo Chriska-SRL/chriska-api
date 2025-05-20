@@ -8,11 +8,11 @@ namespace BusinessLogic.Dominio
 {
     public class Payment
     {
-        public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public decimal Amount { get; set; }
-        public string PaymentMethod { get; set; }
-        public string Note { get; set; }
-        public Supplier Supplier { get; set; }
+        private int Id { get; set; }
+        private DateTime Date { get; set; }
+        private decimal Amount { get; set; }
+        private string PaymentMethod { get; set; }
+        private string Note { get; set; }
+        private Supplier Supplier { get; set; }
     }
 }

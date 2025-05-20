@@ -8,21 +8,21 @@ namespace BusinessLogic.Dominio
 {
     public class Supplier
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string RUT { get; set; }
-        public string BusinessName { get; set; }
-        public string Address { get; set; }
-        public string MapsAddress { get; set; }
-        public string Phone { get; set; }
-        public string ContactName { get; set; }
-        public string Email { get; set; }
-        public string BankAccount { get; set; }
-        public string Observation { get; set; }
-        public List<Product> Products { get; set; } = new List<Product>();
-        public List<Payment> Payments { get; set; } = new List<Payment>();
-        public List<Purchase> Purchases { get; set; } = new List<Purchase>();
-        public List<Day> DaysToDeliver { get; set; } = new List<Day>();
+        private int Id { get; set; }
+        private string Name { get; set; }
+        private string RUT { get; set; }
+        private string BusinessName { get; set; }
+        private string Address { get; set; }
+        private string MapsAddress { get; set; }
+        private string Phone { get; set; }
+        private string ContactName { get; set; }
+        private string Email { get; set; }
+        private string BankAccount { get; set; }
+        private string Observation { get; set; }
+        private List<Product> Products { get; set; } = new List<Product>();
+        private List<Payment> Payments { get; set; } = new List<Payment>();
+        private List<Purchase> Purchases { get; set; } = new List<Purchase>();
+        private List<Day> DaysToDeliver { get; set; } = new List<Day>();
 
     }
 }

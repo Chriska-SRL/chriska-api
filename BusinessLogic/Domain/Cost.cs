@@ -9,9 +9,9 @@ namespace BusinessLogic.Dominio
     public class Cost
     {
 
-        public int Id { get; set; }
-        public string Description { get; set; }
-        public decimal Amount { get; set; }
+        private int Id { get; set; }
+        private string Description { get; set; }
+        private decimal Amount { get; set; }
 
     }
 }

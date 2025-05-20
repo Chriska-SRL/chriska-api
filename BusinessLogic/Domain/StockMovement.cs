@@ -8,12 +8,12 @@ namespace BusinessLogic.Dominio
 {
     public class StockMovement
     {
-        public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public int Quantity { get; set; }
-        public string Type { get; set; }
-        public string Reason { get; set; }
-        public Shelve Shelve { get; set; }
-        public User User { get; set; }
+        private int Id { get; set; }
+        private DateTime Date { get; set; }
+        private int Quantity { get; set; }
+        private string Type { get; set; }
+        private string Reason { get; set; }
+        private Shelve Shelve { get; set; }
+        private User User { get; set; }
     }
 }
