@@ -10,7 +10,6 @@ namespace BusinessLogic.Dominio
     {
         private int CreditNoteId { get; set; }
         private DateTime IssueDate { get; set; }
-
         private ReturnRequest ReturnRequest { get; set; }
     }
 }
