@@ -1,0 +1,5 @@
+﻿CREATE TABLE [dbo].[Invoices]
+(
+	[Id] INT NOT NULL PRIMARY KEY, 
+    [Date] DATETIME NOT NULL
+)
