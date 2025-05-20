@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Interface
 {
-    public interface CRUD<T>
+    public interface IPasswordHasher
     {
-        void Create(T entity);
-        T Read(int id);
-        void Update(T entity);
-        void Delete(int id);
-       
+        string HashPassword(string password);
+        bool VerifyPassword(string password, string hashedPassword);
     }
 }
