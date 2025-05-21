@@ -6,15 +6,8 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public enum Day
+    public class RolesSubSystem
     {
-        Monday,
-        Tuesday,
-        Wednesday,
-        Thursday,
-        Friday,
-        Saturday,
-        Sunday
-
+        private List<Role> Roles = new List<Role>();
     }
 }
