@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public class OrderRequest : Request
+    public class SubCategory
     {
-       
-   
+        private int Id { get; set; }
+        private string Name { get; set; }
+        private Category Category { get; set; } 
     }
 }

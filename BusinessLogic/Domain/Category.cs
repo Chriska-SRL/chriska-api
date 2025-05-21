@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public class Zone
+    public class Category
     {
-        private int ZoneId { get; set; }
+
+        private int Id { get; set; }
         private string Name { get; set; }
-        private string Description { get; set; }
-        private List<Day> Days { get; set; }
+
     }
 }

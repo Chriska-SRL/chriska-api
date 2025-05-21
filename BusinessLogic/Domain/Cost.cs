@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public class SubCategory
+    public class Cost
     {
-        private int SubCategoryId { get; set; }
-        private string Name { get; set; }
-        private Category Category { get; set; } 
+
+        private int Id { get; set; }
+        private string Description { get; set; }
+        private decimal Amount { get; set; }
+
     }
 }

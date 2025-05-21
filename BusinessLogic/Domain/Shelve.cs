@@ -8,7 +8,7 @@ namespace BusinessLogic.Dominio
 {
     public class Shelve
     {
-        private int ShelveId { get; set; }
+        private int Id { get; set; }
         private string Description { get; set; }
         private Warehouse Warehouse { get; set; }
         private List<ProductStock> Stocks { get; set; } = new List<ProductStock>();

@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public enum Day
+    public class Role
     {
+        private int Id { get; set; }
+        private string Name { get; set; }
+        private Permission Permission { get; set; }
+
+
     }
 }

@@ -8,8 +8,8 @@ namespace BusinessLogic.Dominio
 {
     public class Sale
     {
-        private int SaleId { get; set; }
-        private DateTime SaleDate { get; set; }
+        private int Id { get; set; }
+        private DateTime Date { get; set; }
         private string Status { get; set; }
 
         private SaleItem SaleItem { get; set; }
