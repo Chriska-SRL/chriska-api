@@ -15,6 +15,13 @@ namespace BusinessLogic.SubSystem
 
         private List<SubCategory> SubCategories = new List<SubCategory>();
 
+        private readonly ICategoryRepository _categoryRepository;
+
+        public CategoriesSubSystem(ICategoryRepository categoryRepository)
+        {
+            _categoryRepository = categoryRepository;
+        }
+
 
 
 

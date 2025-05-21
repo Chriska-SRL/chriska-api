@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,23 @@ namespace BusinessLogic.SubSystem
 {
     public  class ZonesSubSystem
     {
-        private List<Zone> Zones = new List<Zone>();
+        // Guía temporal: entidades que maneja este subsistema
 
-        private List<Client> Clients = new List<Client>();
+        private IZoneRepository _zoneRepository;
+        private IClientRepository _clientRepository;
+        public ZonesSubSystem(IZoneRepository zoneRepository, IClientRepository clientRepository)
+        {
+            _zoneRepository = zoneRepository;
+            _clientRepository = clientRepository;
+        }
+        public void AddZone(Zone zone)
+        {
+            _zoneRepository.Add(zone);
+        }
+        public void AddClient(Client client)
+        {
+            _clientRepository.Add(client);
+        }
+
     }
 }

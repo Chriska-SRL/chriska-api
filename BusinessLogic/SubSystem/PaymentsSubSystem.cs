@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,15 @@ namespace BusinessLogic.SubSystem
 {
     public class PaymentsSubSystem
     {
+        // Guía temporal: entidades que maneja este subsistema
 
         private List<Payment> Payments = new List<Payment>();
        
-       
+        private IPaymentRepository _paymentRepository;
+        public PaymentsSubSystem(IPaymentRepository paymentRepository)
+        {
+            _paymentRepository = paymentRepository;
+        }
+
     }
 }
