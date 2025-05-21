@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Repository
+﻿namespace BusinessLogic.Repository
 {
     public interface IRepository<T>
     {
@@ -13,6 +7,7 @@ namespace BusinessLogic.Repository
         void Add(T entity);
         void Update(T entity);
         void Delete(int id);
-    
+
+        //De necesitar mas metodos de escritura o obtencion de datos, agregar en la interfaz correspondiente que herede de esta.
     }
 }
