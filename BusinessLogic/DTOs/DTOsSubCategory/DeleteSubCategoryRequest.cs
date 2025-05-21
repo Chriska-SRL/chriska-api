@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.DTOs.DTOsSubCategory
 {
-    public class RolesSubSystem
+    public class DeleteSubCategoryRequest
     {
-        private List<Role> Roles = new List<Role>();
+        public int Id { get; set; }
+    
     }
 }
