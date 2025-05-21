@@ -10,7 +10,6 @@ namespace BusinessLogic.SubSystem
 {
     public class PaymentsSubSystem
     {
-        // Guía temporal: entidades que maneja este subsistema
 
         private List<Payment> Payments = new List<Payment>();
        
@@ -18,6 +17,10 @@ namespace BusinessLogic.SubSystem
         public PaymentsSubSystem(IPaymentRepository paymentRepository)
         {
             _paymentRepository = paymentRepository;
+        }
+        public void AddPayment(Payment payment)
+        {
+            _paymentRepository.Add(payment);
         }
 
     }

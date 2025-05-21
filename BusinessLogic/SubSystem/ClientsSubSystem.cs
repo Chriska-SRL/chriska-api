@@ -10,14 +10,28 @@ namespace BusinessLogic.SubSystem
 {
     public class ClientsSubSystem
     {
-
-        private List<Client> Clients = new List<Client>();
-        private List<Receipt> Receipts = new List<Receipt>();
-
         private readonly IClientRepository _clientRepository;
-        public ClientsSubSystem(IClientRepository clientRepository)
+        private readonly IReceiptRepository _receiptRepository;
+        private readonly IZoneRepository _zoneRepository;
+        public ClientsSubSystem(IClientRepository clientRepository, IReceiptRepository receiptRepository, IZoneRepository zoneRepository)
         {
             _clientRepository = clientRepository;
+            _receiptRepository = receiptRepository;
+            _zoneRepository = zoneRepository;
+        }
+
+        public void AddClient(Client client)
+        {
+            _clientRepository.Add(client);
+        }
+        public void AddReceipt(Receipt receipt)
+        {
+            _receiptRepository.Add(receipt);
+        }
+        public void AsignZone(Zone zone,Client client)
+        {
+
+            //_zoneRepository.Add(zone);
         }
     }
 

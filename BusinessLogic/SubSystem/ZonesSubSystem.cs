@@ -13,20 +13,17 @@ namespace BusinessLogic.SubSystem
         // Guía temporal: entidades que maneja este subsistema
 
         private IZoneRepository _zoneRepository;
-        private IClientRepository _clientRepository;
+     
         public ZonesSubSystem(IZoneRepository zoneRepository, IClientRepository clientRepository)
         {
             _zoneRepository = zoneRepository;
-            _clientRepository = clientRepository;
+            
         }
         public void AddZone(Zone zone)
         {
             _zoneRepository.Add(zone);
         }
-        public void AddClient(Client client)
-        {
-            _clientRepository.Add(client);
-        }
+       
 
     }
 }

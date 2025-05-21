@@ -2,7 +2,7 @@
 
 namespace BusinessLogic.Repository
 {
-    public interface IReturnRequestRepository:IRepository<ReturnRequest>
+    public interface IReturnRequestRepository : IRepository<ReturnRequest>
     {
     }
 }

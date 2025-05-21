@@ -10,18 +10,23 @@ namespace BusinessLogic.SubSystem
 {
     public class CategoriesSubSystem
     {
-
-        private List<Category> Categories = new List<Category>();
-
-        private List<SubCategory> SubCategories = new List<SubCategory>();
-
         private readonly ICategoryRepository _categoryRepository;
-
-        public CategoriesSubSystem(ICategoryRepository categoryRepository)
+        private readonly ISubCategoryRepository _subCategoryRepository;
+        public CategoriesSubSystem(ICategoryRepository categoryRepository, ISubCategoryRepository subCategoryRepository)
         {
             _categoryRepository = categoryRepository;
+            _subCategoryRepository = subCategoryRepository;
         }
 
+        public void AddCategory(Category category)
+        {
+            _categoryRepository.Add(category);
+        }
+
+        public void AddSubCategory(SubCategory subCategory)
+        {
+            _subCategoryRepository.Add(subCategory);
+        }
 
 
 

@@ -19,13 +19,19 @@ namespace BusinessLogic.SubSystem
         private List<ProductStock> WarehouseStocks = new List<ProductStock>();
 
         private IWarehouseRepository _warehouseRepository;
-        public WarehousesSubSystem(IWarehouseRepository warehouseRepository)
+        private IShelveRepository _shelveRepository;
+        public WarehousesSubSystem(IWarehouseRepository warehouseRepository, IShelveRepository shelveRepository)
         {
             _warehouseRepository = warehouseRepository;
+            _shelveRepository = shelveRepository;
         }
         public void AddWarehouse(Warehouse warehouse)
         {
             _warehouseRepository.Add(warehouse);
+        }
+        public void AddShelve(Shelve shelve)
+        {
+            _shelveRepository.Add(shelve);
         }
 
     }

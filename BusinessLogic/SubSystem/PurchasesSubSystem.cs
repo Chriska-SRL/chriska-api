@@ -10,15 +10,21 @@ namespace BusinessLogic.SubSystem
 {
     public class PurchasesSubSystem
     {
-        // Guía temporal: entidades que maneja este subsistema
-
-        private List<Purchase> Purchases = new List<Purchase>();
-        private List<PurchaseItem> PurchaseItems = new List<PurchaseItem>();
-
         private IPurchaseRepository _purchaseRepository;
-        public PurchasesSubSystem(IPurchaseRepository purchaseRepository)
+        private IPurchaseItemRepository _purchaseItemRepository;
+        public PurchasesSubSystem(IPurchaseRepository purchaseRepository, IPurchaseItemRepository purchaseItemRepository)
         {
             _purchaseRepository = purchaseRepository;
+            _purchaseItemRepository = purchaseItemRepository;
+        }
+        public void AddPurchase(Purchase purchase)
+        {
+            _purchaseRepository.Add(purchase);
+        }
+
+        public void AddPurchaseItem(PurchaseItem purchaseItem)
+        {
+            _purchaseItemRepository.Add(purchaseItem);
         }
     }
 }

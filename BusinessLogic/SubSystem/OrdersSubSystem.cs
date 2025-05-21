@@ -10,15 +10,23 @@ namespace BusinessLogic.SubSystem
 {
     public class OrdersSubSystem
     {
-        // Guía temporal: entidades que maneja este subsistema
-
         private List<Order> Orders = new List<Order>();
         private List<OrderItem> OrderItems = new List<OrderItem>();
 
         private IOrderRepository _orderRepository;
-        public OrdersSubSystem(IOrderRepository orderRepository)
+        private IOrderItemRepository _orderItemRepository;
+        public OrdersSubSystem(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository)
         {
             _orderRepository = orderRepository;
+            _orderItemRepository = orderItemRepository;
+        }
+        public void AddOrder(Order order)
+        {
+            _orderRepository.Add(order);
+        }
+        public void AddOrderItem(OrderItem orderItem)
+        {
+            _orderItemRepository.Add(orderItem);
         }
 
 
