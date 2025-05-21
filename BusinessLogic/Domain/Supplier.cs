@@ -8,7 +8,7 @@ namespace BusinessLogic.Dominio
 {
     public class Supplier
     {
-        private int SupplierId { get; set; }
+        private int Id { get; set; }
         private string Name { get; set; }
         private string RUT { get; set; }
         private string BusinessName { get; set; }

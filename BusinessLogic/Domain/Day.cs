@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public class Category
+    public enum Day
     {
-
-        private int CategoryId { get; set; }
-        private string Name { get; set; }
-
+        Monday,
+        Tuesday,
+        Wednesday,
+        Thursday,
+        Friday,
+        Saturday,
+        Sunday
     }
 }

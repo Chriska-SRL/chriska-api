@@ -9,8 +9,8 @@ namespace BusinessLogic.Dominio
 {
     public class Order
     {
-        private int OrderId { get; set; }
-        private DateTime OrderDate { get; set; }
+        private int Id { get; set; }
+        private DateTime Date { get; set; }
         private string ClientName { get; set; }
         private int Crates { get; set; }
         private string Status { get; set; }
@@ -19,7 +19,7 @@ namespace BusinessLogic.Dominio
         private Sale Sale { get; set; } = new Sale();
         private User PreparedBy { get; set; } = new User();
         private User DeliveredBy { get; set; } = new User();
-
+        private OrderRequest OrderRequest { get; set; } 
 
     }
 }

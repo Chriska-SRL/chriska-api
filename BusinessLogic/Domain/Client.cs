@@ -8,7 +8,7 @@ namespace BusinessLogic.Dominio
 {
     public class Client
     {
-        private int ClientId { get; set; }
+        private int Id { get; set; }
         private string Name { get; set; }
         private string RUT { get; set; }
         private string RazonSocial { get; set; }

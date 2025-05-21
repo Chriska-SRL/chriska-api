@@ -8,7 +8,7 @@ namespace BusinessLogic.Dominio
 {
     public class Product
     {
-        private int ProductId { get; set; }
+        private int Id { get; set; }
         private string InternalCode { get; set; }
         private string Barcode { get; set; }
         private string Name { get; set; }

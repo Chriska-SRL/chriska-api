@@ -8,7 +8,7 @@ namespace BusinessLogic.Dominio
 {
     public class User
     {
-        private int UserId { get; set; }
+        private int Id { get; set; }
         private string Name { get; set; }
         private string Username { get; set; }
         private string Password { get; set; }

@@ -8,8 +8,8 @@ namespace BusinessLogic.Dominio
 {
     public class Delivery
     {
-        private int DeliveryId { get; set; }
-        private DateTime DeliveryDate { get; set; }
+        private int Id { get; set; }
+        private DateTime Date { get; set; }
         private string DriverName { get; set; }
         private string Observation { get; set; }
         private List<Order> Orders { get; set; } = new List<Order>();

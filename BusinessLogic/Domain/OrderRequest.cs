@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Dominio
 {
-    public class Cost
+    public class OrderRequest : Request
     {
-
-        private int CostId { get; set; }
-        private string Description { get; set; }
-        private decimal Amount { get; set; }
+       private Order Order { get; set; } 
 
     }
 }

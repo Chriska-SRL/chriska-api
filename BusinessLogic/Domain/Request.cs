@@ -8,7 +8,7 @@ namespace BusinessLogic.Dominio
 {
     public abstract class Request
     {
-        private int RequestId { get; set; }
+        private int Id { get; set; }
         private DateTime RequestDate { get; set; }
         private DateTime DeliveryDate { get; set; }
         private string Status { get; set; }

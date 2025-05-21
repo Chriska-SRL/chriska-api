@@ -8,7 +8,7 @@ namespace BusinessLogic.Dominio
 {
     public class Warehouse
     {
-        private int WarehouseId { get; set; }
+        private int Id { get; set; }
         private string Name { get; set; }
         private string Description { get; set; }
         private string Address { get; set; }
