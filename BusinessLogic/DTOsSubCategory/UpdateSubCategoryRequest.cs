@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.DTOsSubCategory
 {
-    public class CreditNote
+    public class UpdateSubCategoryRequest
     {
         public int Id { get; set; }
-        public DateTime IssueDate { get; set; }
-        public ReturnRequest ReturnRequest { get; set; }
+        public string Name { get; set; }
+
     }
 }

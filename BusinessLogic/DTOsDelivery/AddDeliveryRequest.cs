@@ -13,7 +13,6 @@ namespace BusinessLogic.DTOsDelivery
         public string DriverName { get; set; }
         public string Observation { get; set; }
         public int CostId { get; set; } 
-
         public Vehicle Vehicle { get; set; }
 
     }

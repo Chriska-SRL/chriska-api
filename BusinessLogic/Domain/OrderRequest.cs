@@ -8,7 +8,7 @@ namespace BusinessLogic.Dominio
 {
     public class OrderRequest : Request
     {
-       private Order Order { get; set; } 
+       public Order Order { get; set; } 
 
     }
 }

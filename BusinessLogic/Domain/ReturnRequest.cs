@@ -8,6 +8,6 @@ namespace BusinessLogic.Dominio
 {
     public class ReturnRequest: Request
     {
-        private CreditNote CreditNote { get; set; } 
+        public CreditNote CreditNote { get; set; } 
     }
 }
