@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.DTOsUser
 {
-    public class RolesSubSystem
+    internal class AddUserRequest
     {
-        private List<Role> Roles = new List<Role>();
     }
 }
