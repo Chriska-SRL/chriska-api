@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOsUser
 {
-    internal class AddUserRequest
+    public class AddUserRequest
     {
+        private string Name { get; set; }
+        private string UserName { get; set; }
+        private string Password { get; set; }
+        private bool IsEnabled { get; set; }
+
     }
 }

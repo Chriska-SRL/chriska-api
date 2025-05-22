@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOsCategory
 {
-    internal class AddCategoryRequest
+    public class AddCategoryRequest
     {
+        private string Name { get; set; }
     }
 }

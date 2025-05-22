@@ -24,6 +24,20 @@ namespace BusinessLogic.SubSystem
             _userRepository.Add(user);
         }
 
+        public void UpdateUser(User user)
+        {
+            _userRepository.Update(user);
+        }
+        public void DeleteUser(User user)
+        {
+            _userRepository.Delete(user);
+        }
+        public User GetUserById(int id)
+        {
+            return _userRepository.GetById(id);
+        }
+
+
 
     }
 }

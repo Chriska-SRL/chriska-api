@@ -29,12 +29,7 @@ namespace BusinessLogic.SubSystem
             _shelveRepository.Add(shelve);
         }
 
-        public void AsignShelve(Warehouse warehouse, Shelve shelve)
-        {
-            //Logica para asignar estante a bodega
-            // warehouse.AddShelve(shelve);
-            // _warehouseRepository.Update(warehouse);
-        }
+     
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessLogic.Dominio;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOsPurchase
 {
-    internal class AddPurchaseRequest
+    public class AddPurchaseRequest
     {
+        private DateTime Date { get; set; }
+        private string Status { get; set; }
+        private int SupplierId { get; set; }
     }
 }

@@ -10,10 +10,6 @@ namespace BusinessLogic.SubSystem
 {
     public class StockSubSystem
     {
-        // Guía temporal: entidades que maneja este subsistema
-
-        private readonly List<StockMovement> Movements = new List<StockMovement>();
-
         private readonly IStockMovementRepository _stockMovementRepository;
         
         public StockSubSystem(IStockMovementRepository stockMovementRepository)
