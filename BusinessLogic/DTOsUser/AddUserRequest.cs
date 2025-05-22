@@ -8,10 +8,10 @@ namespace BusinessLogic.DTOsUser
 {
     public class AddUserRequest
     {
-        private string Name { get; set; }
-        private string UserName { get; set; }
-        private string Password { get; set; }
-        private bool IsEnabled { get; set; }
+        public string Name { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public bool IsEnabled { get; set; }
 
     }
 }

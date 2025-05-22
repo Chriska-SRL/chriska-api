@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOsCategory
+namespace BusinessLogic.DTOsWarehouse
 {
-    public class AddCategoryRequest
+    public class AddWarehouseRequest
     {
         public string Name { get; set; }
+        public string Description { get; set; }
+        public string Address { get; set; }
     }
 }

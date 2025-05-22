@@ -6,22 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOsOrderRequest\" />
-    <Folder Include="DTOsPurchaseItem\" />
-    <Folder Include="DTOsReceipt\" />
-    <Folder Include="DTOsRequest\" />
-    <Folder Include="DTOsRequestItem\" />
-    <Folder Include="DTOsReturnRequest\" />
-    <Folder Include="DTOsSale\" />
-    <Folder Include="DTOsRole\" />
-    <Folder Include="DTOsSaleItem\" />
-    <Folder Include="DTOsShelve\" />
-    <Folder Include="DTOsStockMovement\" />
-    <Folder Include="DTOsSubCategory\" />
-    <Folder Include="DTOsSupplier\" />
-    <Folder Include="DTOsWarehouse\" />
-    <Folder Include="DTOsZone\" />
-  </ItemGroup>
-
 </Project>

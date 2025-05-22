@@ -2,17 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.SubSystem
+namespace BusinessLogic.DTOsShelve
 {
-    public class AuthSubSystem
+    public class AddShelve
     {
-        public AuthSubSystem() { 
-
-        }    
-        
+        public string Description { get; set; }
+        public int WarehouseId { get; set; }
     }
 }

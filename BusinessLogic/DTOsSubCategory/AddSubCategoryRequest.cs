@@ -2,17 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.SubSystem
+namespace BusinessLogic.DTOsSubCategory
 {
-    public class AuthSubSystem
+    public class AddSubCategoryRequest
     {
-        public AuthSubSystem() { 
-
-        }    
-        
+        public string Name { get; set; }
+        public int CategoryId { get; set; }
     }
 }

@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOsPurchase
+namespace BusinessLogic.DTOsSale
 {
-    public class AddPurchaseRequest
+    public class AddSaleRequest
     {
         public DateTime Date { get; set; }
         public string Status { get; set; }
-        public int SupplierId { get; set; }
+        public int SaleItemId { get; set; }
     }
 }

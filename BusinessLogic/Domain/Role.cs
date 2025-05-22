@@ -10,8 +10,7 @@ namespace BusinessLogic.Dominio
     {
         private int Id { get; set; }
         private string Name { get; set; }
-        private Permission Permission { get; set; }
-
+        private List<Permission> permissions { get; set; }
 
     }
 }

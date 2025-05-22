@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOsPayments
+namespace BusinessLogic.DTOsReceipt
 {
-    public class AddPaymentRequest
+    public class AddReceiptRequest
     {
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public string PaymentMethod { get; set; }
-        public string Note { get; set; }
-        public int SupplierId { get; set; }
+        public string Notes { get; set; }
+        public int ClientId { get; set; }
     }
 }

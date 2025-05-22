@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOsOrderItem
+namespace BusinessLogic.DTOsPurchaseItem
 {
-    public class AddOrderItemRequest
+    public class AddPurchaseItemRequest
     {
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }

@@ -1,4 +1,6 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOsCategory;
+using BusinessLogic.DTOsSubCategory;
 using BusinessLogic.Repository;
 using System;
 using System.Collections.Generic;
@@ -18,15 +20,14 @@ namespace BusinessLogic.SubSystem
             _subCategoryRepository = subCategoryRepository;
         }
 
-        public void AddCategory(Category category)
+        public void AddCategory(AddSubCategoryRequest category)
         {
-            _categoryRepository.Add(category);
+
+            var newCategory = new Category(category.Name);
+            
+            _categoryRepository.Add(newCategory);
         }
 
-        public void AddSubCategory(SubCategory subCategory)
-        {
-            _subCategoryRepository.Add(subCategory);
-        }
 
 
 

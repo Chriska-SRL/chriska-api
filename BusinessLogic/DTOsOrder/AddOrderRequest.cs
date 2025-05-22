@@ -9,14 +9,14 @@ namespace BusinessLogic.DTOsOrder
 {
     public class AddOrderRequest
     {
-        private DateTime Date { get; set; }
-        private string ClientName { get; set; }
-        private int Crates { get; set; }
-        private string Status { get; set; }
-        private int DeliveryId { get; set; }
-        private Sale Sale { get; set; } = new Sale();
-        private int PreparedById { get; set; } 
-        private int DeliveredById { get; set; } 
-        private int OrderRequestId { get; set; }
+        public DateTime Date { get; set; }
+        public string ClientName { get; set; }
+        public int Crates { get; set; }
+        public string Status { get; set; }
+        public int DeliveryId { get; set; }
+        public Sale Sale { get; set; } = new Sale();
+        public int PreparedById { get; set; } 
+        public int DeliveredById { get; set; } 
+        public int OrderRequestId { get; set; }
     }
 }

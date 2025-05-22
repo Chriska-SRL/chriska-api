@@ -9,11 +9,11 @@ namespace BusinessLogic.DTOsVehicle
 {
     public class AddVehicleRequest
     {
-        private string Plate { get; set; }
-        private string Brand { get; set; }
-        private string Model { get; set; }
-        private int CrateCapacity { get; set; }
-        private int DeliveryId { get; set; }
+        public string Plate { get; set; }
+        public string Brand { get; set; }
+        public string Model { get; set; }
+        public int CrateCapacity { get; set; }
+        public int DeliveryId { get; set; }
 
     }
 }

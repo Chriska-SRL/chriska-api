@@ -9,12 +9,12 @@ namespace BusinessLogic.DTOsDelivery
 {
     public class AddDeliveryRequest
     {
-        private DateTime Date { get; set; }
-        private string DriverName { get; set; }
-        private string Observation { get; set; }
-        private int CostId { get; set; } 
+        public DateTime Date { get; set; }
+        public string DriverName { get; set; }
+        public string Observation { get; set; }
+        public int CostId { get; set; } 
 
-        private Vehicle Vehicle { get; set; }
+        public Vehicle Vehicle { get; set; }
 
     }
 }
