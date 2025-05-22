@@ -10,11 +10,9 @@ namespace BusinessLogic.SubSystem
 {
     public class OrdersSubSystem
     {
-        private List<Order> Orders = new List<Order>();
-        private List<OrderItem> OrderItems = new List<OrderItem>();
 
-        private IOrderRepository _orderRepository;
-        private IOrderItemRepository _orderItemRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderItemRepository _orderItemRepository;
         public OrdersSubSystem(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository)
         {
             _orderRepository = orderRepository;

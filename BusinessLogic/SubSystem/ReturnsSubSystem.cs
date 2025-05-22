@@ -11,9 +11,7 @@ namespace BusinessLogic.SubSystem
     public class ReturnsSubSystem
     {
 
-        private List<Request> Requests = new List<Request>();
-
-        private IReturnRequestRepository _returnRequestRepository;
+        private readonly IReturnRequestRepository _returnRequestRepository;
         public ReturnsSubSystem(IReturnRequestRepository returnRequestRepository)
         {
             _returnRequestRepository = returnRequestRepository;

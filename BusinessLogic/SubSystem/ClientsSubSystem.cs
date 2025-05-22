@@ -31,7 +31,8 @@ namespace BusinessLogic.SubSystem
         public void AsignZone(Zone zone,Client client)
         {
 
-            //_zoneRepository.Add(zone);
+            //Logica para asignar zona a cliente     
+
         }
     }
 

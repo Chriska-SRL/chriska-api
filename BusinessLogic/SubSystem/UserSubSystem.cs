@@ -10,21 +10,20 @@ namespace BusinessLogic.SubSystem
 {
     public class UserSubSystem
     {
-        // Guía temporal: entidades que maneja este subsistema
 
-        private List<User> Users = new List<User>();
-        private List<Permission> Permissions = new List<Permission>();
-        private List<Role> Roles = new List<Role>();
+        private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository _roleRepository;
 
-        public IUserRepository _userRepository;
-        public UserSubSystem(IUserRepository userRepository)
+        public UserSubSystem(IUserRepository userRepository, IRoleRepository roleRepository)
         {
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
         }
         public void AddUser(User user)
         {
             _userRepository.Add(user);
         }
+
 
     }
 }

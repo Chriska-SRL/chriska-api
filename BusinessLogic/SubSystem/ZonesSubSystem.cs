@@ -10,9 +10,8 @@ namespace BusinessLogic.SubSystem
 {
     public  class ZonesSubSystem
     {
-        // Guía temporal: entidades que maneja este subsistema
 
-        private IZoneRepository _zoneRepository;
+        private readonly IZoneRepository _zoneRepository;
      
         public ZonesSubSystem(IZoneRepository zoneRepository, IClientRepository clientRepository)
         {
@@ -23,7 +22,20 @@ namespace BusinessLogic.SubSystem
         {
             _zoneRepository.Add(zone);
         }
-       
+
+        public void UpdateZone(Zone zone)
+        {
+            _zoneRepository.Update(zone);
+        }
+        public void DeleteZone(Zone zone)
+        {
+            _zoneRepository.Delete(zone);
+        }
+        public Zone GetZoneById(int id)
+        {
+            return _zoneRepository.GetById(id);
+        }
+
 
     }
 }

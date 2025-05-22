@@ -10,8 +10,8 @@ namespace BusinessLogic.SubSystem
 {
     public class ProductsSubSystem
     {
-        private IProductRepository _productRepository;
-        private ISubCategoryRepository _subCategoryRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly ISubCategoryRepository _subCategoryRepository;
         public ProductsSubSystem(IProductRepository productRepository, ISubCategoryRepository subCategoryRepository)
         {
             _productRepository = productRepository;

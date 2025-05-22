@@ -12,9 +12,9 @@ namespace BusinessLogic.SubSystem
     {
         // Guía temporal: entidades que maneja este subsistema
 
-        private List<StockMovement> Movements = new List<StockMovement>();
+        private readonly List<StockMovement> Movements = new List<StockMovement>();
 
-        private IStockMovementRepository _stockMovementRepository;
+        private readonly IStockMovementRepository _stockMovementRepository;
         
         public StockSubSystem(IStockMovementRepository stockMovementRepository)
         {
@@ -24,8 +24,8 @@ namespace BusinessLogic.SubSystem
         {
             _stockMovementRepository.Add(stockMovement);
         }
-        //Fabriccio: Preguntar por si el stock subsistema tambien tienen el repositorio de stock de producto.
 
+      
 
     }
 }

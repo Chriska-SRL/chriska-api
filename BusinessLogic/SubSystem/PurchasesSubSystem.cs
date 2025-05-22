@@ -10,8 +10,8 @@ namespace BusinessLogic.SubSystem
 {
     public class PurchasesSubSystem
     {
-        private IPurchaseRepository _purchaseRepository;
-        private IPurchaseItemRepository _purchaseItemRepository;
+        private readonly IPurchaseRepository _purchaseRepository;
+        private readonly IPurchaseItemRepository _purchaseItemRepository;
         public PurchasesSubSystem(IPurchaseRepository purchaseRepository, IPurchaseItemRepository purchaseItemRepository)
         {
             _purchaseRepository = purchaseRepository;

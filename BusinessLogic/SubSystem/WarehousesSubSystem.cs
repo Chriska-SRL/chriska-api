@@ -10,13 +10,6 @@ namespace BusinessLogic.SubSystem
 {
     public class WarehousesSubSystem
     {
-        // Guía temporal: entidades que maneja este subsistema
-
-        private List<Warehouse> Warehouses = new List<Warehouse>();
-
-        private List<Shelve> Shelves = new List<Shelve>();
-
-        private List<ProductStock> WarehouseStocks = new List<ProductStock>();
 
         private IWarehouseRepository _warehouseRepository;
         private IShelveRepository _shelveRepository;
@@ -29,9 +22,18 @@ namespace BusinessLogic.SubSystem
         {
             _warehouseRepository.Add(warehouse);
         }
+
+
         public void AddShelve(Shelve shelve)
         {
             _shelveRepository.Add(shelve);
+        }
+
+        public void AsignShelve(Warehouse warehouse, Shelve shelve)
+        {
+            //Logica para asignar estante a bodega
+            // warehouse.AddShelve(shelve);
+            // _warehouseRepository.Update(warehouse);
         }
 
     }

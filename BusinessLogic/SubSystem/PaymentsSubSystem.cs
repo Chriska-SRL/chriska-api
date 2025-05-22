@@ -11,9 +11,7 @@ namespace BusinessLogic.SubSystem
     public class PaymentsSubSystem
     {
 
-        private List<Payment> Payments = new List<Payment>();
-       
-        private IPaymentRepository _paymentRepository;
+        private readonly IPaymentRepository _paymentRepository;
         public PaymentsSubSystem(IPaymentRepository paymentRepository)
         {
             _paymentRepository = paymentRepository;
