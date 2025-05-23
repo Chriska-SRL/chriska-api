@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOsUser;
 using BusinessLogic.Repository;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,9 @@ namespace BusinessLogic.SubSystem
             return _userRepository.GetById(id);
         }
 
-
-
+        public UserResponse GetById(int id)
+        {
+            return new UserResponse();
+        }
     }
 }

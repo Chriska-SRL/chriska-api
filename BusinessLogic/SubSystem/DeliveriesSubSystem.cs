@@ -54,5 +54,9 @@ namespace BusinessLogic.SubSystem
             _vehicleRepository.Add(vehicle);
         }
 
+        internal DeliveryResponse GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

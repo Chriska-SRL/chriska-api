@@ -8,5 +8,6 @@ namespace BusinessLogic.DTOsSale
 {
     public class SaleResponse
     {
+
     }
 }

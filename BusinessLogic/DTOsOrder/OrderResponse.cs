@@ -13,15 +13,16 @@ namespace BusinessLogic.DTOsOrder
 {
     public class OrderResponse
     {
+        public int Id { get; set; }
         public DateTime Date { get; set; }
         public string ClientName { get; set; }
         public int Crates { get; set; }
         public string Status { get; set; }
-        public DeliveryResponse DeliveryId { get; set; }
-        public SaleResponse SaleId { get; set; }
-        public UserResponse PreparedById { get; set; }
-        public UserResponse DeliveredById { get; set; }
-        public OrderItemResponse OrderRequestId { get; set; }
+        public DeliveryResponse Delivery { get; set; }
+        public SaleResponse Sale { get; set; }
+        public UserResponse PreparedBy { get; set; }
+        public UserResponse DeliveredBy { get; set; }
+        public OrderItemResponse OrderItemRequest { get; set; }
         
     }
 }

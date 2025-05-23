@@ -1,6 +1,9 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOsClient;
 using BusinessLogic.DTOsOrder;
 using BusinessLogic.DTOsOrderItem;
+using BusinessLogic.DTOsSale;
+using BusinessLogic.DTOsZone;
 using BusinessLogic.Repository;
 using System;
 using System.Collections.Generic;
@@ -13,6 +16,9 @@ namespace BusinessLogic.SubSystem
     public class OrdersSubSystem
     {
 
+        private readonly UserSubSystem _userSubSystem;
+        private readonly DeliveriesSubSystem _deliveriesSubSystem;
+
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderItemRepository _orderItemRepository;
         private readonly IDeliveryRepository _deliveryRepository;
@@ -20,7 +26,7 @@ namespace BusinessLogic.SubSystem
         private readonly IUserRepository _userRepository;
         private readonly IReturnRequestRepository _returnRequestRepository;
 
-        public OrdersSubSystem(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository,IDeliveryRepository deliveryRepository,ISaleRepository saleRepository, IUserRepository userRepository,IReturnRequestRepository returnRequestRepository)
+        public OrdersSubSystem(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository,IDeliveryRepository deliveryRepository,ISaleRepository saleRepository, IUserRepository userRepository,IReturnRequestRepository returnRequestRepository,UserSubSystem userSubSystem,DeliveriesSubSystem deliveriesSubSystem)
         {
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
@@ -28,6 +34,8 @@ namespace BusinessLogic.SubSystem
             _saleRepository = saleRepository;
             _userRepository = userRepository;
             _returnRequestRepository = returnRequestRepository;
+            _userSubSystem = userSubSystem;
+            _deliveriesSubSystem = deliveriesSubSystem;
         }
         public void AddOrder(AddOrderRequest orderRequest)
         {
@@ -50,18 +58,55 @@ namespace BusinessLogic.SubSystem
             if (order == null) throw new Exception("No se encontro la orden");
             _orderRepository.Delete(orderRequest.Id);
         }
-        public List<OrderResponse> GetOrderById(int id)
-        {
-            var order = _orderRepository.GetById(id);
-            if (order == null) throw new Exception("No se encontro la orden");
-            return new List<OrderResponse> { order };
-        }
+       public OrderResponse GetOrderById(int id)
+       {
+           var order = _orderRepository.GetById(id);
+           if (order == null) throw new Exception("No se encontro la orden");
+          var orderResponse= new OrderResponse{
 
+
+               Id = order.Id,
+               Date = order.Date,
+               ClientName = order.ClientName,
+               Crates = order.Crates,
+               Status = order.Status,
+               Delivery = _deliveriesSubSystem.GetById(order.Delivery.Id),
+                //SaleId = order.Sale.Id,
+               Sale = new SaleResponse(),
+               PreparedBy = _userSubSystem.GetById(order.PreparedBy.Id),
+               DeliveredBy = _userSubSystem.GetById(order.DeliveredBy.Id),
+               OrderItemRequest = GetItemOrderById(order.OrderRequest.Id)
+
+
+               };
+            return orderResponse;
+       }
+       
         public List<OrderResponse> GetAllOrders()
         {
             var list = _orderRepository.GetAll();
             if (list == null) throw new Exception("No se encontraron ordenes");
-            return list;
+            var listResponse = new List<OrderResponse>();
+            foreach (var order in list)
+            {
+                var response = new OrderResponse
+                {
+                    Id = order.Id,
+                    Date = order.Date,
+                    ClientName = order.ClientName,
+                    Crates = order.Crates,
+                    Status = order.Status,
+                    Delivery = _deliveriesSubSystem.GetById(order.Delivery.Id),
+                    //SaleId = order.Sale.Id,
+                    PreparedBy = _userSubSystem.GetById(order.PreparedBy.Id),
+                    DeliveredBy = _userSubSystem.GetById(order.DeliveredBy.Id),
+                    OrderItemRequest = GetItemOrderById(order.OrderRequest.Id)
+
+
+                }; 
+                listResponse.Add(response);
+            }
+            return listResponse;
         }
         
         public void AddOrderItem(OrderItem orderItem)
@@ -73,6 +118,18 @@ namespace BusinessLogic.SubSystem
             var list = _orderItemRepository.GetAll();
             if (list == null) throw new Exception("No se encontraron items de orden");
             return list;
+        }
+        public OrderItemResponse GetItemOrderById(int id)
+        {
+            var orderItemResponse= new OrderItemResponse();
+            var orderItem = _orderItemRepository.GetById(id);
+            //if (orderItem == null) throw new Exception("No se encontro el item de orden");
+            //return new List<OrderItemResponse>
+            //{
+            //    orderItem
+            //}.ToList();
+
+            return orderItemResponse;
         }
 
     }
