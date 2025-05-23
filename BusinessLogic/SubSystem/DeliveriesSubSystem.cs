@@ -1,4 +1,6 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOsCategory;
+using BusinessLogic.DTOsDelivery;
 using BusinessLogic.Repository;
 using System;
 using System.Collections.Generic;
@@ -18,11 +20,35 @@ namespace BusinessLogic.SubSystem
         {
             _deliveryRepository = deliveryRepository;
             _vehicleRepository = vehicleRepository;
+            
         }
-        public void AddDelivery(Delivery delivery)
+        public void AddDelivery(AddDeliveryRequest deliveryRequest)
         {
+            var delivery = new Delivery(deliveryRequest.Date, deliveryRequest.DriverName, deliveryRequest.Observation,_vehicleRepository.GetById(deliveryRequest.VehicleId));
+            delivery.Validate();
             _deliveryRepository.Add(delivery);
+
         }
+
+        public void UpdateDelivery(UpdateDeliveryRequest deliveryRequest)
+        {
+            var delivery = _deliveryRepository.GetById(deliveryRequest.Id);
+            if (delivery == null) throw new Exception("No se encontro la entrega");
+            delivery.Update(deliveryRequest.DriverName, deliveryRequest.Observation, _vehicleRepository.GetById(deliveryRequest.VehicleId));
+            _deliveryRepository.Update(delivery);
+        }
+        public void DeleteDelivery(DeleteDeliveryRequest deliveryRequest)
+        {
+            var delivery = _deliveryRepository.GetById(deliveryRequest.Id);
+            if (delivery == null) throw new Exception("No se encontro la entrega");
+            _deliveryRepository.Delete(deliveryRequest.Id);
+        }
+        //public List<Delivery> GetAllDeliveries()
+        //{
+        //    return _deliveryRepository.GetAll();
+        //}
+
+        //Agregar un subsistema de veiculos???
         public void AddVehicle(Vehicle vehicle)
         {
             _vehicleRepository.Add(vehicle);

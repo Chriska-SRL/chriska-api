@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOsZone;
 using BusinessLogic.Repository;
 using System;
 using System.Collections.Generic;
@@ -29,11 +30,12 @@ namespace BusinessLogic.SubSystem
         }
         public void DeleteZone(Zone zone)
         {
-            _zoneRepository.Delete(zone);
+            _zoneRepository.Delete(zone.Id);
         }
-        public Zone GetZoneById(int id)
+
+        public ZoneResponse GetZoneById(int id)
         {
-            return _zoneRepository.GetById(id);
+            return new ZoneResponse();
         }
 
 

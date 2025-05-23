@@ -57,5 +57,24 @@ namespace BusinessLogic.Dominio
             if (string.IsNullOrEmpty(BankAccount)) throw new Exception("La cuenta bancaria no puede estar vacía");
             if (LoanedCrates < 0) throw new Exception("Las cajas prestadas no pueden ser negativas");
         }
+
+        public void Update(string name, string rut, string razonSocial,string address, string mapsAddress,string stringSchedule,string phone,string contactName,string email, string observation, string bankAccount, int loanedCrates,Zone zone)
+        {
+
+            Name = name;
+            RUT = rut;
+            RazonSocial = razonSocial;
+            Address = address;
+            MapsAddress = mapsAddress;
+            Schedule = stringSchedule;
+            Phone = phone;
+            ContactName = contactName;
+            Email = email;
+            Observation = observation;
+            BankAccount = bankAccount;
+            LoanedCrates = loanedCrates;
+            Zone = zone;
+
+        }
     }
 }
