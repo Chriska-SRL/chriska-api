@@ -15,6 +15,7 @@ namespace BusinessLogic.Dominio
         public decimal Price { get; set; }
         public string Image { get; set; }
         public int Stock { get; set; }
+        public string Description { get; set; }
         public string UnitType { get; set; }
         public string TemperatureCondition { get; set; }
         public string Observation { get; set; }

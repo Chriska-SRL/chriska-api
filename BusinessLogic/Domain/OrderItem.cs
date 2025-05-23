@@ -26,6 +26,8 @@ namespace BusinessLogic.Dominio
             if (Product == null) throw new Exception("El producto no puede estar vacío");
 
         }
+
+        
     }
 
 }

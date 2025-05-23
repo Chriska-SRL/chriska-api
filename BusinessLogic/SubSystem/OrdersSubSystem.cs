@@ -2,6 +2,7 @@
 using BusinessLogic.DTOsClient;
 using BusinessLogic.DTOsOrder;
 using BusinessLogic.DTOsOrderItem;
+using BusinessLogic.DTOsProduct;
 using BusinessLogic.DTOsSale;
 using BusinessLogic.DTOsZone;
 using BusinessLogic.Repository;
@@ -113,23 +114,31 @@ namespace BusinessLogic.SubSystem
         {
             _orderItemRepository.Add(orderItem);
         }
-        public List<OrderItemResponse> GetAllOrderItems()
-        {
-            var list = _orderItemRepository.GetAll();
-            if (list == null) throw new Exception("No se encontraron items de orden");
-            return list;
-        }
+       
+      
+       
         public OrderItemResponse GetItemOrderById(int id)
         {
-            var orderItemResponse= new OrderItemResponse();
+            
             var orderItem = _orderItemRepository.GetById(id);
-            //if (orderItem == null) throw new Exception("No se encontro el item de orden");
-            //return new List<OrderItemResponse>
-            //{
-            //    orderItem
-            //}.ToList();
-
+            if (orderItem == null) throw new Exception("No se encontro el item de orden");
+            var orderItemResponse = new OrderItemResponse
+            {
+                Id = orderItem.Id,
+                Quantity = orderItem.Quantity,
+                UnitPrice = orderItem.UnitPrice,
+                Product = new ProductResponse
+                {
+                    Id = orderItem.Product.Id,
+                    Name = orderItem.Product.Name,
+                    Description = orderItem.Product.Description,
+                    Price = orderItem.Product.Price,
+                    Stock = orderItem.Product.Stock
+                }
+            };
+     
             return orderItemResponse;
+
         }
 
     }
