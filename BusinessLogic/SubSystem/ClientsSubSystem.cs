@@ -1,4 +1,6 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOsClient;
+using BusinessLogic.NewFolder;
 using BusinessLogic.Repository;
 using System;
 using System.Collections.Generic;
@@ -12,18 +14,37 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IClientRepository _clientRepository;
         private readonly IReceiptRepository _receiptRepository;
-        private readonly IZoneRepository _zoneRepository;
-        public ClientsSubSystem(IClientRepository clientRepository, IReceiptRepository receiptRepository, IZoneRepository zoneRepository)
+        private readonly ZonesSubSystem _zonesSubSystem;
+        public ClientsSubSystem(IClientRepository clientRepository, IReceiptRepository receiptRepository, ZonesSubSystem _ZonesSubSystem)
         {
             _clientRepository = clientRepository;
             _receiptRepository = receiptRepository;
-            _zoneRepository = zoneRepository;
+            _zonesSubSystem = _ZonesSubSystem;
         }
 
-        public void AddClient(Client client)
+        public void AddClient(AddClientRequest addClientRequest)
         {
-            _clientRepository.Add(client);
+
+            var newClient = new Client(addClientRequest.Name,addClientRequest.RUT,addClientRequest.RazonSocial,addClientRequest.Address,addClientRequest.MapsAddress,addClientRequest.Schedule,addClientRequest.Phone,addClientRequest.ContactName,addClientRequest.Email,addClientRequest.Observations,addClientRequest.BankAccount,addClientRequest.LoanedCrates,_zonesSubSystem.GetZoneById(addClientRequest.ZoneId));
+
+            newClient.Validate();
+
+            _clientRepository.Add(newClient);
         }
+
+
+        public void UpdateClient(UpdateClientRequest updateClientRequest)
+        {
+            var client = _clientRepository.GetById(updateClientRequest.Id);
+            
+
+        }
+
+
+
+
+
+
         public void AddReceipt(Receipt receipt)
         {
             _receiptRepository.Add(receipt);
@@ -34,6 +55,7 @@ namespace BusinessLogic.SubSystem
             //Logica para asignar zona a cliente     
 
         }
+
     }
 
 }

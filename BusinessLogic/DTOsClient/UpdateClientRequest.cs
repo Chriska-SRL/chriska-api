@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.NewFolder
+namespace BusinessLogic.DTOsClient
 {
-    public class AddClientRequest
+    public class UpdateClientRequest
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
@@ -19,9 +20,7 @@ namespace BusinessLogic.NewFolder
         public string ContactName { get; set; }
         public string BankAccount { get; set; }
         public string Observations { get; set; }
-        public int LoanedCrates { get; set; }    
+        public int LoanedCrates { get; set; }
         public int ZoneId { get; set; }
-
-
     }
 }
