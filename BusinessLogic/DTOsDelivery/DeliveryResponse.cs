@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOsDelivery
 {
-    internal class DelvieryResponse
+    public class DeliveryResponse
     {
     }
 }

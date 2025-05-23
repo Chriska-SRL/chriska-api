@@ -50,11 +50,30 @@ namespace BusinessLogic.SubSystem
             if (order == null) throw new Exception("No se encontro la orden");
             _orderRepository.Delete(orderRequest.Id);
         }
+        public List<OrderResponse> GetOrderById(int id)
+        {
+            var order = _orderRepository.GetById(id);
+            if (order == null) throw new Exception("No se encontro la orden");
+            return new List<OrderResponse> { order };
+        }
+
+        public List<OrderResponse> GetAllOrders()
+        {
+            var list = _orderRepository.GetAll();
+            if (list == null) throw new Exception("No se encontraron ordenes");
+            return list;
+        }
+        
         public void AddOrderItem(OrderItem orderItem)
         {
             _orderItemRepository.Add(orderItem);
         }
-
+        public List<OrderItemResponse> GetAllOrderItems()
+        {
+            var list = _orderItemRepository.GetAll();
+            if (list == null) throw new Exception("No se encontraron items de orden");
+            return list;
+        }
 
     }
 }

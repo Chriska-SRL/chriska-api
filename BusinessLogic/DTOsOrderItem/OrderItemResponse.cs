@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOsOrderItem
 {
-    internal class OrderItemResponse
+    public class OrderItemResponse
     {
     }
 }
