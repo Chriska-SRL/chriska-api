@@ -8,10 +8,26 @@ namespace BusinessLogic.Dominio
 {
     public class Role
     {
-        private int Id { get; set; }
-        private string Name { get; set; }
-        private Permission Permission { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public List<Permission> permissions { get; set; } = new List<Permission>();
 
+        public Role(string name)
+        {
+            Name = name;
+        }
 
+        public void Validate()
+        {
+            if(string.IsNullOrEmpty(Name))
+            {
+                throw new Exception("El nombre del rol no puede estar vacío");
+            }
+        }
+
+        public void Update(string roleName)
+        {
+            Name = roleName;
+        }
     }
 }
