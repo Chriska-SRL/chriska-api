@@ -1,0 +1,17 @@
+name: Close PRs from unauthorized users
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  check-author:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR author and close if not allowed
+        uses: peter-evans/close-pull-request@v3
+        if: ${{ !contains(fromJson('["lautaro-yaurreche", "mathiastabarez", "Iltirgamer"]'), github.actor) }}
+        with:
+          comment: |
+            ❌ Este repositorio solo acepta pull requests de miembros autorizados.
+            Tu PR fue cerrado automáticamente.
