@@ -4,11 +4,13 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<Permission> permissions { get; set; } = new List<Permission>();
+        public List<Permission> Permissions { get; set; } = new List<Permission>();
 
-        public Role(string name)
+        public Role(int id, string name, List<Permission> permissions)
         {
+            Id = id;
             Name = name;
+            Permissions = permissions;
         }
 
         public void Validate()
