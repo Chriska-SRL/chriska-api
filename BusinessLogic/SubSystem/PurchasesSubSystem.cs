@@ -14,14 +14,12 @@ namespace BusinessLogic.SubSystem
 
         private readonly SuppliersSubSystem _suppliersSubSystem;
 
-        public PurchasesSubSystem(IPurchaseRepository purchaseRepository, IPurchaseItemRepository purchaseItemRepository, ISupplierRepository supplierRepository, IProductRepository productRepository, SuppliersSubSystem suppliersSubSystem)
+        public PurchasesSubSystem(IPurchaseRepository purchaseRepository, IPurchaseItemRepository purchaseItemRepository, ISupplierRepository supplierRepository, IProductRepository productRepository)
         {
             _purchaseRepository = purchaseRepository;
             _purchaseItemRepository = purchaseItemRepository;
             _supplierRepository = supplierRepository;
             _productRepository = productRepository;
-
-            _suppliersSubSystem = suppliersSubSystem;
         }
 
         public void AddPurchase(AddPurchaseRequest purchase)

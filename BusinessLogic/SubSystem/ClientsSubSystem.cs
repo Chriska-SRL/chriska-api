@@ -12,15 +12,15 @@ namespace BusinessLogic.SubSystem
         private readonly IReceiptRepository _receiptRepository;
         private readonly IZoneRepository _zoneRepository;
 
-        private readonly ZonesSubSystem _zonesSubSystem;
-
+        private readonly ZonesSubSystem zonesSubSystem;
+        private readonly ClientsSubSystem clientsSubSystem;
         public ClientsSubSystem(IClientRepository clientRepository, IReceiptRepository receiptRepository, IZoneRepository zoneRepository, ZonesSubSystem _ZonesSubSystem)
         {
             _clientRepository = clientRepository;
             _receiptRepository = receiptRepository;
             _zoneRepository = zoneRepository;
 
-            _zonesSubSystem = _ZonesSubSystem;
+            zonesSubSystem = _ZonesSubSystem;
         }
 
         public void AddClient(AddClientRequest addClientRequest)
@@ -66,12 +66,7 @@ namespace BusinessLogic.SubSystem
                     Observation = client.Observation,
                     BankAccount = client.BankAccount,
                     LoanedCrates = client.LoanedCrates,
-                    zone = new ZoneResponse
-                    {
-                        Id = client.Zone.Id,
-                        Name = client.Zone.Name,
-                        Description = client.Zone.Description,
-                    }
+                    zone= zonesSubSystem.GetZoneById(client.Zone.Id)
                 };
                 listClientResponse.Add(clientResponse);
             }
@@ -96,12 +91,7 @@ namespace BusinessLogic.SubSystem
                 Observation = client.Observation,
                 BankAccount = client.BankAccount,
                 LoanedCrates = client.LoanedCrates,
-                zone = new ZoneResponse
-                {
-                    Id = client.Zone.Id,
-                    Name = client.Zone.Name,
-                    Description = client.Zone.Description,
-                }
+                zone = zonesSubSystem.GetZoneById(client.Zone.Id)
             };
             return clientResponse;
         }
@@ -113,15 +103,29 @@ namespace BusinessLogic.SubSystem
             _receiptRepository.Add(newReceipt);
         }
 
-        //public void UpdateReceipt(UpdateReceiptRequest receipt)
-        //{
-        //    var existingReceipt = _receiptRepository.GetById(receipt.Id);
-        //    if (existingReceipt == null) throw new Exception("No se encontro el recibo");
-        //    existingReceipt.Update(receipt.Date, receipt.Amount, receipt.PaymentMethod, receipt.Notes, _clientRepository.GetById(receipt.ClientId));
-        //    _receiptRepository.Update(existingReceipt);
-        //}
-        //
-        //
-        //Se necesita actualizar o borrar el recibo???
+        public void UpdateReceipt(UpdateReceiptRequest receipt)
+        {
+            var existingReceipt = _receiptRepository.GetById(receipt.Id);
+            if (existingReceipt == null) throw new Exception("No se encontro el recibo");
+            existingReceipt.Update(receipt.Amount, receipt.PaymentMethod, receipt.Notes, _clientRepository.GetById(receipt.ClientId));
+            _receiptRepository.Update(existingReceipt);
+        }
+        
+        public ReceiptResponse GetReceiptById(int id)
+        {
+            var receipt = _receiptRepository.GetById(id);
+            if (receipt == null) throw new Exception("No se encontro el recibo");
+            var receiptResponse = new ReceiptResponse
+            {
+                Date = receipt.Date,
+                Amount = receipt.Amount,
+                PaymentMethod = receipt.PaymentMethod,
+                Notes = receipt.Notes,
+                Client = clientsSubSystem.GetClientById(receipt.Client.Id)
+            };
+            return receiptResponse;
+        }
+
+
     }
 }

@@ -5,11 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOs.DTOsShelve
+namespace BusinessLogic.Repository
 {
-    public class AddShelve
+    public interface ICostRepository : IRepository<Cost>
     {
-        public string Description { get; set; }
-        public int WarehouseId { get; set; }
     }
 }

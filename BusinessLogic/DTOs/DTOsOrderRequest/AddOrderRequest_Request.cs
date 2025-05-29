@@ -16,6 +16,7 @@ namespace BusinessLogic.DTOs.DTOsOrderRequest
         public string Observation { get; set; }
         public int UserId { get; set; }
         public int ClientId { get; set; }
+        public int OrderId { get; set; }
 
     }
 }

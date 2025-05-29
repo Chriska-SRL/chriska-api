@@ -15,15 +15,12 @@ namespace BusinessLogic.SubSystem
         private readonly UserSubSystem _userSubSystem;
         private readonly ProductsSubSystem _productsSubSystem;
 
-        public StockSubSystem(IStockMovementRepository stockMovementRepository, IUserRepository userRepository, IShelveRepository shelveRespository, IProductRepository productRepository, UserSubSystem userSubSystem, ProductsSubSystem productsSubSystem)
+        public StockSubSystem(IStockMovementRepository stockMovementRepository, IUserRepository userRepository, IShelveRepository shelveRespository, IProductRepository productRepository)
         {
             _stockMovementRepository = stockMovementRepository;
             _userRepository = userRepository;
             _shelveRespository = shelveRespository;
             _productRepository = productRepository;
-
-            _userSubSystem = userSubSystem;
-            _productsSubSystem = productsSubSystem;
         }
 
         public void AddStockMovement(AddStockMovementRequest stockMovement)

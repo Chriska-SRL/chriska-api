@@ -20,7 +20,22 @@
 
         public void Validate()
         {
-            throw new NotImplementedException();
+            if (Date == default)
+                throw new ArgumentException("Fecha no puede ser nula o por defecto.");
+            if (Amount <= 0)
+                throw new ArgumentException("El monto debe ser mayor que cero.");
+            if (string.IsNullOrWhiteSpace(PaymentMethod))
+                throw new ArgumentException("El metodo de pago no puede estar vacio.");
+            if (Client == null)
+                throw new ArgumentException("El cliente no puede ser nulo.");
+        }
+
+        public void Update(decimal amount, string paymentMethod, string notes, Client client)
+        {          
+            Amount = amount;
+            PaymentMethod = paymentMethod;
+            Notes = notes;
+            Client = client;
         }
     }
 }

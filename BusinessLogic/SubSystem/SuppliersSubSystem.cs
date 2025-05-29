@@ -7,7 +7,6 @@ namespace BusinessLogic.SubSystem
     public class SuppliersSubSystem
     {
         private readonly ISupplierRepository _supplierRepository;
-
         public SuppliersSubSystem(ISupplierRepository supplierRepository)
         {
             _supplierRepository = supplierRepository;

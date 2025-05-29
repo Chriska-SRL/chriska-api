@@ -7,19 +7,16 @@ namespace BusinessLogic.SubSystem
     public class ZonesSubSystem
     {
         private readonly IZoneRepository _zoneRepository;
-
         public ZonesSubSystem(IZoneRepository zoneRepository, IClientRepository clientRepository)
         {
             _zoneRepository = zoneRepository;
         }
-
         public void AddZone(AddZoneRequest zone)
         {
             var newZone = new Zone(zone.Name, zone.Description);
             newZone.Validate();
             _zoneRepository.Add(newZone);
         }
-
         public void UpdateZone(UpdateZoneRequest zone)
         {
             var existingZone = _zoneRepository.GetById(zone.Id);
@@ -28,14 +25,12 @@ namespace BusinessLogic.SubSystem
             existingZone.Validate();
             _zoneRepository.Update(existingZone);
         }
-
         public void DeleteZone(DeleteZoneRequest zone)
         {
             var existingZone = _zoneRepository.GetById(zone.Id);
             if (existingZone == null) throw new Exception("No se encontro la zona");
             _zoneRepository.Delete(existingZone.Id);
         }
-
         public ZoneResponse GetZoneById(int id)
         {
             var zone = _zoneRepository.GetById(id);
@@ -48,7 +43,6 @@ namespace BusinessLogic.SubSystem
             return zoneResponse;
 
         }
-
         public List<ZoneResponse> GetAllZones()
         {
             var zones = _zoneRepository.GetAll();

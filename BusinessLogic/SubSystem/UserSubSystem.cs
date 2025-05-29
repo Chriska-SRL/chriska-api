@@ -9,20 +9,17 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
-
         public UserSubSystem(IUserRepository userRepository, IRoleRepository roleRepository)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
         }
-
         public void AddUser(AddUserRequest user)
         {
             var newUser = new User(user.Name, user.UserName, user.Password, user.IsEnabled, _roleRepository.GetById(user.RoleId));
             newUser.Validate();
             _userRepository.Add(newUser);
         }
-
         public void UpdateUser(UpdateUserRequest user)
         {
             var existingUser = _userRepository.GetById(user.Id);
@@ -31,14 +28,12 @@ namespace BusinessLogic.SubSystem
             existingUser.Validate();
             _userRepository.Update(existingUser);
         }
-
         public void DeleteUser(User user)
         {
             var existingUser = _userRepository.GetById(user.Id);
             if (existingUser == null) throw new Exception("No se encontro el usuario");
             _userRepository.Delete(user.Id);
         }
-
         public UserResponse GetUserById(int id)
         {
             var user = _userRepository.GetById(id);
@@ -55,7 +50,6 @@ namespace BusinessLogic.SubSystem
             };
             return userResponse;
         }
-
         public List<UserResponse> GetAllUsers()
         {
             var users = _userRepository.GetAll();

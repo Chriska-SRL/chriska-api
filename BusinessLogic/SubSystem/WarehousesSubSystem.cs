@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsWarehouse;
+using BusinessLogic.DTOs.DTOsShelve;
 
 namespace BusinessLogic.SubSystem
 {
@@ -63,9 +64,43 @@ namespace BusinessLogic.SubSystem
             }).ToList();
         }
 
-        //public void AddShelve(Shelve shelve)
-        //{
-        //    _shelveRepository.Add(shelve);
-        //}
+        public void AddShelve(AddShelveRequest shelveRequest)
+        {
+            var newShelve = new Shelve(shelveRequest.Description, _warehouseRepository.GetById(shelveRequest.WarehouseId));
+            newShelve.Validate();
+            _shelveRepository.Add(newShelve);
+        }
+        public void UpdateShelve(UpdateShelveRequest shelveRequest)
+        {
+            var existingShelve = _shelveRepository.GetById(shelveRequest.Id);
+            if (existingShelve == null) throw new Exception("No se encontro la estanteria");
+            existingShelve.Update(shelveRequest.Description, _warehouseRepository.GetById(shelveRequest.WarehouseId));
+            existingShelve.Validate();
+            _shelveRepository.Update(existingShelve);
+        }
+        public void DeleteShelve(DeleteShelveRequest shelveRequest)
+        {
+            var existingShelve = _shelveRepository.GetById(shelveRequest.Id);
+            if (existingShelve == null) throw new Exception("No se encontro la estanteria");
+            _shelveRepository.Delete(existingShelve.Id);
+        }
+        public ShelveResponse GetShelveById(int id)
+        {
+            var shelve = _shelveRepository.GetById(id);
+            if (shelve == null) throw new Exception("No se encontro la estanteria");
+            var shelveResponse = new ShelveResponse
+            {
+                Description = shelve.Description,
+                Warehouse = new WarehouseResponse
+                {
+                    Name = shelve.Warehouse.Name,
+                    Description = shelve.Warehouse.Description,
+                    Address = shelve.Warehouse.Address
+                }
+            };
+            return shelveResponse;
+        }
+
+
     }
 }

@@ -11,17 +11,15 @@ namespace BusinessLogic.SubSystem
 
         private readonly SuppliersSubSystem _suppliersSubSystem;
 
-        public PaymentsSubSystem(IPaymentRepository paymentRepository, ISupplierRepository supplierRepository, SuppliersSubSystem suppliersSubSystem)
+        public PaymentsSubSystem(IPaymentRepository paymentRepository, ISupplierRepository supplierRepository)
         {
             _paymentRepository = paymentRepository;
             _supplierRepository = supplierRepository;
-
-            _suppliersSubSystem = suppliersSubSystem;
         }
 
         public void AddPayment(AddPaymentRequest paymentRequest)
         {
-            var payment = new Payment(paymentRequest.Date, paymentRequest.Amount, paymentRequest.PaymentMethod,paymentRequest.Note, _supplierRepository.GetById(paymentRequest.SupplierId));
+            var payment = new Payment(paymentRequest.Date, paymentRequest.Amount, paymentRequest.PaymentMethod, paymentRequest.Note, _supplierRepository.GetById(paymentRequest.SupplierId));
             payment.Validate();
             _paymentRepository.Add(payment);
         }
@@ -33,7 +31,12 @@ namespace BusinessLogic.SubSystem
             payment.Update(paymentRequest.Date, paymentRequest.Amount, paymentRequest.PaymentMethod, paymentRequest.Note, _supplierRepository.GetById(paymentRequest.SupplierId));
             _paymentRepository.Update(payment);
         }
-
+        public void DeletePayment(DeletePaymentRequest paymentRequest)
+        {
+            var payment = _paymentRepository.GetById(paymentRequest.Id);
+            if (payment == null) throw new Exception("No se encontro el pago");
+            _paymentRepository.Delete(paymentRequest.Id);
+        }
         public PaymentResponse GetPaymentyById(int id)
         {
             var payment = _paymentRepository.GetById(id);
@@ -47,20 +50,26 @@ namespace BusinessLogic.SubSystem
                 supplier = _suppliersSubSystem.GetSupplierById(payment.Supplier.Id),
             };
             return paymentResponse;
-        }
-
-        public void DeletePayment(DeletePaymentRequest paymentRequest)
+        }      
+        public List<PaymentResponse> GetAllPayments()
         {
-            var payment = _paymentRepository.GetById(paymentRequest.Id);
-            if (payment == null) throw new Exception("No se encontro el pago");
-            _paymentRepository.Delete(paymentRequest.Id);
+            var payments = _paymentRepository.GetAll();
+            if (payments == null || !payments.Any()) throw new Exception("No se encontraron pagos");
+            var paymentResponses = new List<PaymentResponse>();
+            foreach (var payment in payments)
+            {
+                var response = new PaymentResponse
+                {
+                    Date = payment.Date,
+                    Amount = payment.Amount,
+                    PaymentMethod = payment.PaymentMethod,
+                    Note = payment.Note,
+                    supplier = _suppliersSubSystem.GetSupplierById(payment.Supplier.Id),
+                };
+                paymentResponses.Add(response);
+            }
+            return paymentResponses;
         }
-
-        //public void GetAllPayments()
-        //{
-        //    var payments = _paymentRepository.GetAll();
-        //    if (payments == null || !payments.Any()) throw new Exception("No se encontraron pagos");
-        //    return payments;
-        //}
     }
+
 }

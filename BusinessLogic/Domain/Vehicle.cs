@@ -7,34 +7,38 @@
         public string Brand { get; set; }
         public string Model { get; set; }
         public int CrateCapacity { get; set; }
-        public Cost cost { get; set; }
+        public Cost Cost { get; set; }
 
-        public Vehicle(string plate, string brand, string model, int crateCapacity)
+        public Vehicle(string plate, string brand, string model, int crateCapacity,Cost cost)
         {
             Plate = plate;
             Brand = brand;
             Model = model;
             CrateCapacity = crateCapacity;
+            Cost = cost;
         }
 
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Plate))
-                throw new ArgumentException("Plate cannot be empty or null.");
+                throw new Exception("La placa no puede estar vacía.");
             if (string.IsNullOrWhiteSpace(Brand))
-                throw new ArgumentException("Brand cannot be empty or null.");
+                throw new Exception("La marca no puede estar vacía.");
             if (string.IsNullOrWhiteSpace(Model))
-                throw new ArgumentException("Model cannot be empty or null.");
+                throw new Exception("El modelo no puede estar vacío.");
             if (CrateCapacity <= 0)
-                throw new ArgumentException("Crate capacity must be greater than zero.");
+                throw new Exception("La capacidad de cajas debe ser mayor que cero.");
+            if (Cost == null)
+                throw new Exception("El costo no puede ser nulo.");
         }
 
-        public void Update(string plate, string brand, string model, int crateCapacity)
+        public void Update(string plate, string brand, string model, int crateCapacity,Cost cost)
         {
             Plate = plate;
             Brand = brand;
             Model = model;
             CrateCapacity = crateCapacity;
+            Cost = cost;
         } 
     }
 }

@@ -16,9 +16,15 @@
 
         public void Validate()
         {
-            if(Quantity <= 0) throw new Exception("La cantidad debe ser mayor a cero");
+            if (Quantity <= 0) throw new Exception("La cantidad debe ser mayor a cero");
             if (UnitPrice <= 0) throw new Exception("El precio unitario debe ser mayor a cero");
             if (Product == null) throw new Exception("El producto no puede estar vacío");
-        } 
+        }
+        public void Update(int quantity, decimal unitPrice, Product product)
+        {
+            Quantity = quantity;
+            UnitPrice = unitPrice;
+            Product = product;
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using BusinessLogic.DTOs.DTOsWarehouse;
+﻿using BusinessLogic.Dominio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOs.DTOsShelve
 {
-    public class ShelveResponse
+    public class AddShelveRequest
     {
         public string Description { get; set; }
-        public WarehouseResponse Warehouse { get; set; }
+        public int WarehouseId { get; set; }
     }
 }

@@ -52,7 +52,6 @@ namespace BusinessLogic.SubSystem
             {
                 var categoryResponse = new CategoryResponse
                 {
-                    Id = l.Id,
                     Name = l.Name
                 };
                 listCategoryResponse.Add(categoryResponse);
@@ -67,7 +66,6 @@ namespace BusinessLogic.SubSystem
             {
                 var ReturnCategory = new CategoryResponse
                 {
-                    Id = existingCategory.Id,
                     Name = existingCategory.Name
                 };
                 return ReturnCategory;
@@ -108,11 +106,9 @@ namespace BusinessLogic.SubSystem
             {
                 var subCategoryResponse = new SubCategoryResponse
                 {
-                    Id = existingSubCategory.Id,
                     Name = existingSubCategory.Name,
                     Category = new CategoryResponse
                     {
-                        Id = existingSubCategory.Category.Id,
                         Name = existingSubCategory.Category.Name
                     }
                 };
@@ -130,11 +126,9 @@ namespace BusinessLogic.SubSystem
                 var categoryResponse = GetCategoryById(l.Category.Id);
                 var subCategoryResponse = new SubCategoryResponse
                 {
-                    Id = l.Id,
                     Name = l.Name,
                     Category = new CategoryResponse
                     {
-                        Id = l.Category.Id,
                         Name = l.Category.Name
                     }
                 };

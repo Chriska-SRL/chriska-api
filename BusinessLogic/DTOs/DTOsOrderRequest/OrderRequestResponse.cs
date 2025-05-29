@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.DTOs.DTOsClient;
+using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsUser;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace BusinessLogic.DTOs.DTOsOrderRequest
         public string Observation { get; set; }
         public UserResponse User { get; set; }
         public ClientResponse Client { get; set; }
+        public OrderResponse Order { get; set; }
 
     }
 }
