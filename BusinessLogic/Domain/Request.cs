@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public abstract class Request
     {
@@ -18,9 +11,8 @@ namespace BusinessLogic.Dominio
         public Client Client { get; set; }
         public List<RequestItem> RequestItems { get; set; } = new List<RequestItem>();
 
-
-
         public abstract void Validate();
+
         public abstract void Update(DateTime deliveryDate, string status, string observation, User user, Client client);
     }
 }

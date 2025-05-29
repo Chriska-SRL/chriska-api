@@ -1,30 +1,23 @@
 ﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsZone;
 using BusinessLogic.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BusinessLogic.DTOs.DTOsZone;
 
 namespace BusinessLogic.SubSystem
 {
     public class ZonesSubSystem
     {
-
         private readonly IZoneRepository _zoneRepository;
 
         public ZonesSubSystem(IZoneRepository zoneRepository, IClientRepository clientRepository)
         {
             _zoneRepository = zoneRepository;
-
         }
+
         public void AddZone(AddZoneRequest zone)
         {
             var newZone = new Zone(zone.Name, zone.Description);
             newZone.Validate();
             _zoneRepository.Add(newZone);
-
         }
 
         public void UpdateZone(UpdateZoneRequest zone)
@@ -35,6 +28,7 @@ namespace BusinessLogic.SubSystem
             existingZone.Validate();
             _zoneRepository.Update(existingZone);
         }
+
         public void DeleteZone(DeleteZoneRequest zone)
         {
             var existingZone = _zoneRepository.GetById(zone.Id);
@@ -54,6 +48,7 @@ namespace BusinessLogic.SubSystem
             return zoneResponse;
 
         }
+
         public List<ZoneResponse> GetAllZones()
         {
             var zones = _zoneRepository.GetAll();
@@ -63,8 +58,6 @@ namespace BusinessLogic.SubSystem
                 Name = z.Name,
                 Description = z.Description
             }).ToList();
-
-
         }
     }
 }

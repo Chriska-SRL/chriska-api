@@ -1,25 +1,14 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsOrderItem;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsSale;
 
-using BusinessLogic.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace BusinessLogic.SubSystem
 {
     public class OrdersSubSystem
     {
-
-        private readonly UserSubSystem _userSubSystem;
-        private readonly DeliveriesSubSystem _deliveriesSubSystem;
-        public readonly ReturnsSubSystem subSystemReturnRequest;
-
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderItemRepository _orderItemRepository;
         private readonly IDeliveryRepository _deliveryRepository;
@@ -27,7 +16,11 @@ namespace BusinessLogic.SubSystem
         private readonly IUserRepository _userRepository;
         private readonly IReturnRequestRepository _returnRequestRepository;
 
-        public OrdersSubSystem(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository,IDeliveryRepository deliveryRepository,ISaleRepository saleRepository, IUserRepository userRepository,IReturnRequestRepository returnRequestRepository)
+        private readonly UserSubSystem _userSubSystem;
+        private readonly DeliveriesSubSystem _deliveriesSubSystem;
+        private readonly ReturnsSubSystem _subSystemReturnRequest;
+
+        public OrdersSubSystem(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository,IDeliveryRepository deliveryRepository,ISaleRepository saleRepository, IUserRepository userRepository,IReturnRequestRepository returnRequestRepository, UserSubSystem userSubSystem, DeliveriesSubSystem deliveriesSubSystem, ReturnsSubSystem subSystemReturnRequest)
         {
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
@@ -35,37 +28,40 @@ namespace BusinessLogic.SubSystem
             _saleRepository = saleRepository;
             _userRepository = userRepository;
             _returnRequestRepository = returnRequestRepository;
-            
+
+            _userSubSystem = userSubSystem;
+            _deliveriesSubSystem = deliveriesSubSystem;
+            _subSystemReturnRequest = subSystemReturnRequest;
         }
+
         public void AddOrder(AddOrderRequest orderRequest)
         {
             var order = new Order( orderRequest.Date, orderRequest.ClientName, orderRequest.Crates, orderRequest.Status, _deliveryRepository.GetById(orderRequest.DeliveryId), _saleRepository.GetById(orderRequest.SaleId), _userRepository.GetById(orderRequest.PreparedById), _userRepository.GetById(orderRequest.DeliveredById), _returnRequestRepository.GetById(orderRequest.OrderRequestId));
             order.Validate();
             _orderRepository.Add(order);
-
         }
+
         public void UpdateOrder(UpdateOrderRequest orderRequest)
         {
             var order = _orderRepository.GetById(orderRequest.Id);
             if (order == null) throw new Exception("No se encontro la orden");
             order.Update(orderRequest.ClientName, orderRequest.Crates, orderRequest.Status, _deliveryRepository.GetById(orderRequest.DeliveryId));
             _orderRepository.Update(order);
-           
         }
+
         public void DeleteOrder(DeleteOrderRequest orderRequest)
         {
             var order = _orderRepository.GetById(orderRequest.Id);
             if (order == null) throw new Exception("No se encontro la orden");
             _orderRepository.Delete(orderRequest.Id);
         }
+
        public OrderResponse GetOrderById(int id)
        {
            var order = _orderRepository.GetById(id);
            if (order == null) throw new Exception("No se encontro la orden");
            var Sale = _saleRepository.GetById(order.Sale.Id);
             var orderResponse= new OrderResponse{
-
-
                Id = order.Id,
                Date = order.Date,
                ClientName = order.ClientName,
@@ -78,9 +74,7 @@ namespace BusinessLogic.SubSystem
                },         
                PreparedBy = _userSubSystem.GetUserById(order.PreparedBy.Id),
                DeliveredBy = _userSubSystem.GetUserById(order.DeliveredBy.Id),
-               OrderRequest = subSystemReturnRequest.GetOrderRequestById(order.OrderRequest.Id)
-
-
+               OrderRequest = _subSystemReturnRequest.GetReturnRequestById(order.OrderRequest.Id)
                };
             return orderResponse;
        }
@@ -107,9 +101,7 @@ namespace BusinessLogic.SubSystem
                     },
                     PreparedBy = _userSubSystem.GetUserById(order.PreparedBy.Id),
                     DeliveredBy = _userSubSystem.GetUserById(order.DeliveredBy.Id),
-                    OrderRequest = subSystemReturnRequest.GetOrderRequestById(order.OrderRequest.Id)
-
-
+                    OrderRequest = _subSystemReturnRequest.GetOrderRequestById(order.OrderRequest.Id)
                 }; 
                 listResponse.Add(response);
             }
@@ -121,16 +113,12 @@ namespace BusinessLogic.SubSystem
             _orderItemRepository.Add(orderItem);
         }
        
-      
-       
         public OrderItemResponse GetItemOrderById(int id)
         {
-            
             var orderItem = _orderItemRepository.GetById(id);
             if (orderItem == null) throw new Exception("No se encontro el item de orden");
             var orderItemResponse = new OrderItemResponse
             {
-
                 Quantity = orderItem.Quantity,
                 UnitPrice = orderItem.UnitPrice,
                 Product = new ProductResponse
@@ -142,9 +130,7 @@ namespace BusinessLogic.SubSystem
                     Stock = orderItem.Product.Stock
                 }
             };
-     
             return orderItemResponse;
-
         }
 
     }

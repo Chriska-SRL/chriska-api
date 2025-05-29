@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class Supplier
     {
@@ -37,6 +31,7 @@ namespace BusinessLogic.Dominio
             BankAccount = bankAccount;
             Observation = observation;
         }
+
         public void Validate()
         {
             if (string.IsNullOrEmpty(Name)) throw new Exception("El nombre es obligatorio");
@@ -48,6 +43,7 @@ namespace BusinessLogic.Dominio
             if (string.IsNullOrEmpty(Email)) throw new Exception("El email es obligatorio");
             if (string.IsNullOrEmpty(BankAccount)) throw new Exception("La cuenta bancaria es obligatoria");
         }
+
         public void Update(string name, string rUT, string businessName, string address, string mapsAddress, string phone, string contactName, string email, string bankAccount, string observation)
         {
             Name = name;
@@ -61,6 +57,5 @@ namespace BusinessLogic.Dominio
             BankAccount = bankAccount;
             Observation = observation;
         }
-
     }
 }

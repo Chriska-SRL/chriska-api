@@ -1,11 +1,4 @@
-﻿using BusinessLogic.DTOsCategory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class Delivery
     {
@@ -24,18 +17,19 @@ namespace BusinessLogic.Dominio
             Observation = observation;
             Vehicle = vehicle;
         }
+
         public void Validate()
         {
             if (string.IsNullOrEmpty(DriverName)) throw new Exception("El nombre del conductor no puede estar vacío");
             if (string.IsNullOrEmpty(Observation)) throw new Exception("La observación no puede estar vacía");
             if (Vehicle == null) throw new Exception("El vehículo no puede estar vacío");
         }
+
         public void Update(string driverName, string observation, Vehicle vehicle)
         {
             DriverName = driverName;
             Observation = observation;
             Vehicle = vehicle;
         }
-
     }
 }

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class Order
     {
@@ -33,6 +26,7 @@ namespace BusinessLogic.Dominio
             DeliveredBy = deliveredBy;
             OrderRequest = orderRequest;
         }
+
         public void Validate()
         {
             if (string.IsNullOrEmpty(ClientName)) throw new Exception("El nombre del cliente no puede estar vacío");
@@ -43,6 +37,7 @@ namespace BusinessLogic.Dominio
             if (PreparedBy == null) throw new Exception("El usuario que preparó la orden no puede estar vacío");
             if (DeliveredBy == null) throw new Exception("El usuario que entregó la orden no puede estar vacío");
         }
+
         public void Update(string clientName,int crates,string status,Delivery delivery)
         {
             ClientName = clientName;
@@ -50,6 +45,5 @@ namespace BusinessLogic.Dominio
             Status = status;
             Delivery = delivery;
         }
-
     }
 }

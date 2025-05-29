@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class Category
     {
-
         public int Id { get; set; }
         public string Name { get; set; }
 
@@ -16,11 +9,12 @@ namespace BusinessLogic.Dominio
         {
             Name = name;
         }
+
         public void Update(string name)
         {
             Name = name;
-
         }
+
         public void Validate()
         {
             if (string.IsNullOrEmpty(Name))

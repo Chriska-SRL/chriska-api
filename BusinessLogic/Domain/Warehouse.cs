@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class Warehouse
     {
@@ -20,14 +14,14 @@ namespace BusinessLogic.Dominio
             Description = description;
             Address = address;
         }
+
         public void Validate()
         {
-
             if (string.IsNullOrEmpty(Name)) throw new Exception("El nombre del almacén es obligatorio");
             if (string.IsNullOrEmpty(Description)) throw new Exception("La descripción del almacén es obligatoria");
             if (string.IsNullOrEmpty(Address)) throw new Exception("La dirección del almacén es obligatoria");
-
         }
+
         public void Update(string name, string description, string address)
         {
             Name = name;

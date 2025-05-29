@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class User
     {
@@ -24,6 +18,7 @@ namespace BusinessLogic.Dominio
             this.isEnabled = isEnabled;
             Role = role;
         }
+
         public void Validate()
         {
             if (string.IsNullOrEmpty(Name)) throw new Exception("El nombre es obligatorio");
@@ -31,6 +26,7 @@ namespace BusinessLogic.Dominio
             if (string.IsNullOrEmpty(Password)) throw new Exception("La contraseña es obligatoria");
             if (Role == null) throw new Exception("El rol es obligatorio");
         }
+
         public void Update(string name, string username, string password, Boolean isEnabled, Role role)
         {
             Name = name;

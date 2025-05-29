@@ -16,6 +16,7 @@
             Model = model;
             CrateCapacity = crateCapacity;
         }
+
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Plate))
@@ -27,15 +28,13 @@
             if (CrateCapacity <= 0)
                 throw new ArgumentException("Crate capacity must be greater than zero.");
         }
+
         public void Update(string plate, string brand, string model, int crateCapacity)
         {
             Plate = plate;
             Brand = brand;
             Model = model;
             CrateCapacity = crateCapacity;
-            
-        }  
-
-
+        } 
     }
 }

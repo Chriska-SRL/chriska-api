@@ -1,31 +1,27 @@
 ﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsWarehouse;
 using BusinessLogic.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BusinessLogic.DTOs.DTOsWarehouse;
 
 namespace BusinessLogic.SubSystem
 {
     public class WarehousesSubSystem
     {
-
         private IWarehouseRepository _warehouseRepository;
         private IShelveRepository _shelveRepository;
+
         public WarehousesSubSystem(IWarehouseRepository warehouseRepository, IShelveRepository shelveRepository)
         {
             _warehouseRepository = warehouseRepository;
             _shelveRepository = shelveRepository;
         }
+
         public void AddWarehouse(AddWarehouseRequest warehouse)
         {
             var newWarehouse = new Warehouse(warehouse.Name, warehouse.Description, warehouse.Address);
             newWarehouse.Validate();
             _warehouseRepository.Add(newWarehouse);
-
         }
+
         public void UpdateWarehouse(UpdateWarehouseRequest warehouse)
         {
             var existingWarehouse = _warehouseRepository.GetById(warehouse.Id);
@@ -34,12 +30,14 @@ namespace BusinessLogic.SubSystem
             existingWarehouse.Validate();
             _warehouseRepository.Update(existingWarehouse);
         }
+
         public void DeleteWarehouse(DeleteWarehouseRequest warehouse)
         {
             var existingWarehouse = _warehouseRepository.GetById(warehouse.Id);
             if (existingWarehouse == null) throw new Exception("No se encontro el almacen");
             _warehouseRepository.Delete(existingWarehouse.Id);
         }
+
         public WarehouseResponse GetWarehouseById(int id)
         {
             var warehouse = _warehouseRepository.GetById(id);
@@ -52,6 +50,7 @@ namespace BusinessLogic.SubSystem
             };
             return warehouseResponse;
         }
+
         public List<WarehouseResponse> GetAllWarehouses()
         {
             var warehouses = _warehouseRepository.GetAll();
@@ -63,15 +62,10 @@ namespace BusinessLogic.SubSystem
                 Address = w.Address
             }).ToList();
         }
-        //
-
 
         //public void AddShelve(Shelve shelve)
         //{
         //    _shelveRepository.Add(shelve);
         //}
-
-
-
     }
 }
