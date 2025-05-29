@@ -1,42 +1,54 @@
 ﻿using BusinessLogic.SubSystem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic
 {
     public class Facade
     {
-        private AuthSubSystem _auth  = new AuthSubSystem();
+        private readonly AuthSubSystem Auth;
+        private readonly CategoriesSubSystem Categories;
+        private readonly DeliveriesSubSystem Deliveries;
+        private readonly ClientsSubSystem Clients;
+        private readonly OrdersSubSystem Orders;
+        private readonly ProductsSubSystem Products;
+        private readonly PaymentsSubSystem Payments;
+        private readonly StockSubSystem Stock;
+        private readonly PurchasesSubSystem Purchases;
+        private readonly ReturnsSubSystem Returns;
+        private readonly SuppliersSubSystem Suppliers;
+        private readonly UserSubSystem Users;
+        private readonly WarehousesSubSystem Warehouses;
+        private readonly ZonesSubSystem Zones;
 
-        private CategoriesSubSystem _category = new CategoriesSubSystem();
-
-        private DeliveriesSubSystem _deliverie = new DeliveriesSubSystem();
-
-        private  ClientsSubSystem _client = new ClientsSubSystem();
-
-        private  OrdersSubSystem _order = new OrdersSubSystem();
-
-        private  ProductsSubSystem _product = new ProductsSubSystem();
-
-        private  PaymentsSubSystem _payment = new PaymentsSubSystem();
-
-        private  StockSubSystem _stock = new StockSubSystem();
-
-        private PurchasesSubSystem _purchase = new PurchasesSubSystem();
-
-        private ReturnsSubSystem _return = new ReturnsSubSystem();
-
-        private SuppliersSubSystem _supplier = new SuppliersSubSystem();
-
-        private UserSubSystem _user = new UserSubSystem();
-
-        private WarehousesSubSystem _warehouse = new WarehousesSubSystem();
-
-        private ZonesSubSystem _zone = new ZonesSubSystem();
-
-
+        public Facade(
+            AuthSubSystem auth,
+            CategoriesSubSystem categories,
+            DeliveriesSubSystem deliveries,
+            ClientsSubSystem clients,
+            OrdersSubSystem orders,
+            ProductsSubSystem products,
+            PaymentsSubSystem payments,
+            StockSubSystem stock,
+            PurchasesSubSystem purchases,
+            ReturnsSubSystem returns,
+            SuppliersSubSystem suppliers,
+            UserSubSystem users,
+            WarehousesSubSystem warehouses,
+            ZonesSubSystem zones)
+        {
+            Auth = auth;
+            Categories = categories;
+            Deliveries = deliveries;
+            Clients = clients;
+            Orders = orders;
+            Products = products;
+            Payments = payments;
+            Stock = stock;
+            Purchases = purchases;
+            Returns = returns;
+            Suppliers = suppliers;
+            Users = users;
+            Warehouses = warehouses;
+            Zones = zones;
+        }
     }
 }

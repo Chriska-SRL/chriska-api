@@ -1,18 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class Receipt
     {
-        private int Id { get; set; }
-        private DateTime Date { get; set; }
-        private decimal Amount { get; set; }
-        private string PaymentMethod { get; set; }
-        private string Notes { get; set; }
-        private Client Client { get; set; }
+        public int Id { get; set; }
+        public DateTime Date { get; set; }
+        public decimal Amount { get; set; }
+        public string PaymentMethod { get; set; }
+        public string Notes { get; set; }
+        public Client Client { get; set; }
+
+        public Receipt(DateTime date, decimal amount, string paymentMethod, string notes, Client client)
+        {
+            Date = date;
+            Amount = amount;
+            PaymentMethod = paymentMethod;
+            Notes = notes;
+            Client = client;
+        }
+
+        public void Validate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

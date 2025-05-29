@@ -1,6 +1,4 @@
-﻿
-
-using BusinessLogic.Dominio;
+﻿using BusinessLogic.Dominio;
 
 namespace BusinessLogic.Repository
 {

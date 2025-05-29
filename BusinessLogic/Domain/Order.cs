@@ -1,25 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class Order
     {
-        private int Id { get; set; }
-        private DateTime Date { get; set; }
-        private string ClientName { get; set; }
-        private int Crates { get; set; }
-        private string Status { get; set; }
-        private Delivery Delivery { get; set; }
-        private List<OrderItem> OrderItems { get; set; }
-        private Sale Sale { get; set; } = new Sale();
-        private User PreparedBy { get; set; } = new User();
-        private User DeliveredBy { get; set; } = new User();
-        private OrderRequest OrderRequest { get; set; } 
+        public int Id { get; set; }
+        public DateTime Date { get; set; }
+        public string ClientName { get; set; }
+        public int Crates { get; set; }
+        public string Status { get; set; }
+        public Delivery Delivery { get; set; }
+        public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public Sale Sale { get; set; } 
+        public User PreparedBy { get; set; } 
+        public User DeliveredBy { get; set; } 
+        public Request OrderRequest { get; set; } 
+        
+        public Order (DateTime date, string clientName, int crates, string status, Delivery delivery, Sale sale, User preparedBy, User deliveredBy, Request orderRequest)
+        {
+            Date = date;
+            ClientName = clientName;
+            Crates = crates;
+            Status = status;
+            Delivery = delivery;
+            Sale = sale;
+            PreparedBy = preparedBy;
+            DeliveredBy = deliveredBy;
+            OrderRequest = orderRequest;
+        }
 
+        public void Validate()
+        {
+            if (string.IsNullOrEmpty(ClientName)) throw new Exception("El nombre del cliente no puede estar vacío");
+            if (Crates <= 0) throw new Exception("La cantidad de cajas debe ser mayor a cero");
+            if (string.IsNullOrEmpty(Status)) throw new Exception("El estado no puede estar vacío");
+            if (Delivery == null) throw new Exception("La entrega no puede estar vacía");
+            if (OrderItems == null || OrderItems.Count == 0) throw new Exception("Los items de la orden no pueden estar vacíos");
+            if (PreparedBy == null) throw new Exception("El usuario que preparó la orden no puede estar vacío");
+            if (DeliveredBy == null) throw new Exception("El usuario que entregó la orden no puede estar vacío");
+        }
+
+        public void Update(string clientName,int crates,string status,Delivery delivery)
+        {
+            ClientName = clientName;
+            Crates = crates;
+            Status = status;
+            Delivery = delivery;
+        }
     }
 }
