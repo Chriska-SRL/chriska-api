@@ -1,18 +1,12 @@
 ﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsUser;
-using BusinessLogic.DTOsRole;
 using BusinessLogic.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BusinessLogic.DTOs.DTOsRole;
+using BusinessLogic.DTOs.DTOsUser;
 
 namespace BusinessLogic.SubSystem
 {
     public class UserSubSystem
     {
-
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
 
@@ -21,10 +15,10 @@ namespace BusinessLogic.SubSystem
             _userRepository = userRepository;
             _roleRepository = roleRepository;
         }
+
         public void AddUser(AddUserRequest user)
         {
-
-            var newUser = new User(user.Name,user.UserName,user.Password,user.IsEnabled,_roleRepository.GetById(user.RoleId));
+            var newUser = new User(user.Name, user.UserName, user.Password, user.IsEnabled, _roleRepository.GetById(user.RoleId));
             newUser.Validate();
             _userRepository.Add(newUser);
         }
@@ -36,24 +30,21 @@ namespace BusinessLogic.SubSystem
             existingUser.Update(user.Name, user.UserName, user.Password, user.IsEnabled, _roleRepository.GetById(user.RoleId));
             existingUser.Validate();
             _userRepository.Update(existingUser);
-
-
         }
+
         public void DeleteUser(User user)
         {
-
-           var existingUser = _userRepository.GetById(user.Id );
+            var existingUser = _userRepository.GetById(user.Id);
             if (existingUser == null) throw new Exception("No se encontro el usuario");
             _userRepository.Delete(user.Id);
-
         }
+
         public UserResponse GetUserById(int id)
         {
             var user = _userRepository.GetById(id);
             if (user == null) throw new Exception("No se encontro el usuario");
             var userResponse = new UserResponse
             {
-
                 Name = user.Name,
                 UserName = user.Username,
                 IsEnabled = user.isEnabled,
@@ -64,6 +55,7 @@ namespace BusinessLogic.SubSystem
             };
             return userResponse;
         }
+
         public List<UserResponse> GetAllUsers()
         {
             var users = _userRepository.GetAll();
@@ -73,7 +65,6 @@ namespace BusinessLogic.SubSystem
             {
                 userResponses.Add(new UserResponse
                 {
-
                     Name = user.Name,
                     UserName = user.Username,
                     IsEnabled = user.isEnabled,
@@ -84,6 +75,6 @@ namespace BusinessLogic.SubSystem
                 });
             }
             return userResponses;
-
         }
+    }
 }

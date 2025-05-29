@@ -1,11 +1,6 @@
 ﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsRole;
 using BusinessLogic.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BusinessLogic.DTOs.DTOsRole;
 
 namespace BusinessLogic.SubSystem
 {
@@ -17,6 +12,7 @@ namespace BusinessLogic.SubSystem
         {
             _roleRepository = roleRepository;
         }
+
         public void AddRole(AddRoleRequest role)
         {
             var newRole = new Role(role.Name);
@@ -24,6 +20,7 @@ namespace BusinessLogic.SubSystem
             _roleRepository.Add(newRole);
 
         }
+
         public void UpdateRole(UpdateRoleRequest role)
         {
             var updateRole = _roleRepository.GetById(role.Id);
@@ -32,12 +29,14 @@ namespace BusinessLogic.SubSystem
             updateRole.Validate();
             _roleRepository.Update(updateRole);
         }
+
         public void DeleteRole(DeleteRoleRequest role)
         {
             var deleteRole = _roleRepository.GetById(role.Id);
             if (deleteRole == null) throw new Exception("El rol no existe");
             _roleRepository.Delete(deleteRole.Id);
         }
+
         public RoleResponse GetRoleById(int id)
         {
             var role = _roleRepository.GetById(id);
@@ -46,11 +45,11 @@ namespace BusinessLogic.SubSystem
             {
 
                 RoleName = role.Name
-                
+
             };
             return roleResponse;
-
         }
+
         public List<RoleResponse> GetAllRoles()
         {
             var roles = _roleRepository.GetAll();
@@ -58,13 +57,10 @@ namespace BusinessLogic.SubSystem
             foreach (var rol in roles)
             {
                 var rolesResponse = new RoleResponse();
-
                 rolesResponse.RoleName = rol.Name;
-
                 listRolesResponse.Add(rolesResponse);
-
             }
             return listRolesResponse;
-
         }
+    }
 }

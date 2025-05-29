@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class StockMovement
     {
@@ -27,6 +21,7 @@ namespace BusinessLogic.Dominio
             User = user;
             Product = product;
         }
+
         public void Validate()
         {
 
@@ -38,6 +33,5 @@ namespace BusinessLogic.Dominio
             if (User == null) throw new Exception("El usuario no puede estar vacío");
             if (Product == null) throw new Exception("El producto no puede estar vacío");
         }
-       
     }
 }

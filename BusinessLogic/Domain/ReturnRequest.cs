@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class ReturnRequest: Request
     {
         public CreditNote CreditNote { get; set; }
+
         public ReturnRequest(CreditNote creditNote, DateTime requestDate, DateTime deliveryDate, string status, string observation, User user, Client client)
         {
             CreditNote = creditNote;
@@ -18,7 +13,6 @@ namespace BusinessLogic.Dominio
             Observation = observation;
             User = user;
             Client = client;
-
         }
 
         public override void Validate()
@@ -35,13 +29,11 @@ namespace BusinessLogic.Dominio
         
         public override void Update(DateTime deliveryDate, string status,string observation, User user, Client client)
         {
-
             DeliveryDate = deliveryDate;
             Status = status;
             Observation = observation;
             User = user;
             Client = client;
         }
-   
     }
 }

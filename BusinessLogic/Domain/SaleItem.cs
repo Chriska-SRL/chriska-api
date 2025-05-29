@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class SaleItem
     {
@@ -12,6 +6,5 @@ namespace BusinessLogic.Dominio
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public Product Product { get; set; }
-
     }
 }

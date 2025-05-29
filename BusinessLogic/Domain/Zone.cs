@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class Zone
     {
@@ -18,17 +12,17 @@ namespace BusinessLogic.Dominio
             Name = name;
             Description = description;
         }
+
         public void Validate()
         {
             if (string.IsNullOrEmpty(Name)) throw new Exception("El nombre es obligatorio");
             if (string.IsNullOrEmpty(Description)) throw new Exception("La descripcion es obligatoria");
         }
+
         public void Update(string name, string description)
         {
             Name = name;
             Description = description;
         }
-
     }
-
 }

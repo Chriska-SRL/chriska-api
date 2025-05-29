@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class Client
     {
@@ -26,7 +19,7 @@ namespace BusinessLogic.Dominio
         public Zone Zone { get; set; }
         public List<Receipt> Receipts { get; set; } = new List<Receipt>();
 
-        public Client(string name, string rut,string razonSocial, string address, string mapsAddress, string schedule, string phone,string contactName,string email,string observation,string bankAccount, int loanedCrates,Zone zone)
+        public Client(string name, string rut, string razonSocial, string address, string mapsAddress, string schedule, string phone, string contactName, string email, string observation, string bankAccount, int loanedCrates, Zone zone)
         {
             Name = name;
             RUT = rut;
@@ -42,6 +35,7 @@ namespace BusinessLogic.Dominio
             LoanedCrates = loanedCrates;
             Zone = zone;
         }
+
         public void Validate()
         {
             if (string.IsNullOrEmpty(Name)) throw new Exception("El nombre no puede estar vacío");
@@ -58,9 +52,8 @@ namespace BusinessLogic.Dominio
             if (LoanedCrates < 0) throw new Exception("Las cajas prestadas no pueden ser negativas");
         }
 
-        public void Update(string name, string rut, string razonSocial,string address, string mapsAddress,string stringSchedule,string phone,string contactName,string email, string observation, string bankAccount, int loanedCrates,Zone zone)
+        public void Update(string name, string rut, string razonSocial, string address, string mapsAddress, string stringSchedule, string phone, string contactName, string email, string observation, string bankAccount, int loanedCrates, Zone zone)
         {
-
             Name = name;
             RUT = rut;
             RazonSocial = razonSocial;
@@ -74,7 +67,6 @@ namespace BusinessLogic.Dominio
             BankAccount = bankAccount;
             LoanedCrates = loanedCrates;
             Zone = zone;
-
         }
     }
 }

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class Product
     {
@@ -23,9 +16,6 @@ namespace BusinessLogic.Dominio
         public SubCategory SubCategory { get; set; }
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
 
-
-
-
         public Product(string internalCode, string barcode, string name, decimal price, string image, int stock, string description, string unitType, string temperatureCondition, string observation, SubCategory subCategory)
         {
             InternalCode = internalCode;
@@ -40,6 +30,7 @@ namespace BusinessLogic.Dominio
             Observation = observation;
             SubCategory = subCategory;
         }
+
         public void Validate()
         {
             if (string.IsNullOrEmpty(InternalCode)) throw new Exception("El codigo interno es obligatorio");
@@ -49,10 +40,8 @@ namespace BusinessLogic.Dominio
             if (SubCategory == null) throw new Exception("La subcategoria es obligatoria");
         }
 
-        public void Update(string name,decimal price,string image,int stock,string description,string unitType,string temperatureCondition,string observation,SubCategory subCategory
-            )
+        public void Update(string name, decimal price, string image, int stock, string description, string unitType, string temperatureCondition, string observation, SubCategory subCategory)
         {
-
             Name = name;
             Price = price;
             Image = image;
@@ -62,7 +51,6 @@ namespace BusinessLogic.Dominio
             TemperatureCondition = temperatureCondition;
             Observation = observation;
             SubCategory = subCategory;
-
         }
     }
 }

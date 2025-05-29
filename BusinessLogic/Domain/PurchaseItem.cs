@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Dominio
 {
     public class PurchaseItem
     {
@@ -13,6 +6,7 @@ namespace BusinessLogic.Dominio
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public Product Product { get; set; }
+
         public PurchaseItem(int quantity, decimal unitPrice, Product product)
         {
             Quantity = quantity;
@@ -30,11 +24,8 @@ namespace BusinessLogic.Dominio
 
         public void Update(int quantity, decimal unitPrice)
         {
-
             Quantity = quantity;
             UnitPrice = unitPrice;
-     
-
         }
     }
 }

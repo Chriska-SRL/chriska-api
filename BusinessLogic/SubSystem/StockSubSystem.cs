@@ -1,12 +1,7 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsStockMovement;
-using BusinessLogic.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.SubSystem
 {
@@ -16,23 +11,26 @@ namespace BusinessLogic.SubSystem
         private readonly IUserRepository _userRepository;
         private readonly IShelveRepository _shelveRespository;
         private readonly IProductRepository _productRepository;
-        private readonly UserSubSystem userSubSystem;
-        private readonly ProductsSubSystem productsSubSystem;
-        public StockSubSystem(IStockMovementRepository stockMovementRepository, IUserRepository userRepository, IShelveRepository shelveRespository, IProductRepository productRepository)
+
+        private readonly UserSubSystem _userSubSystem;
+        private readonly ProductsSubSystem _productsSubSystem;
+
+        public StockSubSystem(IStockMovementRepository stockMovementRepository, IUserRepository userRepository, IShelveRepository shelveRespository, IProductRepository productRepository, UserSubSystem userSubSystem, ProductsSubSystem productsSubSystem)
         {
             _stockMovementRepository = stockMovementRepository;
             _userRepository = userRepository;
             _shelveRespository = shelveRespository;
             _productRepository = productRepository;
+
+            _userSubSystem = userSubSystem;
+            _productsSubSystem = productsSubSystem;
         }
 
         public void AddStockMovement(AddStockMovementRequest stockMovement)
         {
-
             var newStockMovement = new StockMovement(stockMovement.Date, stockMovement.Quantity, stockMovement.Type, stockMovement.Reason, _shelveRespository.GetById(stockMovement.ShelveId), _userRepository.GetById(stockMovement.UserId), _productRepository.GetById(stockMovement.ProductId));
             newStockMovement.Validate();
             _stockMovementRepository.Add(newStockMovement);
-
         }
 
         public StockMovementResponse GetStockMovementById(int id)
@@ -48,14 +46,11 @@ namespace BusinessLogic.SubSystem
                 Reason = stockMovement.Reason,
                 Shelve = new ShelveResponse
                 {
-
                     Description = stockMovement.Shelve.Description
-
                 },
-                User = userSubSystem.GetUserById(stockMovement.User.Id),
-                Product = productsSubSystem.GetProductById(stockMovement.Product.Id)
+                User = _userSubSystem.GetUserById(stockMovement.User.Id),
+                Product = _productsSubSystem.GetProductById(stockMovement.Product.Id)
             };
-
             return stockMovementResponse;
         }
 
@@ -63,9 +58,7 @@ namespace BusinessLogic.SubSystem
         {
             var stockMovements = _stockMovementRepository.GetAll();
             if (stockMovements == null) throw new Exception("No hay movimientos de stock registrados");
-
             var stockMovementResponses = new List<StockMovementResponse>();
-
             foreach (var stockMovement in stockMovements)
             {
                 var stockMovementResponse = new StockMovementResponse
@@ -78,14 +71,12 @@ namespace BusinessLogic.SubSystem
                     {
                         Description = stockMovement.Shelve.Description
                     },
-                    User = userSubSystem.GetUserById(stockMovement.User.Id),
-                    Product = productsSubSystem.GetProductById(stockMovement.Product.Id)
+                    User = _userSubSystem.GetUserById(stockMovement.User.Id),
+                    Product = _productsSubSystem.GetProductById(stockMovement.Product.Id)
                 };
                 stockMovementResponses.Add(stockMovementResponse);
             }
             return stockMovementResponses;
-
         }
-
     }
 }

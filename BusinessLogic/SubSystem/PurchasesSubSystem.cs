@@ -1,12 +1,7 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsPurchase;
 using BusinessLogic.DTOs.DTOsPurchaseItem;
-using BusinessLogic.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.SubSystem
 {
@@ -15,16 +10,20 @@ namespace BusinessLogic.SubSystem
         private readonly IPurchaseRepository _purchaseRepository;
         private readonly IPurchaseItemRepository _purchaseItemRepository;
         private readonly ISupplierRepository _supplierRepository;
-        private readonly SuppliersSubSystem _suppliersSubSystem;
         private readonly IProductRepository _productRepository;
-        public PurchasesSubSystem(IPurchaseRepository purchaseRepository, IPurchaseItemRepository purchaseItemRepository, SuppliersSubSystem suppliersSubSystem, ISupplierRepository supplierRepository, IProductRepository productRepository)
+
+        private readonly SuppliersSubSystem _suppliersSubSystem;
+
+        public PurchasesSubSystem(IPurchaseRepository purchaseRepository, IPurchaseItemRepository purchaseItemRepository, ISupplierRepository supplierRepository, IProductRepository productRepository, SuppliersSubSystem suppliersSubSystem)
         {
             _purchaseRepository = purchaseRepository;
             _purchaseItemRepository = purchaseItemRepository;
-            _suppliersSubSystem = suppliersSubSystem;
             _supplierRepository = supplierRepository;
             _productRepository = productRepository;
+
+            _suppliersSubSystem = suppliersSubSystem;
         }
+
         public void AddPurchase(AddPurchaseRequest purchase)
         {
             var newPurchase = new Purchase(purchase.Date, purchase.Status, _supplierRepository.GetById(purchase.SupplierId));
@@ -41,6 +40,7 @@ namespace BusinessLogic.SubSystem
             _purchaseRepository.Update(existingPurchase);
 
         }
+
         public void DeletePurchase(DeletePurchaseRequest deletePurchaseRequest)
         {
             var existingPurchase = _purchaseRepository.GetById(deletePurchaseRequest.Id);
@@ -49,6 +49,7 @@ namespace BusinessLogic.SubSystem
             _purchaseRepository.Delete(deletePurchaseRequest.Id);
 
         }
+
         public PurchaseResponse GetPurchaseById(int id)
         {
             var purchase = _purchaseRepository.GetById(id);
@@ -61,6 +62,7 @@ namespace BusinessLogic.SubSystem
             };
             return purchaseResponse;
         }
+
         public List<PurchaseResponse> GetAllPurchases()
         {
             var purchases = _purchaseRepository.GetAll();
@@ -83,26 +85,21 @@ namespace BusinessLogic.SubSystem
             newPurchaseItem.Validate();
             _purchaseItemRepository.Add(newPurchaseItem);
         }
+
         public void UpdatePurchaseItem(UpdatePurchaseItemRequest purchaseItem)
         {
             var existingPurchaseItem = _purchaseItemRepository.GetById(purchaseItem.Id);
             if (existingPurchaseItem == null) throw new Exception("No se encontro el item de compra");
-
             existingPurchaseItem.Update(purchaseItem.Quantity, purchaseItem.UnitPrice);
             _purchaseItemRepository.Update(existingPurchaseItem);
 
         }
+
         public void DeletePurchaseItem(DeletePurchaseItemRequest purchaseItemRequest)
         {
-
             var existingPurchaseItem = _purchaseItemRepository.GetById(purchaseItemRequest.Id);
             if (existingPurchaseItem == null) throw new Exception("No se encontro el item de compra");
-
             _purchaseItemRepository.Delete(existingPurchaseItem.Id);
-
-
-
         }
-
     } 
 }
