@@ -2,7 +2,6 @@
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsRole;
 using BusinessLogic.Común.Mappers;
-using System.Linq;
 
 namespace BusinessLogic.SubSystem
 {

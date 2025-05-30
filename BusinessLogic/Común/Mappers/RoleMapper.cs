@@ -1,6 +1,5 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsRole;
-using System.Reflection.PortableExecutable;
 
 namespace BusinessLogic.Común.Mappers
 {
