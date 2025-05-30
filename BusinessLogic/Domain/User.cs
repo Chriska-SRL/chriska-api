@@ -10,8 +10,9 @@
         public Role Role { get; set; }
         public List<Request> Requests { get; set; } = new List<Request>();
 
-        public User(string name, string username, string password, Boolean isEnabled, Role role)
+        public User(int id, string name, string username, string password, Boolean isEnabled, Role role)
         {
+            Id = id;
             Name = name;
             Username = username;
             Password = password;
