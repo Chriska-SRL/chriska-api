@@ -18,9 +18,12 @@ namespace BusinessLogic.SubSystem
 
         public void AddUser(AddUserRequest user)
         {
+            throw new NotImplementedException("");
+            /*
             var newUser = new User(user.Name, user.UserName, user.Password, user.IsEnabled, _roleRepository.GetById(user.RoleId));
             newUser.Validate();
             _userRepository.Add(newUser);
+            */
         }
 
         public void UpdateUser(UpdateUserRequest user)
