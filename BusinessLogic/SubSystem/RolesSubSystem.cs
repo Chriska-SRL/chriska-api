@@ -15,9 +15,10 @@ namespace BusinessLogic.SubSystem
 
         public void AddRole(AddRoleRequest role)
         {
-            var newRole = new Role(role.Name);
-            newRole.Validate();
-            _roleRepository.Add(newRole);
+            throw new NotImplementedException("");
+           // var newRole = new Role(role.Name);
+           // newRole.Validate();
+            //_roleRepository.Add(newRole);
 
         }
 
