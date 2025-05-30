@@ -44,9 +44,7 @@ namespace BusinessLogic.SubSystem
             if (role == null) throw new Exception("El rol no existe");
             var roleResponse = new RoleResponse
             {
-
                 RoleName = role.Name
-
             };
             return roleResponse;
         }
