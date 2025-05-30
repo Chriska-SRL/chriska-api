@@ -41,7 +41,6 @@ namespace BusinessLogic.SubSystem
                 Description = zone.Description
             };
             return zoneResponse;
-
         }
         public List<ZoneResponse> GetAllZones()
         {
