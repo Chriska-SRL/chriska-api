@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Re
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{28CEF6AF-A77D-40BC-BBE0-B8AFFB8B6DAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{2F34FDE2-AC98-499B-9A60-C22516348A1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{2F34FDE2-AC98-499B-9A60-C22516348A1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +31,10 @@ Global
 		{28CEF6AF-A77D-40BC-BBE0-B8AFFB8B6DAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28CEF6AF-A77D-40BC-BBE0-B8AFFB8B6DAF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{28CEF6AF-A77D-40BC-BBE0-B8AFFB8B6DAF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{2F34FDE2-AC98-499B-9A60-C22516348A1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F34FDE2-AC98-499B-9A60-C22516348A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F34FDE2-AC98-499B-9A60-C22516348A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F34FDE2-AC98-499B-9A60-C22516348A1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
