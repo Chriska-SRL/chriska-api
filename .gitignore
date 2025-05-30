@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Chriska.Tests/appsettings.Development.json
+/Chriska.Tests/appsettings.Development.json

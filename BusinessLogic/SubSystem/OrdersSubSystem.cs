@@ -58,7 +58,8 @@ namespace BusinessLogic.SubSystem
 
        public OrderResponse GetOrderById(int id)
        {
-           var order = _orderRepository.GetById(id);
+            throw new NotImplementedException("");
+            /*var order = _orderRepository.GetById(id);
            if (order == null) throw new Exception("No se encontro la orden");
            var Sale = _saleRepository.GetById(order.Sale.Id);
             var orderResponse= new OrderResponse{
@@ -76,12 +77,13 @@ namespace BusinessLogic.SubSystem
                DeliveredBy = _userSubSystem.GetUserById(order.DeliveredBy.Id),
                OrderRequest = _subSystemReturnRequest.GetReturnRequestById(order.OrderRequest.Id)
                };
-            return orderResponse;
+            return orderResponse;*/
        }
        
         public List<OrderResponse> GetAllOrders()
         {
-            var list = _orderRepository.GetAll();
+            throw new NotImplementedException("");
+           /* var list = _orderRepository.GetAll();
             if (list == null) throw new Exception("No se encontraron ordenes");
             var listResponse = new List<OrderResponse>();
             foreach (var order in list)
@@ -105,7 +107,7 @@ namespace BusinessLogic.SubSystem
                 }; 
                 listResponse.Add(response);
             }
-            return listResponse;
+            return listResponse;*/
         }
         
         public void AddOrderItem(OrderItem orderItem)
