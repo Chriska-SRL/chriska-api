@@ -1,17 +1,10 @@
-﻿using BusinessLogic.Dominio;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLogic.DTOs.DTOsRole
+﻿namespace BusinessLogic.DTOs.DTOsRole
 {
     public class AddRoleRequest
     {
-
         public string Name { get; set; }
-
+        public List<int> PermissionsIds { get; set; }
 
     }
 }
+    
