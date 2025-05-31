@@ -34,7 +34,7 @@ namespace BusinessLogic.SubSystem
             _paymentRepository.Update(payment);
         }
 
-        public PaymentResponse GetPaymentyById(int id)
+        public PaymentResponse GetPaymentById(int id)
         {
             var payment = _paymentRepository.GetById(id);
             if (payment == null) throw new Exception("No se encontro el pago");

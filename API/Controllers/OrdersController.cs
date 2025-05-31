@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BusinessLogic;
-using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsOrderItem;
+using BusinessLogic.Dominio;
 
-namespace API.ControllerS
+namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -20,51 +20,100 @@ namespace API.ControllerS
         [HttpPost]
         public IActionResult AddOrder([FromBody] AddOrderRequest request)
         {
-            _facade.AddOrder(request);
-            return Ok();
+            try
+            {
+                _facade.AddOrder(request);
+                return Ok(new { message = "Orden agregada correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
         [HttpPut]
         public IActionResult UpdateOrder([FromBody] UpdateOrderRequest request)
         {
-            _facade.UpdateOrder(request);
-            return Ok();
+            try
+            {
+                _facade.UpdateOrder(request);
+                return Ok(new { message = "Orden actualizada correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteOrder(int id)
+        [HttpDelete]
+        public IActionResult DeleteOrder([FromBody] DeleteOrderRequest request)
         {
-            var request = new DeleteOrderRequest { Id = id };
-            _facade.DeleteOrder(request);
-            return Ok();
+            try
+            {
+                _facade.DeleteOrder(request);
+                return Ok(new { message = "Orden eliminada correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<OrderResponse> GetOrderById(int id)
-        {
-            var response = _facade.GetOrderById(id);
-            return Ok(response);
-        }
+        // Puedes implementar esto más adelante
+        //[HttpGet("{id}")]
+        //public IActionResult GetOrderById(int id)
+        //{
+        //    try
+        //    {
+        //        var order = _facade.GetOrderById(id);
+        //        return Ok(order);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return NotFound(new { error = ex.Message });
+        //    }
+        //}
 
-        [HttpGet]
-        public ActionResult<List<OrderResponse>> GetAllOrders()
-        {
-            var response = _facade.GetAllOrders();
-            return Ok(response);
-        }
+        //[HttpGet]
+        //public IActionResult GetAllOrders()
+        //{
+        //    try
+        //    {
+        //        var orders = _facade.GetAllOrders();
+        //        return Ok(orders);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new { error = ex.Message });
+        //    }
+        //}
 
-        [HttpPost("items")]
+        [HttpPost("item")]
         public IActionResult AddOrderItem([FromBody] OrderItem orderItem)
         {
-            _facade.AddOrderItem(orderItem);
-            return Ok();
+            try
+            {
+                _facade.AddOrderItem(orderItem);
+                return Ok(new { message = "Item agregado correctamente a la orden" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
-        [HttpGet("items/{id}")]
-        public ActionResult<OrderItemResponse> GetOrderItemById(int id)
+        [HttpGet("item/{id}")]
+        public IActionResult GetOrderItemById(int id)
         {
-            var response = _facade.GetItemOrderById(id);
-            return Ok(response);
+            try
+            {
+                var item = _facade.GetOrderItemById(id);
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
         }
     }
 }

@@ -15,34 +15,13 @@ namespace API.Controllers
             _facade = facade;
         }
 
-        [HttpGet]
-        public ActionResult<List<RoleResponse>> GetAll()
-        {
-            var roles = _facade.GetAllRoles();
-            return Ok(roles);
-        }
-
-        [HttpGet("{id}")]
-        public ActionResult<RoleResponse> GetById(int id)
-        {
-            try
-            {
-                var role = _facade.GetRoleById(id);
-                return Ok(role);
-            }
-            catch (Exception ex)
-            {
-                return NotFound(new { error = ex.Message });
-            }
-        }
-
         [HttpPost]
-        public IActionResult Add([FromBody] AddRoleRequest request)
+        public IActionResult AddRole([FromBody] AddRoleRequest request)
         {
             try
             {
                 _facade.AddRole(request);
-                return Ok(new { message = "Rol creado exitosamente." });
+                return Ok(new { message = "Rol agregado correctamente" });
             }
             catch (Exception ex)
             {
@@ -51,12 +30,12 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update([FromBody] UpdateRoleRequest request)
+        public IActionResult UpdateRole([FromBody] UpdateRoleRequest request)
         {
             try
             {
                 _facade.UpdateRole(request);
-                return Ok(new { message = "Rol actualizado exitosamente." });
+                return Ok(new { message = "Rol actualizado correctamente" });
             }
             catch (Exception ex)
             {
@@ -65,16 +44,44 @@ namespace API.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Delete([FromBody] DeleteRoleRequest request)
+        public IActionResult DeleteRole([FromBody] DeleteRoleRequest request)
         {
             try
             {
                 _facade.DeleteRole(request);
-                return Ok(new { message = "Rol eliminado exitosamente." });
+                return Ok(new { message = "Rol eliminado correctamente" });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<RoleResponse> GetRoleById(int id)
+        {
+            try
+            {
+                var response = _facade.GetRoleById(id);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<List<RoleResponse>> GetAllRoles()
+        {
+            try
+            {
+                var response = _facade.GetAllRoles();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { error = ex.Message });
             }
         }
     }

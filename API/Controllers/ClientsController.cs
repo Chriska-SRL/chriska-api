@@ -16,46 +16,86 @@ namespace API.Controllers
             _facade = facade;
         }
 
+        [HttpGet]
+        public ActionResult<List<ClientResponse>> GetAllClients()
+        {
+            try
+            {
+                return Ok(_facade.GetAllClients());
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<ClientResponse> GetClientById(int id)
+        {
+            try
+            {
+                return Ok(_facade.GetClientById(id));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+        }
+
         [HttpPost]
         public IActionResult AddClient([FromBody] AddClientRequest request)
         {
-            _facade.AddClient(request);
-            return Ok();
+            try
+            {
+                _facade.AddClient(request);
+                return Ok(new { message = "Cliente agregado correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
         [HttpPut]
         public IActionResult UpdateClient([FromBody] UpdateClientRequest request)
         {
-            _facade.UpdateClient(request);
-            return Ok();
+            try
+            {
+                _facade.UpdateClient(request);
+                return Ok(new { message = "Cliente actualizado correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteClient(int id)
+        [HttpDelete]
+        public IActionResult DeleteClient([FromBody] DeleteClientRequest request)
         {
-            _facade.DeleteClient(new DeleteClientRequest { Id = id });
-            return Ok();
+            try
+            {
+                _facade.DeleteClient(request);
+                return Ok(new { message = "Cliente eliminado correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
-        [HttpGet]
-        public IActionResult GetAllClients()
-        {
-            var result = _facade.GetAllClients();
-            return Ok(result);
-        }
-
-        [HttpGet("{id}")]
-        public IActionResult GetClientById(int id)
-        {
-            var result = _facade.GetClientById(id);
-            return Ok(result);
-        }
-
-        [HttpPost("receipt")]
+        [HttpPost("receipts")]
         public IActionResult AddReceipt([FromBody] AddReceiptRequest request)
         {
-            _facade.AddReceipt(request);
-            return Ok();
+            try
+            {
+                _facade.AddReceipt(request);
+                return Ok(new { message = "Recibo agregado correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
     }
 }

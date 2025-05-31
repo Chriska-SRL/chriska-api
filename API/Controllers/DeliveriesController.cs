@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BusinessLogic;
 using BusinessLogic.DTOs.DTOsDelivery;
+using BusinessLogic.Dominio;
 
 namespace API.Controllers
 {
@@ -18,22 +19,57 @@ namespace API.Controllers
         [HttpPost]
         public IActionResult AddDelivery([FromBody] AddDeliveryRequest request)
         {
-            _facade.AddDelivery(request);
-            return Ok();
+            try
+            {
+                _facade.AddDelivery(request);
+                return Ok(new { message = "Entrega agregada correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
         [HttpPut]
         public IActionResult UpdateDelivery([FromBody] UpdateDeliveryRequest request)
         {
-            _facade.UpdateDelivery(request);
-            return Ok();
+            try
+            {
+                _facade.UpdateDelivery(request);
+                return Ok(new { message = "Entrega actualizada correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteDelivery(int id)
+        [HttpDelete]
+        public IActionResult DeleteDelivery([FromBody] DeleteDeliveryRequest request)
         {
-            _facade.DeleteDelivery(new DeleteDeliveryRequest { Id = id });
-            return Ok();
+            try
+            {
+                _facade.DeleteDelivery(request);
+                return Ok(new { message = "Entrega eliminada correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpPost("vehicles")]
+        public IActionResult AddVehicle([FromBody] Vehicle vehicle)
+        {
+            try
+            {
+                _facade.AddVehicle(vehicle);
+                return Ok(new { message = "Vehículo agregado correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
     }
 }

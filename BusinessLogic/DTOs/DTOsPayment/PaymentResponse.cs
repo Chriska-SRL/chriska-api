@@ -14,6 +14,6 @@ namespace BusinessLogic.DTOs.DTOsPayment
         public decimal Amount { get; set; }
         public string PaymentMethod { get; set; }
         public string Note { get; set; }
-        public SupplierResponse supplier { get; set; }
+        public SupplierResponse Supplier { get; set; }
     }
 }

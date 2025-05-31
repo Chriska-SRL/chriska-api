@@ -16,8 +16,6 @@ namespace API.Controllers
             _facade = facade;
         }
 
-        // ----- CATEGORIES -----
-
         [HttpGet]
         public ActionResult<List<CategoryResponse>> GetAllCategories()
         {
@@ -85,8 +83,6 @@ namespace API.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
-
-        // ----- SUBCATEGORIES -----
 
         [HttpGet("subcategories")]
         public ActionResult<List<SubCategoryResponse>> GetAllSubCategories()
