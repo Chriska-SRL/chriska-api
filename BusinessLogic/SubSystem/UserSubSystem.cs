@@ -35,7 +35,7 @@ namespace BusinessLogic.SubSystem
             _userRepository.Update(existingUser);
         }
 
-        public void DeleteUser(User user)
+        public void DeleteUser(DeleteUserRequest user)
         {
             var existingUser = _userRepository.GetById(user.Id);
             if (existingUser == null) throw new Exception("No se encontro el usuario");

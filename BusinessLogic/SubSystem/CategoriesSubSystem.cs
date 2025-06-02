@@ -26,7 +26,7 @@ namespace BusinessLogic.SubSystem
         public void UpdateCategory(UpdateCategoryRequest category)
         {
             var existingCategory = _categoryRepository.GetById(category.Id);
-            if (existingCategory != null) throw new Exception("No se encontro la categoria");
+            if (existingCategory == null) throw new Exception("No se encontro la categoria");
             {
                 existingCategory.Update(category.Name);
                 _categoryRepository.Update(existingCategory);
@@ -36,7 +36,7 @@ namespace BusinessLogic.SubSystem
         public void DeleteCategory(DeleteCategoryRequest deleteCategoryRequest)
         {
             var existingCategory = _categoryRepository.GetById(deleteCategoryRequest.Id);
-            if (existingCategory != null) throw new Exception("No se encontro la categoria");
+            if (existingCategory == null) throw new Exception("No se encontro la categoria");
             {
 
                 _categoryRepository.Delete(deleteCategoryRequest.Id);
