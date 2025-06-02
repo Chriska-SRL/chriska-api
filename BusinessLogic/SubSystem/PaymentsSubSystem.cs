@@ -44,7 +44,7 @@ namespace BusinessLogic.SubSystem
                 Amount = payment.Amount,
                 PaymentMethod = payment.PaymentMethod,
                 Note = payment.Note,
-                supplier = _suppliersSubSystem.GetSupplierById(payment.Supplier.Id),
+                Supplier = _suppliersSubSystem.GetSupplierById(payment.Supplier.Id),
             };
             return paymentResponse;
         }
