@@ -155,7 +155,7 @@ namespace Repository.EntityRepositories
                     updateCommand.Parameters.AddWithValue("@CategoryId", subCategory.Category.Id);
                     updateCommand.Parameters.AddWithValue("@Id", subCategory.Id);
                     updateCommand.ExecuteNonQuery();
-                }
+        }
 
                 return subCategory;
             }
@@ -165,7 +165,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
             catch (Exception ex)
-            {
+        {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }

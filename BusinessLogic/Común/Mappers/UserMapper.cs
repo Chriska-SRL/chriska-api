@@ -36,8 +36,7 @@ namespace BusinessLogic.Común.Mappers
 
         public static UserResponse ToResponse(User user)
         {
-            return new UserResponse
-            {
+            return new UserResponse {
                 Id = user.Id,
                 Name = user.Name,
                 Username = user.Username,
@@ -48,6 +47,7 @@ namespace BusinessLogic.Común.Mappers
                     Name = user.Role.Name,
                     Permissions = user.Role.Permissions.Select(p => (int)p).ToList()
                 }
+
             };
         }
 

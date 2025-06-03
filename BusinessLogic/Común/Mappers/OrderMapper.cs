@@ -167,9 +167,9 @@ namespace BusinessLogic.Común.Mappers
                     DeliveryDate = order.OrderRequest.DeliveryDate,
                     Status = order.OrderRequest.Status,
                     Observation = order.OrderRequest.Observation,                   
-                }
+        }
             };
 
-        }
     }
+}
 }

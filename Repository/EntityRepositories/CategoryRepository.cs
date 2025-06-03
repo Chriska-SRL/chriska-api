@@ -31,7 +31,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
             catch (Exception ex)
-            {
+        {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
@@ -149,7 +149,7 @@ namespace Repository.EntityRepositories
                     updateCommand.Parameters.AddWithValue("@Name", category.Name);
                     updateCommand.Parameters.AddWithValue("@Id", category.Id);
                     updateCommand.ExecuteNonQuery();
-                }
+        }
 
                 return category;
             }
@@ -159,7 +159,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
             catch (Exception ex)
-            {
+        {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
