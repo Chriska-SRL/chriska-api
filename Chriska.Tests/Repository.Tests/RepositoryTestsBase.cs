@@ -3,10 +3,11 @@ using BusinessLogic.Dominio;
 using NUnit.Framework;
 using Repository.EntityRepositories;
 using Microsoft.Extensions.Configuration;
+using System.Xml.Linq;
 
 namespace Chriska.Tests.Repository.Tests
 {
-    public abstract class RepositoryTestsBase<T> where T : IEntity
+    public abstract class RepositoryTestsBase<T, TData> where T : IEntity<TData>
     {
         protected string connectionString = LoadConnectionString();
         protected IRepository<T> _estandarRepo;

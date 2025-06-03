@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOs.DTOsReturnRequest
+namespace BusinessLogic.DTOs.DTOsProductStock
 {
-    public class DeleteReturnRequest
+    public class DeleteProductStockRequest
     {
         public int Id { get; set; }
-        
-        
     }
 }

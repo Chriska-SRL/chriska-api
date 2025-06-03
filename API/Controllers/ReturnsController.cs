@@ -16,7 +16,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddReturnRequest([FromBody] AddReturnRequest request)
+        public IActionResult AddReturnRequest([FromBody] AddReturnRequest_Request request)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateReturnRequest([FromBody] UpdateReturnRequest request)
+        public IActionResult UpdateReturnRequest([FromBody] UpdateReturnRequest_Request request)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace API.Controllers
         }
 
         [HttpDelete]
-        public IActionResult DeleteReturnRequest([FromBody] DeleteReturnRequest request)
+        public IActionResult DeleteReturnRequest([FromBody] DeleteReturnRequest_Request request)
         {
             try
             {

@@ -1,11 +1,14 @@
-﻿using BusinessLogic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using BusinessLogic;
+using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsUser;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly Facade _facade;
@@ -16,6 +19,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = nameof(Permission.CREATE_USERS))]
         public IActionResult AddUser([FromBody] AddUserRequest request)
         {
             try
@@ -30,6 +34,7 @@ namespace API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Policy = nameof(Permission.EDIT_USERS))]
         public IActionResult UpdateUser([FromBody] UpdateUserRequest request)
         {
             try
@@ -44,6 +49,7 @@ namespace API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Policy = nameof(Permission.DELETE_USERS))]
         public IActionResult DeleteUser([FromBody] DeleteUserRequest request)
         {
             try
@@ -58,6 +64,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = nameof(Permission.VIEW_USERS))]
         public ActionResult<UserResponse> GetUserById(int id)
         {
             try
@@ -72,6 +79,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = nameof(Permission.VIEW_USERS))]
         public ActionResult<List<UserResponse>> GetAllUsers()
         {
             try

@@ -28,22 +28,22 @@ namespace BusinessLogic.SubSystem
             _clientsSubSystem = clientsSubSystem;
         }
 
-        public void AddReturnRequest(AddReturnRequest request)
+        public void AddReturnRequest(AddReturnRequest_Request request)
         {
             //Averiguar como se comportan en los dto los hijos.
-            var newRequest = new ReturnRequest(_creditNoteRepository.GetById(request.CreditNoteId), request.RequestDate, request.DeliveryDate, request.Status, request.Observation, _userRepository.GetById(request.UserId), _clientRepository.GetById(request.ClientId));
-            newRequest.Validate();
-            _returnRequestRepository.Add(newRequest);
+            //var newRequest = new ReturnRequest(_creditNoteRepository.GetById(request.CreditNoteId), request.RequestDate, request.DeliveryDate, request.Status, request.Observation, _userRepository.GetById(request.UserId), _clientRepository.GetById(request.ClientId));
+            //newRequest.Validate();
+            //_returnRequestRepository.Add(newRequest);
         }
 
-        public void UpdateReturnRequest(UpdateReturnRequest request)
+        public void UpdateReturnRequest(UpdateReturnRequest_Request request)
         {
-            var updateRequest = _returnRequestRepository.GetById(request.Id);
-            if (updateRequest == null) throw new Exception("La solicitud de devolucion no existe");
-            updateRequest.Update(request.DeliveryDate,request.Status,request.Observation,_userRepository.GetById(request.UserId),_clientRepository.GetById(request.ClientId));
-            _returnRequestRepository.Update(updateRequest);
+            //var updateRequest = _returnRequestRepository.GetById(request.Id);
+            //if (updateRequest == null) throw new Exception("La solicitud de devolucion no existe");
+            //updateRequest.Update(request.DeliveryDate,request.Status,request.Observation,_userRepository.GetById(request.UserId),_clientRepository.GetById(request.ClientId));
+            //_returnRequestRepository.Update(updateRequest);
         }
-        public void DeleteReturnRequest (DeleteReturnRequest request)
+        public void DeleteReturnRequest (DeleteReturnRequest_Request request)
         {
             var deleteRequest = _returnRequestRepository.GetById(request.Id);
             if (deleteRequest == null) throw new Exception("La solicitud de devolucion no existe");

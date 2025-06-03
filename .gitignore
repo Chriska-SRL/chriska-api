@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /Chriska.Tests/appsettings.Development.json
 /Chriska.Tests/appsettings.Development.json
+/API/appsettings.json
+/API/appsettings.json

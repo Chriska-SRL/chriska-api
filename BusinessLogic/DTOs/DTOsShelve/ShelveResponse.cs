@@ -9,7 +9,8 @@ namespace BusinessLogic.DTOs.DTOsShelve
 {
     public class ShelveResponse
     {
+        public int Id { get; set; }
         public string Description { get; set; }
-        public WarehouseResponse WarehouseResponse { get; set; }
+
     }
 }

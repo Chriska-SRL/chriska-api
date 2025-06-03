@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.Dominio
 {
-    public class OrderRequest : Request
+    public class OrderRequest : Request, IEntity<OrderRequest.UpdatableData>
     {
         public Order Order { get; set; }
 
@@ -14,8 +14,9 @@
             if (Client == null) throw new Exception("El cliente es obligatorio para una solicitud de devolucion");
         }
 
-        public OrderRequest(Order order, DateTime requestDate, DateTime deliveryDate, string status, string observation, User user, Client client)
+        public OrderRequest(int id,Order order, DateTime requestDate, DateTime deliveryDate, string status, string observation, User user, Client client,List<RequestItem> requestsItems)
         {
+            Id = id;
             Order = order;
             RequestDate = requestDate;
             DeliveryDate = deliveryDate;
@@ -23,15 +24,26 @@
             Observation = observation;
             User = user;
             Client = client;
+            RequestItems = requestsItems;
         }
-
-        public override void Update(DateTime deliveryDate, string status, string observation, User user, Client client)
+        public void Update(UpdatableData data)
         {
-            DeliveryDate = deliveryDate;
-            Status = status;
-            Observation = observation;
-            User = user;
-            Client = client;
+            RequestDate = data.RequestDate;
+            DeliveryDate = data.DeliveryDate;
+            Status = data.Status;
+            Observation = data.Observation;
+            User = data.User;
+            Client = data.Client;
+            Validate();
+        }
+        public class UpdatableData
+        {
+            public DateTime RequestDate { get; set; }
+            public DateTime DeliveryDate { get; set; }
+            public string Status { get; set; }
+            public string Observation { get; set; }
+            public User User { get; set; }
+            public Client Client { get; set; }
         }
     }
 }

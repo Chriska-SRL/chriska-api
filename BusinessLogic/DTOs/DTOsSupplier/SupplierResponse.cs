@@ -8,15 +8,17 @@ namespace BusinessLogic.DTOs.DTOsSupplier
 {
     public class SupplierResponse
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string RUT { get; set; }
-        public string BusinessName { get; set; }
+        public string RazonSocial { get; set; }
         public string Address { get; set; }
         public string MapsAddress { get; set; }
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
+        public string Bank { get; set; }
         public string BankAccount { get; set; }
-        public string Observation { get; set; }
+        public string Observations { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace BusinessLogic.DTOs.DTOsCreditNote
 {
     public class CreditNoteResponse
     {
+        public int Id { get; set; }
         public DateTime IssueDate { get; set; }
 
     }

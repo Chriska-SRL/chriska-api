@@ -72,6 +72,8 @@ namespace BusinessLogic
             Zones = zones;
             Roles = roles;
         }
+        // Authentication
+        public UserResponse? Authenticate(string username, string password) => Auth.Authenticate(username, password);
 
         // Categories
         public void AddCategory(AddCategoryRequest category) => Categories.AddCategory(category);
@@ -143,9 +145,9 @@ namespace BusinessLogic
         public void DeletePurchaseItem(DeletePurchaseItemRequest request) => Purchases.DeletePurchaseItem(request);
 
         // Returns
-        public void AddReturnRequest(AddReturnRequest request) => Returns.AddReturnRequest(request);
-        public void UpdateReturnRequest(UpdateReturnRequest request) => Returns.UpdateReturnRequest(request);
-        public void DeleteReturnRequest(DeleteReturnRequest request) => Returns.DeleteReturnRequest(request);
+        public void AddReturnRequest(AddReturnRequest_Request request) => Returns.AddReturnRequest(request);
+        public void UpdateReturnRequest(UpdateReturnRequest_Request request) => Returns.UpdateReturnRequest(request);
+        public void DeleteReturnRequest(DeleteReturnRequest_Request request) => Returns.DeleteReturnRequest(request);
         public ReturnRequestResponse GetReturnRequestById(int id) => Returns.GetReturnRequestById(id);
 
         // Roles

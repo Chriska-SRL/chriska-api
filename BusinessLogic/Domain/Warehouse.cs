@@ -8,11 +8,13 @@
         public string Address { get; set; }
         public List<Shelve> Shelves { get; set; } = new List<Shelve>();
 
-        public Warehouse(string name, string description, string address)
+        public Warehouse(int id,string name, string description, string address,List<Shelve> shelves)
         {
+            Id = id;
             Name = name;
             Description = description;
             Address = address;
+            Shelves = shelves;
         }
 
         public void Validate()

@@ -25,11 +25,13 @@ namespace Chriska.Tests.Repository.Tests
             connection.Open();
 
             using var command = new SqlCommand(@"
-            DELETE FROM Roles_Permissions;
-            DELETE FROM Roles;
-            ", connection);
+        DELETE FROM Users;             -- Elimina usuarios primero por FK a Roles
+        DELETE FROM Roles_Permissions;
+        DELETE FROM Roles;
+        ", connection);
 
             command.ExecuteNonQuery();
         }
+
     }
 }

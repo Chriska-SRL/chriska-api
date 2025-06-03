@@ -13,6 +13,6 @@
 
         public abstract void Validate();
 
-        public abstract void Update(DateTime deliveryDate, string status, string observation, User user, Client client);
-    }
+   
+}
 }

@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using BusinessLogic;
+using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsRole;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize] // Aplica autenticación por defecto
     public class RolesController : ControllerBase
     {
         private readonly Facade _facade;
@@ -16,12 +19,13 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = nameof(Permission.CREATE_ROLES))]
         public IActionResult AddRole([FromBody] AddRoleRequest request)
         {
             try
             {
                 _facade.AddRole(request);
-                return Ok(new { message = "Rol agregado correctamente" });
+                return Ok(new { message = "Rol agregado correctamente." });
             }
             catch (Exception ex)
             {
@@ -30,12 +34,13 @@ namespace API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Policy = nameof(Permission.EDIT_ROLES))]
         public IActionResult UpdateRole([FromBody] UpdateRoleRequest request)
         {
             try
             {
                 _facade.UpdateRole(request);
-                return Ok(new { message = "Rol actualizado correctamente" });
+                return Ok(new { message = "Rol actualizado correctamente." });
             }
             catch (Exception ex)
             {
@@ -44,12 +49,13 @@ namespace API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Policy = nameof(Permission.DELETE_ROLES))]
         public IActionResult DeleteRole([FromBody] DeleteRoleRequest request)
         {
             try
             {
                 _facade.DeleteRole(request);
-                return Ok(new { message = "Rol eliminado correctamente" });
+                return Ok(new { message = "Rol eliminado correctamente." });
             }
             catch (Exception ex)
             {
@@ -58,6 +64,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = nameof(Permission.VIEW_ROLES))]
         public ActionResult<RoleResponse> GetRoleById(int id)
         {
             try
@@ -72,6 +79,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = nameof(Permission.VIEW_ROLES))]
         public ActionResult<List<RoleResponse>> GetAllRoles()
         {
             try
