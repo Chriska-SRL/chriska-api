@@ -94,7 +94,7 @@ namespace API
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
 
-            var connectionString = builder.Configuration.GetConnectionString("TestDatabase");
+            var connectionString = builder.Configuration.GetConnectionString("chriska-db");
             builder.Services.AddSingleton(connectionString);
 
 
