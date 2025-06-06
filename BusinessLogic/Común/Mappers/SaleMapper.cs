@@ -26,7 +26,7 @@ namespace BusinessLogic.Común.Mappers
                 Date = sale.Date,
                 Status = sale.Status,
                 SaleItems = sale.SaleItems.Select(si => new SaleItemResponse
-                {
+    {
                     Id = si.Id,
                     Quantity = si.Quantity,
                     UnitPrice = si.UnitPrice,

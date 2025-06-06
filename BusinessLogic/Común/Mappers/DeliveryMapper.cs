@@ -26,7 +26,7 @@ namespace BusinessLogic.Común.Mappers
                     cost: null
                 )
 
-            );
+                );
         }
         public static Delivery.UpdatableData toDomain(UpdateDeliveryRequest updateDeliveryRequest)
         {

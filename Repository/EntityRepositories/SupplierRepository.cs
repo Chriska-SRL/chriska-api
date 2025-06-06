@@ -41,12 +41,12 @@ namespace Repository.EntityRepositories
                 return supplier;
             }
             catch (SqlException ex)
-            {
+        {
                 _logger.LogError(ex, "Error al acceder a la base de datos.");
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
+        }
             catch (Exception ex)
-            {
+        {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
@@ -175,7 +175,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
             catch (Exception ex)
-            {
+        {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }

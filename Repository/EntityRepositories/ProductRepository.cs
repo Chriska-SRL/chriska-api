@@ -49,7 +49,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
             catch (Exception ex)
-            {
+        {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
@@ -106,7 +106,7 @@ namespace Repository.EntityRepositories
                     while (reader.Read())
                     {
                         products.Add(ProductMapper.FromReader(reader));
-                    }
+        }
                 }
 
                 return products;
@@ -191,7 +191,7 @@ namespace Repository.EntityRepositories
                     updateCommand.Parameters.AddWithValue("@Id", product.Id);
 
                     updateCommand.ExecuteNonQuery();
-                }
+        }
 
                 return product;
             }
@@ -201,7 +201,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
             catch (Exception ex)
-            {
+        {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }

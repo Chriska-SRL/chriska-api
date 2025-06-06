@@ -94,7 +94,7 @@ namespace API
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
 
-            var connectionString = builder.Configuration.GetConnectionString("chriska-db");
+            var connectionString = builder.Configuration.GetConnectionString("Database");
             builder.Services.AddSingleton(connectionString);
 
 
@@ -141,6 +141,18 @@ namespace API
 
             builder.Services.AddScoped<Facade>();
 
+            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("PermitirFrontend", policy =>
+                 {
+                    policy.WithOrigins(allowedOrigins)
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -149,6 +161,7 @@ namespace API
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("PermitirFrontend");
             app.UseAuthentication();
             app.UseAuthorization();
 
