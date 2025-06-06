@@ -24,7 +24,7 @@ namespace BusinessLogic.Común.Mappers
         public static Role.UpdatableData ToUpdatableData(UpdateRoleRequest dto)
         {
             return new Role.UpdatableData
-            {
+    {
                 Name = dto.Name,
                 Permissions = dto.Permissions.Select(p => (Permission)p).ToList()
             };
