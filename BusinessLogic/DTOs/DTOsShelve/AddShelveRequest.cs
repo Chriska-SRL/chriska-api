@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOs.DTOsShelve
 {
-    public class AddShelve
+    public class AddShelveRequest
     {
         public string Description { get; set; }
         public int WarehouseId { get; set; }

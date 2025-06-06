@@ -2,6 +2,7 @@
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsStockMovement;
+using BusinessLogic.Común.Mappers;
 
 namespace BusinessLogic.SubSystem
 {
@@ -12,71 +13,47 @@ namespace BusinessLogic.SubSystem
         private readonly IShelveRepository _shelveRespository;
         private readonly IProductRepository _productRepository;
 
-        private readonly UserSubSystem _userSubSystem;
-        private readonly ProductsSubSystem _productsSubSystem;
-
-        public StockSubSystem(IStockMovementRepository stockMovementRepository, IUserRepository userRepository, IShelveRepository shelveRespository, IProductRepository productRepository, UserSubSystem userSubSystem, ProductsSubSystem productsSubSystem)
+        public StockSubSystem(IStockMovementRepository stockMovementRepository, IUserRepository userRepository, IShelveRepository shelveRespository, IProductRepository productRepository)
         {
             _stockMovementRepository = stockMovementRepository;
             _userRepository = userRepository;
             _shelveRespository = shelveRespository;
             _productRepository = productRepository;
-
-            _userSubSystem = userSubSystem;
-            _productsSubSystem = productsSubSystem;
         }
 
         public void AddStockMovement(AddStockMovementRequest stockMovement)
         {
-            var newStockMovement = new StockMovement(stockMovement.Date, stockMovement.Quantity, stockMovement.Type, stockMovement.Reason, _shelveRespository.GetById(stockMovement.ShelveId), _userRepository.GetById(stockMovement.UserId), _productRepository.GetById(stockMovement.ProductId));
+            StockMovement newStockMovement = StockMovementMapper.toDomain(stockMovement);
             newStockMovement.Validate();
             _stockMovementRepository.Add(newStockMovement);
         }
-
+        public void UpdateStockMovement(UpdateStockMovementRequest stockMovement)
+        {
+            StockMovement existingStockMovement = _stockMovementRepository.GetById(stockMovement.Id);
+            if (existingStockMovement == null) throw new Exception("Movimiento de stock no encontrado");
+            existingStockMovement.Update(StockMovementMapper.toDomain(stockMovement));
+            _stockMovementRepository.Update(existingStockMovement);
+        }
+        public void DeleteStockMovement(DeleteStockMovementRequest stockMovement)
+        {
+            StockMovement existingStockMovement = _stockMovementRepository.GetById(stockMovement.Id);
+            if (existingStockMovement == null) throw new Exception("Movimiento de stock no encontrado");
+            _stockMovementRepository.Delete(existingStockMovement.Id);
+        }
         public StockMovementResponse GetStockMovementById(int id)
         {
-            var stockMovement = _stockMovementRepository.GetById(id);
-            if (stockMovement == null) throw new Exception("Movimiento de stock no encontrado");
-
-            var stockMovementResponse= new StockMovementResponse
-            {
-                Date = stockMovement.Date,
-                Quantity = stockMovement.Quantity,
-                Type = stockMovement.Type,
-                Reason = stockMovement.Reason,
-                Shelve = new ShelveResponse
-                {
-                    Description = stockMovement.Shelve.Description
-                },
-                User = _userSubSystem.GetUserById(stockMovement.User.Id),
-                Product = _productsSubSystem.GetProductById(stockMovement.Product.Id)
-            };
-            return stockMovementResponse;
+            StockMovement stockMovement = _stockMovementRepository.GetById(id);
+            if (stockMovement == null)
+                throw new Exception("Movimiento de stock no encontrado");
+            return StockMovementMapper.toResponse(stockMovement);
         }
 
         public List<StockMovementResponse> GetAllStockMovements()
         {
-            var stockMovements = _stockMovementRepository.GetAll();
-            if (stockMovements == null) throw new Exception("No hay movimientos de stock registrados");
-            var stockMovementResponses = new List<StockMovementResponse>();
-            foreach (var stockMovement in stockMovements)
-            {
-                var stockMovementResponse = new StockMovementResponse
-                {
-                    Date = stockMovement.Date,
-                    Quantity = stockMovement.Quantity,
-                    Type = stockMovement.Type,
-                    Reason = stockMovement.Reason,
-                    Shelve = new ShelveResponse
-                    {
-                        Description = stockMovement.Shelve.Description
-                    },
-                    User = _userSubSystem.GetUserById(stockMovement.User.Id),
-                    Product = _productsSubSystem.GetProductById(stockMovement.Product.Id)
-                };
-                stockMovementResponses.Add(stockMovementResponse);
-            }
-            return stockMovementResponses;
+            List<StockMovement> stockMovements = _stockMovementRepository.GetAll();
+            if (stockMovements == null || !stockMovements.Any())
+                throw new Exception("No hay movimientos de stock disponibles");
+            return stockMovements.Select(StockMovementMapper.toResponse).ToList();
         }
     }
 }

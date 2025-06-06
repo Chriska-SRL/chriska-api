@@ -8,7 +8,7 @@ namespace BusinessLogic.DTOs.DTOsReceipt
 {
     public class UpdateReceiptRequest
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public string PaymentMethod { get; set; }

@@ -17,7 +17,6 @@ namespace BusinessLogic.DTOs.DTOsSupplier
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
-        public string Bank { get; set; }
         public string BankAccount { get; set; }
         public string Observations { get; set; }
     }

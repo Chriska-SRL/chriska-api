@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsZone;
+using BusinessLogic.Común.Mappers;
 
 namespace BusinessLogic.SubSystem
 {
@@ -15,49 +16,38 @@ namespace BusinessLogic.SubSystem
 
         public void AddZone(AddZoneRequest zone)
         {
-            //var newZone = new Zone(zone.Name, zone.Description);
-            //newZone.Validate();
-            //_zoneRepository.Add(newZone);
+            Zone newZone = ZoneMapper.toDomain(zone);
+            newZone.Validate();
+            _zoneRepository.Add(newZone);
         }
 
         public void UpdateZone(UpdateZoneRequest zone)
         {
-            //var existingZone = _zoneRepository.GetById(zone.Id);
-            //if (existingZone == null) throw new Exception("No se encontro la zona");
-            //existingZone.Update(zone.Name, zone.Description);
-            //existingZone.Validate();
-            //_zoneRepository.Update(existingZone);
+            Zone existingZone = _zoneRepository.GetById(zone.Id);
+            if (existingZone == null) throw new Exception("No se encontro la zona");
+            existingZone.Update(ZoneMapper.toDomain(zone));
+            _zoneRepository.Update(existingZone);
         }
 
         public void DeleteZone(DeleteZoneRequest zone)
         {
-            var existingZone = _zoneRepository.GetById(zone.Id);
+            Zone existingZone = _zoneRepository.GetById(zone.Id);
             if (existingZone == null) throw new Exception("No se encontro la zona");
             _zoneRepository.Delete(existingZone.Id);
         }
 
         public ZoneResponse GetZoneById(int id)
         {
-            var zone = _zoneRepository.GetById(id);
+            Zone zone = _zoneRepository.GetById(id);
             if (zone == null) throw new Exception("No se encontro la zona");
-            var zoneResponse = new ZoneResponse
-            {
-                Name = zone.Name,
-                Description = zone.Description
-            };
-            return zoneResponse;
-
+            return ZoneMapper.toResponse(zone);
         }
 
         public List<ZoneResponse> GetAllZones()
         {
-            var zones = _zoneRepository.GetAll();
-            if (zones == null || !zones.Any()) throw new Exception("No hay zonas registradas");
-            return zones.Select(z => new ZoneResponse
-            {
-                Name = z.Name,
-                Description = z.Description
-            }).ToList();
+            List<Zone> zones = _zoneRepository.GetAll();
+            if (zones == null || zones.Count == 0) throw new Exception("No se encontraron zonas");
+            return zones.Select(ZoneMapper.toResponse).ToList();
         }
     }
 }

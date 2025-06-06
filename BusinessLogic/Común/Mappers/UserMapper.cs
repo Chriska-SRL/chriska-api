@@ -30,7 +30,7 @@ namespace BusinessLogic.Común.Mappers
                 Name = updateUserRequest.Name,
                 Username = updateUserRequest.Username,
                 isEnabled = updateUserRequest.IsEnabled,
-                Role = null // Role will be set later in the update process
+                Role = null 
             };
         }
 

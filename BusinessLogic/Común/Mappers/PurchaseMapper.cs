@@ -1,17 +1,12 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsPurchase;
 using BusinessLogic.DTOs.DTOsSupplier;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.Común.Mappers
 {
     public static class PurchaseMapper
     {
-        public static Purchase ToDomain(AddPurchaseRequest purchaseRequest)
+        public static Purchase toDomain(AddPurchaseRequest purchaseRequest)
         {
             return new Purchase
             (
@@ -29,7 +24,6 @@ namespace BusinessLogic.Común.Mappers
                     phone: string.Empty,
                     contactName: string.Empty,
                     email: string.Empty,
-                    bank: string.Empty,
                     bankAccount: string.Empty,
                     observations: string.Empty,
                     products: new List<Product>(),
@@ -39,7 +33,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static Purchase.UpdatableData ToDomain(UpdatePurchaseRequest purchaseRequest)
+        public static Purchase.UpdatableData toDomain(UpdatePurchaseRequest purchaseRequest)
         {
             return new Purchase.UpdatableData
             {
@@ -56,7 +50,6 @@ namespace BusinessLogic.Común.Mappers
                     phone: string.Empty,
                     contactName: string.Empty,
                     email: string.Empty,
-                    bank: string.Empty,
                     bankAccount: string.Empty,
                     observations: string.Empty,
                     products: new List<Product>(),
@@ -82,7 +75,6 @@ namespace BusinessLogic.Común.Mappers
                     Phone = purchase.Supplier.Phone,
                     ContactName = purchase.Supplier.ContactName,
                     Email = purchase.Supplier.Email,
-                    Bank = purchase.Supplier.Bank,
                     BankAccount = purchase.Supplier.BankAccount,
                     Observations = purchase.Supplier.Observations
                 }
