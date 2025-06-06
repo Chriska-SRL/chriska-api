@@ -141,6 +141,19 @@ namespace API
 
             builder.Services.AddScoped<Facade>();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("PermitirFrontend", policy =>
+                {
+                    policy.WithOrigins(
+                        "http://localhost:3000",
+                        "http://192.168.0.197:3000" // o IP de tu frontend si es otra
+                    )
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            });
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -149,6 +162,7 @@ namespace API
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("PermitirFrontend");
             app.UseAuthentication();
             app.UseAuthorization();
 
