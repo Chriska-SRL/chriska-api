@@ -21,17 +21,16 @@ namespace BusinessLogic.SubSystem
 
         public void AddProduct(AddProductRequest product)
         {
-            var newProduct = new Product(product.InternalCode, product.Barcode, product.Name, product.Price, product.Image, product.Stock, product.Description, product.UnitType, product.TemperatureCondition, product.Observation, _subCategoryRepository.GetById(product.SubCategoryId));
-            newProduct.Validate();
+           throw new NotImplementedException();
         }
 
         public void UpdateProduct(UpdateProductRequest product)
         {
-            var existingProduct = _productRepository.GetById(product.Id);
-            if (existingProduct == null)
-                throw new Exception("No se encontro el producto");
-            existingProduct.Update(product.Name, product.Price, product.Image, product.Stock, product.Description, product.UnitType, product.TemperatureCondition, product.Observation, _subCategoryRepository.GetById(product.Id));
-            _productRepository.Update(existingProduct);
+            //var existingProduct = _productRepository.GetById(product.Id);
+            //if (existingProduct == null)
+            //    throw new Exception("No se encontro el producto");
+            //existingProduct.Update(product.Name, product.Price, product.Image, product.Stock, product.Description, product.UnitType, product.TemperatureCondition, product.Observation, _subCategoryRepository.GetById(product.Id));
+            //_productRepository.Update(existingProduct);
         }
 
         public void DeleteProduct(DeleteProductRequest deleteProductRequest)

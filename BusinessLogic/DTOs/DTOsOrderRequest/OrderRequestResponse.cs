@@ -10,7 +10,6 @@ namespace BusinessLogic.DTOs.DTOsOrderRequest
 {
     public class OrderRequestResponse
     {
-
         public DateTime RequestDate { get; set; }
         public DateTime DeliveryDate { get; set; }
         public string Status { get; set; }

@@ -21,20 +21,20 @@ namespace BusinessLogic.SubSystem
 
         public void AddPayment(AddPaymentRequest paymentRequest)
         {
-            var payment = new Payment(paymentRequest.Date, paymentRequest.Amount, paymentRequest.PaymentMethod,paymentRequest.Note, _supplierRepository.GetById(paymentRequest.SupplierId));
-            payment.Validate();
-            _paymentRepository.Add(payment);
+            //var payment = new Payment(paymentRequest.Date, paymentRequest.Amount, paymentRequest.PaymentMethod,paymentRequest.Note, _supplierRepository.GetById(paymentRequest.SupplierId));
+            //payment.Validate();
+            //_paymentRepository.Add(payment);
         }
 
         public void UpdatePayment(UpdatePaymentRequest paymentRequest)
         {
-            var payment = _paymentRepository.GetById(paymentRequest.Id);
-            if (payment == null) throw new Exception("No se encontro el pago");
-            payment.Update(paymentRequest.Date, paymentRequest.Amount, paymentRequest.PaymentMethod, paymentRequest.Note, _supplierRepository.GetById(paymentRequest.SupplierId));
-            _paymentRepository.Update(payment);
+            //var payment = _paymentRepository.GetById(paymentRequest.Id);
+            //if (payment == null) throw new Exception("No se encontro el pago");
+            //payment.Update(paymentRequest.Date, paymentRequest.Amount, paymentRequest.PaymentMethod, paymentRequest.Note, _supplierRepository.GetById(paymentRequest.SupplierId));
+            //_paymentRepository.Update(payment);      
         }
 
-        public PaymentResponse GetPaymentyById(int id)
+        public PaymentResponse GetPaymentById(int id)
         {
             var payment = _paymentRepository.GetById(id);
             if (payment == null) throw new Exception("No se encontro el pago");
@@ -44,7 +44,7 @@ namespace BusinessLogic.SubSystem
                 Amount = payment.Amount,
                 PaymentMethod = payment.PaymentMethod,
                 Note = payment.Note,
-                supplier = _suppliersSubSystem.GetSupplierById(payment.Supplier.Id),
+                Supplier = _suppliersSubSystem.GetSupplierById(payment.Supplier.Id),
             };
             return paymentResponse;
         }

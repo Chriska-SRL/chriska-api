@@ -18,25 +18,25 @@ namespace BusinessLogic.SubSystem
 
         public void AddCategory(AddCategoryRequest category)
         {
-            var newCategory = new Category(category.Name);
-            newCategory.Validate();
-            _categoryRepository.Add(newCategory);
+            //var newCategory = new Category(category.Name);
+            //newCategory.Validate();
+            //_categoryRepository.Add(newCategory);
         }
 
         public void UpdateCategory(UpdateCategoryRequest category)
         {
-            var existingCategory = _categoryRepository.GetById(category.Id);
-            if (existingCategory != null) throw new Exception("No se encontro la categoria");
-            {
-                existingCategory.Update(category.Name);
-                _categoryRepository.Update(existingCategory);
-            }
+            //var existingCategory = _categoryRepository.GetById(category.Id);
+            //if (existingCategory == null) throw new Exception("No se encontro la categoria");
+            
+               // existingCategory.Update(category.Name);
+               // _categoryRepository.Update(existingCategory);
+            
         }
 
         public void DeleteCategory(DeleteCategoryRequest deleteCategoryRequest)
         {
             var existingCategory = _categoryRepository.GetById(deleteCategoryRequest.Id);
-            if (existingCategory != null) throw new Exception("No se encontro la categoria");
+            if (existingCategory == null) throw new Exception("No se encontro la categoria");
             {
 
                 _categoryRepository.Delete(deleteCategoryRequest.Id);
@@ -77,19 +77,17 @@ namespace BusinessLogic.SubSystem
 
         public void AddSubCategory(AddSubCategoryRequest subCategory)
         {
-            var newSubCategory = new SubCategory(subCategory.Name, _categoryRepository.GetById(subCategory.CategoryId));
-            newSubCategory.Validate();
-            _subCategoryRepository.Add(newSubCategory);
+            throw new NotImplementedException("Metodo no implementado");
         }
 
         public void UpdateSubCategory(UpdateSubCategoryRequest subCategory)
         {
-            var existingSubCategory = _subCategoryRepository.GetById(subCategory.Id);
-            if (existingSubCategory != null) throw new Exception("No se encontro la subcategoria");
-            {
-                existingSubCategory.Update(subCategory.Name);
-                _subCategoryRepository.Update(existingSubCategory);
-            }
+            //var existingSubCategory = _subCategoryRepository.GetById(subCategory.Id);
+            //if (existingSubCategory != null) throw new Exception("No se encontro la subcategoria");
+            //{
+               // existingSubCategory.Update(subCategory.Name);
+                //_subCategoryRepository.Update(existingSubCategory);
+           // }
         }
 
         public void DeleteSubCategory(DeleteSubCategoryRequest subCategoryRequest)

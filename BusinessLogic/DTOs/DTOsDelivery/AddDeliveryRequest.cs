@@ -13,6 +13,7 @@ namespace BusinessLogic.DTOs.DTOsDelivery
         public string DriverName { get; set; }
         public string Observation { get; set; }
         public int VehicleId { get; set; }
+        public List<int> Orders { get; set; } = new List<int>();
 
     }
 }

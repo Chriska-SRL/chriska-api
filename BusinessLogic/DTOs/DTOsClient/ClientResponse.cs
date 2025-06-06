@@ -9,6 +9,7 @@ namespace BusinessLogic.DTOs.DTOsClient
 {
     public class ClientResponse
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string RUT { get; set; }
         public string RazonSocial { get; set; }

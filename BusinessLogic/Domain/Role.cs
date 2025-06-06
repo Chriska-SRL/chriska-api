@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.Dominio
 {
-    public class Role
+    public class Role:IEntity<Role.UpdatableData>
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -15,15 +15,20 @@
 
         public void Validate()
         {
-            if(string.IsNullOrEmpty(Name))
-            {
-                throw new Exception("El nombre del rol no puede estar vacío");
-            }
+            if (string.IsNullOrEmpty(Name)) throw new Exception("El nombre del rol no puede estar vacío");
         }
 
-        public void Update(string roleName)
+        public void Update(UpdatableData data)
         {
-            Name = roleName;
+            Name = data.Name;
+            Permissions = data.Permissions ?? new List<Permission>();
+            Validate();
+        }
+
+        public class UpdatableData
+        {
+            public string Name { get; set; }
+            public List<Permission> Permissions { get; set; } = new List<Permission>();
         }
     }
 }

@@ -1,20 +1,21 @@
 ﻿namespace BusinessLogic.Dominio
 {
-    public class Delivery
+    public class Delivery:IEntity<Delivery.UpdatableData>
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public string DriverName { get; set; }
         public string Observation { get; set; }
         public List<Order> Orders { get; set; } = new List<Order>();
-        public List<Zone> Zones { get; set; } = new List<Zone>();
         public Vehicle Vehicle { get; set; }
 
-        public Delivery(DateTime date, string driverName, string observation, Vehicle vehicle)
+        public Delivery(int id, DateTime date, string driverName, string observation, List<Order> orders, Vehicle vehicle)
         {
+            Id = id;
             Date = date;
             DriverName = driverName;
             Observation = observation;
+            Orders = orders;
             Vehicle = vehicle;
         }
 
@@ -25,11 +26,20 @@
             if (Vehicle == null) throw new Exception("El vehículo no puede estar vacío");
         }
 
-        public void Update(string driverName, string observation, Vehicle vehicle)
+        public void Update(UpdatableData Data)
         {
-            DriverName = driverName;
-            Observation = observation;
-            Vehicle = vehicle;
+            Date = Data.Date;
+            DriverName = Data.DriverName;
+            Observation = Data.Observation;
+            Vehicle = Data.Vehicle;
+            Validate();
+        }
+        public class UpdatableData
+        {
+            public DateTime Date { get; set; }
+            public string DriverName { get; set; }
+            public string Observation { get; set; }
+            public Vehicle Vehicle { get; set; }
         }
     }
 }

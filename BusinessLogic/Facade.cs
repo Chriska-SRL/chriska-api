@@ -1,4 +1,23 @@
-﻿using BusinessLogic.SubSystem;
+﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsCategory;
+using BusinessLogic.DTOs.DTOsClient;
+using BusinessLogic.DTOs.DTOsDelivery;
+using BusinessLogic.DTOs.DTOsOrder;
+using BusinessLogic.DTOs.DTOsOrderItem;
+using BusinessLogic.DTOs.DTOsPayment;
+using BusinessLogic.DTOs.DTOsProduct;
+using BusinessLogic.DTOs.DTOsPurchase;
+using BusinessLogic.DTOs.DTOsPurchaseItem;
+using BusinessLogic.DTOs.DTOsReceipt;
+using BusinessLogic.DTOs.DTOsReturnRequest;
+using BusinessLogic.DTOs.DTOsRole;
+using BusinessLogic.DTOs.DTOsStockMovement;
+using BusinessLogic.DTOs.DTOsSubCategory;
+using BusinessLogic.DTOs.DTOsSupplier;
+using BusinessLogic.DTOs.DTOsUser;
+using BusinessLogic.DTOs.DTOsWarehouse;
+using BusinessLogic.DTOs.DTOsZone;
+using BusinessLogic.SubSystem;
 
 namespace BusinessLogic
 {
@@ -18,6 +37,7 @@ namespace BusinessLogic
         private readonly UserSubSystem Users;
         private readonly WarehousesSubSystem Warehouses;
         private readonly ZonesSubSystem Zones;
+        private readonly RolesSubSystem Roles; 
 
         public Facade(
             AuthSubSystem auth,
@@ -33,7 +53,8 @@ namespace BusinessLogic
             SuppliersSubSystem suppliers,
             UserSubSystem users,
             WarehousesSubSystem warehouses,
-            ZonesSubSystem zones)
+            ZonesSubSystem zones,
+            RolesSubSystem roles)
         {
             Auth = auth;
             Categories = categories;
@@ -49,6 +70,124 @@ namespace BusinessLogic
             Users = users;
             Warehouses = warehouses;
             Zones = zones;
+            Roles = roles;
         }
+        // Authentication
+        public UserResponse? Authenticate(string username, string password) => Auth.Authenticate(username, password);
+
+        // Categories
+        public void AddCategory(AddCategoryRequest category) => Categories.AddCategory(category);
+        public void UpdateCategory(UpdateCategoryRequest category) => Categories.UpdateCategory(category);
+        public void DeleteCategory(DeleteCategoryRequest request) => Categories.DeleteCategory(request);
+        public List<CategoryResponse> GetAllCategory() => Categories.GetAllCategory();
+        public CategoryResponse GetCategoryById(int id) => Categories.GetCategoryById(id);
+
+        // SubCategories
+        public void AddSubCategory(AddSubCategoryRequest subCategory) => Categories.AddSubCategory(subCategory);
+        public void UpdateSubCategory(UpdateSubCategoryRequest subCategory) => Categories.UpdateSubCategory(subCategory);
+        public void DeleteSubCategory(DeleteSubCategoryRequest request) => Categories.DeleteSubCategory(request);
+        public SubCategoryResponse GetSubCategoryById(int id) => Categories.GetSubCategoryById(id);
+        public List<SubCategoryResponse> GetAllSubCategories() => Categories.GetAllSubCategories();
+
+        // Clients
+        public void AddClient(AddClientRequest request) => Clients.AddClient(request);
+        public void UpdateClient(UpdateClientRequest request) => Clients.UpdateClient(request);
+        public void DeleteClient(DeleteClientRequest request) => Clients.DeleteClient(request);
+        public List<ClientResponse> GetAllClients() => Clients.GetAllClients();
+        public ClientResponse GetClientById(int id) => Clients.GetClientById(id);
+
+        // Receipts
+        public void AddReceipt(AddReceiptRequest request) => Clients.AddReceipt(request);
+
+        // Deliveries
+        public void AddDelivery(AddDeliveryRequest request) => Deliveries.AddDelivery(request);
+        public void UpdateDelivery(UpdateDeliveryRequest request) => Deliveries.UpdateDelivery(request);
+        public void DeleteDelivery(DeleteDeliveryRequest request) => Deliveries.DeleteDelivery(request);
+
+        // Vehicles
+        public void AddVehicle(Vehicle vehicle) => Deliveries.AddVehicle(vehicle);
+
+        // Orders
+        public void AddOrder(AddOrderRequest request) => Orders.AddOrder(request);
+        public void UpdateOrder(UpdateOrderRequest request) => Orders.UpdateOrder(request);
+        public void DeleteOrder(DeleteOrderRequest request) => Orders.DeleteOrder(request);
+
+        // public OrderResponse GetOrderById(int id) => Orders.GetOrderById(id);
+        // public List<OrderResponse> GetAllOrders() => Orders.GetAllOrders();
+
+        // OrderItems
+        public void AddOrderItem(OrderItem item) => Orders.AddOrderItem(item);
+        public OrderItemResponse GetOrderItemById(int id) => Orders.GetItemOrderById(id);
+
+        // Payments
+        public void AddPayment(AddPaymentRequest payment) => Payments.AddPayment(payment);
+        public void UpdatePayment(UpdatePaymentRequest payment) => Payments.UpdatePayment(payment);
+        public void DeletePayment(DeletePaymentRequest request) => Payments.DeletePayment(request);
+        public PaymentResponse GetPaymentById(int id) => Payments.GetPaymentById(id);
+
+        // Products
+        public void AddProduct(AddProductRequest product) => Products.AddProduct(product);
+        public void UpdateProduct(UpdateProductRequest product) => Products.UpdateProduct(product);
+        public void DeleteProduct(DeleteProductRequest request) => Products.DeleteProduct(request);
+        public ProductResponse GetProductById(int id) => Products.GetProductById(id);
+        public List<ProductResponse> GetAllProducts() => Products.GetAllProducts();
+
+        // Purchases
+        public void AddPurchase(AddPurchaseRequest purchase) => Purchases.AddPurchase(purchase);
+        public void UpdatePurchase(UpdatePurchaseRequest purchase) => Purchases.UpdatePurchase(purchase);
+        public void DeletePurchase(DeletePurchaseRequest request) => Purchases.DeletePurchase(request);
+        public PurchaseResponse GetPurchaseById(int id) => Purchases.GetPurchaseById(id);
+        public List<PurchaseResponse> GetAllPurchases() => Purchases.GetAllPurchases();
+
+        // Purchase Items
+        public void AddPurchaseItem(AddPurchaseItemRequest item) => Purchases.AddPurchaseItem(item);
+        public void UpdatePurchaseItem(UpdatePurchaseItemRequest item) => Purchases.UpdatePurchaseItem(item);
+        public void DeletePurchaseItem(DeletePurchaseItemRequest request) => Purchases.DeletePurchaseItem(request);
+
+        // Returns
+        public void AddReturnRequest(AddReturnRequest_Request request) => Returns.AddReturnRequest(request);
+        public void UpdateReturnRequest(UpdateReturnRequest_Request request) => Returns.UpdateReturnRequest(request);
+        public void DeleteReturnRequest(DeleteReturnRequest_Request request) => Returns.DeleteReturnRequest(request);
+        public ReturnRequestResponse GetReturnRequestById(int id) => Returns.GetReturnRequestById(id);
+
+        // Roles
+        public void AddRole(AddRoleRequest role) => Roles.AddRole(role);
+        public void UpdateRole(UpdateRoleRequest role) => Roles.UpdateRole(role);
+        public void DeleteRole(DeleteRoleRequest role) => Roles.DeleteRole(role);
+        public RoleResponse GetRoleById(int id) => Roles.GetRoleById(id);
+        public List<RoleResponse> GetAllRoles() => Roles.GetAllRoles();
+
+        // Stock 
+        public void AddStockMovement(AddStockMovementRequest stockMovement) => Stock.AddStockMovement(stockMovement);
+        public StockMovementResponse GetStockMovementById(int id) => Stock.GetStockMovementById(id);
+        public List<StockMovementResponse> GetAllStockMovements() => Stock.GetAllStockMovements();
+
+        // Suppliers
+        public void AddSupplier(AddSupplierRequest supplier) => Suppliers.AddSupplier(supplier);
+        public void UpdateSupplier(UpdateSupplierRequest supplier) => Suppliers.UpdateSupplier(supplier);
+        public void DeleteSupplier(DeleteSupplierRequest supplier) => Suppliers.DeleteSupplier(supplier);
+        public SupplierResponse GetSupplierById(int id) => Suppliers.GetSupplierById(id);
+        public List<SupplierResponse> GetAllSuppliers() => Suppliers.GetAllSupplierResponse();
+
+        // Users
+        public void AddUser(AddUserRequest user) => Users.AddUser(user);
+        public void UpdateUser(UpdateUserRequest user) => Users.UpdateUser(user);
+        public void DeleteUser(DeleteUserRequest user) => Users.DeleteUser(user);
+        public UserResponse GetUserById(int id) => Users.GetUserById(id);
+        public List<UserResponse> GetAllUsers() => Users.GetAllUsers();
+
+        // Warehouses
+        public void AddWarehouse(AddWarehouseRequest warehouse) => Warehouses.AddWarehouse(warehouse);
+        public void UpdateWarehouse(UpdateWarehouseRequest warehouse) => Warehouses.UpdateWarehouse(warehouse);
+        public void DeleteWarehouse(DeleteWarehouseRequest warehouse) => Warehouses.DeleteWarehouse(warehouse);
+        public WarehouseResponse GetWarehouseById(int id) => Warehouses.GetWarehouseById(id);
+        public List<WarehouseResponse> GetAllWarehouses() => Warehouses.GetAllWarehouses();
+
+        // Zones
+        public void AddZone(AddZoneRequest zone) => Zones.AddZone(zone);
+        public void UpdateZone(UpdateZoneRequest zone) => Zones.UpdateZone(zone);
+        public void DeleteZone(DeleteZoneRequest zone) => Zones.DeleteZone(zone);
+        public ZoneResponse GetZoneById(int id) => Zones.GetZoneById(id);
+        public List<ZoneResponse> GetAllZones() => Zones.GetAllZones();
     }
 }

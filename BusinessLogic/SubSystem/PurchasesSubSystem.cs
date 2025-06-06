@@ -26,18 +26,18 @@ namespace BusinessLogic.SubSystem
 
         public void AddPurchase(AddPurchaseRequest purchase)
         {
-            var newPurchase = new Purchase(purchase.Date, purchase.Status, _supplierRepository.GetById(purchase.SupplierId));
-            newPurchase.Validate();
-            _purchaseRepository.Add(newPurchase);
+            //var newPurchase = new Purchase(purchase.Date, purchase.Status, _supplierRepository.GetById(purchase.SupplierId));
+            //newPurchase.Validate();
+            //_purchaseRepository.Add(newPurchase);
         }
 
         public void UpdatePurchase(UpdatePurchaseRequest purchase)
         {
-            var existingPurchase = _purchaseRepository.GetById(purchase.Id);
-            if (existingPurchase == null) throw new Exception("No se encontro la compra");
+            //var existingPurchase = _purchaseRepository.GetById(purchase.Id);
+            //if (existingPurchase == null) throw new Exception("No se encontro la compra");
 
-            existingPurchase.Update(purchase.Date, purchase.Status, _supplierRepository.GetById(purchase.SupplierId));
-            _purchaseRepository.Update(existingPurchase);
+            //existingPurchase.Update(purchase.Date, purchase.Status, _supplierRepository.GetById(purchase.SupplierId));
+            //_purchaseRepository.Update(existingPurchase);
 
         }
 
@@ -81,17 +81,17 @@ namespace BusinessLogic.SubSystem
 
         public void AddPurchaseItem(AddPurchaseItemRequest purchaseItem)
         {
-            var newPurchaseItem = new PurchaseItem(purchaseItem.Quantity, purchaseItem.UnitPrice, _productRepository.GetById(purchaseItem.ProductId));
-            newPurchaseItem.Validate();
-            _purchaseItemRepository.Add(newPurchaseItem);
+            //var newPurchaseItem = new PurchaseItem(purchaseItem.Quantity, purchaseItem.UnitPrice, _productRepository.GetById(purchaseItem.ProductId));
+            //newPurchaseItem.Validate();
+            //_purchaseItemRepository.Add(newPurchaseItem);
         }
 
         public void UpdatePurchaseItem(UpdatePurchaseItemRequest purchaseItem)
         {
-            var existingPurchaseItem = _purchaseItemRepository.GetById(purchaseItem.Id);
-            if (existingPurchaseItem == null) throw new Exception("No se encontro el item de compra");
-            existingPurchaseItem.Update(purchaseItem.Quantity, purchaseItem.UnitPrice);
-            _purchaseItemRepository.Update(existingPurchaseItem);
+            //var existingPurchaseItem = _purchaseItemRepository.GetById(purchaseItem.Id);
+            //if (existingPurchaseItem == null) throw new Exception("No se encontro el item de compra");
+            //existingPurchaseItem.Update(purchaseItem.Quantity, purchaseItem.UnitPrice);
+            //_purchaseItemRepository.Update(existingPurchaseItem);
 
         }
 

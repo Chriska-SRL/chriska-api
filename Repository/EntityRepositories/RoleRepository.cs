@@ -12,7 +12,7 @@ namespace Repository.EntityRepositories
         {
         }
 
-        public void Add(Role role)
+        public Role Add(Role role)
         {
             try
             {
@@ -25,6 +25,8 @@ namespace Repository.EntityRepositories
                 int roleId = (int)command.ExecuteScalar();
 
                 InsertPermissions(connection, roleId, role.Permissions);
+
+                return new Role(roleId, role.Name, role.Permissions);
             }
             catch (SqlException ex)
             {
@@ -38,12 +40,21 @@ namespace Repository.EntityRepositories
             }
         }
 
-        public void Delete(int id)
+        public Role? Delete(int id)
         {
             try
             {
+                _logger.LogInformation($"Intentando eliminar el rol con ID {id}.");
                 using var connection = CreateConnection();
                 connection.Open();
+
+                var role = GetById(id);
+                
+                if (role == null) 
+                {
+                    _logger.LogWarning($"No se encontró el rol con ID {id} para eliminar.");
+                    return null;
+                }
 
                 using (var deletePermissions = new SqlCommand("DELETE FROM Roles_Permissions WHERE RoleId = @Id", connection))
                 {
@@ -56,6 +67,8 @@ namespace Repository.EntityRepositories
                     deleteRole.Parameters.AddWithValue("@Id", id);
                     deleteRole.ExecuteNonQuery();
                 }
+                _logger.LogInformation($"Rol con ID {id} eliminado correctamente.");
+                return role;
             }
             catch (SqlException ex)
             {
@@ -175,7 +188,7 @@ namespace Repository.EntityRepositories
         }
 
 
-        public void Update(Role role)
+        public Role Update(Role role)
         {
             try
             {
@@ -196,7 +209,8 @@ namespace Repository.EntityRepositories
                 }
 
                 InsertPermissions(connection, role.Id, role.Permissions);
-                
+                return role;
+
             }
             catch (SqlException ex)
             {

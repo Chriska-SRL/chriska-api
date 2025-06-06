@@ -9,11 +9,8 @@ namespace BusinessLogic.DTOs.DTOsOrderItem
 {
     public class OrderItemResponse
     {
-
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public ProductResponse Product { get; set; }
-
-
     }
 }

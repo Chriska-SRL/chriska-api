@@ -18,17 +18,20 @@ namespace BusinessLogic.SubSystem
 
         public void AddDelivery(AddDeliveryRequest deliveryRequest)
         {
+            throw new NotImplementedException("No se implemento el metodo.");
+            /*
             var delivery = new Delivery(deliveryRequest.Date, deliveryRequest.DriverName, deliveryRequest.Observation,_vehicleRepository.GetById(deliveryRequest.VehicleId));
             delivery.Validate();
             _deliveryRepository.Add(delivery);
+            */
         }
 
         public void UpdateDelivery(UpdateDeliveryRequest deliveryRequest)
         {
-            var delivery = _deliveryRepository.GetById(deliveryRequest.Id);
-            if (delivery == null) throw new Exception("No se encontro la entrega");
-            delivery.Update(deliveryRequest.DriverName, deliveryRequest.Observation, _vehicleRepository.GetById(deliveryRequest.VehicleId));
-            _deliveryRepository.Update(delivery);
+            //var delivery = _deliveryRepository.GetById(deliveryRequest.Id);
+            //if (delivery == null) throw new Exception("No se encontro la entrega");
+            //delivery.Update(deliveryRequest.DriverName, deliveryRequest.Observation, _vehicleRepository.GetById(deliveryRequest.VehicleId));
+            //_deliveryRepository.Update(delivery);
         }
 
         public void DeleteDelivery(DeleteDeliveryRequest deliveryRequest)
