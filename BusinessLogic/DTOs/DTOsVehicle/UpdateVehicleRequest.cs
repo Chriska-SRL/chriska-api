@@ -13,6 +13,6 @@ namespace BusinessLogic.DTOs.DTOsVehicle
         public string Brand { get; set; }
         public string Model { get; set; }
         public int CrateCapacity { get; set; }
-        public int DeliveryId { get; set; }
+        public int CostId { get; set; }
     }
 }

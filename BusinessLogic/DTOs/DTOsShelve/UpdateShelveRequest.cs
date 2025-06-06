@@ -1,16 +1,14 @@
-﻿using BusinessLogic.Dominio;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOs.DTOsZone
+namespace BusinessLogic.DTOs.DTOsShelve
 {
-    public class AddZoneRequest
+    public class UpdateShelveRequest
     {
-        public string Name { get; set; }
         public string Description { get; set; }
-        
+        public int WarehouseId { get; set; }
     }
 }

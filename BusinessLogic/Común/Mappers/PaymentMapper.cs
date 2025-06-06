@@ -1,11 +1,6 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsPayment;
 using BusinessLogic.DTOs.DTOsSupplier;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.Común.Mappers
 {
@@ -31,7 +26,6 @@ namespace BusinessLogic.Común.Mappers
                     phone: string.Empty,
                     contactName: string.Empty,
                     email: string.Empty,
-                    bank: string.Empty,
                     bankAccount: string.Empty,
                     observations: string.Empty,
                     products: new List<Product>(),
@@ -60,7 +54,6 @@ namespace BusinessLogic.Común.Mappers
                     phone: string.Empty,
                     contactName: string.Empty,
                     email: string.Empty,
-                    bank: string.Empty,
                     bankAccount: string.Empty,
                     observations: string.Empty,
                     products: new List<Product>(),
@@ -89,7 +82,6 @@ namespace BusinessLogic.Común.Mappers
                     Phone = domain.Supplier.Phone,
                     ContactName = domain.Supplier.ContactName,
                     Email = domain.Supplier.Email,
-                    Bank = domain.Supplier.Bank,
                     BankAccount = domain.Supplier.BankAccount,
                     Observations = domain.Supplier.Observations
                 }

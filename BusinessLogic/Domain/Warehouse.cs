@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.Dominio
 {
-    public class Warehouse
+    public class Warehouse:IEntity<Warehouse.UpdatableData>
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -24,11 +24,18 @@
             if (string.IsNullOrEmpty(Address)) throw new Exception("La dirección del almacén es obligatoria");
         }
 
-        public void Update(string name, string description, string address)
+        public void Update(UpdatableData data)
         {
-            Name = name;
-            Description = description;
-            Address = address;
+            Name = data.Name;
+            Description = data.Description;
+            Address = data.Address;
+            Validate();
+        }
+        public class UpdatableData
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public string Address { get; set; }
         }
     }
 }

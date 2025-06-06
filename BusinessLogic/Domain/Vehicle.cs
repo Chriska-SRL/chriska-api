@@ -29,6 +29,8 @@
                 throw new ArgumentException("Model cannot be empty or null.");
             if (CrateCapacity <= 0)
                 throw new ArgumentException("Crate capacity must be greater than zero.");
+            if (Cost == null)
+                throw new ArgumentException("Cost cannot be null.");
         }
 
         public void Update(UpdatableData data)
@@ -47,6 +49,7 @@
             public string Model { get; set; }
             public int CrateCapacity { get; set; }
             public Cost Cost { get; set; }
+
         }
     }
 }

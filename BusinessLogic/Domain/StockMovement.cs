@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.Dominio
 {
-    public class StockMovement
+    public class StockMovement:IEntity<StockMovement.UpdatableData>
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
@@ -11,8 +11,9 @@
         public User User { get; set; }
         public Product Product { get; set; }
 
-        public StockMovement(DateTime date, int quantity, string type, string reason, Shelve shelve, User user,Product product)
-        {  
+        public StockMovement(int id,DateTime date, int quantity, string type, string reason, Shelve shelve, User user,Product product)
+        {
+            Id = id;
             Date = date;
             Quantity = quantity;
             Type = type;
@@ -33,5 +34,27 @@
             if (User == null) throw new Exception("El usuario no puede estar vacío");
             if (Product == null) throw new Exception("El producto no puede estar vacío");
         }
+        public void Update(UpdatableData data)
+        {
+            Date = data.Date;
+            Quantity = data.Quantity;
+            Type = data.Type;
+            Reason = data.Reason;
+            Shelve = data.Shelve;
+            User = data.User;
+            Product = data.Product;
+            Validate();
+        }
+        public class UpdatableData
+        {
+            public DateTime Date { get; set; }
+            public int Quantity { get; set; }
+            public string Type { get; set; }
+            public string Reason { get; set; }
+            public Shelve Shelve { get; set; }
+            public User User { get; set; }
+            public Product Product { get; set; }
+        }
+
     }
 }
