@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.Dominio
 {
-    public class Order
+    public class Order : IEntity<Order.UpdatableData>
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
@@ -9,13 +9,14 @@
         public string Status { get; set; }
         public Delivery Delivery { get; set; }
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
-        public Sale Sale { get; set; } 
-        public User PreparedBy { get; set; } 
-        public User DeliveredBy { get; set; } 
-        public Request OrderRequest { get; set; } 
-        
-        public Order (DateTime date, string clientName, int crates, string status, Delivery delivery, Sale sale, User preparedBy, User deliveredBy, Request orderRequest)
+        public Sale Sale { get; set; }
+        public User PreparedBy { get; set; }
+        public User DeliveredBy { get; set; }
+        public OrderRequest OrderRequest { get; set; }
+
+        public Order(int id, DateTime date, string clientName, int crates, string status, Delivery delivery, Sale sale, User preparedBy, User deliveredBy, OrderRequest orderRequest, List<OrderItem> orderItems)
         {
+            Id = id;
             Date = date;
             ClientName = clientName;
             Crates = crates;
@@ -25,6 +26,7 @@
             PreparedBy = preparedBy;
             DeliveredBy = deliveredBy;
             OrderRequest = orderRequest;
+            OrderItems = orderItems;
         }
 
         public void Validate()
@@ -38,12 +40,30 @@
             if (DeliveredBy == null) throw new Exception("El usuario que entregó la orden no puede estar vacío");
         }
 
-        public void Update(string clientName,int crates,string status,Delivery delivery)
+        public void Update(UpdatableData data)
         {
-            ClientName = clientName;
-            Crates = crates;
-            Status = status;
-            Delivery = delivery;
+            Date = data.Date;
+            ClientName = data.ClientName;
+            Crates = data.Crates;
+            Status = data.Status;
+            Delivery = data.Delivery;
+            Sale = data.Sale;
+            PreparedBy = data.PreparedBy;
+            DeliveredBy = data.DeliveredBy;
+            OrderRequest = data.OrderRequest;
+            Validate();
+        }
+        public class UpdatableData
+        {
+            public DateTime Date { get; set; }
+            public string ClientName { get; set; }
+            public int Crates { get; set; }
+            public string Status { get; set; }
+            public Delivery Delivery { get; set; }
+            public Sale Sale { get; set; }
+            public User PreparedBy { get; set; }
+            public User DeliveredBy { get; set; }
+            public OrderRequest OrderRequest { get; set; }
         }
     }
 }

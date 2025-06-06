@@ -9,6 +9,7 @@ namespace BusinessLogic.DTOs.DTOsDelivery
     public class UpdateDeliveryRequest
     {
         public int Id { get; set; }
+        public DateTime Date { get; set; }
         public string DriverName { get; set; }
         public string Observation { get; set; }
         public int VehicleId { get; set; }

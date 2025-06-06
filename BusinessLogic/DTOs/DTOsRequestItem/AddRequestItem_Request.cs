@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOs.DTOsRequestItem
 {
-    public class AddRequestItemRequest
+    public class AddRequestItem_Request
     {
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }

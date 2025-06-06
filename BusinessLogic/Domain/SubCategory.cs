@@ -1,13 +1,14 @@
 ﻿namespace BusinessLogic.Dominio
 {
-    public class SubCategory
+    public class SubCategory:IEntity<SubCategory.UpdatableData>
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public Category Category { get; set; }
 
-        public SubCategory(string name, Category category)
+        public SubCategory(int id,string name, Category category)
         {
+            Id = id;
             Name = name;
             Category = category;
         }
@@ -17,10 +18,15 @@
             if (Name == null) throw new Exception("El nombre no puede estar vacío");
         }
 
-        internal void Update(string name)
+        public void Update(UpdatableData data)
         {
-            if (string.IsNullOrEmpty(name)) throw new Exception("El nombre no puede estar vacío");
-            Name = name;
+            Name = data.Name;
+            Validate();
+        }
+
+        public class UpdatableData
+        {
+            public string Name { get; set; }
         }
     }
 }

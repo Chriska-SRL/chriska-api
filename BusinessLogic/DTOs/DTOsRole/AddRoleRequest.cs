@@ -11,6 +11,7 @@ namespace BusinessLogic.DTOs.DTOsRole
     {
 
         public string Name { get; set; }
+        public List<int> Permissions { get; set; }
 
 
     }

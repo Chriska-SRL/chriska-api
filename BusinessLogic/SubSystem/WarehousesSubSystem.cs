@@ -17,9 +17,7 @@ namespace BusinessLogic.SubSystem
 
         public void AddWarehouse(AddWarehouseRequest warehouse)
         {
-            var newWarehouse = new Warehouse(warehouse.Name, warehouse.Description, warehouse.Address);
-            newWarehouse.Validate();
-            _warehouseRepository.Add(newWarehouse);
+            throw new NotImplementedException("Metodo no implementado");
         }
 
         public void UpdateWarehouse(UpdateWarehouseRequest warehouse)

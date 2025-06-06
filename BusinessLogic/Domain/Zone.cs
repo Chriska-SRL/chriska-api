@@ -1,14 +1,15 @@
 ﻿namespace BusinessLogic.Dominio
 {
-    public class Zone
+    public class Zone : IEntity<Zone.UpdatableData>
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public List<Day> Days { get; set; } = new List<Day>();
 
-        public Zone(string name, string description)
+        public Zone(int id, string name, string description)
         {
+            Id = id;
             Name = name;
             Description = description;
         }
@@ -19,10 +20,16 @@
             if (string.IsNullOrEmpty(Description)) throw new Exception("La descripcion es obligatoria");
         }
 
-        public void Update(string name, string description)
+        public void Update(UpdatableData data)
         {
-            Name = name;
-            Description = description;
+            Name = data.Name;
+            Description = data.Description;
+            Validate();
+        }
+        public class UpdatableData
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
         }
     }
 }

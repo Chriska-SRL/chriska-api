@@ -15,18 +15,18 @@ namespace BusinessLogic.SubSystem
 
         public void AddZone(AddZoneRequest zone)
         {
-            var newZone = new Zone(zone.Name, zone.Description);
-            newZone.Validate();
-            _zoneRepository.Add(newZone);
+            //var newZone = new Zone(zone.Name, zone.Description);
+            //newZone.Validate();
+            //_zoneRepository.Add(newZone);
         }
 
         public void UpdateZone(UpdateZoneRequest zone)
         {
-            var existingZone = _zoneRepository.GetById(zone.Id);
-            if (existingZone == null) throw new Exception("No se encontro la zona");
-            existingZone.Update(zone.Name, zone.Description);
-            existingZone.Validate();
-            _zoneRepository.Update(existingZone);
+            //var existingZone = _zoneRepository.GetById(zone.Id);
+            //if (existingZone == null) throw new Exception("No se encontro la zona");
+            //existingZone.Update(zone.Name, zone.Description);
+            //existingZone.Validate();
+            //_zoneRepository.Update(existingZone);
         }
 
         public void DeleteZone(DeleteZoneRequest zone)

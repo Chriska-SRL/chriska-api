@@ -25,17 +25,20 @@ namespace BusinessLogic.SubSystem
 
         public void AddClient(AddClientRequest addClientRequest)
         {
+            throw new NotImplementedException("No se implemento el metodo.");
+            /*
             var newClient = new Client(addClientRequest.Name,addClientRequest.RUT,addClientRequest.RazonSocial,addClientRequest.Address,addClientRequest.MapsAddress,addClientRequest.Schedule,addClientRequest.Phone,addClientRequest.ContactName,addClientRequest.Email,addClientRequest.Observations,addClientRequest.BankAccount,addClientRequest.LoanedCrates,_zoneRepository.GetById(addClientRequest.ZoneId));
             newClient.Validate();
             _clientRepository.Add(newClient);
+            */
         }
 
         public void UpdateClient(UpdateClientRequest updateClientRequest)
         {
-            var client = _clientRepository.GetById(updateClientRequest.Id);
-            if(client == null) throw new Exception("No se encontro el cliente");
-            client.Update(updateClientRequest.Name, updateClientRequest.RUT, updateClientRequest.RazonSocial, updateClientRequest.Address, updateClientRequest.MapsAddress, updateClientRequest.Schedule, updateClientRequest.Phone, updateClientRequest.ContactName, updateClientRequest.Email, updateClientRequest.Observations, updateClientRequest.BankAccount, updateClientRequest.LoanedCrates, _zoneRepository.GetById(updateClientRequest.ZoneId));
-            _clientRepository.Update(client);
+            //var client = _clientRepository.GetById(updateClientRequest.Id);
+            //if(client == null) throw new Exception("No se encontro el cliente");
+            //client.Update(updateClientRequest.Name, updateClientRequest.RUT, updateClientRequest.RazonSocial, updateClientRequest.Address, updateClientRequest.MapsAddress, updateClientRequest.Schedule, updateClientRequest.Phone, updateClientRequest.ContactName, updateClientRequest.Email, updateClientRequest.Observations, updateClientRequest.BankAccount, updateClientRequest.LoanedCrates, _zoneRepository.GetById(updateClientRequest.ZoneId));
+            //_clientRepository.Update(client);
         }
 
         public void DeleteClient(DeleteClientRequest deleteClientRequest)
@@ -108,9 +111,7 @@ namespace BusinessLogic.SubSystem
         
         public void AddReceipt(AddReceiptRequest receipt)
         {
-            var newReceipt = new Receipt(receipt.Date, receipt.Amount, receipt.PaymentMethod, receipt.Notes, _clientRepository.GetById(receipt.ClientId));
-            newReceipt.Validate();
-            _receiptRepository.Add(newReceipt);
+           throw new NotImplementedException("No se implemento el metodo.");
         }
 
         //public void UpdateReceipt(UpdateReceiptRequest receipt)

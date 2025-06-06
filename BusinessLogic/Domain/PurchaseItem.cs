@@ -1,14 +1,15 @@
 ﻿namespace BusinessLogic.Dominio
 {
-    public class PurchaseItem
+    public class PurchaseItem : IEntity<PurchaseItem.UpdatableData>
     {
         public int Id { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public Product Product { get; set; }
 
-        public PurchaseItem(int quantity, decimal unitPrice, Product product)
+        public PurchaseItem(int id, int quantity, decimal unitPrice, Product product)
         {
+            Id = id;
             Quantity = quantity;
             UnitPrice = unitPrice;
             Product = product;
@@ -22,10 +23,15 @@
             if (Product == null) throw new Exception("El producto es obligatorio");
         }
 
-        public void Update(int quantity, decimal unitPrice)
+        public void Update(UpdatableData data)
         {
-            Quantity = quantity;
-            UnitPrice = unitPrice;
+            Quantity = data.Quantity;
+            UnitPrice = data.UnitPrice;
+        }
+        public class UpdatableData
+        {
+            public int Quantity { get; set; }
+            public decimal UnitPrice { get; set; }
         }
     }
 }

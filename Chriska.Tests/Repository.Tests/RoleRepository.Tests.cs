@@ -7,7 +7,7 @@ using BusinessLogic.Repository;
 
 namespace Repository.Tests
 {
-    public class RoleRepositoryTests: RepositoryTestsBase<Role>
+    public class RoleRepositoryTests: RepositoryTestsBase<Role, Role.UpdatableData>
     {
         private RoleRepository _repo;
         public override Role CreateSampleEntity()
