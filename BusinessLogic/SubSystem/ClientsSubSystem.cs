@@ -10,22 +10,17 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IClientRepository _clientRepository;
         private readonly IReceiptRepository _receiptRepository;
-        private readonly IZoneRepository _zoneRepository;
 
-        private readonly ZonesSubSystem _zonesSubSystem;
-
-        public ClientsSubSystem(IClientRepository clientRepository, IReceiptRepository receiptRepository, IZoneRepository zoneRepository, ZonesSubSystem _ZonesSubSystem)
+        public ClientsSubSystem(IClientRepository clientRepository, IReceiptRepository receiptRepository)
         {
             _clientRepository = clientRepository;
             _receiptRepository = receiptRepository;
-            _zoneRepository = zoneRepository;
-
-            _zonesSubSystem = _ZonesSubSystem;
         }
 
         public void AddClient(AddClientRequest addClientRequest)
         {
             Client client = ClientMapper.toDomain(addClientRequest);
+            client.Validate();
             _clientRepository.Add(client);
         }
 
@@ -47,14 +42,8 @@ namespace BusinessLogic.SubSystem
         public List<ClientResponse> GetAllClients()
         {
             List<Client> listClient = _clientRepository.GetAll();
-            if (listClient == null) throw new Exception("No se encontraron clientes");
-            List<ClientResponse> listClientResponse = new List<ClientResponse>();
-            foreach (Client client in listClient)
-            {
-                ClientResponse clientResponse = ClientMapper.toResponse(client);
-                listClientResponse.Add(clientResponse);
-            }
-            return listClientResponse;
+            if (!listClient.Any()) throw new Exception("No se encontraron clientes");
+            return listClient.Select(ClientMapper.toResponse).ToList();
         }
 
         public ClientResponse GetClientById(int id)
@@ -68,6 +57,7 @@ namespace BusinessLogic.SubSystem
         public void AddReceipt(AddReceiptRequest receipt)
         {
             Receipt newReceipt = ReceiptMapper.toDomain(receipt);
+            newReceipt.Validate();
             _receiptRepository.Add(newReceipt);
         }
 
@@ -87,14 +77,8 @@ namespace BusinessLogic.SubSystem
         public List<ReceiptResponse> GetAllReceipts()
         {
             List<Receipt> listReceipt = _receiptRepository.GetAll();
-            if (listReceipt == null) throw new Exception("No se encontraron recibos");
-            List<ReceiptResponse> listReceiptResponse = new List<ReceiptResponse>();
-            foreach (Receipt receipt in listReceipt)
-            {
-                ReceiptResponse receiptResponse = ReceiptMapper.toResponse(receipt);
-                listReceiptResponse.Add(receiptResponse);
-            }
-            return listReceiptResponse;
+            if (!listReceipt.Any()) throw new Exception("No se encontraron recibos");
+            return listReceipt.Select(ReceiptMapper.toResponse).ToList();
         }
         public ReceiptResponse GetReceiptById(int id)
         {

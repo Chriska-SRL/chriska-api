@@ -1,6 +1,8 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsDelivery;
+using BusinessLogic.Común.Mappers;
+using BusinessLogic.DTOs.DTOsVehicle;
 
 namespace BusinessLogic.SubSystem
 {
@@ -8,7 +10,6 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IDeliveryRepository _deliveryRepository;
         private readonly IVehicleRepository _vehicleRepository;
-        //private IZoneRepository _zoneRepository;
 
         public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IVehicleRepository vehicleRepository)
         {
@@ -18,20 +19,17 @@ namespace BusinessLogic.SubSystem
 
         public void AddDelivery(AddDeliveryRequest deliveryRequest)
         {
-            throw new NotImplementedException("No se implemento el metodo.");
-            /*
-            var delivery = new Delivery(deliveryRequest.Date, deliveryRequest.DriverName, deliveryRequest.Observation,_vehicleRepository.GetById(deliveryRequest.VehicleId));
+            Delivery delivery = DeliveryMapper.toDomain(deliveryRequest);
             delivery.Validate();
             _deliveryRepository.Add(delivery);
-            */
         }
 
         public void UpdateDelivery(UpdateDeliveryRequest deliveryRequest)
         {
-            //var delivery = _deliveryRepository.GetById(deliveryRequest.Id);
-            //if (delivery == null) throw new Exception("No se encontro la entrega");
-            //delivery.Update(deliveryRequest.DriverName, deliveryRequest.Observation, _vehicleRepository.GetById(deliveryRequest.VehicleId));
-            //_deliveryRepository.Update(delivery);
+            Delivery exisitingDelivery = _deliveryRepository.GetById(deliveryRequest.Id);
+            if (exisitingDelivery == null) throw new Exception("No se encontro la entrega");
+            exisitingDelivery.Update(DeliveryMapper.toDomain(deliveryRequest));
+            _deliveryRepository.Update(exisitingDelivery);
         }
 
         public void DeleteDelivery(DeleteDeliveryRequest deliveryRequest)
@@ -41,20 +39,47 @@ namespace BusinessLogic.SubSystem
             _deliveryRepository.Delete(deliveryRequest.Id);
         }
 
-        //public List<Delivery> GetAllDeliveries()
-        //{
-        //    return _deliveryRepository.GetAll();
-        //}
-
-        //Agregar un subsistema de veiculos???
-        public void AddVehicle(Vehicle vehicle)
+        public List<DeliveryResponse> GetAllDeliveries()
         {
-            _vehicleRepository.Add(vehicle);
+            List<Delivery> deliveries = _deliveryRepository.GetAll();
+            if (!deliveries.Any()) throw new Exception("No se encontraron entregas");
+            return deliveries.Select(DeliveryMapper.toResponse).ToList();
         }
 
-        internal DeliveryResponse GetById(int id)
+
+        public void AddVehicle(AddVehicleRequest vehicle)
         {
-            throw new NotImplementedException();
+            Vehicle newVehicle = VehicleMapper.toDomain(vehicle);
+            newVehicle.Validate();
+            _vehicleRepository.Add(newVehicle);
+        }
+
+        public void UpdateVehicle(UpdateVehicleRequest vehicle)
+        {
+            Vehicle existingVehicle = _vehicleRepository.GetById(vehicle.Id);
+            if (existingVehicle == null) throw new Exception("No se encontro el vehiculo");
+            existingVehicle.Update(VehicleMapper.toDomain(vehicle));
+            _vehicleRepository.Update(existingVehicle);
+        }
+
+        public void DeleteVehicle(DeleteVehicleRequest vehicle)
+        {
+            var existingVehicle = _vehicleRepository.GetById(vehicle.Id);
+            if (existingVehicle == null) throw new Exception("No se encontro el vehiculo");
+            _vehicleRepository.Delete(vehicle.Id);
+        }
+        public List<VehicleResponse> GetAllVehicles()
+        {
+            List<Vehicle> listVehicles = _vehicleRepository.GetAll();
+            if (!listVehicles.Any()) throw new Exception("No se encontraron vehiculos");
+            return listVehicles.Select(VehicleMapper.toResponse).ToList();
+        }
+        public VehicleResponse GetVehicleById(int id)
+        {
+            Vehicle vehicle = _vehicleRepository.GetById(id);
+            if (vehicle == null) throw new Exception("No se encontro el vehiculo");
+            VehicleResponse vehicleResponse = VehicleMapper.toResponse(vehicle);
+            return vehicleResponse;
         }
     }
 }

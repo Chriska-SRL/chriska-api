@@ -26,7 +26,6 @@ namespace BusinessLogic.SubSystem
             Role? role = _roleRepository.GetById(request.Id);
             if (role == null)
                 throw new Exception("El rol no existe");
-
             role.Update(RoleMapper.ToUpdatableData(request));
             _roleRepository.Update(role);
         }
@@ -52,8 +51,9 @@ namespace BusinessLogic.SubSystem
         public List<RoleResponse> GetAllRoles()
         {
             List<Role> roles = _roleRepository.GetAll();
-            List<RoleResponse> response = roles.Select(RoleMapper.ToResponse).ToList();
-            return response;
+            if (!roles.Any())
+                throw new Exception("No hay roles disponibles");
+            return roles.Select(RoleMapper.ToResponse).ToList(); ;
         }
     }
 }

@@ -9,6 +9,7 @@ namespace BusinessLogic.DTOs.DTOsStockMovement
 {
     public class UpdateStockMovementRequest
     {
+        public int Id { get; set; }
         public DateTime Date { get; set; }
         public int Quantity { get; set; }
         public string Type { get; set; }

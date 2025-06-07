@@ -41,14 +41,8 @@ namespace BusinessLogic.SubSystem
         public List<CategoryResponse> GetAllCategory()
         {
             List<Category> listCategory = _categoryRepository.GetAll();
-            if (listCategory == null) throw new Exception("No se encontraron categorias");
-            List<CategoryResponse> listCategoryResponse = new List<CategoryResponse>();
-            foreach (Category c in listCategory)
-            {
-                CategoryResponse categoryResponse = CategoryMapper.toResponse(c);
-                listCategoryResponse.Add(categoryResponse);
-            }
-            return listCategoryResponse;
+            if (!listCategory.Any()) throw new Exception("No se encontraron categorias");
+            return listCategory.Select(CategoryMapper.toResponse).ToList();
         }
 
         public CategoryResponse GetCategoryById(int Id)
@@ -62,6 +56,7 @@ namespace BusinessLogic.SubSystem
         public void AddSubCategory(AddSubCategoryRequest addSubCategory)
         {
             SubCategory subCategory = SubCategoryMapper.toDomain(addSubCategory);
+            subCategory.Validate();
             _subCategoryRepository.Add(subCategory);
         }
 
@@ -83,22 +78,15 @@ namespace BusinessLogic.SubSystem
         public SubCategoryResponse GetSubCategoryById(int Id)
         {
             SubCategory existingSubCategory = _subCategoryRepository.GetById(Id);
-            if (existingSubCategory == null) throw new Exception("No se encontro la subcategoria");          
-                SubCategoryResponse subCategoryResponse = SubCategoryMapper.ToResponse(existingSubCategory);
-                return subCategoryResponse;          
+            if (existingSubCategory == null) throw new Exception("No se encontro la subcategoria");    
+            return SubCategoryMapper.toResponse(existingSubCategory);          
         }
 
         public List<SubCategoryResponse> GetAllSubCategories()
         {
             List<SubCategory> listSubCategory = _subCategoryRepository.GetAll();
-            if (listSubCategory == null) throw new Exception("No se encontraron subcategorias");
-            List<SubCategoryResponse> listSubCategoryResponse = new List<SubCategoryResponse>();
-            foreach (SubCategory sc in listSubCategory)
-            {
-                SubCategoryResponse subCategoryResponse = SubCategoryMapper.ToResponse(sc);
-                listSubCategoryResponse.Add(subCategoryResponse);
-            }
-            return listSubCategoryResponse;
+            if (!listSubCategory.Any()) throw new Exception("No se encontraron subcategorias");
+            return listSubCategory.Select(SubCategoryMapper.toResponse).ToList();
         }
     }
 }

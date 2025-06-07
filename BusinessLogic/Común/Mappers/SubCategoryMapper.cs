@@ -13,7 +13,7 @@ namespace BusinessLogic.Común.Mappers
                 category: new Category (id:dto.CategoryId,name:dto.Name)
             );
         }
-        public static SubCategoryResponse ToResponse(SubCategory subCategory)
+        public static SubCategoryResponse toResponse(SubCategory subCategory)
         {
             return new SubCategoryResponse
             {
