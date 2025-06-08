@@ -30,11 +30,13 @@ namespace API.Controllers
             ///////////////// TESTING
             
             UserResponse? user = new UserResponse { 
-                Id = 1, Username = "testuser", 
-                Name = "Test User", IsEnabled = true, 
+                Id = 1, 
+                Username = "jperez", 
+                Name = "Juan Pérez", 
+                IsEnabled = true, 
                 Role = new RoleResponse{ 
                     Id = 1, 
-                    Name = "Admin", 
+                    Name = "Administrador", 
                     Permissions = new List<int> { 1, 2, 3, 4, 5, 6 , 7, 8, 9, 10 } 
                 }
             };
@@ -48,6 +50,8 @@ namespace API.Controllers
             {
                 new Claim("userId", user.Id.ToString()),
                 new Claim("username", user.Username),
+                new Claim("name", user.Name)
+                new Claim("isEnabled", user.IsEnabled)
                 new Claim("role", user.Role.Name)
             };
 
