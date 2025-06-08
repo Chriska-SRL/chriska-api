@@ -26,6 +26,9 @@ namespace API.Controllers
         public IActionResult Login([FromBody] LoginRequest request)
         {
             //UserResponse? user = _facade.Authenticate(request.Username, request.Password);
+            
+            ///////////////// TESTING
+            
             UserResponse? user = new UserResponse { 
                 Id = 1, Username = "testuser", 
                 Name = "Test User", IsEnabled = true, 
@@ -34,18 +37,22 @@ namespace API.Controllers
                     Name = "Admin", 
                     Permissions = new List<int> { 1, 2, 3, 4, 5, 6 , 7, 8, 9, 10 } 
                 }
-            }; // Simulated user for testing
+            };
+            
+            /////////////////
+            
             if (user == null)
                 return Unauthorized(new { error = "Credenciales inválidas" });
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username)
+                new Claim("userId", user.Id.ToString()),
+                new Claim("username", user.Username),
+                new Claim("role", user.Role.Name)
             };
 
-            foreach (int perm in user.Role.Permissions)
-                claims.Add(new Claim("permission", perm.ToString()));
+            foreach (var permission in user.Role.Permissions)
+                claims.Add(new Claim("permissions", permission.ToString()));
 
             var key = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"])
