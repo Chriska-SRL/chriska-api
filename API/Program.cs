@@ -147,7 +147,8 @@ namespace API
             {
                 options.AddPolicy("PermitirFrontend", policy =>
                  {
-                    policy.WithOrigins(allowedOrigins)
+                    // policy.WithOrigins(allowedOrigins)
+                    policy.AllowAnyOrigin()
                           .AllowAnyHeader()
                           .AllowAnyMethod();
                 });
