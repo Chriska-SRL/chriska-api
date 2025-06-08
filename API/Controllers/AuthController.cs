@@ -51,7 +51,6 @@ namespace API.Controllers
                 new Claim("userId", user.Id.ToString()),
                 new Claim("username", user.Username),
                 new Claim("name", user.Name),
-                new Claim("isEnabled", user.IsEnabled),
                 new Claim("role", user.Role.Name)
             };
 
