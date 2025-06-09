@@ -36,7 +36,7 @@ namespace API.Controllers
                 IsEnabled = true, 
                 Role = new RoleResponse{ 
                     Id = 1, 
-                    Name = "Administrador", 
+                    Name = "Admin", 
                     Permissions = new List<int> { 1, 2, 3, 4, 5, 6 , 7, 8, 9, 10 } 
                 }
             };
@@ -55,7 +55,7 @@ namespace API.Controllers
             };
 
             foreach (int perm in user.Role.Permissions)
-                claims.Add(new Claim("permissions", perm.ToString()));
+                claims.Add(new Claim("permission", perm.ToString()));
 
             var key = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"])
