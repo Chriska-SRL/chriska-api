@@ -7,17 +7,14 @@ using BusinessLogic.Repository;
 
 namespace Repository.Tests
 {
-    public class ProductRepositoryTests : RepositoryTestsBase<Product>
+    public class ProductRepositoryTests : RepositoryTestsBase<Product, Product.UpdatableData>
     {
         private ProductRepository _repo;
 
         public override Product CreateSampleEntity()
         {
-            var subCategory = new SubCategory(
-                id: 1,
-                name: "TestSubCat",
-                category: new Category(1, "TestCat")
-            );
+            var category = new Category(1, "TestCat", "DescCat");
+            var subCategory = new SubCategory(1, "TestSubCat", "DescSubCat", category);
 
             return new Product(
                 id: 0,

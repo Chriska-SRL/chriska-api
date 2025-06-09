@@ -1,36 +1,42 @@
 ﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsSubCategory;
 
 namespace BusinessLogic.Común.Mappers
 {
     public static class SubCategoryMapper
     {
-        public static SubCategory toDomain(AddSubCategoryRequest dto) {
+        public static SubCategory ToDomain(AddSubCategoryRequest dto)
+        {
             return new SubCategory(
-                id: 0, 
+                id: 0,
                 name: dto.Name,
-                category: new Category (id:dto.CategoryId,name:dto.Name)
+                description: dto.Description,
+                category: new Category(dto.CategoryId, string.Empty, string.Empty)
             );
         }
-        public static SubCategoryResponse toResponse(SubCategory subCategory)
-        {
-            return new SubCategoryResponse
-            {
-                Id = subCategory.Id,
-                Name = subCategory.Name,
-                Category = new CategoryResponse
-                {
-                    Id = subCategory.Category.Id,
-                    Name = subCategory.Category.Name
-                }
-            };
-        }
-        public static SubCategory.UpdatableData toDomain(UpdateSubCategoryRequest dto)
+
+        public static SubCategory.UpdatableData ToUpdatableData(UpdateSubCategoryRequest dto)
         {
             return new SubCategory.UpdatableData
             {
-                Name = dto.Name
+                Name = dto.Name,
+                Description = dto.Description
+            };
+        }
+
+        public static SubCategoryResponse ToResponse(SubCategory domain)
+        {
+            return new SubCategoryResponse
+            {
+                Id = domain.Id,
+                Name = domain.Name,
+                Description = domain.Description,
+                Category = new DTOs.DTOsCategory.CategoryResponse
+                {
+                    Id = domain.Category.Id,
+                    Name = domain.Category.Name,
+                    Description = domain.Category.Description
+                }
             };
         }
     }

@@ -17,76 +17,96 @@ namespace BusinessLogic.SubSystem
             _subCategoryRepository = subCategoryRepository;
         }
 
-        public void AddCategory(AddCategoryRequest addCategory)
+        // Categorías
+
+        public CategoryResponse AddCategory(AddCategoryRequest request)
         {
-            Category category = CategoryMapper.toDomain(addCategory);
-            _categoryRepository.Add(category);
+            var category = CategoryMapper.ToDomain(request);
+            category.Validate();
+
+            var added = _categoryRepository.Add(category);
+            return CategoryMapper.ToResponse(added);
         }
 
-        public void UpdateCategory(UpdateCategoryRequest updateCategory)
+        public CategoryResponse UpdateCategory(UpdateCategoryRequest request)
         {
-            Category existingCategory = _categoryRepository.GetById(updateCategory.Id);
-            if (existingCategory == null) throw new Exception("No se encontró la categoría");
-            existingCategory.Update(CategoryMapper.toDomain(updateCategory));
-            _categoryRepository.Update(existingCategory);
+            var existing = _categoryRepository.GetById(request.Id)
+                          ?? throw new InvalidOperationException("Categoría no encontrada.");
+
+            var updatedData = CategoryMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            var updated = _categoryRepository.Update(existing);
+            return CategoryMapper.ToResponse(updated);
         }
 
-        public void DeleteCategory(DeleteCategoryRequest deleteCategoryRequest)
+        public CategoryResponse DeleteCategory(DeleteCategoryRequest request)
         {
-            Category existingCategory = _categoryRepository.GetById(deleteCategoryRequest.Id);
-            if (existingCategory == null) throw new Exception("No se encontro la categoria");           
-                _categoryRepository.Delete(deleteCategoryRequest.Id);           
+            var deleted = _categoryRepository.Delete(request.Id)
+                          ?? throw new InvalidOperationException("Categoría no encontrada.");
+
+            return CategoryMapper.ToResponse(deleted);
+        }
+
+        public CategoryResponse GetCategoryById(int id)
+        {
+            var category = _categoryRepository.GetById(id)
+                          ?? throw new InvalidOperationException("Categoría no encontrada.");
+
+            return CategoryMapper.ToResponse(category);
         }
 
         public List<CategoryResponse> GetAllCategory()
         {
-            List<Category> listCategory = _categoryRepository.GetAll();
-            if (!listCategory.Any()) throw new Exception("No se encontraron categorias");
-            return listCategory.Select(CategoryMapper.toResponse).ToList();
+            return _categoryRepository.GetAll()
+                                      .Select(CategoryMapper.ToResponse)
+                                      .ToList();
         }
 
-        public CategoryResponse GetCategoryById(int Id)
-        {
-            Category existingCategory = _categoryRepository.GetById(Id);
-            if (existingCategory == null) throw new Exception("No se encontro la categoria");          
-            CategoryResponse ReturnCategory = CategoryMapper.toResponse(existingCategory);
-            return ReturnCategory;          
-        }
+        // Subcategorías
 
-        public void AddSubCategory(AddSubCategoryRequest addSubCategory)
+        public SubCategoryResponse AddSubCategory(AddSubCategoryRequest request)
         {
-            SubCategory subCategory = SubCategoryMapper.toDomain(addSubCategory);
+            var subCategory = SubCategoryMapper.ToDomain(request);
             subCategory.Validate();
-            _subCategoryRepository.Add(subCategory);
+
+            var added = _subCategoryRepository.Add(subCategory);
+            return SubCategoryMapper.ToResponse(added);
         }
 
-        public void UpdateSubCategory(UpdateSubCategoryRequest updateSubCategory)
+        public SubCategoryResponse UpdateSubCategory(UpdateSubCategoryRequest request)
         {
-            SubCategory existingCategory = _subCategoryRepository.GetById(updateSubCategory.Id);
-            if (existingCategory == null) throw new Exception("No se encontró la categoría");
-            existingCategory.Update(SubCategoryMapper.toDomain(updateSubCategory));
-            _subCategoryRepository.Update(existingCategory);
+            var existing = _subCategoryRepository.GetById(request.Id)
+                           ?? throw new InvalidOperationException("Subcategoría no encontrada.");
+
+            var updatedData = SubCategoryMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            var updated = _subCategoryRepository.Update(existing);
+            return SubCategoryMapper.ToResponse(updated);
         }
 
-        public void DeleteSubCategory(DeleteSubCategoryRequest subCategoryRequest)
+        public SubCategoryResponse DeleteSubCategory(DeleteSubCategoryRequest request)
         {
-            SubCategory existingSubCategory = _subCategoryRepository.GetById(subCategoryRequest.Id);
-            if (existingSubCategory == null) throw new Exception("No se encontro la subcategoria");
-                _subCategoryRepository.Delete(subCategoryRequest.Id);     
+            var deleted = _subCategoryRepository.Delete(request.Id)
+                           ?? throw new InvalidOperationException("Subcategoría no encontrada.");
+
+            return SubCategoryMapper.ToResponse(deleted);
         }
 
-        public SubCategoryResponse GetSubCategoryById(int Id)
+        public SubCategoryResponse GetSubCategoryById(int id)
         {
-            SubCategory existingSubCategory = _subCategoryRepository.GetById(Id);
-            if (existingSubCategory == null) throw new Exception("No se encontro la subcategoria");    
-            return SubCategoryMapper.toResponse(existingSubCategory);          
+            var subCategory = _subCategoryRepository.GetById(id)
+                              ?? throw new InvalidOperationException("Subcategoría no encontrada.");
+
+            return SubCategoryMapper.ToResponse(subCategory);
         }
 
         public List<SubCategoryResponse> GetAllSubCategories()
         {
-            List<SubCategory> listSubCategory = _subCategoryRepository.GetAll();
-            if (!listSubCategory.Any()) throw new Exception("No se encontraron subcategorias");
-            return listSubCategory.Select(SubCategoryMapper.toResponse).ToList();
+            return _subCategoryRepository.GetAll()
+                                         .Select(SubCategoryMapper.ToResponse)
+                                         .ToList();
         }
     }
 }

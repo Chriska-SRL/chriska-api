@@ -77,16 +77,16 @@ namespace BusinessLogic
         public UserResponse? Authenticate(string username, string password) => Auth.Authenticate(username, password);
 
         // Categories
-        public void AddCategory(AddCategoryRequest category) => Categories.AddCategory(category);
-        public void UpdateCategory(UpdateCategoryRequest category) => Categories.UpdateCategory(category);
-        public void DeleteCategory(DeleteCategoryRequest request) => Categories.DeleteCategory(request);
+        public CategoryResponse AddCategory(AddCategoryRequest category) => Categories.AddCategory(category);
+        public CategoryResponse UpdateCategory(UpdateCategoryRequest category) => Categories.UpdateCategory(category);
+        public CategoryResponse DeleteCategory(DeleteCategoryRequest request) => Categories.DeleteCategory(request);
         public List<CategoryResponse> GetAllCategory() => Categories.GetAllCategory();
         public CategoryResponse GetCategoryById(int id) => Categories.GetCategoryById(id);
 
         // SubCategories
-        public void AddSubCategory(AddSubCategoryRequest subCategory) => Categories.AddSubCategory(subCategory);
-        public void UpdateSubCategory(UpdateSubCategoryRequest subCategory) => Categories.UpdateSubCategory(subCategory);
-        public void DeleteSubCategory(DeleteSubCategoryRequest request) => Categories.DeleteSubCategory(request);
+        public SubCategoryResponse AddSubCategory(AddSubCategoryRequest subCategory) => Categories.AddSubCategory(subCategory);
+        public SubCategoryResponse UpdateSubCategory(UpdateSubCategoryRequest subCategory) => Categories.UpdateSubCategory(subCategory);
+        public SubCategoryResponse DeleteSubCategory(DeleteSubCategoryRequest request) => Categories.DeleteSubCategory(request);
         public SubCategoryResponse GetSubCategoryById(int id) => Categories.GetSubCategoryById(id);
         public List<SubCategoryResponse> GetAllSubCategories() => Categories.GetAllSubCategories();
 
@@ -127,9 +127,9 @@ namespace BusinessLogic
         public PaymentResponse GetPaymentById(int id) => Payments.GetPaymentById(id);
 
         // Products
-        public void AddProduct(AddProductRequest product) => Products.AddProduct(product);
-        public void UpdateProduct(UpdateProductRequest product) => Products.UpdateProduct(product);
-        public void DeleteProduct(DeleteProductRequest request) => Products.DeleteProduct(request);
+        public ProductResponse AddProduct(AddProductRequest product) => Products.AddProduct(product);
+        public ProductResponse UpdateProduct(UpdateProductRequest product) => Products.UpdateProduct(product);
+        public ProductResponse DeleteProduct(DeleteProductRequest request) => Products.DeleteProduct(request);
         public ProductResponse GetProductById(int id) => Products.GetProductById(id);
         public List<ProductResponse> GetAllProducts() => Products.GetAllProducts();
 

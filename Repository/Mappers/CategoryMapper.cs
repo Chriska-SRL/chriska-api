@@ -9,7 +9,8 @@ namespace Repository.Mappers
         {
             return new Category(
                 id: reader.GetInt32(reader.GetOrdinal("Id")),
-                name: reader.GetString(reader.GetOrdinal("Name"))
+                name: reader.GetString(reader.GetOrdinal("Name")),
+                description: reader.GetString(reader.GetOrdinal("Description"))
             );
         }
     }

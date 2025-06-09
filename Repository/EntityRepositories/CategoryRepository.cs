@@ -17,13 +17,14 @@ namespace Repository.EntityRepositories
             try
             {
                 using var connection = CreateConnection();
-                using var command = new SqlCommand(@"INSERT INTO Categories (Name) OUTPUT INSERTED.Id VALUES (@Name)", connection);
+                using var command = new SqlCommand(@"INSERT INTO Categories (Name, Description) OUTPUT INSERTED.Id VALUES (@Name, @Description)", connection);
                 command.Parameters.AddWithValue("@Name", category.Name);
+                command.Parameters.AddWithValue("@Description", category.Description);
 
                 connection.Open();
                 int id = (int)command.ExecuteScalar();
 
-                return new Category(id, category.Name);
+                return new Category(id, category.Name, category.Description);
             }
             catch (SqlException ex)
             {
@@ -31,7 +32,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
             catch (Exception ex)
-        {
+            {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
@@ -82,7 +83,7 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using (var command = new SqlCommand("SELECT Id, Name FROM Categories", connection))
+                using (var command = new SqlCommand("SELECT Id, Name, Description FROM Categories", connection))
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -109,21 +110,17 @@ namespace Repository.EntityRepositories
         {
             try
             {
-                Category category;
-
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using (var command = new SqlCommand("SELECT Id, Name FROM Categories WHERE Id = @Id", connection))
+                using (var command = new SqlCommand("SELECT Id, Name, Description FROM Categories WHERE Id = @Id", connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
                     using var reader = command.ExecuteReader();
                     if (!reader.Read()) return null;
 
-                    category = CategoryMapper.FromReader(reader);
+                    return CategoryMapper.FromReader(reader);
                 }
-
-                return category;
             }
             catch (SqlException ex)
             {
@@ -144,12 +141,16 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using (var updateCommand = new SqlCommand("UPDATE Categories SET Name = @Name WHERE Id = @Id", connection))
+                using (var updateCommand = new SqlCommand("UPDATE Categories SET Name = @Name, Description = @Description WHERE Id = @Id", connection))
                 {
                     updateCommand.Parameters.AddWithValue("@Name", category.Name);
+                    updateCommand.Parameters.AddWithValue("@Description", category.Description);
                     updateCommand.Parameters.AddWithValue("@Id", category.Id);
-                    updateCommand.ExecuteNonQuery();
-        }
+
+                    int affectedRows = updateCommand.ExecuteNonQuery();
+                    if (affectedRows == 0)
+                        throw new InvalidOperationException($"No se encontró la categoría con ID {category.Id} para actualizar.");
+                }
 
                 return category;
             }
@@ -159,7 +160,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
             catch (Exception ex)
-        {
+            {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
