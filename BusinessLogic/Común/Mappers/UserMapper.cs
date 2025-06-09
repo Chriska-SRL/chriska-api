@@ -11,7 +11,7 @@ namespace BusinessLogic.Común.Mappers
             return new User(
                 id: 0,
                 name: addUserRequest.Name,
-                username: addUserRequest.UserName,
+                username: addUserRequest.Username,
                 password: "",
                 isEnabled: addUserRequest.IsEnabled,
                 role: new Role(
@@ -28,7 +28,7 @@ namespace BusinessLogic.Común.Mappers
             return new User.UpdatableData
             {
                 Name = updateUserRequest.Name,
-                Username = updateUserRequest.UserName,
+                Username = updateUserRequest.Username,
                 isEnabled = updateUserRequest.IsEnabled,
                 Role = null // Role will be set later in the update process
             };
