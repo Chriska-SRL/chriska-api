@@ -3,17 +3,12 @@ using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsCreditNote;
 using BusinessLogic.DTOs.DTOsReturnRequest;
 using BusinessLogic.DTOs.DTOsUser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.Común.Mappers
 {
     public static class ReturnRequestMapper
     {
-        public static ReturnRequest ToDomain(AddReturnRequest_Request addReturnRequestRequest)
+        public static ReturnRequest toDomain(AddReturnRequest_Request addReturnRequestRequest)
         {
             return new ReturnRequest(
                 id: 0,
@@ -56,7 +51,7 @@ namespace BusinessLogic.Común.Mappers
                 requestItems: new List<RequestItem>()
             );
         }
-        public static ReturnRequest.UpdatableData ToDomain(UpdateReturnRequest_Request updateReturnRequestRequest)
+        public static ReturnRequest.UpdatableData toDomain(UpdateReturnRequest_Request updateReturnRequestRequest)
         {
             return new ReturnRequest.UpdatableData
             {
@@ -92,7 +87,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             };
         }
-        public static ReturnRequestResponse ToResponse(ReturnRequest returnRequest)
+        public static ReturnRequestResponse toResponse(ReturnRequest returnRequest)
         {
             return new ReturnRequestResponse
             {

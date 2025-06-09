@@ -7,11 +7,12 @@
         public string Description { get; set; }
         public List<Day> Days { get; set; } = new List<Day>();
 
-        public Zone(int id, string name, string description)
+        public Zone(int id, string name, string description,List<Day> days)
         {
             Id = id;
             Name = name;
             Description = description;
+            Days = days;
         }
 
         public void Validate()

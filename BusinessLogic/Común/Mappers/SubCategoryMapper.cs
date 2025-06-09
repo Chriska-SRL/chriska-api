@@ -1,11 +1,6 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsSubCategory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.Común.Mappers
 {
@@ -18,7 +13,7 @@ namespace BusinessLogic.Común.Mappers
                 category: new Category (id:dto.CategoryId,name:dto.Name)
             );
         }
-        public static SubCategoryResponse ToResponse(SubCategory subCategory)
+        public static SubCategoryResponse toResponse(SubCategory subCategory)
         {
             return new SubCategoryResponse
             {
@@ -31,7 +26,7 @@ namespace BusinessLogic.Común.Mappers
                 }
             };
         }
-        public static SubCategory.UpdatableData ToUpdatableData(UpdateSubCategoryRequest dto)
+        public static SubCategory.UpdatableData toDomain(UpdateSubCategoryRequest dto)
         {
             return new SubCategory.UpdatableData
             {

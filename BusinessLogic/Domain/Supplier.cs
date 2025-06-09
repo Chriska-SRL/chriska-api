@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.Dominio
 {
-    public class Supplier
+    public class Supplier:IEntity<Supplier.UpdatableData>
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -11,7 +11,6 @@
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
-        public string Bank { get; set; }
         public string BankAccount { get; set; }
         public string Observations { get; set; }
         public List<Product> Products { get; set; } = new List<Product>();
@@ -19,7 +18,7 @@
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public List<Day> DaysToDeliver { get; set; } = new List<Day>();
 
-        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email,string bank, string bankAccount, string observations, List<Product> products, List<Payment> payments, List<Purchase> purchases, List<Day> daysToDeliver)
+        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email,string bankAccount, string observations, List<Product> products, List<Payment> payments, List<Purchase> purchases, List<Day> daysToDeliver)
         {
             Id = id;
             Name = name;
@@ -30,7 +29,6 @@
             Phone = phone;
             ContactName = contactName;
             Email = email;
-            Bank = bank;
             BankAccount = bankAccount;
             Observations = observations;
             Products = products;
@@ -49,20 +47,33 @@
             if (string.IsNullOrEmpty(ContactName)) throw new Exception("El nombre de contacto es obligatorio");
             if (string.IsNullOrEmpty(Email)) throw new Exception("El email es obligatorio");
             if (string.IsNullOrEmpty(BankAccount)) throw new Exception("La cuenta bancaria es obligatoria");
-        }
-
-        public void Update(string name, string rUT, string businessName, string address, string mapsAddress, string phone, string contactName, string email, string bankAccount, string observations)
+        } 
+        public void Update(UpdatableData data)
         {
-            Name = name;
-            RUT = rUT;
-            RazonSocial = businessName;
-            Address = address;
-            MapsAddress = mapsAddress;
-            Phone = phone;
-            ContactName = contactName;
-            Email = email;
-            BankAccount = bankAccount;
-            Observations = observations;
+            Name = data.Name;
+            RUT = data.RUT;
+            RazonSocial = data.RazonSocial;
+            Address = data.Address;
+            MapsAddress = data.MapsAddress;
+            Phone = data.Phone;
+            ContactName = data.ContactName;
+            Email = data.Email;
+            BankAccount = data.BankAccount;
+            Observations = data.Observations;
+            Validate();
+        }
+        public class UpdatableData
+        {
+            public string Name { get; set; }
+            public string RUT { get; set; }
+            public string RazonSocial { get; set; }
+            public string Address { get; set; }
+            public string MapsAddress { get; set; }
+            public string Phone { get; set; }
+            public string ContactName { get; set; }
+            public string Email { get; set; }
+            public string BankAccount { get; set; }
+            public string Observations { get; set; }
         }
     }
 }

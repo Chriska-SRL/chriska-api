@@ -1,7 +1,6 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsZone;
-
 namespace BusinessLogic.Común.Mappers
 {
     public static class ClientMapper
@@ -48,7 +47,8 @@ namespace BusinessLogic.Común.Mappers
                 (
                     id: updateClientRequest.ZoneId,
                     name: "",
-                    description: ""
+                    description: "",
+                    days: new List<Day>()
                 )
 
             };
