@@ -14,6 +14,7 @@ namespace Repository.Tests
         {
             return new Role(
             id: 0,
+            description: "This is a sample role for testing purposes.",
             name: $"newRole{getANumber()}",
             permissions: new List<Permission>() { Permission.CREATE_ROLES, Permission.DELETE_ROLES }
             );
@@ -21,7 +22,10 @@ namespace Repository.Tests
 
         public override bool CompareEntities(Role a, Role b)
         {
-            return a.Id == b.Id && a.Name == b.Name && a.Permissions.SequenceEqual(b.Permissions);
+            return a.Id == b.Id &&
+                   a.Name == b.Name &&
+                   a.Description == b.Description &&
+                   a.Permissions.SequenceEqual(b.Permissions);
         }
 
         public override Role ModifyEntity(Role entity)

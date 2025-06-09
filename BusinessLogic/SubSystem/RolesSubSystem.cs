@@ -1,7 +1,7 @@
-﻿using BusinessLogic.Repository;
+﻿using BusinessLogic.Dominio;
+using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsRole;
 using BusinessLogic.Común.Mappers;
-using BusinessLogic.Dominio;
 
 namespace BusinessLogic.SubSystem
 {
@@ -14,46 +14,48 @@ namespace BusinessLogic.SubSystem
             _roleRepository = roleRepository;
         }
 
-        public void AddRole(AddRoleRequest request)
+        public RoleResponse AddRole(AddRoleRequest request)
         {
-            Role role = RoleMapper.ToDomain(request);
-            role.Validate();
-            _roleRepository.Add(role);
+            var newRole = RoleMapper.ToDomain(request);
+            newRole.Validate();
+
+            var added = _roleRepository.Add(newRole);
+            return RoleMapper.ToResponse(added);
         }
 
-        public void UpdateRole(UpdateRoleRequest request)
+        public RoleResponse UpdateRole(UpdateRoleRequest request)
         {
-            Role? role = _roleRepository.GetById(request.Id);
-            if (role == null)
-                throw new Exception("El rol no existe");
+            var existingRole = _roleRepository.GetById(request.Id)
+                                 ?? throw new InvalidOperationException("Rol no encontrado.");
 
-            role.Update(RoleMapper.ToUpdatableData(request));
-            _roleRepository.Update(role);
+            var updatedData = RoleMapper.ToUpdatableData(request);
+            existingRole.Update(updatedData);
+
+            var updated = _roleRepository.Update(existingRole);
+            return RoleMapper.ToResponse(updated);
         }
 
-        public void DeleteRole(DeleteRoleRequest request)
+        public RoleResponse DeleteRole(DeleteRoleRequest request)
         {
-            Role? role = _roleRepository.GetById(request.Id);
-            if (role == null)
-                throw new Exception("El rol no existe");
+            var deleted = _roleRepository.Delete(request.Id)
+                          ?? throw new InvalidOperationException("Rol no encontrado.");
 
-            _roleRepository.Delete(role.Id);
+            return RoleMapper.ToResponse(deleted);
         }
 
         public RoleResponse GetRoleById(int id)
         {
-            Role? role = _roleRepository.GetById(id);
-            if (role == null)
-                throw new Exception("Rol no encontrado");
+            var role = _roleRepository.GetById(id)
+                       ?? throw new InvalidOperationException("Rol no encontrado.");
 
             return RoleMapper.ToResponse(role);
         }
 
         public List<RoleResponse> GetAllRoles()
         {
-            List<Role> roles = _roleRepository.GetAll();
-            List<RoleResponse> response = roles.Select(RoleMapper.ToResponse).ToList();
-            return response;
+            return _roleRepository.GetAll()
+                                  .Select(RoleMapper.ToResponse)
+                                  .ToList();
         }
     }
 }

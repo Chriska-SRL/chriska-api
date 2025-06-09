@@ -8,9 +8,7 @@ namespace Repository.EntityRepositories
 {
     public class UserRepository : Repository<UserRepository>, IUserRepository
     {
-        public UserRepository(string connectionString, ILogger<UserRepository> logger) : base(connectionString, logger)
-        {
-        }
+        public UserRepository(string connectionString, ILogger<UserRepository> logger) : base(connectionString, logger) { }
 
         public User Add(User user)
         {
@@ -29,7 +27,11 @@ namespace Repository.EntityRepositories
                 command.Parameters.AddWithValue("@RoleId", user.Role.Id);
 
                 connection.Open();
-                int userId = (int)command.ExecuteScalar();
+                var result = command.ExecuteScalar();
+                if (result == null || result == DBNull.Value)
+                    throw new InvalidOperationException("No se pudo insertar el usuario.");
+
+                int userId = (int)result;
 
                 return new User(userId, user.Name, user.Username, user.Password, user.isEnabled, user.Role, new List<Request>());
             }
@@ -52,13 +54,14 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                var user = GetById(id);
+                var user = GetUserWithoutRole(id, connection);
                 if (user == null) return null;
 
                 using var deleteCommand = new SqlCommand("DELETE FROM Users WHERE Id = @Id", connection);
                 deleteCommand.Parameters.AddWithValue("@Id", id);
                 deleteCommand.ExecuteNonQuery();
 
+                user.Role = GetRoleWithPermissions(user.Role.Id, connection);
                 return user;
             }
             catch (SqlException ex)
@@ -109,7 +112,6 @@ namespace Repository.EntityRepositories
             }
         }
 
-
         public User? GetById(int id)
         {
             try
@@ -117,19 +119,10 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                User? user;
-
-                using (var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, RoleId FROM Users WHERE Id = @Id", connection))
-                {
-                    command.Parameters.AddWithValue("@Id", id);
-                    using var reader = command.ExecuteReader();
-                    if (!reader.Read()) return null;
-
-                    user = UserMapper.FromReader(reader);
-                }
+                var user = GetUserWithoutRole(id, connection);
+                if (user == null) return null;
 
                 user.Role = GetRoleWithPermissions(user.Role.Id, connection);
-
                 return user;
             }
             catch (SqlException ex)
@@ -143,7 +136,6 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
         }
-
 
         public User? GetByUsername(string username)
         {
@@ -152,19 +144,10 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                User? user;
-
-                using (var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, RoleId FROM Users WHERE Username = @Username", connection))
-                {
-                    command.Parameters.AddWithValue("@Username", username);
-                    using var reader = command.ExecuteReader();
-                    if (!reader.Read()) return null;
-
-                    user = UserMapper.FromReader(reader);
-                }
+                var user = GetUserWithoutRole(username, connection);
+                if (user == null) return null;
 
                 user.Role = GetRoleWithPermissions(user.Role.Id, connection);
-
                 return user;
             }
             catch (SqlException ex)
@@ -178,7 +161,6 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
         }
-
 
         public bool ExistsByUsername(string username)
         {
@@ -190,7 +172,6 @@ namespace Repository.EntityRepositories
 
                 connection.Open();
                 int count = (int)command.ExecuteScalar();
-
                 return count > 0;
             }
             catch (SqlException ex)
@@ -224,7 +205,9 @@ namespace Repository.EntityRepositories
                 command.Parameters.AddWithValue("@IsEnabled", user.isEnabled ? 'T' : 'F');
                 command.Parameters.AddWithValue("@RoleId", user.Role.Id);
 
-                command.ExecuteNonQuery();
+                int affected = command.ExecuteNonQuery();
+                if (affected == 0)
+                    throw new InvalidOperationException($"No se encontró el usuario con ID {user.Id} para actualizar.");
 
                 return user;
             }
@@ -240,25 +223,38 @@ namespace Repository.EntityRepositories
             }
         }
 
+        private User? GetUserWithoutRole(int id, SqlConnection connection)
+        {
+            using var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, RoleId FROM Users WHERE Id = @Id", connection);
+            command.Parameters.AddWithValue("@Id", id);
+            using var reader = command.ExecuteReader();
+            return reader.Read() ? UserMapper.FromReader(reader) : null;
+        }
+
+        private User? GetUserWithoutRole(string username, SqlConnection connection)
+        {
+            using var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, RoleId FROM Users WHERE Username = @Username", connection);
+            command.Parameters.AddWithValue("@Username", username);
+            using var reader = command.ExecuteReader();
+            return reader.Read() ? UserMapper.FromReader(reader) : null;
+        }
+
         private Role GetRoleWithPermissions(int roleId, SqlConnection connection)
         {
             Role? role = null;
 
-            using (var command = new SqlCommand("SELECT Id, Name FROM Roles WHERE Id = @Id", connection))
+            using (var command = new SqlCommand("SELECT Id, Name, Description FROM Roles WHERE Id = @Id", connection))
             {
                 command.Parameters.AddWithValue("@Id", roleId);
                 using var reader = command.ExecuteReader();
                 if (reader.Read())
                 {
-                    role = new Role(
-                        id: reader.GetInt32(reader.GetOrdinal("Id")),
-                        name: reader.GetString(reader.GetOrdinal("Name")),
-                        permissions: new List<Permission>()
-                    );
+                    role = RoleMapper.FromReader(reader); // ← Correcto
                 }
             }
 
-            if (role == null) throw new Exception("Rol no encontrado.");
+            if (role == null)
+                throw new InvalidOperationException($"Rol con ID {roleId} no encontrado.");
 
             using (var permCommand = new SqlCommand("SELECT PermissionId FROM Roles_Permissions WHERE RoleId = @RoleId", connection))
             {
@@ -267,10 +263,10 @@ namespace Repository.EntityRepositories
                 while (permReader.Read())
                 {
                     int permId = permReader.GetInt32(permReader.GetOrdinal("PermissionId"));
-                    if (Enum.IsDefined(typeof(Permission), permId))
-                    {
-                        role.Permissions.Add((Permission)permId);
-                    }
+                    if (!Enum.IsDefined(typeof(Permission), permId))
+                        throw new InvalidOperationException($"Permiso inválido: {permId}");
+
+                    role.Permissions.Add((Permission)permId);
                 }
             }
 

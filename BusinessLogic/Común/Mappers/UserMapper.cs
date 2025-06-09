@@ -12,11 +12,12 @@ namespace BusinessLogic.Común.Mappers
                 id: 0,
                 name: addUserRequest.Name,
                 username: addUserRequest.UserName,
-                password: addUserRequest.Password,
+                password: "",
                 isEnabled: addUserRequest.IsEnabled,
                 role: new Role(
                     id: addUserRequest.RoleId,
                     name:"",
+                    description: "",
                     permissions: new List<Permission>()
                     ),
                 requests: new List<Request>()
@@ -28,7 +29,6 @@ namespace BusinessLogic.Común.Mappers
             {
                 Name = updateUserRequest.Name,
                 Username = updateUserRequest.UserName,
-                Password = updateUserRequest.Password,
                 isEnabled = updateUserRequest.IsEnabled,
                 Role = null // Role will be set later in the update process
             };

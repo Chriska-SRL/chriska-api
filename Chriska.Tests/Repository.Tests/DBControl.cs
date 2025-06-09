@@ -28,6 +28,9 @@ namespace Chriska.Tests.Repository.Tests
         DELETE FROM Users;             -- Elimina usuarios primero por FK a Roles
         DELETE FROM Roles_Permissions;
         DELETE FROM Roles;
+        DELETE FROM SubCategories;
+        DELETE FROM Categories;
+       
         ", connection);
 
             command.ExecuteNonQuery();

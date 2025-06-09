@@ -24,8 +24,7 @@ namespace API.Controllers
         {
             try
             {
-                _facade.AddUser(request);
-                return Ok(new { message = "Usuario agregado correctamente" });
+                return Ok(_facade.AddUser(request));
             }
             catch (Exception ex)
             {
@@ -39,8 +38,7 @@ namespace API.Controllers
         {
             try
             {
-                _facade.UpdateUser(request);
-                return Ok(new { message = "Usuario actualizado correctamente" });
+                return Ok(_facade.UpdateUser(request));
             }
             catch (Exception ex)
             {
@@ -54,8 +52,7 @@ namespace API.Controllers
         {
             try
             {
-                _facade.DeleteUser(request);
-                return Ok(new { message = "Usuario eliminado correctamente" });
+                return Ok(_facade.DeleteUser(request));
             }
             catch (Exception ex)
             {

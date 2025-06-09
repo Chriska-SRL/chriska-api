@@ -69,6 +69,7 @@
     <Folder Include="Tables\Orders" />
     <Folder Include="Tables\Orders\Relations" />
     <Folder Include="Tables\Stock\Relaciones" />
+    <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Users And Roles\Users.sql" />
@@ -102,5 +103,8 @@
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Database.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\TestData.sql" />
   </ItemGroup>
 </Project>

@@ -7,29 +7,32 @@ using BusinessLogic.Repository;
 
 namespace Repository.Tests
 {
-    public class UserRepositoryTests: RepositoryTestsBase<User,User.UpdatableData>
+    public class UserRepositoryTests : RepositoryTestsBase<User, User.UpdatableData>
     {
         private UserRepository _repo;
+
         public override User CreateSampleEntity()
         {
+            var suffix = getANumber();
+
             var roleRepo = new RoleRepository(connectionString, NullLogger<RoleRepository>.Instance);
             var role = roleRepo.Add(new Role(
                 id: 0,
-                name: $"TestRole{getANumber()}",
+                description: "This is a sample role for testing purposes.",
+                name: $"TestRole{suffix}",
                 permissions: new List<Permission> { Permission.VIEW_USERS }
             ));
 
             return new User(
                 id: 0,
-                name: $"newUser{getANumber()}",
-                username: $"newUser{getANumber()}",
+                name: $"newUser{suffix}",
+                username: $"newUser{suffix}",
                 password: "password123",
                 isEnabled: true,
                 role: role,
                 requests: new List<Request>()
             );
         }
-
 
         public override bool CompareEntities(User a, User b)
         {
@@ -40,9 +43,9 @@ namespace Repository.Tests
                 && a.isEnabled == b.isEnabled
                 && a.Role.Id == b.Role.Id
                 && a.Role.Name == b.Role.Name
+                && a.Role.Description == b.Role.Description
                 && a.Role.Permissions.SequenceEqual(b.Role.Permissions);
         }
-
 
         public override User ModifyEntity(User entity)
         {
@@ -51,7 +54,6 @@ namespace Repository.Tests
             entity.isEnabled = false;
             return entity;
         }
-
 
         public override IRepository<User> CreateRepositoryInstance()
         {
@@ -65,6 +67,7 @@ namespace Repository.Tests
             _repo = (UserRepository)CreateRepositoryInstance();
             _estandarRepo = _repo;
         }
+
         [Test]
         public void GetByUsername_ShouldReturnCorrectUser()
         {
@@ -77,6 +80,7 @@ namespace Repository.Tests
             Assert.IsNotNull(result);
             Assert.IsTrue(CompareEntities(result!, added));
         }
+
         [Test]
         public void ExistsByUsername_ShouldReturnTrueIfUserExists()
         {
@@ -97,7 +101,5 @@ namespace Repository.Tests
 
             Assert.IsFalse(exists);
         }
-
-
     }
 }

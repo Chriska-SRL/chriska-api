@@ -14,8 +14,7 @@ namespace Repository.Mappers
             var isEnabledChar = reader.GetString(reader.GetOrdinal("IsEnabled"))[0];
             var isEnabled = isEnabledChar == 'T';
             var roleId = reader.GetInt32(reader.GetOrdinal("RoleId"));
-
-            var role = new Role(roleId, "", new List<Permission>());
+            var role = new Role(roleId, "", "", new List<Permission>());
 
             return new User(id, name, username, password, isEnabled, role, new List<Request>());
         }
