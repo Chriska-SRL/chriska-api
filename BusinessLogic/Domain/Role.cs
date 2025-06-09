@@ -4,12 +4,14 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; } = string.Empty;
         public List<Permission> Permissions { get; set; } = new List<Permission>();
 
-        public Role(int id, string name, List<Permission> permissions)
+        public Role(int id, string name, string description, List<Permission> permissions)
         {
             Id = id;
             Name = name;
+            Description = description;
             Permissions = permissions;
         }
 
@@ -28,9 +30,13 @@
         public class UpdatableData
         {
             public string Name { get; set; }
+            public string Description { get; set; } = string.Empty;
             public List<Permission> Permissions { get; set; } = new List<Permission>();
         }
 
-       
+       public override string ToString()
+        {
+            return $"Role(Id: {Id}, Name: {Name}, Description: {Description}, Permissions: [{string.Join(", ", Permissions)}])";
+        }
     }
 }

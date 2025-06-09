@@ -24,8 +24,7 @@ namespace API.Controllers
         {
             try
             {
-                _facade.AddRole(request);
-                return Ok(new { message = "Rol agregado correctamente." });
+                return Ok(_facade.AddRole(request));
             }
             catch (Exception ex)
             {
@@ -39,8 +38,7 @@ namespace API.Controllers
         {
             try
             {
-                _facade.UpdateRole(request);
-                return Ok(new { message = "Rol actualizado correctamente." });
+                return Ok(_facade.UpdateRole(request));
             }
             catch (Exception ex)
             {
@@ -54,8 +52,7 @@ namespace API.Controllers
         {
             try
             {
-                _facade.DeleteRole(request);
-                return Ok(new { message = "Rol eliminado correctamente." });
+                return Ok(_facade.DeleteRole(request));
             }
             catch (Exception ex)
             {

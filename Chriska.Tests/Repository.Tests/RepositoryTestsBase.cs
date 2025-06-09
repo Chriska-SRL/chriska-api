@@ -46,6 +46,8 @@ namespace Chriska.Tests.Repository.Tests
             var entityAdded = _estandarRepo.Add(entity);
 
             var result = _estandarRepo.GetById(entityAdded.Id);
+            Console.WriteLine($"Entity added: {entityAdded.Id} - {entityAdded.ToString()}");
+            Console.WriteLine($"Result: {result?.Id} - {result.ToString()}");
 
             Assert.IsNotNull(result);
             Assert.IsTrue(CompareEntities(result!, entityAdded));

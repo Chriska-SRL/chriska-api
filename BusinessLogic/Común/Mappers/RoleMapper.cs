@@ -7,7 +7,7 @@ namespace BusinessLogic.Común.Mappers
     {
         public static Role ToDomain(AddRoleRequest dto)
         {
-            return new Role(0, dto.Name, dto.Permissions.Select(p => (Permission)p).ToList());
+            return new Role(0, dto.Name, dto.Description, dto.Permissions.Select(p => (Permission)p).ToList());
         }
 
 
@@ -17,6 +17,7 @@ namespace BusinessLogic.Común.Mappers
             {
                 Id = role.Id,
                 Name = role.Name,
+                Description = role.Description,
                 Permissions = role.Permissions.Select(p => (int)p).ToList()
             };
         }
@@ -26,6 +27,7 @@ namespace BusinessLogic.Común.Mappers
             return new Role.UpdatableData
     {
                 Name = dto.Name,
+                Description = dto.Description,
                 Permissions = dto.Permissions.Select(p => (Permission)p).ToList()
             };
         }
