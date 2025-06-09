@@ -54,8 +54,8 @@ namespace API.Controllers
                 new Claim("role", user.Role.Name)
             };
 
-            foreach (var permission in user.Role.Permissions)
-                claims.Add(new Claim("permissions", permission.ToString()));
+            foreach (int perm in user.Role.Permissions)
+                claims.Add(new Claim("permissions", perm.ToString()));
 
             var key = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"])
