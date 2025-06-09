@@ -151,9 +151,9 @@ namespace BusinessLogic
         public ReturnRequestResponse GetReturnRequestById(int id) => Returns.GetReturnRequestById(id);
 
         // Roles
-        public void AddRole(AddRoleRequest role) => Roles.AddRole(role);
-        public void UpdateRole(UpdateRoleRequest role) => Roles.UpdateRole(role);
-        public void DeleteRole(DeleteRoleRequest role) => Roles.DeleteRole(role);
+        public RoleResponse AddRole(AddRoleRequest role) => Roles.AddRole(role);
+        public RoleResponse UpdateRole(UpdateRoleRequest role) => Roles.UpdateRole(role);
+        public RoleResponse DeleteRole(DeleteRoleRequest role) => Roles.DeleteRole(role);
         public RoleResponse GetRoleById(int id) => Roles.GetRoleById(id);
         public List<RoleResponse> GetAllRoles() => Roles.GetAllRoles();
 
@@ -170,9 +170,9 @@ namespace BusinessLogic
         public List<SupplierResponse> GetAllSuppliers() => Suppliers.GetAllSupplierResponse();
 
         // Users
-        public void AddUser(AddUserRequest user) => Users.AddUser(user);
-        public void UpdateUser(UpdateUserRequest user) => Users.UpdateUser(user);
-        public void DeleteUser(DeleteUserRequest user) => Users.DeleteUser(user);
+        public UserResponse AddUser(AddUserRequest user) => Users.AddUser(user);
+        public UserResponse UpdateUser(UpdateUserRequest user) => Users.UpdateUser(user);
+        public UserResponse DeleteUser(DeleteUserRequest user) => Users.DeleteUser(user);
         public UserResponse GetUserById(int id) => Users.GetUserById(id);
         public List<UserResponse> GetAllUsers() => Users.GetAllUsers();
 

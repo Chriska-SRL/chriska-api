@@ -33,7 +33,6 @@
         {
             Name = data.Name;
             Username = data.Username;
-            Password = data.Password;
             this.isEnabled = data.isEnabled;
             Role = data.Role;
             Validate();
@@ -43,9 +42,13 @@
         {
             public string Name { get; set; }
             public string Username { get; set; }
-            public string Password { get; set; }
             public Boolean isEnabled { get; set; }
             public Role Role { get; set; }
+        }
+
+        public override string ToString()
+        {
+            return $"User(Id: {Id}, Name: {Name}, Username: {Username}, isEnabled: {isEnabled}, Role: {Role.ToString()})";
         }
     }
 }

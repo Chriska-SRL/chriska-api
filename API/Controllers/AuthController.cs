@@ -1,6 +1,5 @@
 ﻿using BusinessLogic;
 using BusinessLogic.DTOs.DTOsAuth;
-using BusinessLogic.DTOs.DTOsRole;
 using BusinessLogic.DTOs.DTOsUser;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -25,24 +24,8 @@ namespace API.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            //UserResponse? user = _facade.Authenticate(request.Username, request.Password);
-            
-            ///////////////// TESTING
-            
-            UserResponse? user = new UserResponse { 
-                Id = 1, 
-                Username = "jperez", 
-                Name = "Juan Pérez", 
-                IsEnabled = true, 
-                Role = new RoleResponse{ 
-                    Id = 1, 
-                    Name = "Admin", 
-                    Permissions = new List<int> { 1, 2, 3, 4, 5, 6 , 7, 8, 9, 10 } 
-                }
-            };
-            
-            /////////////////
-            
+            UserResponse? user = _facade.Authenticate(request.Username, request.Password);
+
             if (user == null)
                 return Unauthorized(new { error = "Credenciales inválidas" });
 
