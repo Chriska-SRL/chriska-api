@@ -1,38 +1,42 @@
-﻿namespace BusinessLogic.Dominio
+﻿using System.Data;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
+
+namespace BusinessLogic.Dominio
 {
-    public class User : IEntity<User.UpdatableData>
+    public class User:IEntity<User.UpdatableData>
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public bool isEnabled { get; set; }
+        public Boolean isEnabled { get; set; }
+        public Boolean needsPasswordChange { get; set; }
         public Role Role { get; set; }
         public List<Request> Requests { get; set; } = new List<Request>();
-
-        public User(int id, string name, string username, string password, bool isEnabled, Role role, List<Request> requests)
+       
+        
+        public User(int id, string name, string username, string password, Boolean isEnabled, Boolean needsPasswordChange, Role role,List<Request> requests)
         {
             Id = id;
             Name = name;
             Username = username;
             Password = password;
             this.isEnabled = isEnabled;
+            this.needsPasswordChange = needsPasswordChange;
             Role = role ?? throw new ArgumentNullException(nameof(role));
             Requests = requests ?? new List<Request>();
 
             Validate();
         }
-        public User(int id)
+        public User(int id) 
         {
-            if (id <= 0)
-                throw new ArgumentOutOfRangeException(nameof(id), "El ID del usuario debe ser mayor a cero.");
-
             Id = id;
-            Name = string.Empty;
-            Username = string.Empty;
-            Password = string.Empty;
-            isEnabled = true;
-            Role = new Role(9999, "Temporal","-", new List<Permission>());
+            Name = "Usuario Temporal";
+            Username = "usuariotemporal";
+            Password = "password.temporal.123";isEnabled = false;
+            needsPasswordChange = false;
+            Role = new Role(0);
             Requests = new List<Request>();
         }
 
@@ -51,13 +55,22 @@
                 throw new ArgumentOutOfRangeException(nameof(Username), "El nombre de usuario no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(Password))
-                throw new ArgumentNullException(nameof(Password), "La contraseña es obligatoria.");
+                throw new ArgumentNullException(nameof(Password), "La contraseña hash es obligatoria.");
 
-            if (Password.Length > 255)
-                throw new ArgumentOutOfRangeException(nameof(Password), "La contraseña no puede superar los 255 caracteres.");
+            if (Password.Length > 20 && Password.Length < 8)
+                throw new ArgumentOutOfRangeException(nameof(Password), "La contraseña hash no puede superar los 255 caracteres.");
 
             if (Role == null)
                 throw new ArgumentNullException(nameof(Role), "El rol es obligatorio.");
+        }
+        public static void ValidatePassword(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentNullException(nameof(Password), "La contraseña es obligatoria.");
+
+            var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,30}$");
+            if (!regex.IsMatch(password))
+                throw new ArgumentException("La contraseña debe tener entre 8 y 30 caracteres, incluyendo al menos una mayúscula, una minúscula, un número y un carácter especial.", nameof(Password));
         }
 
         public void Update(UpdatableData data)
@@ -70,23 +83,23 @@
 
             Name = data.Name ?? Name;
             Username = data.Username ?? Username;
-            isEnabled = data.IsEnabled;
+            isEnabled = data.isEnabled;
             Role = data.Role ?? Role;
-
+            needsPasswordChange = data.needsPasswordChange;
             Validate();
         }
 
         public class UpdatableData
         {
-            public string Name { get; set; } = string.Empty;
-            public string Username { get; set; } = string.Empty;
-            public bool IsEnabled { get; set; }
-            public Role Role { get; set; } = null!;
+            public string Name { get; set; }
+            public string Username { get; set; }
+            public Boolean isEnabled { get; set; }
+            public Boolean needsPasswordChange { get; set; }
+            public Role Role { get; set; }
         }
 
-        public override string ToString()
-        {
-            return $"User(Id: {Id}, Name: {Name}, Username: {Username}, IsEnabled: {isEnabled}, Role: {Role})";
+        public override string ToString() { 
+            return $"User(Id: {Id}, Name: {Name}, Username: {Username}, isEnabled: {isEnabled}, needsPasswordChange: {needsPasswordChange},  Role: {Role.ToString()})";
         }
     }
 }

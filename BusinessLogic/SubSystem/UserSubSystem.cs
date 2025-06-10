@@ -24,7 +24,8 @@ namespace BusinessLogic.SubSystem
 
             var newUser = UserMapper.ToDomain(request);
             newUser.Role = role;
-            newUser.Password = PasswordGenerator.Generate();
+            User.ValidatePassword(request.Password);
+            newUser.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
             newUser.Validate();
 
             if (_userRepository.GetByUsername(newUser.Username) != null) 
@@ -32,6 +33,23 @@ namespace BusinessLogic.SubSystem
 
             var added = _userRepository.Add(newUser);
             return UserMapper.ToResponse(added);
+        }
+
+        public string ResetPassword(int userId, string? newPassword = null)
+        {
+            var user = _userRepository.GetById(userId)
+                       ?? throw new InvalidOperationException("Usuario no encontrado.");
+
+            if (string.IsNullOrEmpty(newPassword))
+            {
+                newPassword = PasswordGenerator.Generate();
+                user.needsPasswordChange = true;
+            }
+            User.ValidatePassword(newPassword);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            _userRepository.Update(user);
+
+            return newPassword;
         }
 
         public UserResponse UpdateUser(UpdateUserRequest request)

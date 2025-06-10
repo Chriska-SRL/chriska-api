@@ -26,6 +26,18 @@
             Client = client;
             RequestItems = requestsItems;
         }
+        public OrderRequest(int id)
+        {
+            Id = id;
+            //Order = order;
+            //RequestDate = requestDate;
+           // DeliveryDate = deliveryDate;
+           // Status = status;
+            //Observation = observation;
+            //User = user;
+           // Client = client;
+           // RequestItems = requestsItems;
+        }
         public void Update(UpdatableData data)
         {
             RequestDate = data.RequestDate;

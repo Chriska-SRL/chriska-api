@@ -176,6 +176,7 @@ namespace BusinessLogic
         public UserResponse DeleteUser(int id) => Users.DeleteUser(id);
         public UserResponse GetUserById(int id) => Users.GetUserById(id);
         public List<UserResponse> GetAllUsers() => Users.GetAllUsers();
+        public string ResetPassword(int userId, string? newPassword = null) => Users.ResetPassword(userId, newPassword);
 
         // Warehouses
         public void AddWarehouse(AddWarehouseRequest warehouse) => Warehouses.AddWarehouse(warehouse);

@@ -20,33 +20,8 @@ namespace BusinessLogic.Común.Mappers
                 deliveryDate: orderRequest.DeliveryDate,
                 status: orderRequest.Status,
                 observation: "",
-                user: new User(
-                    id: orderRequest.UserId,
-                    name: "",
-                    username: "",
-                    password: "",
-                    isEnabled: true,
-                    role: null,
-                    requests: new List<Request>()
-                ),                 
-                client: new Client(
-                    id: orderRequest.ClientId,
-                    name: "",
-                    rut: "",
-                    razonSocial: "",
-                    address: "",
-                    mapsAddress: "",
-                    schedule: "",
-                    phone: "",
-                    contactName: "",
-                    email: "",
-                    observation: "",
-                    bankAccount: "",
-                    loanedCrates: 0,
-                    zone: null,
-                    receipts: new List<Receipt>(),
-                    requests: new List<Request>()
-                ),
+                user: new User(orderRequest.UserId),                 
+                client: new Client(orderRequest.ClientId),
                 requestsItems: new List<RequestItem>()
             );
         }
@@ -58,35 +33,8 @@ namespace BusinessLogic.Común.Mappers
                 DeliveryDate = updateOrderRequest.DeliveryDate,
                 Status = updateOrderRequest.Status,
                 Observation = updateOrderRequest.Observation,
-                User = new User
-               (
-                    id: updateOrderRequest.UserId,
-                    name: "",
-                    username: "",
-                    password: "",
-                    isEnabled: true,
-                    role: null,
-                    requests: new List<Request>()
-               ),
-                Client = new Client
-                (
-                    id: updateOrderRequest.ClientId,
-                    name: "",
-                    rut: "",
-                    razonSocial: "",
-                    address: "",
-                    mapsAddress: "",
-                    schedule: "",
-                    phone: "",
-                    contactName: "",
-                    email: "",
-                    observation: "",
-                    bankAccount: "",
-                    loanedCrates: 0,
-                    zone: null,
-                    receipts: new List<Receipt>(),
-                    requests: new List<Request>()
-                )
+                User = new User(updateOrderRequest.UserId),
+                Client = new Client(updateOrderRequest.ClientId)
             };
         }
         public static OrderRequestResponse ToResponse(OrderRequest orderRequest)
@@ -97,38 +45,8 @@ namespace BusinessLogic.Común.Mappers
                 DeliveryDate = orderRequest.DeliveryDate,
                 Status = orderRequest.Status,
                 Observation = orderRequest.Observation,
-                User = new UserResponse
-                {
-                    Name = orderRequest.User.Name,
-                    Username = orderRequest.User.Username,
-                    IsEnabled = orderRequest.User.isEnabled,
-                    Role = new RoleResponse
-                    {
-                        Name = orderRequest.User.Role.Name
-                    }
-                },
-                Client = new ClientResponse
-                {
-                    Id = orderRequest.Client.Id,
-                    Name = orderRequest.Client.Name,
-                    RUT = orderRequest.Client.RUT,
-                    RazonSocial = orderRequest.Client.RazonSocial,
-                    Address = orderRequest.Client.Address,
-                    MapsAddress = orderRequest.Client.MapsAddress,
-                    Schedule = orderRequest.Client.Schedule,
-                    Phone = orderRequest.Client.Phone,
-                    ContactName = orderRequest.Client.ContactName,
-                    Email = orderRequest.Client.Email,
-                    Observation = orderRequest.Client.Observation,
-                    BankAccount = orderRequest.Client.BankAccount,
-                    LoanedCrates = orderRequest.Client.LoanedCrates,
-                    zone = new ZoneResponse
-                    {
-                        Id = orderRequest.Client.Zone.Id,
-                        Name = orderRequest.Client.Zone.Name,
-                        Description = orderRequest.Client.Zone.Description
-                    }
-                }
+                User = UserMapper.ToResponse(orderRequest.User),
+                Client = ClientMapper.ToResponse(orderRequest.Client),
             };
         }
     }

@@ -17,7 +17,7 @@ namespace BusinessLogic.SubSystem
         {
             var user = _userRepository.GetByUsername(username);
 
-            if (user == null || user.Password != password || !user.isEnabled)
+            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password) || !user.isEnabled)
                 return null;
 
             return UserMapper.ToResponse(user);

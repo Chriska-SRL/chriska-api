@@ -29,6 +29,7 @@ namespace Repository.Tests
                 username: $"newUser{suffix}",
                 password: "password123",
                 isEnabled: true,
+                needsPasswordChange: true,
                 role: role,
                 requests: new List<Request>()
             );
@@ -41,6 +42,7 @@ namespace Repository.Tests
                 && a.Username == b.Username
                 && a.Password == b.Password
                 && a.isEnabled == b.isEnabled
+                && a.needsPasswordChange == b.needsPasswordChange
                 && a.Role.Id == b.Role.Id
                 && a.Role.Name == b.Role.Name
                 && a.Role.Description == b.Role.Description
@@ -52,8 +54,10 @@ namespace Repository.Tests
             entity.Name += "Modified";
             entity.Password = "newPassword456";
             entity.isEnabled = false;
+            entity.needsPasswordChange = false;
             return entity;
         }
+
 
         public override IRepository<User> CreateRepositoryInstance()
         {

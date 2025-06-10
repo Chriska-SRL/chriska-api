@@ -42,30 +42,9 @@ namespace BusinessLogic.Común.Mappers
                 Quantity = domain.Quantity,
                 Type = domain.Type,
                 Reason = domain.Reason,
-                Shelve = new ShelveResponse
-                {
-                    Description = domain.Shelve.Description
-                },
-                User = new UserResponse
-                {
-                    Id = domain.User.Id,
-                    Name = domain.User.Name,
-                    Username = domain.User.Username
-                },
-                Product = new ProductResponse
-                {
-                    Id = domain.Product.Id,
-                    InternalCode = domain.Product.InternalCode,
-                    Barcode = domain.Product.Barcode,
-                    Name = domain.Product.Name,
-                    Price = domain.Product.Price,
-                    Image = domain.Product.Image,
-                    Stock = domain.Product.Stock,
-                    Description = domain.Product.Description,
-                    UnitType = domain.Product.UnitType,
-                    TemperatureCondition = domain.Product.TemperatureCondition,
-                    Observation = domain.Product.Observation
-                }
+                Shelve = ShelveMapper.ToResponse(domain.Shelve),
+                User = UserMapper.ToResponse(domain.User),
+                Product = ProductMapper.ToResponse(domain.Product)
             };
         }
     }

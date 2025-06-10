@@ -14,6 +14,7 @@ namespace BusinessLogic.Común.Mappers
                 username: addUserRequest.Username,
                 password: "Temporal.12345",
                 isEnabled: addUserRequest.IsEnabled,
+                needsPasswordChange: true,
                 role: new Role(addUserRequest.RoleId),
                 requests: new List<Request>()
             );
@@ -24,7 +25,7 @@ namespace BusinessLogic.Común.Mappers
             {
                 Name = updateUserRequest.Name,
                 Username = updateUserRequest.Username,
-                IsEnabled = updateUserRequest.IsEnabled,
+                isEnabled = updateUserRequest.IsEnabled,
                 Role = new Role(updateUserRequest.RoleId),
             };
         }
@@ -36,13 +37,7 @@ namespace BusinessLogic.Común.Mappers
                 Name = user.Name,
                 Username = user.Username,
                 IsEnabled = user.isEnabled,
-                Role = new RoleResponse
-                {
-                    Id = user.Role.Id,
-                    Name = user.Role.Name,
-                    Description = user.Role.Description,
-                    Permissions = user.Role.Permissions.Select(p => (int)p).ToList()
-                }
+                Role = RoleMapper.ToResponse(user.Role),
             };
         }
 

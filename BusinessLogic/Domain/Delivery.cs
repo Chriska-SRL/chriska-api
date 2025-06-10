@@ -18,6 +18,15 @@
             Orders = orders;
             Vehicle = vehicle;
         }
+        public Delivery(int id)
+        {
+            Id = id;
+            //Date = date;
+          // DriverName = driverName;
+          //  Observation = observation;
+          //  Orders = orders;
+           // Vehicle = vehicle;
+        }
 
         public void Validate()
         {
