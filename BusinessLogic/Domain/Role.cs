@@ -23,6 +23,7 @@
         public void Update(UpdatableData data)
         {
             Name = data.Name;
+            Description = data.Description;
             Permissions = data.Permissions ?? new List<Permission>();
             Validate();
         }
