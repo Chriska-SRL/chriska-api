@@ -15,6 +15,7 @@ using BusinessLogic.DTOs.DTOsStockMovement;
 using BusinessLogic.DTOs.DTOsSubCategory;
 using BusinessLogic.DTOs.DTOsSupplier;
 using BusinessLogic.DTOs.DTOsUser;
+using BusinessLogic.DTOs.DTOsVehicle;
 using BusinessLogic.DTOs.DTOsWarehouse;
 using BusinessLogic.DTOs.DTOsZone;
 using BusinessLogic.SubSystem;
@@ -105,7 +106,7 @@ namespace BusinessLogic
         public void DeleteDelivery(DeleteDeliveryRequest request) => Deliveries.DeleteDelivery(request);
 
         // Vehicles
-        public void AddVehicle(Vehicle vehicle) => Deliveries.AddVehicle(vehicle);
+        public void AddVehicle(AddVehicleRequest vehicle) => Deliveries.AddVehicle(vehicle);
 
         // Orders
         public void AddOrder(AddOrderRequest request) => Orders.AddOrder(request);
@@ -116,7 +117,7 @@ namespace BusinessLogic
         // public List<OrderResponse> GetAllOrders() => Orders.GetAllOrders();
 
         // OrderItems
-        public void AddOrderItem(OrderItem item) => Orders.AddOrderItem(item);
+        public void AddOrderItem(AddOrderItemRequest item) => Orders.AddOrderItem(item);
         public OrderItemResponse GetOrderItemById(int id) => Orders.GetItemOrderById(id);
 
         // Payments
