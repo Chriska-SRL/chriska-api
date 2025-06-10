@@ -49,7 +49,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
             catch (Exception ex)
-        {
+            {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
@@ -100,13 +100,23 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using (var command = new SqlCommand("SELECT * FROM Products", connection))
+                using (var command = new SqlCommand(@"
+                    SELECT 
+                        p.*, 
+                        sc.Name AS SubCategoryName, 
+                        sc.Description AS SubCategoryDescription, 
+                        c.Id AS CategoryId, 
+                        c.Name AS CategoryName, 
+                        c.Description AS CategoryDescription
+                    FROM Products p
+                    JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+                    JOIN Categories c ON sc.CategoryId = c.Id", connection))
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         products.Add(ProductMapper.FromReader(reader));
-        }
+                    }
                 }
 
                 return products;
@@ -127,21 +137,28 @@ namespace Repository.EntityRepositories
         {
             try
             {
-                Product product;
-
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using (var command = new SqlCommand("SELECT * FROM Products WHERE Id = @Id", connection))
+                using (var command = new SqlCommand(@"
+                    SELECT 
+                        p.*, 
+                        sc.Name AS SubCategoryName, 
+                        sc.Description AS SubCategoryDescription, 
+                        c.Id AS CategoryId, 
+                        c.Name AS CategoryName, 
+                        c.Description AS CategoryDescription
+                    FROM Products p
+                    JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+                    JOIN Categories c ON sc.CategoryId = c.Id
+                    WHERE p.Id = @Id", connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
                     using var reader = command.ExecuteReader();
                     if (!reader.Read()) return null;
 
-                    product = ProductMapper.FromReader(reader);
+                    return ProductMapper.FromReader(reader);
                 }
-
-                return product;
             }
             catch (SqlException ex)
             {
@@ -190,8 +207,10 @@ namespace Repository.EntityRepositories
                     updateCommand.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
                     updateCommand.Parameters.AddWithValue("@Id", product.Id);
 
-                    updateCommand.ExecuteNonQuery();
-        }
+                    int affectedRows = updateCommand.ExecuteNonQuery();
+                    if (affectedRows == 0)
+                        throw new InvalidOperationException($"No se encontró el producto con ID {product.Id} para actualizar.");
+                }
 
                 return product;
             }
@@ -201,7 +220,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
             catch (Exception ex)
-        {
+            {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }

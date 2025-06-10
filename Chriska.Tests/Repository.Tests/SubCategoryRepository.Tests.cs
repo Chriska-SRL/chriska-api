@@ -13,22 +13,27 @@ namespace Repository.Tests
 
         public override SubCategory CreateSampleEntity()
         {
-            var category = new Category(1, "CategoriaDummy");
+            var category = new Category(1, "CategoriaDummy", "DescripcionDummy");
             return new SubCategory(
                 id: 0,
                 name: $"SubCategoria{getANumber()}",
+                description: "Descripción inicial",
                 category: category
             );
         }
 
         public override bool CompareEntities(SubCategory a, SubCategory b)
         {
-            return a.Id == b.Id && a.Name == b.Name && a.Category.Id == b.Category.Id;
+            return a.Id == b.Id &&
+                   a.Name == b.Name &&
+                   a.Description == b.Description &&
+                   a.Category.Id == b.Category.Id;
         }
 
         public override SubCategory ModifyEntity(SubCategory entity)
         {
             entity.Name += "Modificado";
+            entity.Description += " modificada";
             return entity;
         }
 

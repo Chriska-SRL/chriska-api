@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using BusinessLogic;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsSubCategory;
+using BusinessLogic.Dominio;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class CategoriesController : ControllerBase
     {
         private readonly Facade _facade;
@@ -17,6 +20,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = nameof(Permission.VIEW_CATEGORIES))]
         public ActionResult<List<CategoryResponse>> GetAllCategories()
         {
             try
@@ -30,6 +34,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = nameof(Permission.VIEW_CATEGORIES))]
         public ActionResult<CategoryResponse> GetCategoryById(int id)
         {
             try
@@ -43,12 +48,13 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCategory([FromBody] AddCategoryRequest request)
+        [Authorize(Policy = nameof(Permission.CREATE_CATEGORIES))]
+        public ActionResult<CategoryResponse> AddCategory([FromBody] AddCategoryRequest request)
         {
             try
             {
-                _facade.AddCategory(request);
-                return Ok(new { message = "Categoría agregada correctamente" });
+                var response = _facade.AddCategory(request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -57,12 +63,13 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateCategory([FromBody] UpdateCategoryRequest request)
+        [Authorize(Policy = nameof(Permission.EDIT_CATEGORIES))]
+        public ActionResult<CategoryResponse> UpdateCategory([FromBody] UpdateCategoryRequest request)
         {
             try
             {
-                _facade.UpdateCategory(request);
-                return Ok(new { message = "Categoría actualizada correctamente" });
+                var response = _facade.UpdateCategory(request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -71,12 +78,13 @@ namespace API.Controllers
         }
 
         [HttpDelete]
-        public IActionResult DeleteCategory([FromBody] DeleteCategoryRequest request)
+        [Authorize(Policy = nameof(Permission.DELETE_CATEGORIES))]
+        public ActionResult<CategoryResponse> DeleteCategory([FromBody] DeleteCategoryRequest request)
         {
             try
             {
-                _facade.DeleteCategory(request);
-                return Ok(new { message = "Categoría eliminada correctamente" });
+                var response = _facade.DeleteCategory(request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -85,6 +93,7 @@ namespace API.Controllers
         }
 
         [HttpGet("subcategories")]
+        [Authorize(Policy = nameof(Permission.VIEW_CATEGORIES))]
         public ActionResult<List<SubCategoryResponse>> GetAllSubCategories()
         {
             try
@@ -98,6 +107,7 @@ namespace API.Controllers
         }
 
         [HttpGet("subcategories/{id}")]
+        [Authorize(Policy = nameof(Permission.VIEW_CATEGORIES))]
         public ActionResult<SubCategoryResponse> GetSubCategoryById(int id)
         {
             try
@@ -111,12 +121,13 @@ namespace API.Controllers
         }
 
         [HttpPost("subcategories")]
-        public IActionResult AddSubCategory([FromBody] AddSubCategoryRequest request)
+        [Authorize(Policy = nameof(Permission.CREATE_CATEGORIES))]
+        public ActionResult<SubCategoryResponse> AddSubCategory([FromBody] AddSubCategoryRequest request)
         {
             try
             {
-                _facade.AddSubCategory(request);
-                return Ok(new { message = "Subcategoría agregada correctamente" });
+                var response = _facade.AddSubCategory(request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -125,12 +136,13 @@ namespace API.Controllers
         }
 
         [HttpPut("subcategories")]
-        public IActionResult UpdateSubCategory([FromBody] UpdateSubCategoryRequest request)
+        [Authorize(Policy = nameof(Permission.EDIT_CATEGORIES))]
+        public ActionResult<SubCategoryResponse> UpdateSubCategory([FromBody] UpdateSubCategoryRequest request)
         {
             try
             {
-                _facade.UpdateSubCategory(request);
-                return Ok(new { message = "Subcategoría actualizada correctamente" });
+                var response = _facade.UpdateSubCategory(request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -139,12 +151,13 @@ namespace API.Controllers
         }
 
         [HttpDelete("subcategories")]
-        public IActionResult DeleteSubCategory([FromBody] DeleteSubCategoryRequest request)
+        [Authorize(Policy = nameof(Permission.DELETE_CATEGORIES))]
+        public ActionResult<SubCategoryResponse> DeleteSubCategory([FromBody] DeleteSubCategoryRequest request)
         {
             try
             {
-                _facade.DeleteSubCategory(request);
-                return Ok(new { message = "Subcategoría eliminada correctamente" });
+                var response = _facade.DeleteSubCategory(request);
+                return Ok(response);
             }
             catch (Exception ex)
             {

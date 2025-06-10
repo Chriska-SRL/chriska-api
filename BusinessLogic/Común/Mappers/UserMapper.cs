@@ -45,9 +45,9 @@ namespace BusinessLogic.Común.Mappers
                 {
                     Id = user.Role.Id,
                     Name = user.Role.Name,
+                    Description = user.Role.Description,
                     Permissions = user.Role.Permissions.Select(p => (int)p).ToList()
                 }
-
             };
         }
 

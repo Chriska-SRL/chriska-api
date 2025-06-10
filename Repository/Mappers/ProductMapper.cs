@@ -7,10 +7,17 @@ namespace Repository.Mappers
     {
         public static Product FromReader(SqlDataReader reader)
         {
+            var category = new Category(
+                id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                name: reader.GetString(reader.GetOrdinal("CategoryName")),
+                description: reader.GetString(reader.GetOrdinal("CategoryDescription"))
+            );
+
             var subCategory = new SubCategory(
                 id: reader.GetInt32(reader.GetOrdinal("SubCategoryId")),
-                name: string.Empty,
-                category: new Category(0, string.Empty)
+                name: reader.GetString(reader.GetOrdinal("SubCategoryName")),
+                description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
+                category: category
             );
 
             return new Product(

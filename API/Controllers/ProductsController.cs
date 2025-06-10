@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using BusinessLogic;
 using BusinessLogic.DTOs.DTOsProduct;
+using BusinessLogic.Dominio;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly Facade _facade;
@@ -16,12 +19,13 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddProduct([FromBody] AddProductRequest request)
+        [Authorize(Policy = nameof(Permission.CREATE_PRODUCTS))]
+        public ActionResult<ProductResponse> AddProduct([FromBody] AddProductRequest request)
         {
             try
             {
-                _facade.AddProduct(request);
-                return Ok(new { message = "Producto agregado correctamente" });
+                var result = _facade.AddProduct(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -30,12 +34,13 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateProduct([FromBody] UpdateProductRequest request)
+        [Authorize(Policy = nameof(Permission.EDIT_PRODUCTS))]
+        public ActionResult<ProductResponse> UpdateProduct([FromBody] UpdateProductRequest request)
         {
             try
             {
-                _facade.UpdateProduct(request);
-                return Ok(new { message = "Producto actualizado correctamente" });
+                var result = _facade.UpdateProduct(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -44,12 +49,13 @@ namespace API.Controllers
         }
 
         [HttpDelete]
-        public IActionResult DeleteProduct([FromBody] DeleteProductRequest request)
+        [Authorize(Policy = nameof(Permission.DELETE_PRODUCTS))]
+        public ActionResult<ProductResponse> DeleteProduct([FromBody] DeleteProductRequest request)
         {
             try
             {
-                _facade.DeleteProduct(request);
-                return Ok(new { message = "Producto eliminado correctamente" });
+                var result = _facade.DeleteProduct(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -58,11 +64,13 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = nameof(Permission.VIEW_PRODUCTS))]
         public ActionResult<ProductResponse> GetProductById(int id)
         {
             try
             {
-                return Ok(_facade.GetProductById(id));
+                var response = _facade.GetProductById(id);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -71,11 +79,13 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = nameof(Permission.VIEW_PRODUCTS))]
         public ActionResult<List<ProductResponse>> GetAllProducts()
         {
             try
             {
-                return Ok(_facade.GetAllProducts());
+                var response = _facade.GetAllProducts();
+                return Ok(response);
             }
             catch (Exception ex)
             {

@@ -7,7 +7,7 @@ using BusinessLogic.Repository;
 
 namespace Repository.Tests
 {
-    public class CategoryRepositoryTests : RepositoryTestsBase<Category,Category.UpdatableData>
+    public class CategoryRepositoryTests : RepositoryTestsBase<Category, Category.UpdatableData>
     {
         private CategoryRepository _repo;
 
@@ -15,18 +15,20 @@ namespace Repository.Tests
         {
             return new Category(
                 id: 0,
-                name: $"Category{getANumber()}"
+                name: $"Category{getANumber()}",
+                description: "Descripción inicial"
             );
         }
 
         public override bool CompareEntities(Category a, Category b)
         {
-            return a.Id == b.Id && a.Name == b.Name;
+            return a.Id == b.Id && a.Name == b.Name && a.Description == b.Description;
         }
 
         public override Category ModifyEntity(Category entity)
         {
             entity.Name += "Mod";
+            entity.Description += " modificada";
             return entity;
         }
 

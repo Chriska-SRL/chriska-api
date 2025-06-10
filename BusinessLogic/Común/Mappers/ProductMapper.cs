@@ -8,81 +8,74 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class ProductMapper
     {
-        public static Product toDomain(AddProductRequest addProductRequest)
+        public static Product ToDomain(AddProductRequest dto, SubCategory subCategory)
         {
             return new Product(
-                id:0,
-                internalCode: addProductRequest.InternalCode,
-                barcode: addProductRequest.Barcode,
-                name: addProductRequest.Name,
-                price: addProductRequest.Price,
-                image: addProductRequest.Image,
-                stock: addProductRequest.Stock,
-                description: addProductRequest.Description,
-                unitType: addProductRequest.UnitType,
-                temperatureCondition: addProductRequest.TemperatureCondition,
-                observation: addProductRequest.Observation,
-                subCategory: new SubCategory (
-                    id: addProductRequest.SubCategoryId,
-                    name: "",
-                    category:null
-                ),
+                id: 0,
+                internalCode: dto.InternalCode,
+                barcode: dto.Barcode,
+                name: dto.Name,
+                price: dto.Price,
+                image: dto.Image,
+                stock: dto.Stock,
+                description: dto.Description,
+                unitType: dto.UnitType,
+                temperatureCondition: dto.TemperatureCondition,
+                observation: dto.Observation,
+                subCategory: subCategory,
                 suppliers: new List<Supplier>()
             );
         }
-        public static Product.UpdatableData toDomain(UpdateProductRequest updateProductRequest)
+
+        public static Product.UpdatableData ToUpdatableData(UpdateProductRequest dto, SubCategory subCategory)
         {
             return new Product.UpdatableData
             {
-                Name = updateProductRequest.Name,
-                Price = updateProductRequest.Price,
-                Image = updateProductRequest.Image,
-                Stock = updateProductRequest.Stock,
-                Description = updateProductRequest.Description,
-                UnitType = updateProductRequest.UnitType,
-                TemperatureCondition = updateProductRequest.TemperatureCondition,
-                Observation = updateProductRequest.Observation,
-                SubCategory = new SubCategory(
-                    id: updateProductRequest.SubCategoryId,
-                    name: "",
-                    category: null
-                )
+                Name = dto.Name,
+                Price = dto.Price,
+                Image = dto.Image,
+                Stock = dto.Stock,
+                Description = dto.Description,
+                UnitType = dto.UnitType,
+                TemperatureCondition = dto.TemperatureCondition,
+                Observation = dto.Observation,
+                SubCategory = subCategory
             };
         }
-        public static ProductResponse toResponse(Product product)
+
+        public static ProductResponse ToResponse(Product domain)
         {
             return new ProductResponse
             {
-
-                Id = product.Id,
-                InternalCode = product.InternalCode,
-                Barcode = product.Barcode,
-                Name = product.Name,
-                Price = product.Price,
-                Image = product.Image,
-                Stock = product.Stock,
-                UnitType = product.UnitType,
-                Description = product.Description,
-                TemperatureCondition = product.TemperatureCondition,
-                Observation = product.Observation,
+                Id = domain.Id,
+                InternalCode = domain.InternalCode,
+                Barcode = domain.Barcode,
+                Name = domain.Name,
+                Price = domain.Price,
+                Image = domain.Image,
+                Stock = domain.Stock,
+                Description = domain.Description,
+                UnitType = domain.UnitType,
+                TemperatureCondition = domain.TemperatureCondition,
+                Observation = domain.Observation,
                 SubCategory = new SubCategoryResponse
                 {
-                    Id = product.SubCategory.Id,
-                    Name = product.SubCategory.Name,
+                    Id = domain.SubCategory.Id,
+                    Name = domain.SubCategory.Name,
+                    Description = domain.SubCategory.Description,
                     Category = new CategoryResponse
                     {
-                        Id = product.SubCategory.Category.Id,
-                        Name = product.SubCategory.Category.Name
+                        Id = domain.SubCategory.Category.Id,
+                        Name = domain.SubCategory.Category.Name,
+                        Description = domain.SubCategory.Category.Description
                     }
-
                 },
-                Suppliers = product.Suppliers.Select(s => new SupplierResponse
+                Suppliers = domain.Suppliers.Select(s => new SupplierResponse
                 {
                     Id = s.Id,
                     Name = s.Name
                 }).ToList()
             };
-
         }
     }
 }

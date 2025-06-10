@@ -18,17 +18,18 @@ namespace Repository.EntityRepositories
             {
                 using var connection = CreateConnection();
                 using var command = new SqlCommand(@"
-                    INSERT INTO SubCategories (Name, CategoryId) 
+                    INSERT INTO SubCategories (Name, Description, CategoryId) 
                     OUTPUT INSERTED.Id 
-                    VALUES (@Name, @CategoryId)", connection);
+                    VALUES (@Name, @Description, @CategoryId)", connection);
 
                 command.Parameters.AddWithValue("@Name", subCategory.Name);
+                command.Parameters.AddWithValue("@Description", subCategory.Description);
                 command.Parameters.AddWithValue("@CategoryId", subCategory.Category.Id);
 
                 connection.Open();
                 int id = (int)command.ExecuteScalar();
 
-                return new SubCategory(id, subCategory.Name, subCategory.Category);
+                return new SubCategory(id, subCategory.Name, subCategory.Description, subCategory.Category);
             }
             catch (SqlException ex)
             {
@@ -87,7 +88,7 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using (var command = new SqlCommand("SELECT Id, Name, CategoryId FROM SubCategories", connection))
+                using (var command = new SqlCommand("SELECT Id, Name, Description, CategoryId FROM SubCategories", connection))
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -114,21 +115,17 @@ namespace Repository.EntityRepositories
         {
             try
             {
-                SubCategory subCategory;
-
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using (var command = new SqlCommand("SELECT Id, Name, CategoryId FROM SubCategories WHERE Id = @Id", connection))
+                using (var command = new SqlCommand("SELECT Id, Name, Description, CategoryId FROM SubCategories WHERE Id = @Id", connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
                     using var reader = command.ExecuteReader();
                     if (!reader.Read()) return null;
 
-                    subCategory = SubCategoryMapper.FromReader(reader);
+                    return SubCategoryMapper.FromReader(reader);
                 }
-
-                return subCategory;
             }
             catch (SqlException ex)
             {
@@ -149,13 +146,17 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using (var updateCommand = new SqlCommand("UPDATE SubCategories SET Name = @Name, CategoryId = @CategoryId WHERE Id = @Id", connection))
+                using (var updateCommand = new SqlCommand("UPDATE SubCategories SET Name = @Name, Description = @Description, CategoryId = @CategoryId WHERE Id = @Id", connection))
                 {
                     updateCommand.Parameters.AddWithValue("@Name", subCategory.Name);
+                    updateCommand.Parameters.AddWithValue("@Description", subCategory.Description);
                     updateCommand.Parameters.AddWithValue("@CategoryId", subCategory.Category.Id);
                     updateCommand.Parameters.AddWithValue("@Id", subCategory.Id);
-                    updateCommand.ExecuteNonQuery();
-        }
+
+                    int affectedRows = updateCommand.ExecuteNonQuery();
+                    if (affectedRows == 0)
+                        throw new InvalidOperationException($"No se encontró la subcategoría con ID {subCategory.Id} para actualizar.");
+                }
 
                 return subCategory;
             }
@@ -165,7 +166,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
             catch (Exception ex)
-        {
+            {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
