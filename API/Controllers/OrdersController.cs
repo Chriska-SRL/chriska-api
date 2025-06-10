@@ -89,7 +89,7 @@ namespace API.Controllers
         //}
 
         [HttpPost("item")]
-        public IActionResult AddOrderItem([FromBody] OrderItem orderItem)
+        public IActionResult AddOrderItem([FromBody] AddOrderItemRequest orderItem)
         {
             try
             {

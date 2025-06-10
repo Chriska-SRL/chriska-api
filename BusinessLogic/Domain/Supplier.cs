@@ -11,6 +11,7 @@
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
+        public string Bank { get; set; }
         public string BankAccount { get; set; }
         public string Observations { get; set; }
         public List<Product> Products { get; set; } = new List<Product>();
@@ -18,7 +19,7 @@
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public List<Day> DaysToDeliver { get; set; } = new List<Day>();
 
-        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email,string bankAccount, string observations, List<Product> products, List<Payment> payments, List<Purchase> purchases, List<Day> daysToDeliver)
+        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, string bank, string bankAccount, string observations, List<Product> products, List<Payment> payments, List<Purchase> purchases, List<Day> daysToDeliver)
         {
             Id = id;
             Name = name;
@@ -29,6 +30,7 @@
             Phone = phone;
             ContactName = contactName;
             Email = email;
+            Bank = bank;
             BankAccount = bankAccount;
             Observations = observations;
             Products = products;

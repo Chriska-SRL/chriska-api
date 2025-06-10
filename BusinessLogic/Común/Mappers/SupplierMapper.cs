@@ -17,6 +17,7 @@ namespace BusinessLogic.Común.Mappers
                 phone: request.Phone,
                 contactName: request.ContactName,
                 email: request.Email,
+                bank: request.Bank,
                 bankAccount: request.BankAccount,
                 observations: request.Observation,
                 products: new List<Product>(),
