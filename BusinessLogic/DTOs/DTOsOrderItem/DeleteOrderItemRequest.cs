@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOs.DTOsCategory
+namespace BusinessLogic.DTOs.DTOsOrderItem
 {
-    public class CategoryResponse
+    public class DeleteOrderItemRequest
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-
     }
 }

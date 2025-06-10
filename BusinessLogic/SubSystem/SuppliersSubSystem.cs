@@ -2,6 +2,7 @@
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsSupplier;
 using System.Diagnostics;
+using BusinessLogic.Común.Mappers;
 
 namespace BusinessLogic.SubSystem
 {
@@ -16,35 +17,38 @@ namespace BusinessLogic.SubSystem
 
         public void AddSupplier(AddSupplierRequest supplier)
         {
-            //var newSupplier = new Supplier(supplier.Name, supplier.RUT, supplier.BusinessName, supplier.Address, supplier.MapsAddress, supplier.Phone, supplier.ContactName, supplier.Email, supplier.BankAccount, supplier.Observation);
-            //newSupplier.Validate();
-            //_supplierRepository.Add(newSupplier);
+            Supplier newSupplier= SupplierMapper.toDomain(supplier);
+            newSupplier.Validate();
+            _supplierRepository.Add(newSupplier);
         }
 
         public void UpdateSupplier(UpdateSupplierRequest supplier)
         {
-            var existingSupplier = _supplierRepository.GetById(supplier.Id);
+            Supplier existingSupplier = _supplierRepository.GetById(supplier.Id);
             if (existingSupplier == null) throw new Exception("No se encontro el proveedor");
-            existingSupplier.Update(supplier.Name, supplier.RUT, supplier.BusinessName, supplier.Address, supplier.MapsAddress, supplier.Phone, supplier.ContactName, supplier.Email, supplier.BankAccount, supplier.Observation);
-            existingSupplier.Validate();
+            existingSupplier.Update(SupplierMapper.toDomain(supplier));
             _supplierRepository.Update(existingSupplier);
         }
 
         public void DeleteSupplier(DeleteSupplierRequest supplier)
         {
-            var existingSupplier = _supplierRepository.GetById(supplier.Id);
+            Supplier existingSupplier = _supplierRepository.GetById(supplier.Id);
             if (supplier == null) throw new Exception("No se encontro el proveedor");
             _supplierRepository.Delete(existingSupplier.Id);
         }
 
         public SupplierResponse GetSupplierById(int id)
         {
-            throw new NotImplementedException();
+            Supplier supplier = _supplierRepository.GetById(id);
+            if (supplier == null) throw new Exception("No se encontro el proveedor");
+            return SupplierMapper.toResponse(supplier);
         } 
 
         public List<SupplierResponse> GetAllSupplierResponse()
         {
-            throw new NotImplementedException();
+            List<Supplier> suppliers = _supplierRepository.GetAll();
+            if (!suppliers.Any()) throw new Exception("No se encontraron proveedores");
+            return suppliers.Select(SupplierMapper.toResponse).ToList();
         }
     }
 }

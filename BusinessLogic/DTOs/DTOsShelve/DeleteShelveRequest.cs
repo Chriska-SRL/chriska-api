@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOs.DTOsCategory
+namespace BusinessLogic.DTOs.DTOsShelve
 {
-    public class CategoryResponse
+    public class DeleteShelveRequest
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
 
     }
 }

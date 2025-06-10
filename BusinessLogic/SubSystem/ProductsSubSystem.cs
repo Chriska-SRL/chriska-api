@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Dominio;
-using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsProduct;
+using BusinessLogic.Repository;
+using BusinessLogic.Común.Mappers;
 
 namespace BusinessLogic.SubSystem
 {
@@ -9,60 +10,60 @@ namespace BusinessLogic.SubSystem
         private readonly IProductRepository _productRepository;
         private readonly ISubCategoryRepository _subCategoryRepository;
 
-        private readonly CategoriesSubSystem _categoriesSubSystem;
-
-        public ProductsSubSystem(IProductRepository productRepository, ISubCategoryRepository subCategoryRepository, CategoriesSubSystem categoriesSubSystem)
+        public ProductsSubSystem(IProductRepository productRepository, ISubCategoryRepository subCategoryRepository)
         {
             _productRepository = productRepository;
             _subCategoryRepository = subCategoryRepository;
-
-            _categoriesSubSystem = categoriesSubSystem;
         }
 
-        public void AddProduct(AddProductRequest product)
+        public ProductResponse AddProduct(AddProductRequest request)
         {
-           throw new NotImplementedException();
+            var subCategory = _subCategoryRepository.GetById(request.SubCategoryId)
+                              ?? throw new InvalidOperationException("Subcategoría no encontrada.");
+
+            var newProduct = ProductMapper.ToDomain(request, subCategory);
+            newProduct.Validate();
+
+            var added = _productRepository.Add(newProduct);
+            return ProductMapper.ToResponse(added);
         }
 
-        public void UpdateProduct(UpdateProductRequest product)
+        public ProductResponse UpdateProduct(UpdateProductRequest request)
         {
-            //var existingProduct = _productRepository.GetById(product.Id);
-            //if (existingProduct == null)
-            //    throw new Exception("No se encontro el producto");
-            //existingProduct.Update(product.Name, product.Price, product.Image, product.Stock, product.Description, product.UnitType, product.TemperatureCondition, product.Observation, _subCategoryRepository.GetById(product.Id));
-            //_productRepository.Update(existingProduct);
+            var existing = _productRepository.GetById(request.Id)
+                           ?? throw new InvalidOperationException("Producto no encontrado.");
+
+            var subCategory = _subCategoryRepository.GetById(request.SubCategoryId)
+                              ?? throw new InvalidOperationException("Subcategoría no encontrada.");
+
+            var data = ProductMapper.ToUpdatableData(request, subCategory);
+            existing.Update(data);
+
+            var updated = _productRepository.Update(existing);
+            return ProductMapper.ToResponse(updated);
         }
 
-        public void DeleteProduct(DeleteProductRequest deleteProductRequest)
+        public ProductResponse DeleteProduct(DeleteProductRequest request)
         {
-            var existingProduct = _productRepository.GetById(deleteProductRequest.Id);
-            if (existingProduct == null) throw new Exception("No se encontro el producto");
-            _productRepository.Delete(deleteProductRequest.Id);
+            var deleted = _productRepository.Delete(request.Id)
+                          ?? throw new InvalidOperationException("Producto no encontrado.");
+
+            return ProductMapper.ToResponse(deleted);
         }
 
         public ProductResponse GetProductById(int id)
         {
-            var product = _productRepository.GetById(id);
-            return new ProductResponse
-            {
-                Name = product.Name,
-                Price = product.Price,
-                Stock = product.Stock,
-                Description = product.Description,
-                SubCategory = _categoriesSubSystem.GetSubCategoryById(product.SubCategory.Id)
-            };
+            var product = _productRepository.GetById(id)
+                          ?? throw new InvalidOperationException("Producto no encontrado.");
+
+            return ProductMapper.ToResponse(product);
         }
 
         public List<ProductResponse> GetAllProducts()
         {
-            var products = _productRepository.GetAll();
-            return products.Select(p => new ProductResponse
-            {
-                Name = p.Name,
-                Price = p.Price,
-                Stock = p.Stock,
-                Description = p.Description,
-                SubCategory = _categoriesSubSystem.GetSubCategoryById(p.SubCategory.Id),
-            }).ToList();
+            return _productRepository.GetAll()
+                                     .Select(ProductMapper.ToResponse)
+                                     .ToList();
         }
-    } }
+    }
+}

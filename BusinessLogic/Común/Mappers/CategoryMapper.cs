@@ -1,33 +1,31 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsCategory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.Común.Mappers
 {
     public static class CategoryMapper
     {
-        public static Category toDomain(AddCategoryRequest dto)
+        public static Category ToDomain(AddCategoryRequest dto)
         {
             return new Category(
                 id: 0,
+                description: dto.Description,
                 name: dto.Name
             );
         }
-        public static Category toDomain(UpdateCategoryRequest dto)
+        public static Category.UpdatableData ToUpdatableData(UpdateCategoryRequest dto)
         {
-            return new Category(
-                id: dto.Id,
-                name: dto.Name
-            );
+            return new Category.UpdatableData
+            {
+                Description = dto.Description,
+                Name = dto.Name
+            };
         }
-        public static CategoryResponse toResponse(Category domain)
+        public static CategoryResponse ToResponse(Category domain)
         {
             return new CategoryResponse{
                 Id= domain.Id,
+                Description = domain.Description,
                 Name= domain.Name
              };
         }

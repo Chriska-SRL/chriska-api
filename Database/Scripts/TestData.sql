@@ -175,3 +175,38 @@ VALUES ( 'Usuario Inactivo', 'inactivo', 'inactivo123', 'F', 2);
 -- Segundo usuario admin
 INSERT INTO Users ( Name, Username, Password, IsEnabled, RoleId)
 VALUES ( 'Supervisor', 'supervisor', 'super123', 'T', 1);
+
+-- Insertar 2 categorías
+INSERT INTO Categories (Name, Description) VALUES ('Lácteos', 'Productos derivados de la leche');
+INSERT INTO Categories (Name, Description) VALUES ('Chacinados', 'Productos cárnicos procesados');
+
+-- Insertar 4 subcategorías
+INSERT INTO SubCategories (Name, Description, CategoryId) VALUES ('Leche', 'Leche entera, descremada y saborizada', 1);
+INSERT INTO SubCategories (Name, Description, CategoryId) VALUES ('Quesos', 'Quesos blandos, duros y rallados', 1);
+INSERT INTO SubCategories (Name, Description, CategoryId) VALUES ('Embutidos cocidos', 'Mortadelas, salchichas y fiambres cocidos', 2);
+INSERT INTO SubCategories (Name, Description, CategoryId) VALUES ('Embutidos curados', 'Salames, longanizas y chorizos secos', 2);
+
+-- Leche (Unidad)
+INSERT INTO Products 
+(Name, InternalCode, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId)
+VALUES 
+('Leche entera 1L', 'L0010', '7790001000010', 'U', 380, 'Leche entera pasteurizada', 'Frio', 200, '', '', 1),
+('Leche descremada 1L', 'L0020', '7790001000027', 'U', 390, 'Leche descremada pasteurizada', 'Frio', 180, '', '', 1),
+('Leche chocolatada 1L', 'L0030', '7790001000034', 'U', 420, 'Leche sabor chocolate', 'Frio', 150, '', '', 1),
+
+-- Quesos (Kilo o Unidad)
+('Queso cremoso', 'Q0010', '7790002000018', 'K', 1800, 'Queso fresco tipo cremoso', 'Frio', 80, '', '', 2),
+('Queso rallado', 'Q0020', '7790002000025', 'U', 950, 'Queso reggianito rallado 100g', 'Frio', 120, '', '', 2),
+('Queso pategrás', 'Q0030', '7790002000032', 'K', 2400, 'Queso semiduro tipo pategrás', 'Frio', 60, '', '', 2),
+
+-- Embutidos cocidos
+('Mortadela', 'C0010', '7790003000016', 'K', 2300, 'Mortadela con pistacho', 'Frio', 55, '', '', 3),
+('Salchichas (6u)', 'C0020', '7790003000023', 'U', 850, 'Salchichas tipo viena', 'Frio', 90, '', '', 3),
+('Fiambre de cerdo', 'C0030', '7790003000030', 'K', 2100, 'Fiambre cocido de cerdo', 'Frio', 70, '', '', 3),
+
+-- Embutidos curados
+('Salame tandilero', 'E0010', '7790004000014', 'K', 3100, 'Salame curado artesanal', 'Natural', 45, '', '', 4),
+('Longaniza 250g', 'E0020', '7790004000021', 'U', 1200, 'Longaniza tipo calabresa', 'Natural', 65, '', '', 4),
+('Chorizo seco', 'E0030', '7790004000038', 'K', 2900, 'Chorizo estacionado', 'Natural', 50, '', '', 4),
+('Fuet catalán', 'E0040', '7790004000045', 'U', 1500, 'Fuet curado estilo catalán', 'Natural', 30, '', '', 4);
+

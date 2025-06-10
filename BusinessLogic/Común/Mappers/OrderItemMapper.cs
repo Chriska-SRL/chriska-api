@@ -1,17 +1,12 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsOrderItem;
 using BusinessLogic.DTOs.DTOsProduct;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.Común.Mappers
 {
     public static class OrderItemMapper
     {
-        public static OrderItem ToDomain(AddOrderItemRequest dto)
+        public static OrderItem toDomain(AddOrderItemRequest dto)
         {
             return new OrderItem(
                 id: 0,
@@ -34,7 +29,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static OrderItem.UpdatableData ToDomain(UpdateOrderItemRequest dto)
+        public static OrderItem.UpdatableData toDomain(UpdateOrderItemRequest dto)
         {
             return new OrderItem.UpdatableData
             {
@@ -57,7 +52,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             };
         }
-        public static OrderItemResponse ToResponse(OrderItem domain)
+        public static OrderItemResponse toResponse(OrderItem domain)
         {
             return new OrderItemResponse
             {

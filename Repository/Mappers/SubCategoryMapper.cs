@@ -10,9 +10,11 @@ namespace Repository.Mappers
             return new SubCategory(
                 id: reader.GetInt32(reader.GetOrdinal("Id")),
                 name: reader.GetString(reader.GetOrdinal("Name")),
+                description: reader.GetString(reader.GetOrdinal("Description")),
                 category: new Category(
                     id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
-                    name: string.Empty // Se puede completar luego si es necesario
+                    name: string.Empty, // Se puede completar luego si es necesario
+                    description: string.Empty 
                 )
             );
         }

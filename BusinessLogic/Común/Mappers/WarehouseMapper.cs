@@ -16,15 +16,14 @@ namespace BusinessLogic.Común.Mappers
                 shelves: new List<Shelve>()
             );
         }
-        public static Warehouse toDomain(UpdateWarehouseRequest updateWarehouseRequest, int id)
+        public static Warehouse.UpdatableData toDomain(UpdateWarehouseRequest updateWarehouseRequest)
         {
-            return new Warehouse(
-                id: id,
-                name: updateWarehouseRequest.Name,
-                description: updateWarehouseRequest.Description,
-                address: updateWarehouseRequest.Address,
-                shelves: new List<Shelve>()
-            );
+            return new Warehouse.UpdatableData
+            {
+                Name = updateWarehouseRequest.Name,
+                Description = updateWarehouseRequest.Description,
+                Address = updateWarehouseRequest.Address
+            };
         }
         public static WarehouseResponse toResponse(Warehouse warehouse)
         {
@@ -36,7 +35,6 @@ namespace BusinessLogic.Común.Mappers
                 Address = warehouse.Address,
                 Shelves = warehouse.Shelves.Select(s => new ShelveResponse
                 {
-                    Id = s.Id,
                     Description = s.Description
                 }).ToList()
             };

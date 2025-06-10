@@ -2,6 +2,7 @@
 using BusinessLogic;
 using BusinessLogic.DTOs.DTOsDelivery;
 using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsVehicle;
 
 namespace API.Controllers
 {
@@ -59,7 +60,7 @@ namespace API.Controllers
         }
 
         [HttpPost("vehicles")]
-        public IActionResult AddVehicle([FromBody] Vehicle vehicle)
+        public IActionResult AddVehicle([FromBody] AddVehicleRequest vehicle)
         {
             try
             {
