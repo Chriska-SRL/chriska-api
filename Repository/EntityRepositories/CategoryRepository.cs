@@ -78,21 +78,45 @@ namespace Repository.EntityRepositories
         {
             try
             {
-                var categories = new List<Category>();
+                var categories = new Dictionary<int, Category>();
+                var subCategories = new List<SubCategory>();
 
                 using var connection = CreateConnection();
                 connection.Open();
 
+                // Traer categorías
                 using (var command = new SqlCommand("SELECT Id, Name, Description FROM Categories", connection))
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        categories.Add(CategoryMapper.FromReader(reader));
+                        var category = CategoryMapper.FromReader(reader);
+                        category.SubCategories = new List<SubCategory>();
+                        categories[category.Id] = category;
                     }
                 }
 
-                return categories;
+                // Traer subcategorías
+                using (var subCommand = new SqlCommand("SELECT Id, Name, Description, CategoryId FROM SubCategories", connection))
+                using (var subReader = subCommand.ExecuteReader())
+                {
+                    while (subReader.Read())
+                    {
+                        var rawSub = SubCategoryMapper.FromReader(subReader);
+                        if (categories.TryGetValue(rawSub.Category.Id, out var parentCategory))
+                        {
+                            var subWithCategory = new SubCategory(
+                                id: rawSub.Id,
+                                name: rawSub.Name,
+                                description: rawSub.Description,
+                                category: parentCategory
+                            );
+                            parentCategory.SubCategories.Add(subWithCategory);
+                        }
+                    }
+                }
+
+                return categories.Values.ToList();
             }
             catch (SqlException ex)
             {
@@ -113,14 +137,41 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
+                Category? category = null;
+
                 using (var command = new SqlCommand("SELECT Id, Name, Description FROM Categories WHERE Id = @Id", connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
                     using var reader = command.ExecuteReader();
-                    if (!reader.Read()) return null;
-
-                    return CategoryMapper.FromReader(reader);
+                    if (reader.Read())
+                    {
+                        category = CategoryMapper.FromReader(reader);
+                        category.SubCategories = new List<SubCategory>();
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
+
+                using (var subCommand = new SqlCommand("SELECT Id, Name, Description, CategoryId FROM SubCategories WHERE CategoryId = @CategoryId", connection))
+                {
+                    subCommand.Parameters.AddWithValue("@CategoryId", id);
+                    using var subReader = subCommand.ExecuteReader();
+                    while (subReader.Read())
+                    {
+                        var rawSub = SubCategoryMapper.FromReader(subReader);
+                        var subWithCategory = new SubCategory(
+                            id: rawSub.Id,
+                            name: rawSub.Name,
+                            description: rawSub.Description,
+                            category: category!
+                        );
+                        category!.SubCategories.Add(subWithCategory);
+                    }
+                }
+
+                return category;
             }
             catch (SqlException ex)
             {
