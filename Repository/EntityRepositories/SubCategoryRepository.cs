@@ -79,6 +79,43 @@ namespace Repository.EntityRepositories
             }
         }
 
+        public SubCategory? GetById(int id)
+        {
+            try
+            {
+                using var connection = CreateConnection();
+                connection.Open();
+
+                SubCategory? subCategory = null;
+
+                using (var command = new SqlCommand("SELECT Id, Name, Description, CategoryId FROM SubCategories WHERE Id = @Id", connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    using var reader = command.ExecuteReader();
+
+                    if (reader.Read())
+                        subCategory = SubCategoryMapper.FromReader(reader);
+                    else
+                        return null;
+                }
+
+                if (subCategory != null)
+                    subCategory.Category = GetCategory(subCategory.Category.Id);
+
+                return subCategory;
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error al acceder a la base de datos.");
+                throw new ApplicationException("Error al acceder a la base de datos.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado.");
+                throw new ApplicationException("Ocurrió un error inesperado.", ex);
+            }
+        }
+
         public List<SubCategory> GetAll()
         {
             try
@@ -97,6 +134,11 @@ namespace Repository.EntityRepositories
                     }
                 }
 
+                foreach (var subCategory in subCategories)
+                {
+                    subCategory.Category = GetCategory(subCategory.Category.Id);
+                }
+
                 return subCategories;
             }
             catch (SqlException ex)
@@ -111,33 +153,6 @@ namespace Repository.EntityRepositories
             }
         }
 
-        public SubCategory? GetById(int id)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using (var command = new SqlCommand("SELECT Id, Name, Description, CategoryId FROM SubCategories WHERE Id = @Id", connection))
-                {
-                    command.Parameters.AddWithValue("@Id", id);
-                    using var reader = command.ExecuteReader();
-                    if (!reader.Read()) return null;
-
-                    return SubCategoryMapper.FromReader(reader);
-                }
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
 
         public SubCategory Update(SubCategory subCategory)
         {
@@ -169,6 +184,27 @@ namespace Repository.EntityRepositories
             {
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
+            }
+        }
+        private Category GetCategory(int categoryId)
+        {
+            try
+            {
+                using var connection = CreateConnection();
+                connection.Open();
+
+                using var command = new SqlCommand("SELECT Id, Name, Description FROM Categories WHERE Id = @Id", connection);
+                command.Parameters.AddWithValue("@Id", categoryId);
+
+                using var reader = command.ExecuteReader();
+                if (!reader.Read()) throw new InvalidOperationException($"Categoría con ID {categoryId} no encontrada.");
+
+                return CategoryMapper.FromReader(reader);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener la categoría.");
+                throw;
             }
         }
     }

@@ -13,7 +13,7 @@ namespace Repository.Mappers
                 description: reader.GetString(reader.GetOrdinal("Description")),
                 category: new Category(
                     id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
-                    name: string.Empty, // Se puede completar luego si es necesario
+                    name: string.Empty,
                     description: string.Empty 
                 )
             );

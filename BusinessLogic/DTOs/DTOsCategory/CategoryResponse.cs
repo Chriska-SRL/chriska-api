@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessLogic.DTOs.DTOsSubCategory;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace BusinessLogic.DTOs.DTOsCategory
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public List<SubCategoryResponse> SubCategories { get; set; } = new List<SubCategoryResponse>();
 
     }
 }
