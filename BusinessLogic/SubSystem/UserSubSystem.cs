@@ -11,9 +11,10 @@ namespace BusinessLogic.SubSystem
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
 
-        public UserSubSystem(IUserRepository userRepository)
+        public UserSubSystem(IUserRepository userRepository, IRoleRepository roleRepository)
         {
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
         }
 
         public UserResponse AddUser(AddUserRequest request)
