@@ -26,7 +26,8 @@ namespace BusinessLogic.Común.Mappers
             return new CategoryResponse{
                 Id= domain.Id,
                 Description = domain.Description,
-                Name= domain.Name
+                Name= domain.Name,
+                SubCategories = domain.SubCategories.Select(SubCategoryMapper.ToResponse).ToList()
              };
         }
     }
