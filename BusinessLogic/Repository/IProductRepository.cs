@@ -2,7 +2,9 @@
 
 namespace BusinessLogic.Repository
 {
-    public interface IProductRepository: IRepository<Product>
+    public interface IProductRepository : IRepository<Product>
     {
+        Product GetByBarcode(string barcode);
+        Product GetByName(string name);
     }
 }

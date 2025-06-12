@@ -34,6 +34,11 @@ namespace BusinessLogic.SubSystem
             var existingRole = _roleRepository.GetById(request.Id)
                                  ?? throw new ArgumentException("No se encontro el rol seleccionado.", nameof(request.Id));
 
+
+            Role existing = _roleRepository.GetByName(request.Name);
+            if (existingRole.Name != request.Name && existing != null)
+                throw new ArgumentException("Ya existe un rol con ese nombre.", nameof(request.Name));
+
             var updatedData = RoleMapper.ToUpdatableData(request);
             existingRole.Update(updatedData);
 
@@ -41,10 +46,10 @@ namespace BusinessLogic.SubSystem
             return RoleMapper.ToResponse(updated);
         }
 
-        public RoleResponse DeleteRole(DeleteRoleRequest request)
+        public RoleResponse DeleteRole(int id)
         {
-            var deleted = _roleRepository.Delete(request.Id)
-                          ?? throw new ArgumentException("No se encontro el rol seleccionado.", nameof(request.Id));
+            var deleted = _roleRepository.Delete(id)
+                          ?? throw new ArgumentException("No se encontro el rol seleccionado.", nameof(id));
 
             return RoleMapper.ToResponse(deleted);
         }

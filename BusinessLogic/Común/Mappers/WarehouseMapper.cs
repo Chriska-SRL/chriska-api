@@ -6,7 +6,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class WarehouseMapper
     {
-        public static Warehouse toDomain(AddWarehouseRequest addWarehouseRequest)
+        public static Warehouse ToDomain(AddWarehouseRequest addWarehouseRequest)
         {
             return new Warehouse(
                 id: 0,
@@ -16,7 +16,7 @@ namespace BusinessLogic.Común.Mappers
                 shelves: new List<Shelve>()
             );
         }
-        public static Warehouse.UpdatableData toDomain(UpdateWarehouseRequest updateWarehouseRequest)
+        public static Warehouse.UpdatableData ToDomain(UpdateWarehouseRequest updateWarehouseRequest)
         {
             return new Warehouse.UpdatableData
             {
@@ -25,7 +25,7 @@ namespace BusinessLogic.Común.Mappers
                 Address = updateWarehouseRequest.Address
             };
         }
-        public static WarehouseResponse toResponse(Warehouse warehouse)
+        public static WarehouseResponse ToResponse(Warehouse warehouse)
         {
             return new WarehouseResponse
             {

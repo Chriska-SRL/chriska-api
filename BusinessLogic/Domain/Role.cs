@@ -1,6 +1,8 @@
-﻿namespace BusinessLogic.Dominio
+﻿using System.Xml.Linq;
+
+namespace BusinessLogic.Dominio
 {
-    public class Role:IEntity<Role.UpdatableData>
+    public class Role : IEntity<Role.UpdatableData>
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -12,7 +14,16 @@
             Id = id;
             Name = name;
             Description = description;
-            Permissions = permissions;
+            Permissions = permissions ?? throw new ArgumentNullException(nameof(permissions));
+
+            Validate();
+        }
+        public Role(int id)
+        {
+            Id = id;
+            Name = "Temporal";
+            Description = "_";
+            Permissions = new List<Permission>();
         }
 
         public void Validate()
@@ -33,20 +44,26 @@
 
         public void Update(UpdatableData data)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data), "Los datos de actualización no pueden ser nulos.");
+
+            if (data.Permissions == null)
+                throw new ArgumentNullException(nameof(data.Permissions), "La lista de permisos no puede ser nula.");
+
             Name = data.Name;
             Description = data.Description;
-            Permissions = data.Permissions ?? new List<Permission>();
+            Permissions = data.Permissions;
             Validate();
         }
 
         public class UpdatableData
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = string.Empty;
             public string Description { get; set; } = string.Empty;
             public List<Permission> Permissions { get; set; } = new List<Permission>();
         }
 
-       public override string ToString()
+        public override string ToString()
         {
             return $"Role(Id: {Id}, Name: {Name}, Description: {Description}, Permissions: [{string.Join(", ", Permissions)}])";
         }

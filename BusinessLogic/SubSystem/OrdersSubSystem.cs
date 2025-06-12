@@ -20,7 +20,7 @@ namespace BusinessLogic.SubSystem
 
         public void AddOrder(AddOrderRequest orderRequest)
         {
-            Order newOrder = OrderMapper.toDomain(orderRequest);
+            Order newOrder = OrderMapper.ToDomain(orderRequest);
             newOrder.Validate();
             _orderRepository.Add(newOrder);
         }
@@ -29,7 +29,7 @@ namespace BusinessLogic.SubSystem
         {
             Order exisitingOrder = _orderRepository.GetById(orderRequest.Id);
             if (exisitingOrder == null) throw new Exception("No se encontro la orden");
-            exisitingOrder.Update(OrderMapper.toDomain(orderRequest));
+            exisitingOrder.Update(OrderMapper.ToDomain(orderRequest));
             _orderRepository.Update(exisitingOrder);
         }
 
@@ -44,7 +44,7 @@ namespace BusinessLogic.SubSystem
        {
            Order order = _orderRepository.GetById(id);
            if (order == null) throw new Exception("No se encontro la orden");
-           OrderResponse orderResponse = OrderMapper.toResponse(order);
+           OrderResponse orderResponse = OrderMapper.ToResponse(order);
             return orderResponse;
         }
        
@@ -52,11 +52,11 @@ namespace BusinessLogic.SubSystem
         {
             List<Order> orders = _orderRepository.GetAll();
             if (!orders.Any()) throw new Exception("No se encontraron ordenes");
-            return orders.Select(OrderMapper.toResponse).ToList();
+            return orders.Select(OrderMapper.ToResponse).ToList();
         }  
         public void AddOrderItem(AddOrderItemRequest orderItem)
         {
-            OrderItem newOrderItem = OrderItemMapper.toDomain(orderItem);
+            OrderItem newOrderItem = OrderItemMapper.ToDomain(orderItem);
             newOrderItem.Validate();
             _orderItemRepository.Add(newOrderItem);
         }
@@ -64,7 +64,7 @@ namespace BusinessLogic.SubSystem
         {
             OrderItem existingOrderItem = _orderItemRepository.GetById(orderItem.Id);
             if (existingOrderItem == null) throw new Exception("No se encontro el item de orden");
-            existingOrderItem.Update(OrderItemMapper.toDomain(orderItem));
+            existingOrderItem.Update(OrderItemMapper.ToDomain(orderItem));
             _orderItemRepository.Update(existingOrderItem);
         }
         public void DeleteOrderItem(DeleteOrderItemRequest orderItem)
@@ -77,14 +77,14 @@ namespace BusinessLogic.SubSystem
         {
             OrderItem orderItem = _orderItemRepository.GetById(id);
             if (orderItem == null) throw new Exception("No se encontro el item de orden");
-            OrderItemResponse orderItemResponse = OrderItemMapper.toResponse(orderItem);
+            OrderItemResponse orderItemResponse = OrderItemMapper.ToResponse(orderItem);
             return orderItemResponse;
         }
         public List<OrderItemResponse> GetAllOrderItems()
         {
             List<OrderItem> orderItems = _orderItemRepository.GetAll();
             if (!orderItems.Any()) throw new Exception("No se encontraron items de orden");
-            return orderItems.Select(OrderItemMapper.toResponse).ToList();
+            return orderItems.Select(OrderItemMapper.ToResponse).ToList();
         }
     }
 }

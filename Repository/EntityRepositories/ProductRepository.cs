@@ -19,18 +19,17 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 using var command = new SqlCommand(@"
                     INSERT INTO Products 
-                    (Name, InternalCode, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId)
+                    (Name, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId)
                     OUTPUT INSERTED.Id 
                     VALUES 
-                    (@Name, @InternalCode, @BarCode, @UnitType, @Price, @Description, @TemperatureCondition, @Stock, @Image, @Observations, @SubCategoryId)", connection);
+                    (@Name, @BarCode, @UnitType, @Price, @Description, @TemperatureCondition, @Stock, @Image, @Observations, @SubCategoryId)", connection);
 
                 command.Parameters.AddWithValue("@Name", product.Name);
-                command.Parameters.AddWithValue("@InternalCode", product.InternalCode);
                 command.Parameters.AddWithValue("@BarCode", product.Barcode);
-                command.Parameters.AddWithValue("@UnitType", product.UnitType);
+                command.Parameters.AddWithValue("@UnitType", product.UnitType.ToString());
                 command.Parameters.AddWithValue("@Price", product.Price);
                 command.Parameters.AddWithValue("@Description", product.Description);
-                command.Parameters.AddWithValue("@TemperatureCondition", product.TemperatureCondition);
+                command.Parameters.AddWithValue("@TemperatureCondition", product.TemperatureCondition.ToString());
                 command.Parameters.AddWithValue("@Stock", product.Stock);
                 command.Parameters.AddWithValue("@Image", product.Image);
                 command.Parameters.AddWithValue("@Observations", product.Observation);
@@ -39,7 +38,7 @@ namespace Repository.EntityRepositories
                 connection.Open();
                 int id = (int)command.ExecuteScalar();
 
-                return new Product(id, product.InternalCode, product.Barcode, product.Name, product.Price, product.Image, product.Stock,
+                return new Product(id, product.Barcode, product.Name, product.Price, product.Image, product.Stock,
                     product.Description, product.UnitType, product.TemperatureCondition, product.Observation,
                     product.SubCategory, new());
             }
@@ -133,6 +132,45 @@ namespace Repository.EntityRepositories
             }
         }
 
+        public Product GetByBarcode(string barcode)
+        {
+            try
+            {
+                using var connection = CreateConnection();
+                connection.Open();
+
+                using (var command = new SqlCommand(@"
+                    SELECT 
+                        p.*, 
+                        sc.Name AS SubCategoryName, 
+                        sc.Description AS SubCategoryDescription, 
+                        c.Id AS CategoryId, 
+                        c.Name AS CategoryName, 
+                        c.Description AS CategoryDescription
+                    FROM Products p
+                    JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+                    JOIN Categories c ON sc.CategoryId = c.Id
+                    WHERE p.Barcode = @Barcode", connection))
+                {
+                    command.Parameters.AddWithValue("@Barcode", barcode);
+                    using var reader = command.ExecuteReader();
+                    if (!reader.Read()) return null;
+
+                    return ProductMapper.FromReader(reader);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error al acceder a la base de datos.");
+                throw new ApplicationException("Error al acceder a la base de datos.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado.");
+                throw new ApplicationException("Ocurrió un error inesperado.", ex);
+            }
+        }
+
         public Product? GetById(int id)
         {
             try
@@ -172,6 +210,45 @@ namespace Repository.EntityRepositories
             }
         }
 
+        public Product GetByName(string name)
+        {
+            try
+            {
+                using var connection = CreateConnection();
+                connection.Open();
+
+                using (var command = new SqlCommand(@"
+                    SELECT 
+                        p.*, 
+                        sc.Name AS SubCategoryName, 
+                        sc.Description AS SubCategoryDescription, 
+                        c.Id AS CategoryId, 
+                        c.Name AS CategoryName, 
+                        c.Description AS CategoryDescription
+                    FROM Products p
+                    JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+                    JOIN Categories c ON sc.CategoryId = c.Id
+                    WHERE p.Name = @Name", connection))
+                {
+                    command.Parameters.AddWithValue("@Name", name);
+                    using var reader = command.ExecuteReader();
+                    if (!reader.Read()) return null;
+
+                    return ProductMapper.FromReader(reader);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error al acceder a la base de datos.");
+                throw new ApplicationException("Error al acceder a la base de datos.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado.");
+                throw new ApplicationException("Ocurrió un error inesperado.", ex);
+            }
+        }
+
         public Product Update(Product product)
         {
             try
@@ -182,7 +259,6 @@ namespace Repository.EntityRepositories
                 using (var updateCommand = new SqlCommand(@"
                     UPDATE Products SET 
                         Name = @Name,
-                        InternalCode = @InternalCode,
                         BarCode = @BarCode,
                         UnitType = @UnitType,
                         Price = @Price,
@@ -195,12 +271,11 @@ namespace Repository.EntityRepositories
                     WHERE Id = @Id", connection))
                 {
                     updateCommand.Parameters.AddWithValue("@Name", product.Name);
-                    updateCommand.Parameters.AddWithValue("@InternalCode", product.InternalCode);
                     updateCommand.Parameters.AddWithValue("@BarCode", product.Barcode);
-                    updateCommand.Parameters.AddWithValue("@UnitType", product.UnitType);
+                    updateCommand.Parameters.AddWithValue("@UnitType", product.UnitType.ToString());
                     updateCommand.Parameters.AddWithValue("@Price", product.Price);
                     updateCommand.Parameters.AddWithValue("@Description", product.Description);
-                    updateCommand.Parameters.AddWithValue("@TemperatureCondition", product.TemperatureCondition);
+                    updateCommand.Parameters.AddWithValue("@TemperatureCondition", product.TemperatureCondition.ToString());
                     updateCommand.Parameters.AddWithValue("@Stock", product.Stock);
                     updateCommand.Parameters.AddWithValue("@Image", product.Image);
                     updateCommand.Parameters.AddWithValue("@Observations", product.Observation);

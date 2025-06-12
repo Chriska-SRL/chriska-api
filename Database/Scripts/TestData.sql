@@ -188,25 +188,26 @@ INSERT INTO SubCategories (Name, Description, CategoryId) VALUES ('Embutidos cur
 
 -- Leche (Unidad)
 INSERT INTO Products 
-(Name, InternalCode, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId)
+(Name, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId)
 VALUES 
-('Leche entera 1L', 'L0010', '7790001000010', 'U', 380, 'Leche entera pasteurizada', 'Frio', 200, '', '', 1),
-('Leche descremada 1L', 'L0020', '7790001000027', 'U', 390, 'Leche descremada pasteurizada', 'Frio', 180, '', '', 1),
-('Leche chocolatada 1L', 'L0030', '7790001000034', 'U', 420, 'Leche sabor chocolate', 'Frio', 150, '', '', 1),
+-- Leche (SubCategoryId = 1)
+('Leche entera 1L',        '7790001000010', 'Unit', 380, 'Leche entera pasteurizada',     'Cold', 200, '', '', 1),
+('Leche descremada 1L',    '7790001000027', 'Unit', 390, 'Leche descremada pasteurizada', 'Cold', 180, '', '', 1),
+('Leche chocolatada 1L',   '7790001000034', 'Unit', 420, 'Leche sabor chocolate',          'Cold', 150, '', '', 1),
 
--- Quesos (Kilo o Unidad)
-('Queso cremoso', 'Q0010', '7790002000018', 'K', 1800, 'Queso fresco tipo cremoso', 'Frio', 80, '', '', 2),
-('Queso rallado', 'Q0020', '7790002000025', 'U', 950, 'Queso reggianito rallado 100g', 'Frio', 120, '', '', 2),
-('Queso pategrás', 'Q0030', '7790002000032', 'K', 2400, 'Queso semiduro tipo pategrás', 'Frio', 60, '', '', 2),
+-- Quesos (SubCategoryId = 2)
+('Queso cremoso',          '7790002000018', 'Kilo', 1800, 'Queso fresco tipo cremoso',     'Cold', 80,  '', '', 2),
+('Queso rallado',          '7790002000025', 'Unit', 950,  'Queso reggianito rallado 100g', 'Cold', 120, '', '', 2),
+('Queso pategrás',         '7790002000032', 'Kilo', 2400, 'Queso semiduro tipo pategrás',  'Cold', 60,  '', '', 2),
 
--- Embutidos cocidos
-('Mortadela', 'C0010', '7790003000016', 'K', 2300, 'Mortadela con pistacho', 'Frio', 55, '', '', 3),
-('Salchichas (6u)', 'C0020', '7790003000023', 'U', 850, 'Salchichas tipo viena', 'Frio', 90, '', '', 3),
-('Fiambre de cerdo', 'C0030', '7790003000030', 'K', 2100, 'Fiambre cocido de cerdo', 'Frio', 70, '', '', 3),
+-- Embutidos cocidos (SubCategoryId = 3)
+('Mortadela',              '7790003000016', 'Kilo', 2300, 'Mortadela con pistacho',        'Cold', 55,  '', '', 3),
+('Salchichas (6u)',        '7790003000023', 'Unit', 850,  'Salchichas tipo viena',         'Cold', 90,  '', '', 3),
+('Fiambre de cerdo',       '7790003000030', 'Kilo', 2100, 'Fiambre cocido de cerdo',       'Cold', 70,  '', '', 3),
 
--- Embutidos curados
-('Salame tandilero', 'E0010', '7790004000014', 'K', 3100, 'Salame curado artesanal', 'Natural', 45, '', '', 4),
-('Longaniza 250g', 'E0020', '7790004000021', 'U', 1200, 'Longaniza tipo calabresa', 'Natural', 65, '', '', 4),
-('Chorizo seco', 'E0030', '7790004000038', 'K', 2900, 'Chorizo estacionado', 'Natural', 50, '', '', 4),
-('Fuet catalán', 'E0040', '7790004000045', 'U', 1500, 'Fuet curado estilo catalán', 'Natural', 30, '', '', 4);
+-- Embutidos curados (SubCategoryId = 4)
+('Salame tandilero',       '7790004000014', 'Kilo', 3100, 'Salame curado artesanal',       'Ambient', 45, '', '', 4),
+('Longaniza 250g',         '7790004000021', 'Unit', 1200, 'Longaniza tipo calabresa',      'Ambient', 65, '', '', 4),
+('Chorizo seco',           '7790004000038', 'Kilo', 2900, 'Chorizo estacionado',           'Ambient', 50, '', '', 4),
+('Fuet catalán',           '7790004000045', 'Unit', 1500, 'Fuet curado estilo catalán',    'Ambient', 30, '', '', 4);
 
