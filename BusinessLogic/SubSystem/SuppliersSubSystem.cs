@@ -1,7 +1,6 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsSupplier;
-using System.Diagnostics;
 using BusinessLogic.Común.Mappers;
 
 namespace BusinessLogic.SubSystem
@@ -15,41 +14,47 @@ namespace BusinessLogic.SubSystem
             _supplierRepository = supplierRepository;
         }
 
-        public void AddSupplier(AddSupplierRequest supplier)
+        public SupplierResponse AddSupplier(AddSupplierRequest request)
         {
-            Supplier newSupplier= SupplierMapper.ToDomain(supplier);
+            Supplier newSupplier = SupplierMapper.ToDomain(request);
             newSupplier.Validate();
-            _supplierRepository.Add(newSupplier);
+
+            Supplier added = _supplierRepository.Add(newSupplier);
+            return SupplierMapper.ToResponse(added);
         }
 
-        public void UpdateSupplier(UpdateSupplierRequest supplier)
+        public SupplierResponse UpdateSupplier(UpdateSupplierRequest request)
         {
-            Supplier existingSupplier = _supplierRepository.GetById(supplier.Id);
-            if (existingSupplier == null) throw new Exception("No se encontro el proveedor");
-            existingSupplier.Update(SupplierMapper.ToDomain(supplier));
-            _supplierRepository.Update(existingSupplier);
+            Supplier existing = _supplierRepository.GetById(request.Id)
+                                ?? throw new InvalidOperationException("Proveedor no encontrado.");
+
+            Supplier.UpdatableData updatedData = SupplierMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            Supplier updated = _supplierRepository.Update(existing);
+            return SupplierMapper.ToResponse(updated);
         }
 
-        public void DeleteSupplier(DeleteSupplierRequest supplier)
+        public SupplierResponse DeleteSupplier(DeleteSupplierRequest request)
         {
-            Supplier existingSupplier = _supplierRepository.GetById(supplier.Id);
-            if (supplier == null) throw new Exception("No se encontro el proveedor");
-            _supplierRepository.Delete(existingSupplier.Id);
+            Supplier deleted = _supplierRepository.Delete(request.Id)
+                                ?? throw new InvalidOperationException("Proveedor no encontrado.");
+
+            return SupplierMapper.ToResponse(deleted);
         }
 
         public SupplierResponse GetSupplierById(int id)
         {
-            Supplier supplier = _supplierRepository.GetById(id);
-            if (supplier == null) throw new Exception("No se encontro el proveedor");
+            Supplier supplier = _supplierRepository.GetById(id)
+                               ?? throw new InvalidOperationException("Proveedor no encontrado.");
+
             return SupplierMapper.ToResponse(supplier);
-        } 
+        }
 
         public List<SupplierResponse> GetAllSupplierResponse()
         {
             List<Supplier> suppliers = _supplierRepository.GetAll();
-            if (!suppliers.Any()) throw new Exception("No se encontraron proveedores");
             return suppliers.Select(SupplierMapper.ToResponse).ToList();
         }
     }
 }
-

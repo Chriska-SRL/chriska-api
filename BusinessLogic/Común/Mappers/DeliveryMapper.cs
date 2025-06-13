@@ -28,7 +28,7 @@ namespace BusinessLogic.Común.Mappers
 
                 );
         }
-        public static Delivery.UpdatableData ToDomain(UpdateDeliveryRequest updateDeliveryRequest)
+        public static Delivery.UpdatableData ToUpdatableData(UpdateDeliveryRequest updateDeliveryRequest)
         {
             return new Delivery.UpdatableData
             {

@@ -1,8 +1,8 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.Repository;
+﻿using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsSubCategory;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.Dominio;
 
 namespace BusinessLogic.SubSystem
 {
@@ -27,7 +27,7 @@ namespace BusinessLogic.SubSystem
             var category = CategoryMapper.ToDomain(request);
             category.Validate();
 
-            var added = _categoryRepository.Add(category);
+            Category added = _categoryRepository.Add(category);
             return CategoryMapper.ToResponse(added);
         }
 
@@ -42,7 +42,7 @@ namespace BusinessLogic.SubSystem
             var updatedData = CategoryMapper.ToUpdatableData(request);
             existing.Update(updatedData);
 
-            var updated = _categoryRepository.Update(existing);
+            Category updated = _categoryRepository.Update(existing);
             return CategoryMapper.ToResponse(updated);
         }
 
@@ -82,7 +82,7 @@ namespace BusinessLogic.SubSystem
             var subCategory = SubCategoryMapper.ToDomain(request);
             subCategory.Validate();
 
-            var added = _subCategoryRepository.Add(subCategory);
+            SubCategory added = _subCategoryRepository.Add(subCategory);
             return SubCategoryMapper.ToResponse(added);
         }
 
@@ -94,10 +94,10 @@ namespace BusinessLogic.SubSystem
             if (existing.Name != request.Name && _subCategoryRepository.GetByName(request.Name) != null)
                 throw new ArgumentException("Ya existe una subcategoría con el mismo nombre.", nameof(request.Name));
 
-            var updatedData = SubCategoryMapper.ToUpdatableData(request);
+            SubCategory.UpdatableData updatedData = SubCategoryMapper.ToUpdatableData(request);
             existing.Update(updatedData);
 
-            var updated = _subCategoryRepository.Update(existing);
+            SubCategory updated = _subCategoryRepository.Update(existing);
             return SubCategoryMapper.ToResponse(updated);
         }
 

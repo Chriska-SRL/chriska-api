@@ -36,7 +36,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static Receipt.UpdatableData ToDomain(UpdateReceiptRequest updateReceiptRequest)
+        public static Receipt.UpdatableData ToUpdatableData(UpdateReceiptRequest updateReceiptRequest)
         {
             return new Receipt.UpdatableData
             {

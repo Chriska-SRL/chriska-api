@@ -16,7 +16,7 @@ namespace BusinessLogic.Común.Mappers
                 stockMovements: new List<StockMovement>()
                 );
         }
-        public static Shelve.UpdatableData ToDomain(UpdateShelveRequest shelve)
+        public static Shelve.UpdatableData ToUpdatableData(UpdateShelveRequest shelve)
         {
             return new Shelve.UpdatableData
             {
