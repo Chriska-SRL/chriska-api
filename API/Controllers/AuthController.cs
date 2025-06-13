@@ -2,6 +2,7 @@
 using BusinessLogic.DTOs.DTOsAuth;
 using BusinessLogic.DTOs.DTOsUser;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -24,45 +25,57 @@ namespace API.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            UserResponse? user = _facade.Authenticate(request.Username, request.Password);
-
-            if (user == null)
-                return Unauthorized(new { error = "Credenciales inválidas" });
-
-            var claims = new List<Claim>
+            try
             {
-                new Claim("userId", user.Id.ToString()),
-                new Claim("username", user.Username),
-                new Claim("name", user.Name),
-                new Claim("role", user.Role.Name)
-            };
+                UserResponse? user = _facade.Authenticate(request.Username, request.Password);
 
-            foreach (int perm in user.Role.Permissions)
-                claims.Add(new Claim("permission", perm.ToString()));
+                if (user == null)
+                    return Unauthorized(new { error = "Credenciales inválidas" });
 
-            var key = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_config["Jwt:Key"])
-            );
+                var claims = new List<Claim>
+        {
+            new Claim("userId", user.Id.ToString()),
+            new Claim("username", user.Username),
+            new Claim("name", user.Name),
+            new Claim("role", user.Role.Name)
+        };
 
-            var creds = new Microsoft.IdentityModel.Tokens.SigningCredentials(
-                key, Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256
-            );
+                foreach (int perm in user.Role.Permissions)
+                    claims.Add(new Claim("permission", perm.ToString()));
 
-            var expirationHours = int.Parse(_config["Jwt:ExpirationHours"]);
-            var expires = DateTime.UtcNow.AddHours(expirationHours);
+                var key = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(_config["Jwt:Key"])
+                );
 
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                claims: claims,
-                expires: expires,
-                signingCredentials: creds
-            );
+                var creds = new Microsoft.IdentityModel.Tokens.SigningCredentials(
+                    key, Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256
+                );
 
-            return Ok(new LoginResponse
+                var expirationHours = int.Parse(_config["Jwt:ExpirationHours"]);
+                var expires = DateTime.UtcNow.AddHours(expirationHours);
+
+                var token = new JwtSecurityToken(
+                    issuer: _config["Jwt:Issuer"],
+                    audience: _config["Jwt:Audience"],
+                    claims: claims,
+                    expires: expires,
+                    signingCredentials: creds
+                );
+
+                return Ok(new LoginResponse
+                {
+                    Token = new JwtSecurityTokenHandler().WriteToken(token)
+                });
+            }
+            catch (ApplicationException ex)
             {
-                Token = new JwtSecurityTokenHandler().WriteToken(token)
-            });
+                return StatusCode(500, new { error = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al intentar iniciar sesión" });
+            }
         }
+
     }
 }

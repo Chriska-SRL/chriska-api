@@ -2,6 +2,7 @@
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsRole;
 using BusinessLogic.Común.Mappers;
+using System.Xml.Linq;
 
 namespace BusinessLogic.SubSystem
 {
@@ -19,14 +20,19 @@ namespace BusinessLogic.SubSystem
             var newRole = RoleMapper.ToDomain(request);
             newRole.Validate();
 
+            Role existing = _roleRepository.GetByName(newRole.Name);
+            if (existing != null)
+                throw new ArgumentException("Ya existe un rol con ese nombre.", nameof(newRole.Name));
+
             var added = _roleRepository.Add(newRole);
             return RoleMapper.ToResponse(added);
         }
 
+
         public RoleResponse UpdateRole(UpdateRoleRequest request)
         {
             var existingRole = _roleRepository.GetById(request.Id)
-                                 ?? throw new InvalidOperationException("Rol no encontrado.");
+                                 ?? throw new ArgumentException("No se encontro el rol seleccionado.", nameof(request.Id));
 
             var updatedData = RoleMapper.ToUpdatableData(request);
             existingRole.Update(updatedData);
@@ -38,7 +44,7 @@ namespace BusinessLogic.SubSystem
         public RoleResponse DeleteRole(DeleteRoleRequest request)
         {
             var deleted = _roleRepository.Delete(request.Id)
-                          ?? throw new InvalidOperationException("Rol no encontrado.");
+                          ?? throw new ArgumentException("No se encontro el rol seleccionado.", nameof(request.Id));
 
             return RoleMapper.ToResponse(deleted);
         }
@@ -46,7 +52,7 @@ namespace BusinessLogic.SubSystem
         public RoleResponse GetRoleById(int id)
         {
             var role = _roleRepository.GetById(id)
-                       ?? throw new InvalidOperationException("Rol no encontrado.");
+                       ?? throw new ArgumentException("No se encontro el rol seleccionado.", nameof(id));
 
             return RoleMapper.ToResponse(role);
         }

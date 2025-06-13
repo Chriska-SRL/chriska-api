@@ -17,8 +17,19 @@
 
         public void Validate()
         {
-            if (string.IsNullOrEmpty(Name)) throw new Exception("El nombre del rol no puede estar vacío");
+            if (string.IsNullOrWhiteSpace(Name))
+                throw new ArgumentNullException(nameof(Name), "El nombre del rol no puede estar vacío.");
+
+            if (Name.Length > 50)
+                throw new ArgumentOutOfRangeException(nameof(Name), "El nombre del rol no puede superar los 50 caracteres.");
+
+            if (string.IsNullOrWhiteSpace(Description))
+                throw new ArgumentNullException(nameof(Description), "La descripción del rol no puede estar vacía.");
+
+            if (Description.Length > 255)
+                throw new ArgumentOutOfRangeException(nameof(Description), "La descripción del rol no puede superar los 255 caracteres.");
         }
+
 
         public void Update(UpdatableData data)
         {
