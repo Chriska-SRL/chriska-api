@@ -17,7 +17,7 @@ namespace BusinessLogic.SubSystem
 
         public void AddSupplier(AddSupplierRequest supplier)
         {
-            Supplier newSupplier= SupplierMapper.toDomain(supplier);
+            Supplier newSupplier= SupplierMapper.ToDomain(supplier);
             newSupplier.Validate();
             _supplierRepository.Add(newSupplier);
         }
@@ -26,7 +26,7 @@ namespace BusinessLogic.SubSystem
         {
             Supplier existingSupplier = _supplierRepository.GetById(supplier.Id);
             if (existingSupplier == null) throw new Exception("No se encontro el proveedor");
-            existingSupplier.Update(SupplierMapper.toDomain(supplier));
+            existingSupplier.Update(SupplierMapper.ToDomain(supplier));
             _supplierRepository.Update(existingSupplier);
         }
 
@@ -41,14 +41,14 @@ namespace BusinessLogic.SubSystem
         {
             Supplier supplier = _supplierRepository.GetById(id);
             if (supplier == null) throw new Exception("No se encontro el proveedor");
-            return SupplierMapper.toResponse(supplier);
+            return SupplierMapper.ToResponse(supplier);
         } 
 
         public List<SupplierResponse> GetAllSupplierResponse()
         {
             List<Supplier> suppliers = _supplierRepository.GetAll();
             if (!suppliers.Any()) throw new Exception("No se encontraron proveedores");
-            return suppliers.Select(SupplierMapper.toResponse).ToList();
+            return suppliers.Select(SupplierMapper.ToResponse).ToList();
         }
     }
 }

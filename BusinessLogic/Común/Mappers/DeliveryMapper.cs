@@ -7,7 +7,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class DeliveryMapper
     {
-        public static Delivery toDomain(AddDeliveryRequest addDeliveryRequest)
+        public static Delivery ToDomain(AddDeliveryRequest addDeliveryRequest)
         {
             return new Delivery(
 
@@ -28,7 +28,7 @@ namespace BusinessLogic.Común.Mappers
 
                 );
         }
-        public static Delivery.UpdatableData toDomain(UpdateDeliveryRequest updateDeliveryRequest)
+        public static Delivery.UpdatableData ToDomain(UpdateDeliveryRequest updateDeliveryRequest)
         {
             return new Delivery.UpdatableData
             {
@@ -47,7 +47,7 @@ namespace BusinessLogic.Común.Mappers
             };
         }
 
-        public static DeliveryResponse toResponse(Delivery delivery)
+        public static DeliveryResponse ToResponse(Delivery delivery)
         {
             return new DeliveryResponse
             {

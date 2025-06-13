@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.Común.Enums;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
@@ -20,20 +21,36 @@ namespace Repository.Mappers
                 category: category
             );
 
+            string unitTypeStr = reader.GetString(reader.GetOrdinal("UnitType")).Trim();
+            UnitType unitType = unitTypeStr switch
+            {
+                "U" => UnitType.Unit,
+                "K" => UnitType.Kilo,
+                _ => UnitType.None
+            };
+
+            string tempStr = reader.GetString(reader.GetOrdinal("TemperatureCondition")).Trim();
+            TemperatureCondition tempCondition = tempStr switch
+            {
+                "Cold" => TemperatureCondition.Cold,
+                "Frozen" => TemperatureCondition.Frozen,
+                "Ambient" => TemperatureCondition.Ambient,
+                _ => TemperatureCondition.None
+            };
+
             return new Product(
                 id: reader.GetInt32(reader.GetOrdinal("Id")),
-                internalCode: reader.GetString(reader.GetOrdinal("InternalCode")),
                 barcode: reader.GetString(reader.GetOrdinal("BarCode")),
                 name: reader.GetString(reader.GetOrdinal("Name")),
                 price: reader.GetDecimal(reader.GetOrdinal("Price")),
                 image: reader.GetString(reader.GetOrdinal("Image")),
                 stock: reader.GetInt32(reader.GetOrdinal("Stock")),
                 description: reader.GetString(reader.GetOrdinal("Description")),
-                unitType: reader.GetString(reader.GetOrdinal("UnitType")),
-                temperatureCondition: reader.GetString(reader.GetOrdinal("TemperatureCondition")),
+                unitType: unitType,
+                temperatureCondition: tempCondition,
                 observation: reader.GetString(reader.GetOrdinal("Observations")),
                 subCategory: subCategory,
-                suppliers: new List<Supplier>()
+                suppliers: new List<Supplier>() // los proveedores se asignan aparte
             );
         }
     }

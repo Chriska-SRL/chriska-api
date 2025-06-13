@@ -26,9 +26,13 @@ namespace API.Controllers
             {
                 return Ok(_facade.AddUser(request));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar agregar el usuario." });
             }
         }
 
@@ -40,23 +44,31 @@ namespace API.Controllers
             {
                 return Ok(_facade.UpdateUser(request));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar actualizar el usuario." });
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_USERS))]
-        public IActionResult DeleteUser([FromBody] DeleteUserRequest request)
+        public IActionResult DeleteUser(int id)
         {
             try
             {
-                return Ok(_facade.DeleteUser(request));
+                return Ok(_facade.DeleteUser(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar el usuario." });
             }
         }
 
@@ -66,12 +78,15 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.GetUserById(id);
-                return Ok(response);
+                return Ok(_facade.GetUserById(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener el usuario con id {id}." });
             }
         }
 
@@ -81,13 +96,22 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.GetAllUsers();
-                return Ok(response);
+                return Ok(_facade.GetAllUsers());
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
             }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los usuarios." });
+            }
+        }
+
+        private static object FormatearError(ArgumentException ex)
+        {
+            var mensaje = ex.Message.Split(" (Parameter")[0];
+            return new { campo = ex.ParamName, error = mensaje };
         }
     }
 }

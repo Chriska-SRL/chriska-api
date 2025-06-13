@@ -16,7 +16,7 @@ namespace BusinessLogic.SubSystem
 
         public void AddPayment(AddPaymentRequest paymentRequest)
         {
-            Payment newPayment = PaymentMapper.toDomain(paymentRequest);
+            Payment newPayment = PaymentMapper.ToDomain(paymentRequest);
             newPayment.Validate();
             _paymentRepository.Add(newPayment);
         }
@@ -25,7 +25,7 @@ namespace BusinessLogic.SubSystem
         {
             Payment existingPayment = _paymentRepository.GetById(paymentRequest.Id);
             if (existingPayment == null) throw new Exception("No se encontro el pago");
-            existingPayment.Update(PaymentMapper.toDomain(paymentRequest));
+            existingPayment.Update(PaymentMapper.ToDomain(paymentRequest));
             _paymentRepository.Update(existingPayment);
         }
         public void DeletePayment(DeletePaymentRequest paymentRequest)
@@ -39,7 +39,7 @@ namespace BusinessLogic.SubSystem
         {
             Payment payment = _paymentRepository.GetById(id);
             if (payment == null) throw new Exception("No se encontro el pago");
-            PaymentResponse paymentResponse = PaymentMapper.toResponse(payment);
+            PaymentResponse paymentResponse = PaymentMapper.ToResponse(payment);
             return paymentResponse;
         }
         public List<PaymentResponse> GetAllPayments()
@@ -47,7 +47,7 @@ namespace BusinessLogic.SubSystem
             List<Payment> payments = _paymentRepository.GetAll();
             if(!payments.Any())
                 throw new Exception("No se encontraron pagos");
-            return payments.Select(PaymentMapper.toResponse).ToList();
+            return payments.Select(PaymentMapper.ToResponse).ToList();
         }
     }
 }

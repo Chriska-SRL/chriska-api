@@ -6,7 +6,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class PaymentMapper
     {
-        public static Payment toDomain (AddPaymentRequest addPaymentRequest)
+        public static Payment ToDomain (AddPaymentRequest addPaymentRequest)
         {
             return new Payment
             (
@@ -36,7 +36,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static Payment.UpdatableData toDomain(UpdatePaymentRequest updatablePaymentRequest)
+        public static Payment.UpdatableData ToDomain(UpdatePaymentRequest updatablePaymentRequest)
         {
             return new Payment.UpdatableData
             {
@@ -65,7 +65,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             };           
         }
-        public static PaymentResponse toResponse(Payment domain)
+        public static PaymentResponse ToResponse(Payment domain)
         {
             return new PaymentResponse
             {

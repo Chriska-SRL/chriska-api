@@ -207,5 +207,42 @@ namespace Repository.EntityRepositories
                 throw;
             }
         }
+
+        public SubCategory GetByName(string name)
+        {
+            try
+            {
+                using var connection = CreateConnection();
+                connection.Open();
+
+                SubCategory? subCategory = null;
+
+                using (var command = new SqlCommand("SELECT Id, Name, Description, CategoryId FROM SubCategories WHERE Name = @Name", connection))
+                {
+                    command.Parameters.AddWithValue("@Name", name);
+                    using var reader = command.ExecuteReader();
+
+                    if (reader.Read())
+                        subCategory = SubCategoryMapper.FromReader(reader);
+                    else
+                        return null;
+                }
+
+                if (subCategory != null)
+                    subCategory.Category = GetCategory(subCategory.Category.Id);
+
+                return subCategory;
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error al acceder a la base de datos.");
+                throw new ApplicationException("Error al acceder a la base de datos.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado.");
+                throw new ApplicationException("Ocurrió un error inesperado.", ex);
+            }
+        }
     }
 }

@@ -6,38 +6,26 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class PurchaseItemMapper
     {
-        public static PurchaseItem toDomain(AddPurchaseItemRequest addPruchaseItemRequest)
+        public static PurchaseItem ToDomain(AddPurchaseItemRequest dto)
         {
             return new PurchaseItem(
                 id: 0,
-                quantity: addPruchaseItemRequest.Quantity,
-                unitPrice: addPruchaseItemRequest.UnitPrice,
-                product: new Product(
-                    id: addPruchaseItemRequest.ProductId,
-                    internalCode: string.Empty,
-                    barcode: string.Empty,
-                    name: string.Empty,
-                    price: 0,
-                    image: string.Empty,
-                    stock: 0,
-                    description: string.Empty,
-                    unitType: string.Empty,
-                    temperatureCondition: string.Empty,
-                    observation: string.Empty,
-                    subCategory: null,
-                    suppliers: new List<Supplier>()
-                )
-             );
+                quantity: dto.Quantity,
+                unitPrice: dto.UnitPrice,
+                product: new Product(dto.ProductId)
+            );
         }
-        public static PurchaseItem.UpdatableData toDomain(UpdatePurchaseItemRequest purchaseItemResponse)
+
+        public static PurchaseItem.UpdatableData ToDomain(UpdatePurchaseItemRequest dto)
         {
             return new PurchaseItem.UpdatableData
             {
-                Quantity = purchaseItemResponse.Quantity,
-                UnitPrice = purchaseItemResponse.UnitPrice
+                Quantity = dto.Quantity,
+                UnitPrice = dto.UnitPrice
             };
         }
-        public static PurchaseItemResponse toResponse(PurchaseItem purchaseItem)
+
+        public static PurchaseItemResponse ToResponse(PurchaseItem purchaseItem)
         {
             return new PurchaseItemResponse
             {

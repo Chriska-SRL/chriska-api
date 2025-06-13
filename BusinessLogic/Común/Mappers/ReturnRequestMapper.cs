@@ -8,7 +8,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class ReturnRequestMapper
     {
-        public static ReturnRequest toDomain(AddReturnRequest_Request addReturnRequestRequest)
+        public static ReturnRequest ToDomain(AddReturnRequest_Request addReturnRequestRequest)
         {
             return new ReturnRequest(
                 id: 0,
@@ -51,7 +51,7 @@ namespace BusinessLogic.Común.Mappers
                 requestItems: new List<RequestItem>()
             );
         }
-        public static ReturnRequest.UpdatableData toDomain(UpdateReturnRequest_Request updateReturnRequestRequest)
+        public static ReturnRequest.UpdatableData ToDomain(UpdateReturnRequest_Request updateReturnRequestRequest)
         {
             return new ReturnRequest.UpdatableData
             {
@@ -87,7 +87,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             };
         }
-        public static ReturnRequestResponse toResponse(ReturnRequest returnRequest)
+        public static ReturnRequestResponse ToResponse(ReturnRequest returnRequest)
         {
             return new ReturnRequestResponse
             {

@@ -16,7 +16,7 @@ namespace BusinessLogic.SubSystem
 
         public void AddZone(AddZoneRequest zone)
         {
-            Zone newZone = ZoneMapper.toDomain(zone);
+            Zone newZone = ZoneMapper.ToDomain(zone);
             newZone.Validate();
             _zoneRepository.Add(newZone);
         }
@@ -25,7 +25,7 @@ namespace BusinessLogic.SubSystem
         {
             Zone existingZone = _zoneRepository.GetById(zone.Id);
             if (existingZone == null) throw new Exception("No se encontro la zona");
-            existingZone.Update(ZoneMapper.toDomain(zone));
+            existingZone.Update(ZoneMapper.ToDomain(zone));
             _zoneRepository.Update(existingZone);
         }
 
@@ -40,14 +40,14 @@ namespace BusinessLogic.SubSystem
         {
             Zone zone = _zoneRepository.GetById(id);
             if (zone == null) throw new Exception("No se encontro la zona");
-            return ZoneMapper.toResponse(zone);
+            return ZoneMapper.ToResponse(zone);
         }
 
         public List<ZoneResponse> GetAllZones()
         {
             List<Zone> zones = _zoneRepository.GetAll();
             if (zones == null || zones.Count == 0) throw new Exception("No se encontraron zonas");
-            return zones.Select(ZoneMapper.toResponse).ToList();
+            return zones.Select(ZoneMapper.ToResponse).ToList();
         }
     }
 }

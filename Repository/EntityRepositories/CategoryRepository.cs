@@ -185,6 +185,61 @@ namespace Repository.EntityRepositories
             }
         }
 
+        public Category GetByName(string name)
+        {
+            try
+            {
+                using var connection = CreateConnection();
+                connection.Open();
+
+                Category? category = null;
+
+                using (var command = new SqlCommand("SELECT Id, Name, Description FROM Categories WHERE Name = @Name", connection))
+                {
+                    command.Parameters.AddWithValue("@Name", name);
+                    using var reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        category = CategoryMapper.FromReader(reader);
+                        category.SubCategories = new List<SubCategory>();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+
+                using (var subCommand = new SqlCommand("SELECT Id, Name, Description, CategoryId FROM SubCategories WHERE CategoryId = @CategoryId", connection))
+                {
+                    subCommand.Parameters.AddWithValue("@CategoryId", category.Id);
+                    using var subReader = subCommand.ExecuteReader();
+                    while (subReader.Read())
+                    {
+                        var rawSub = SubCategoryMapper.FromReader(subReader);
+                        var subWithCategory = new SubCategory(
+                            id: rawSub.Id,
+                            name: rawSub.Name,
+                            description: rawSub.Description,
+                            category: category!
+                        );
+                        category!.SubCategories.Add(subWithCategory);
+                    }
+                }
+
+                return category;
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error al acceder a la base de datos.");
+                throw new ApplicationException("Error al acceder a la base de datos.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado.");
+                throw new ApplicationException("Ocurrió un error inesperado.", ex);
+            }
+        }
+
         public Category Update(Category category)
         {
             try

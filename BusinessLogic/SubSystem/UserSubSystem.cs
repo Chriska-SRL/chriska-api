@@ -20,12 +20,15 @@ namespace BusinessLogic.SubSystem
         public UserResponse AddUser(AddUserRequest request)
         {
             var role = _roleRepository.GetById(request.RoleId)
-                       ?? throw new InvalidOperationException("Rol no encontrado.");
+                       ?? throw new ArgumentException("Rol no encontrado.", nameof(request.RoleId));
 
             var newUser = UserMapper.ToDomain(request);
             newUser.Role = role;
             newUser.Password = PasswordGenerator.Generate();
             newUser.Validate();
+
+            if (_userRepository.GetByUsername(newUser.Username) != null) 
+                        throw new ArgumentException("Ya existe un usuario con ese username.", nameof(newUser.Username));
 
             var added = _userRepository.Add(newUser);
             return UserMapper.ToResponse(added);
@@ -34,24 +37,26 @@ namespace BusinessLogic.SubSystem
         public UserResponse UpdateUser(UpdateUserRequest request)
         {
             var existingUser = _userRepository.GetById(request.Id)
-                                ?? throw new InvalidOperationException("Usuario no encontrado.");
+                                ?? throw new ArgumentException("Usuario no encontrado.", nameof(request.Id));
 
             var role = _roleRepository.GetById(request.RoleId)
-                       ?? throw new InvalidOperationException("Rol no encontrado.");
+                       ?? throw new ArgumentException("Rol no encontrado.", nameof(request.RoleId));
+
+            if (existingUser.Username != request.Username && _userRepository.GetByUsername(request.Username) != null)
+                throw new ArgumentException("Ya existe un usuario con ese username.", nameof(request.Username));
 
             var updatedData = UserMapper.ToUpdatableData(request);
             updatedData.Role = role;
-
             existingUser.Update(updatedData);
 
             var updated = _userRepository.Update(existingUser);
             return UserMapper.ToResponse(updated);
         }
 
-        public UserResponse DeleteUser(DeleteUserRequest request)
+        public UserResponse DeleteUser(int id)
         {
-            var deleted = _userRepository.Delete(request.Id)
-                          ?? throw new InvalidOperationException("Usuario no encontrado.");
+            var deleted = _userRepository.Delete(id)
+                          ?? throw new ArgumentException("Usuario no encontrado.", nameof(id));
 
             return UserMapper.ToResponse(deleted);
         }
@@ -59,7 +64,7 @@ namespace BusinessLogic.SubSystem
         public UserResponse GetUserById(int id)
         {
             var user = _userRepository.GetById(id)
-                       ?? throw new InvalidOperationException("Usuario no encontrado.");
+                       ?? throw new ArgumentException("Usuario no encontrado.", nameof(id));
 
             return UserMapper.ToResponse(user);
         }

@@ -19,7 +19,7 @@ namespace BusinessLogic.SubSystem
 
         public void AddDelivery(AddDeliveryRequest deliveryRequest)
         {
-            Delivery delivery = DeliveryMapper.toDomain(deliveryRequest);
+            Delivery delivery = DeliveryMapper.ToDomain(deliveryRequest);
             delivery.Validate();
             _deliveryRepository.Add(delivery);
         }
@@ -28,7 +28,7 @@ namespace BusinessLogic.SubSystem
         {
             Delivery exisitingDelivery = _deliveryRepository.GetById(deliveryRequest.Id);
             if (exisitingDelivery == null) throw new Exception("No se encontro la entrega");
-            exisitingDelivery.Update(DeliveryMapper.toDomain(deliveryRequest));
+            exisitingDelivery.Update(DeliveryMapper.ToDomain(deliveryRequest));
             _deliveryRepository.Update(exisitingDelivery);
         }
 
@@ -43,13 +43,13 @@ namespace BusinessLogic.SubSystem
         {
             List<Delivery> deliveries = _deliveryRepository.GetAll();
             if (!deliveries.Any()) throw new Exception("No se encontraron entregas");
-            return deliveries.Select(DeliveryMapper.toResponse).ToList();
+            return deliveries.Select(DeliveryMapper.ToResponse).ToList();
         }
 
 
         public void AddVehicle(AddVehicleRequest vehicle)
         {
-            Vehicle newVehicle = VehicleMapper.toDomain(vehicle);
+            Vehicle newVehicle = VehicleMapper.ToDomain(vehicle);
             newVehicle.Validate();
             _vehicleRepository.Add(newVehicle);
         }
@@ -58,7 +58,7 @@ namespace BusinessLogic.SubSystem
         {
             Vehicle existingVehicle = _vehicleRepository.GetById(vehicle.Id);
             if (existingVehicle == null) throw new Exception("No se encontro el vehiculo");
-            existingVehicle.Update(VehicleMapper.toDomain(vehicle));
+            existingVehicle.Update(VehicleMapper.ToDomain(vehicle));
             _vehicleRepository.Update(existingVehicle);
         }
 
@@ -72,13 +72,13 @@ namespace BusinessLogic.SubSystem
         {
             List<Vehicle> listVehicles = _vehicleRepository.GetAll();
             if (!listVehicles.Any()) throw new Exception("No se encontraron vehiculos");
-            return listVehicles.Select(VehicleMapper.toResponse).ToList();
+            return listVehicles.Select(VehicleMapper.ToResponse).ToList();
         }
         public VehicleResponse GetVehicleById(int id)
         {
             Vehicle vehicle = _vehicleRepository.GetById(id);
             if (vehicle == null) throw new Exception("No se encontro el vehiculo");
-            VehicleResponse vehicleResponse = VehicleMapper.toResponse(vehicle);
+            VehicleResponse vehicleResponse = VehicleMapper.ToResponse(vehicle);
             return vehicleResponse;
         }
     }

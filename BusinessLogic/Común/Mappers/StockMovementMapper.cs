@@ -8,119 +8,65 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class StockMovementMapper
     {
-        public static StockMovement toDomain(AddStockMovementRequest addStockMovement)
+        public static StockMovement ToDomain(AddStockMovementRequest dto)
         {
             return new StockMovement(
                 id: 0,
-                date: addStockMovement.Date,
-                quantity: addStockMovement.Quantity,
-                type: addStockMovement.Type,
-                reason: addStockMovement.Reason,
-                shelve: new Shelve(
-                    id: addStockMovement.ShelveId,
-                    description: string.Empty,
-                    warehouse: null,
-                    productStocks: null,
-                    stockMovements: null
-                ),
-                user: new User(
-                    id: addStockMovement.UserId,
-                    name: string.Empty,
-                    username: string.Empty,
-                    password: string.Empty,
-                    isEnabled: true,
-                    role: null,
-                    requests: null
-                ),
-                product: new Product(
-                    id: addStockMovement.ProductId,
-                    internalCode: string.Empty,
-                    barcode: string.Empty,
-                    name: string.Empty,
-                    price: 0,
-                    image: string.Empty,
-                    stock: 0,
-                    description: string.Empty,
-                    unitType: string.Empty,
-                    temperatureCondition: string.Empty,
-                    observation: string.Empty,
-                    subCategory: null,
-                    suppliers: null
-                )
+                date: dto.Date,
+                quantity: dto.Quantity,
+                type: dto.Type,
+                reason: dto.Reason,
+                shelve: new Shelve(dto.ShelveId),
+                user: new User(dto.UserId),
+                product: new Product(dto.ProductId)
             );
         }
-        public static StockMovement.UpdatableData toDomain(UpdateStockMovementRequest updateStockMovement)
+
+        public static StockMovement.UpdatableData ToDomain(UpdateStockMovementRequest dto)
         {
             return new StockMovement.UpdatableData
             {
-                Date = updateStockMovement.Date,
-                Quantity = updateStockMovement.Quantity,
-                Type = updateStockMovement.Type,
-                Reason = updateStockMovement.Reason,
-                Shelve = new Shelve(
-                    id: updateStockMovement.ShelveId,
-                    description: string.Empty,
-                    warehouse: null,
-                    productStocks: null,
-                    stockMovements: null
-                ),
-                User = new User(
-                    id: updateStockMovement.UserId,
-                    name: string.Empty,
-                    username: string.Empty,
-                    password: string.Empty,
-                    isEnabled: true,
-                    role: null,
-                    requests: null
-                ),
-                Product = new Product(
-                    id: updateStockMovement.ProductId,
-                    internalCode: string.Empty,
-                    barcode: string.Empty,
-                    name: string.Empty,
-                    price: 0,
-                    image: string.Empty,
-                    stock: 0,
-                    description: string.Empty,
-                    unitType: string.Empty,
-                    temperatureCondition: string.Empty,
-                    observation: string.Empty,
-                    subCategory: null,
-                    suppliers: null
-                )
+                Date = dto.Date,
+                Quantity = dto.Quantity,
+                Type = dto.Type,
+                Reason = dto.Reason,
+                Shelve = new Shelve(dto.ShelveId),
+                User = new User(dto.UserId),
+                Product = new Product(dto.ProductId)
             };
         }
-        public static StockMovementResponse toResponse(StockMovement stockMovement)
+
+        public static StockMovementResponse ToResponse(StockMovement domain)
         {
             return new StockMovementResponse
             {
-                Date = stockMovement.Date,
-                Quantity = stockMovement.Quantity,
-                Type = stockMovement.Type,
-                Reason = stockMovement.Reason,
+                Date = domain.Date,
+                Quantity = domain.Quantity,
+                Type = domain.Type,
+                Reason = domain.Reason,
                 Shelve = new ShelveResponse
                 {
-                    Description = stockMovement.Shelve.Description
+                    Description = domain.Shelve.Description
                 },
                 User = new UserResponse
                 {
-                    Id = stockMovement.User.Id,
-                    Name = stockMovement.User.Name,
-                    Username = stockMovement.User.Username
+                    Id = domain.User.Id,
+                    Name = domain.User.Name,
+                    Username = domain.User.Username
                 },
                 Product = new ProductResponse
                 {
-                    Id = stockMovement.Product.Id,
-                    InternalCode = stockMovement.Product.InternalCode,
-                    Barcode = stockMovement.Product.Barcode,
-                    Name = stockMovement.Product.Name,
-                    Price = stockMovement.Product.Price,
-                    Image = stockMovement.Product.Image,
-                    Stock = stockMovement.Product.Stock,
-                    Description = stockMovement.Product.Description,
-                    UnitType = stockMovement.Product.UnitType,
-                    TemperatureCondition = stockMovement.Product.TemperatureCondition,
-                    Observation = stockMovement.Product.Observation
+                    Id = domain.Product.Id,
+                    InternalCode = domain.Product.InternalCode,
+                    Barcode = domain.Product.Barcode,
+                    Name = domain.Product.Name,
+                    Price = domain.Product.Price,
+                    Image = domain.Product.Image,
+                    Stock = domain.Product.Stock,
+                    Description = domain.Product.Description,
+                    UnitType = domain.Product.UnitType,
+                    TemperatureCondition = domain.Product.TemperatureCondition,
+                    Observation = domain.Product.Observation
                 }
             };
         }

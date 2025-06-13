@@ -24,11 +24,16 @@ namespace API.Controllers
         {
             try
             {
-                return Ok(_facade.AddRole(request));
+                var result = _facade.AddRole(request);
+                return Ok(result);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex) 
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar agregar el rol." });
             }
         }
 
@@ -40,23 +45,31 @@ namespace API.Controllers
             {
                 return Ok(_facade.UpdateRole(request));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar actualizar el rol." });
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_ROLES))]
-        public IActionResult DeleteRole([FromBody] DeleteRoleRequest request)
+        public IActionResult DeleteRole(int id)
         {
             try
             {
-                return Ok(_facade.DeleteRole(request));
+                return Ok(_facade.DeleteRole(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar el rol." });
             }
         }
 
@@ -66,12 +79,15 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.GetRoleById(id);
-                return Ok(response);
+                return Ok(_facade.GetRoleById(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener el rol con id {id}." });
             }
         }
 
@@ -81,13 +97,22 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.GetAllRoles();
-                return Ok(response);
+                return Ok(_facade.GetAllRoles());
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
             }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los roles." });
+            }
+        }
+
+        private static object FormatearError(ArgumentException ex)
+        {
+            var mensaje = ex.Message.Split(" (Parameter")[0];
+            return new { campo = ex.ParamName, error = mensaje };
         }
     }
 }

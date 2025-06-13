@@ -5,7 +5,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class ClientMapper
     {
-        public static Client toDomain(AddClientRequest addClientRequest)
+        public static Client ToDomain(AddClientRequest addClientRequest)
         {
             return new Client(
                 id: 0,
@@ -27,7 +27,7 @@ namespace BusinessLogic.Común.Mappers
             );
 
         }
-        public static Client.UpdatableData toDomain(UpdateClientRequest updateClientRequest)
+        public static Client.UpdatableData ToDomain(UpdateClientRequest updateClientRequest)
         {
             return new Client.UpdatableData
             {
@@ -54,7 +54,7 @@ namespace BusinessLogic.Común.Mappers
             };
         }
 
-        public static ClientResponse toResponse(Client client)
+        public static ClientResponse ToResponse(Client client)
         {
 
             return new ClientResponse

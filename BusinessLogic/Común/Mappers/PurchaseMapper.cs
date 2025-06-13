@@ -6,7 +6,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class PurchaseMapper
     {
-        public static Purchase toDomain(AddPurchaseRequest purchaseRequest)
+        public static Purchase ToDomain(AddPurchaseRequest purchaseRequest)
         {
             return new Purchase
             (
@@ -34,7 +34,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static Purchase.UpdatableData toDomain(UpdatePurchaseRequest purchaseRequest)
+        public static Purchase.UpdatableData ToDomain(UpdatePurchaseRequest purchaseRequest)
         {
             return new Purchase.UpdatableData
             {
@@ -61,7 +61,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             };
         }
-        public static PurchaseResponse toResponse(Purchase purchase)
+        public static PurchaseResponse ToResponse(Purchase purchase)
         {
             return new PurchaseResponse
             {

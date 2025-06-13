@@ -12,7 +12,6 @@ namespace BusinessLogic.Común.Mappers
         {
             return new Product(
                 id: 0,
-                internalCode: dto.InternalCode,
                 barcode: dto.Barcode,
                 name: dto.Name,
                 price: dto.Price,
@@ -33,6 +32,7 @@ namespace BusinessLogic.Común.Mappers
             {
                 Name = dto.Name,
                 Price = dto.Price,
+                Barcode = dto.Barcode,
                 Image = dto.Image,
                 Stock = dto.Stock,
                 Description = dto.Description,

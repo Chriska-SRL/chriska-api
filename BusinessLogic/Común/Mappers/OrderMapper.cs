@@ -9,7 +9,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class OrderMapper
     {
-        public static Order toDomain(AddOrderRequest addOrderRequest)
+        public static Order ToDomain(AddOrderRequest addOrderRequest)
         {
             return new Order(
                 id: 0,
@@ -69,7 +69,7 @@ namespace BusinessLogic.Común.Mappers
             );
 
         }
-        public static Order.UpdatableData toDomain(UpdateOrderRequest updatableOrderRequest)
+        public static Order.UpdatableData ToDomain(UpdateOrderRequest updatableOrderRequest)
         {
             return new Order.UpdatableData
             {
@@ -127,7 +127,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             };
         }
-        public static OrderResponse toResponse(Order order)
+        public static OrderResponse ToResponse(Order order)
         {
             return new OrderResponse
             {

@@ -5,7 +5,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class CostMapper
     {
-        public static Cost toDomain(AddCostRequest dto)
+        public static Cost ToDomain(AddCostRequest dto)
         {
             return new Cost(
                 id: 0,
@@ -13,7 +13,7 @@ namespace BusinessLogic.Común.Mappers
                 amount: dto.Amount
             );
         }
-        public static Cost toDomain(UpdateCostRequest dto)
+        public static Cost ToDomain(UpdateCostRequest dto)
         {
             return new Cost(
                 id: dto.Id,
@@ -21,7 +21,7 @@ namespace BusinessLogic.Común.Mappers
                 amount: dto.Amount
             );
         }
-        public static CostResponse toResponse(Cost domain)
+        public static CostResponse ToResponse(Cost domain)
         {
             return new CostResponse
             {

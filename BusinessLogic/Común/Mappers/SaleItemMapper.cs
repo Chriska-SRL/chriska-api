@@ -12,47 +12,21 @@ namespace BusinessLogic.Común.Mappers
                 id: 0,
                 quantity: sale.Quantity,
                 unitPrice: sale.UnitPrice,
-                product: new Product(
-                    id: sale.Product.Id,
-                    internalCode: string.Empty,
-                    barcode: string.Empty,
-                    name: string.Empty,
-                    price: 0,
-                    image: string.Empty,
-                    stock: 0,
-                    description: string.Empty,
-                    unitType: string.Empty,
-                    temperatureCondition: string.Empty,
-                    observation: string.Empty,
-                    subCategory: null,
-                    suppliers: new List<Supplier>()
-                )
+                product: new Product(sale.Product.Id)
             );
         }
+
         public static SaleItem.UpdatableData ToDomain(SaleItem.UpdatableData sale)
         {
             return new SaleItem.UpdatableData
             {
                 Quantity = sale.Quantity,
                 UnitPrice = sale.UnitPrice,
-                Product = new Product(
-                    id: sale.Product.Id,
-                    internalCode: string.Empty,
-                    barcode: string.Empty,
-                    name: string.Empty,
-                    price: 0,
-                    image: string.Empty,
-                    stock: 0,
-                    description: string.Empty,
-                    unitType: string.Empty,
-                    temperatureCondition: string.Empty,
-                    observation: string.Empty,
-                    subCategory: null,
-                    suppliers: new List<Supplier>()
-                )
+                Product = new Product(sale.Product.Id)
             };
         }
-        public static SaleItemResponse toResponse(SaleItem domain)
+
+        public static SaleItemResponse ToResponse(SaleItem domain)
         {
             return new SaleItemResponse
             {
@@ -76,7 +50,7 @@ namespace BusinessLogic.Común.Mappers
                     {
                         Id = domain.Product.SubCategory.Id,
                         Name = domain.Product.SubCategory.Name
-                    },
+                    }
                 }
             };
         }

@@ -19,7 +19,7 @@ namespace BusinessLogic.SubSystem
 
         public void AddPurchase(AddPurchaseRequest purchase)
         {
-            Purchase newPurchase = PurchaseMapper.toDomain(purchase);
+            Purchase newPurchase = PurchaseMapper.ToDomain(purchase);
             newPurchase.Validate();
             _purchaseRepository.Add(newPurchase);
         }
@@ -28,7 +28,7 @@ namespace BusinessLogic.SubSystem
         {
             Purchase existingPurchase = _purchaseRepository.GetById(purchase.Id);
             if (existingPurchase == null) throw new Exception("No se encontro la compra");
-            existingPurchase.Update(PurchaseMapper.toDomain(purchase));
+            existingPurchase.Update(PurchaseMapper.ToDomain(purchase));
             _purchaseRepository.Update(existingPurchase);
         }
 
@@ -43,7 +43,7 @@ namespace BusinessLogic.SubSystem
         {
             Purchase purchase = _purchaseRepository.GetById(id);
             if (purchase == null) throw new Exception("No se encontro la compra");
-            PurchaseResponse purchaseResponse = PurchaseMapper.toResponse(purchase);
+            PurchaseResponse purchaseResponse = PurchaseMapper.ToResponse(purchase);
             return purchaseResponse;
         }
 
@@ -51,12 +51,12 @@ namespace BusinessLogic.SubSystem
         {
             List<Purchase> purchases = _purchaseRepository.GetAll();
             if(!purchases.Any()) throw new Exception("No se encontraron compras");
-            return purchases.Select(PurchaseMapper.toResponse).ToList();
+            return purchases.Select(PurchaseMapper.ToResponse).ToList();
         }
 
         public void AddPurchaseItem(AddPurchaseItemRequest purchaseItem)
         {
-            PurchaseItem newPurchaseItem = PurchaseItemMapper.toDomain(purchaseItem);
+            PurchaseItem newPurchaseItem = PurchaseItemMapper.ToDomain(purchaseItem);
             newPurchaseItem.Validate();
             _purchaseItemRepository.Add(newPurchaseItem);
         }
@@ -65,7 +65,7 @@ namespace BusinessLogic.SubSystem
         {
             PurchaseItem existingPurchaseItem = _purchaseItemRepository.GetById(purchaseItem.Id);
             if (existingPurchaseItem == null) throw new Exception("No se encontro el item de compra");
-            existingPurchaseItem.Update(PurchaseItemMapper.toDomain(purchaseItem));
+            existingPurchaseItem.Update(PurchaseItemMapper.ToDomain(purchaseItem));
             _purchaseItemRepository.Update(existingPurchaseItem);
         }
 
@@ -79,14 +79,14 @@ namespace BusinessLogic.SubSystem
         {
             PurchaseItem purchaseItem = _purchaseItemRepository.GetById(id);
             if (purchaseItem == null) throw new Exception("No se encontro el item de compra");
-            PurchaseItemResponse purchaseItemResponse = PurchaseItemMapper.toResponse(purchaseItem);
+            PurchaseItemResponse purchaseItemResponse = PurchaseItemMapper.ToResponse(purchaseItem);
             return purchaseItemResponse;
         }
         public List<PurchaseItemResponse> GetAllPurchaseItems()
         {
             List<PurchaseItem> purchaseItems = _purchaseItemRepository.GetAll();
             if (!purchaseItems.Any()) throw new Exception("No se encontraron items de compra");
-            return purchaseItems.Select(PurchaseItemMapper.toResponse).ToList();
+            return purchaseItems.Select(PurchaseItemMapper.ToResponse).ToList();
         }
     } 
 }

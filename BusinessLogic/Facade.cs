@@ -79,14 +79,14 @@ namespace BusinessLogic
         // Categories
         public CategoryResponse AddCategory(AddCategoryRequest category) => Categories.AddCategory(category);
         public CategoryResponse UpdateCategory(UpdateCategoryRequest category) => Categories.UpdateCategory(category);
-        public CategoryResponse DeleteCategory(DeleteCategoryRequest request) => Categories.DeleteCategory(request);
+        public CategoryResponse DeleteCategory(int id) => Categories.DeleteCategory(id);
         public List<CategoryResponse> GetAllCategory() => Categories.GetAllCategory();
         public CategoryResponse GetCategoryById(int id) => Categories.GetCategoryById(id);
 
         // SubCategories
         public SubCategoryResponse AddSubCategory(AddSubCategoryRequest subCategory) => Categories.AddSubCategory(subCategory);
         public SubCategoryResponse UpdateSubCategory(UpdateSubCategoryRequest subCategory) => Categories.UpdateSubCategory(subCategory);
-        public SubCategoryResponse DeleteSubCategory(DeleteSubCategoryRequest request) => Categories.DeleteSubCategory(request);
+        public SubCategoryResponse DeleteSubCategory(int id) => Categories.DeleteSubCategory(id);
         public SubCategoryResponse GetSubCategoryById(int id) => Categories.GetSubCategoryById(id);
         public List<SubCategoryResponse> GetAllSubCategories() => Categories.GetAllSubCategories();
 
@@ -129,7 +129,7 @@ namespace BusinessLogic
         // Products
         public ProductResponse AddProduct(AddProductRequest product) => Products.AddProduct(product);
         public ProductResponse UpdateProduct(UpdateProductRequest product) => Products.UpdateProduct(product);
-        public ProductResponse DeleteProduct(DeleteProductRequest request) => Products.DeleteProduct(request);
+        public ProductResponse DeleteProduct(int id) => Products.DeleteProduct(id);
         public ProductResponse GetProductById(int id) => Products.GetProductById(id);
         public List<ProductResponse> GetAllProducts() => Products.GetAllProducts();
 
@@ -154,7 +154,7 @@ namespace BusinessLogic
         // Roles
         public RoleResponse AddRole(AddRoleRequest role) => Roles.AddRole(role);
         public RoleResponse UpdateRole(UpdateRoleRequest role) => Roles.UpdateRole(role);
-        public RoleResponse DeleteRole(DeleteRoleRequest role) => Roles.DeleteRole(role);
+        public RoleResponse DeleteRole(int id) => Roles.DeleteRole(id);
         public RoleResponse GetRoleById(int id) => Roles.GetRoleById(id);
         public List<RoleResponse> GetAllRoles() => Roles.GetAllRoles();
 
@@ -173,7 +173,7 @@ namespace BusinessLogic
         // Users
         public UserResponse AddUser(AddUserRequest user) => Users.AddUser(user);
         public UserResponse UpdateUser(UpdateUserRequest user) => Users.UpdateUser(user);
-        public UserResponse DeleteUser(DeleteUserRequest user) => Users.DeleteUser(user);
+        public UserResponse DeleteUser(int id) => Users.DeleteUser(id);
         public UserResponse GetUserById(int id) => Users.GetUserById(id);
         public List<UserResponse> GetAllUsers() => Users.GetAllUsers();
 

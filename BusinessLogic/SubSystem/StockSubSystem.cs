@@ -23,7 +23,7 @@ namespace BusinessLogic.SubSystem
 
         public void AddStockMovement(AddStockMovementRequest stockMovement)
         {
-            StockMovement newStockMovement = StockMovementMapper.toDomain(stockMovement);
+            StockMovement newStockMovement = StockMovementMapper.ToDomain(stockMovement);
             newStockMovement.Validate();
             _stockMovementRepository.Add(newStockMovement);
         }
@@ -31,7 +31,7 @@ namespace BusinessLogic.SubSystem
         {
             StockMovement existingStockMovement = _stockMovementRepository.GetById(stockMovement.Id);
             if (existingStockMovement == null) throw new Exception("Movimiento de stock no encontrado");
-            existingStockMovement.Update(StockMovementMapper.toDomain(stockMovement));
+            existingStockMovement.Update(StockMovementMapper.ToDomain(stockMovement));
             _stockMovementRepository.Update(existingStockMovement);
         }
         public void DeleteStockMovement(DeleteStockMovementRequest stockMovement)
@@ -45,7 +45,7 @@ namespace BusinessLogic.SubSystem
             StockMovement stockMovement = _stockMovementRepository.GetById(id);
             if (stockMovement == null)
                 throw new Exception("Movimiento de stock no encontrado");
-            return StockMovementMapper.toResponse(stockMovement);
+            return StockMovementMapper.ToResponse(stockMovement);
         }
 
         public List<StockMovementResponse> GetAllStockMovements()
@@ -53,7 +53,7 @@ namespace BusinessLogic.SubSystem
             List<StockMovement> stockMovements = _stockMovementRepository.GetAll();
             if (stockMovements == null || !stockMovements.Any())
                 throw new Exception("No hay movimientos de stock disponibles");
-            return stockMovements.Select(StockMovementMapper.toResponse).ToList();
+            return stockMovements.Select(StockMovementMapper.ToResponse).ToList();
         }
     }
 }

@@ -3,43 +3,30 @@ using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsRequestItem;
 using BusinessLogic.DTOs.DTOsSubCategory;
 
-
 namespace BusinessLogic.Común.Mappers
 {
     public static class RequestItemMapper
     {
-        public static RequestItem ToDomain(AddRequestItem_Request addRequestItemRequest)
+        public static RequestItem ToDomain(AddRequestItem_Request dto)
         {
             return new RequestItem(
                 id: 0,
-                quantity: addRequestItemRequest.Quantity,
-                unitPrice: addRequestItemRequest.UnitPrice,
-                product: new Product(
-                    id: addRequestItemRequest.ProductId,
-                    internalCode: string.Empty,
-                    barcode: string.Empty,
-                    name: string.Empty,
-                    price: 0,
-                    image: string.Empty,
-                    stock: 0,
-                    description: string.Empty,
-                    unitType: string.Empty,
-                    temperatureCondition: string.Empty,
-                    observation: string.Empty,
-                    subCategory: null,
-                    suppliers: new List<Supplier>()
-                )
+                quantity: dto.Quantity,
+                unitPrice: dto.UnitPrice,
+                product: new Product(dto.ProductId)
             );
         }
-        public static RequestItem.UpdatableData ToDomain(UpdateRequestItem_Request update)
+
+        public static RequestItem.UpdatableData ToDomain(UpdateRequestItem_Request dto)
         {
             return new RequestItem.UpdatableData
             {
-                Quantity = update.Quantity,
-                UnitPrice = update.UnitPrice,
+                Quantity = dto.Quantity,
+                UnitPrice = dto.UnitPrice
             };
         }
-        public static RequestItemResponse toResponse(RequestItem requestItem)
+
+        public static RequestItemResponse ToResponse(RequestItem requestItem)
         {
             return new RequestItemResponse
             {
@@ -66,5 +53,5 @@ namespace BusinessLogic.Común.Mappers
                 }
             };
         }
-    }     
+    }
 }

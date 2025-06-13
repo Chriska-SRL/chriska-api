@@ -16,7 +16,7 @@ namespace BusinessLogic.SubSystem
 
         public void AddReturnRequest(AddReturnRequest_Request request)
         {
-            ReturnRequest newReturnRequest = ReturnRequestMapper.toDomain(request);
+            ReturnRequest newReturnRequest = ReturnRequestMapper.ToDomain(request);
             newReturnRequest.Validate();
             _returnRequestRepository.Add(newReturnRequest);
         }
@@ -25,7 +25,7 @@ namespace BusinessLogic.SubSystem
         {
             ReturnRequest existingRequest = _returnRequestRepository.GetById(request.Id);
             if (existingRequest == null) throw new Exception("La solicitud de devolucion no existe");
-            existingRequest.Update(ReturnRequestMapper.toDomain(request));
+            existingRequest.Update(ReturnRequestMapper.ToDomain(request));
             _returnRequestRepository.Update(existingRequest);
         }
         public void DeleteReturnRequest(DeleteReturnRequest_Request request)
@@ -39,13 +39,13 @@ namespace BusinessLogic.SubSystem
         {
             ReturnRequest returnRequest = _returnRequestRepository.GetById(id);
             if (returnRequest == null) throw new Exception("La solicitud de devolucion no existe");
-            return ReturnRequestMapper.toResponse(returnRequest);
+            return ReturnRequestMapper.ToResponse(returnRequest);
         }
         public List<ReturnRequestResponse> GetAllReturnRequests()
         {
             var returnRequests = _returnRequestRepository.GetAll();
             if (!returnRequests.Any()) throw new Exception("No se encontraron solicitudes de devolucion");
-            return returnRequests.Select(ReturnRequestMapper.toResponse).ToList();
+            return returnRequests.Select(ReturnRequestMapper.ToResponse).ToList();
         }
     }
 }
