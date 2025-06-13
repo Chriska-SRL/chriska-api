@@ -6,7 +6,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class PurchaseItemMapper
     {
-        public static PurchaseItem toDomain(AddPurchaseItemRequest addPruchaseItemRequest)
+        public static PurchaseItem ToDomain(AddPurchaseItemRequest addPruchaseItemRequest)
         {
             return new PurchaseItem(
                 id: 0,
@@ -29,7 +29,7 @@ namespace BusinessLogic.Común.Mappers
                 )
              );
         }
-        public static PurchaseItem.UpdatableData toDomain(UpdatePurchaseItemRequest purchaseItemResponse)
+        public static PurchaseItem.UpdatableData ToUpdatableData(UpdatePurchaseItemRequest purchaseItemResponse)
         {
             return new PurchaseItem.UpdatableData
             {
@@ -37,7 +37,7 @@ namespace BusinessLogic.Común.Mappers
                 UnitPrice = purchaseItemResponse.UnitPrice
             };
         }
-        public static PurchaseItemResponse toResponse(PurchaseItem purchaseItem)
+        public static PurchaseItemResponse ToResponse(PurchaseItem purchaseItem)
         {
             return new PurchaseItemResponse
             {

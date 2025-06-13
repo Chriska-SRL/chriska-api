@@ -8,7 +8,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class StockMovementMapper
     {
-        public static StockMovement toDomain(AddStockMovementRequest addStockMovement)
+        public static StockMovement ToDomain(AddStockMovementRequest addStockMovement)
         {
             return new StockMovement(
                 id: 0,
@@ -49,7 +49,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static StockMovement.UpdatableData toDomain(UpdateStockMovementRequest updateStockMovement)
+        public static StockMovement.UpdatableData ToUpdatableData(UpdateStockMovementRequest updateStockMovement)
         {
             return new StockMovement.UpdatableData
             {
@@ -90,7 +90,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             };
         }
-        public static StockMovementResponse toResponse(StockMovement stockMovement)
+        public static StockMovementResponse ToResponse(StockMovement stockMovement)
         {
             return new StockMovementResponse
             {

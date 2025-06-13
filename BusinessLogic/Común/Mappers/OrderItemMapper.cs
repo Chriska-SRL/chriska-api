@@ -6,7 +6,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class OrderItemMapper
     {
-        public static OrderItem toDomain(AddOrderItemRequest dto)
+        public static OrderItem ToDomain(AddOrderItemRequest dto)
         {
             return new OrderItem(
                 id: 0,
@@ -29,7 +29,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static OrderItem.UpdatableData toDomain(UpdateOrderItemRequest dto)
+        public static OrderItem.UpdatableData ToUpdatableData(UpdateOrderItemRequest dto)
         {
             return new OrderItem.UpdatableData
             {
@@ -52,7 +52,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             };
         }
-        public static OrderItemResponse toResponse(OrderItem domain)
+        public static OrderItemResponse ToResponse(OrderItem domain)
         {
             return new OrderItemResponse
             {

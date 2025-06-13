@@ -1,8 +1,8 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.Repository;
+﻿using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsSubCategory;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.Dominio;
 
 namespace BusinessLogic.SubSystem
 {
@@ -21,28 +21,28 @@ namespace BusinessLogic.SubSystem
 
         public CategoryResponse AddCategory(AddCategoryRequest request)
         {
-            var category = CategoryMapper.ToDomain(request);
+            Category category = CategoryMapper.ToDomain(request);
             category.Validate();
 
-            var added = _categoryRepository.Add(category);
+            Category added = _categoryRepository.Add(category);
             return CategoryMapper.ToResponse(added);
         }
 
         public CategoryResponse UpdateCategory(UpdateCategoryRequest request)
         {
-            var existing = _categoryRepository.GetById(request.Id)
+            Category existing = _categoryRepository.GetById(request.Id)
                           ?? throw new InvalidOperationException("Categoría no encontrada.");
 
-            var updatedData = CategoryMapper.ToUpdatableData(request);
+            Category.UpdatableData updatedData = CategoryMapper.ToUpdatableData(request);
             existing.Update(updatedData);
 
-            var updated = _categoryRepository.Update(existing);
+            Category updated = _categoryRepository.Update(existing);
             return CategoryMapper.ToResponse(updated);
         }
 
         public CategoryResponse DeleteCategory(DeleteCategoryRequest request)
         {
-            var deleted = _categoryRepository.Delete(request.Id)
+            Category deleted = _categoryRepository.Delete(request.Id)
                           ?? throw new InvalidOperationException("Categoría no encontrada.");
 
             return CategoryMapper.ToResponse(deleted);
@@ -50,7 +50,7 @@ namespace BusinessLogic.SubSystem
 
         public CategoryResponse GetCategoryById(int id)
         {
-            var category = _categoryRepository.GetById(id)
+            Category category = _categoryRepository.GetById(id)
                           ?? throw new InvalidOperationException("Categoría no encontrada.");
 
             return CategoryMapper.ToResponse(category);
@@ -67,28 +67,28 @@ namespace BusinessLogic.SubSystem
 
         public SubCategoryResponse AddSubCategory(AddSubCategoryRequest request)
         {
-            var subCategory = SubCategoryMapper.ToDomain(request);
+            SubCategory subCategory = SubCategoryMapper.ToDomain(request);
             subCategory.Validate();
 
-            var added = _subCategoryRepository.Add(subCategory);
+            SubCategory added = _subCategoryRepository.Add(subCategory);
             return SubCategoryMapper.ToResponse(added);
         }
 
         public SubCategoryResponse UpdateSubCategory(UpdateSubCategoryRequest request)
         {
-            var existing = _subCategoryRepository.GetById(request.Id)
+            SubCategory existing = _subCategoryRepository.GetById(request.Id)
                            ?? throw new InvalidOperationException("Subcategoría no encontrada.");
 
-            var updatedData = SubCategoryMapper.ToUpdatableData(request);
+            SubCategory.UpdatableData updatedData = SubCategoryMapper.ToUpdatableData(request);
             existing.Update(updatedData);
 
-            var updated = _subCategoryRepository.Update(existing);
+            SubCategory updated = _subCategoryRepository.Update(existing);
             return SubCategoryMapper.ToResponse(updated);
         }
 
         public SubCategoryResponse DeleteSubCategory(DeleteSubCategoryRequest request)
         {
-            var deleted = _subCategoryRepository.Delete(request.Id)
+            SubCategory deleted = _subCategoryRepository.Delete(request.Id)
                            ?? throw new InvalidOperationException("Subcategoría no encontrada.");
 
             return SubCategoryMapper.ToResponse(deleted);
@@ -96,7 +96,7 @@ namespace BusinessLogic.SubSystem
 
         public SubCategoryResponse GetSubCategoryById(int id)
         {
-            var subCategory = _subCategoryRepository.GetById(id)
+            SubCategory subCategory = _subCategoryRepository.GetById(id)
                               ?? throw new InvalidOperationException("Subcategoría no encontrada.");
 
             return SubCategoryMapper.ToResponse(subCategory);

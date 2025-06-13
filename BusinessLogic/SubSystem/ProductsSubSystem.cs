@@ -1,7 +1,7 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsProduct;
+﻿using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.Repository;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.Dominio;
 
 namespace BusinessLogic.SubSystem
 {
@@ -21,40 +21,40 @@ namespace BusinessLogic.SubSystem
             var subCategory = _subCategoryRepository.GetById(request.SubCategoryId)
                               ?? throw new InvalidOperationException("Subcategoría no encontrada.");
 
-            var newProduct = ProductMapper.ToDomain(request, subCategory);
+            Product newProduct = ProductMapper.ToDomain(request, subCategory);
             newProduct.Validate();
 
-            var added = _productRepository.Add(newProduct);
+            Product added = _productRepository.Add(newProduct);
             return ProductMapper.ToResponse(added);
         }
 
         public ProductResponse UpdateProduct(UpdateProductRequest request)
         {
-            var existing = _productRepository.GetById(request.Id)
-                           ?? throw new InvalidOperationException("Producto no encontrado.");
+            Product existing = _productRepository.GetById(request.Id)
+                                ?? throw new InvalidOperationException("Producto no encontrado.");
 
-            var subCategory = _subCategoryRepository.GetById(request.SubCategoryId)
+            SubCategory subCategory = _subCategoryRepository.GetById(request.SubCategoryId)
                               ?? throw new InvalidOperationException("Subcategoría no encontrada.");
 
-            var data = ProductMapper.ToUpdatableData(request, subCategory);
+            Product.UpdatableData data = ProductMapper.ToUpdatableData(request, subCategory);
             existing.Update(data);
 
-            var updated = _productRepository.Update(existing);
+            Product updated = _productRepository.Update(existing);
             return ProductMapper.ToResponse(updated);
         }
 
         public ProductResponse DeleteProduct(DeleteProductRequest request)
         {
-            var deleted = _productRepository.Delete(request.Id)
-                          ?? throw new InvalidOperationException("Producto no encontrado.");
+            Product deleted = _productRepository.Delete(request.Id)
+                                ?? throw new InvalidOperationException("Producto no encontrado.");
 
             return ProductMapper.ToResponse(deleted);
         }
 
         public ProductResponse GetProductById(int id)
         {
-            var product = _productRepository.GetById(id)
-                          ?? throw new InvalidOperationException("Producto no encontrado.");
+            Product product = _productRepository.GetById(id)
+                              ?? throw new InvalidOperationException("Producto no encontrado.");
 
             return ProductMapper.ToResponse(product);
         }
