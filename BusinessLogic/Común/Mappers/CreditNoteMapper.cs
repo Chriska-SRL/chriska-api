@@ -5,7 +5,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class CreditNoteMapper
     {
-        public static CreditNote toDomain (AddCreditNoteRequest dto)
+        public static CreditNote ToDomain (AddCreditNoteRequest dto)
         {
             return new CreditNote(
                 id: 0,
@@ -13,7 +13,7 @@ namespace BusinessLogic.Común.Mappers
                 returnRequest: null
             );
         }
-        public static CreditNote.UpdatableData toDomain(UpdateCreditNoteRequest dto)
+        public static CreditNote.UpdatableData ToDomain(UpdateCreditNoteRequest dto)
         {
             return new CreditNote.UpdatableData
             {
@@ -33,7 +33,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             };
         }       
-        public static CreditNoteResponse toResponse(CreditNote domain)
+        public static CreditNoteResponse ToResponse(CreditNote domain)
         {
             return new CreditNoteResponse
             {

@@ -8,7 +8,7 @@ namespace BusinessLogic.Común.Mappers
     public static class VehicleMapper
     {
         
-        public static Vehicle toDomain(AddVehicleRequest data)
+        public static Vehicle ToDomain(AddVehicleRequest data)
         {
             return new Vehicle(
                 id: 0,
@@ -23,7 +23,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static Vehicle.UpdatableData toDomain(UpdateVehicleRequest data)
+        public static Vehicle.UpdatableData ToDomain(UpdateVehicleRequest data)
         {
            return new Vehicle.UpdatableData
            {
@@ -38,7 +38,7 @@ namespace BusinessLogic.Común.Mappers
                 )
            };
         }
-        public static VehicleResponse toResponse(Vehicle vehicle)
+        public static VehicleResponse ToResponse(Vehicle vehicle)
         {
             return new VehicleResponse
             {

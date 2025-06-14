@@ -17,6 +17,17 @@
             Stocks = productStocks;
             StockMovements = stockMovements;
         }
+        public Shelve(int id)
+        {
+            if (id <= 0)
+                throw new ArgumentOutOfRangeException(nameof(id), "El ID del estante debe ser mayor a cero.");
+
+            Id = id;
+            Description = "-";
+            Warehouse = new Warehouse(9999,"Temporal", "-", "-", new List<Shelve>());
+            Stocks = new List<ProductStock>();
+            StockMovements = new List<StockMovement>();
+        }
         public void Validate()
         {
             if (string.IsNullOrEmpty(Description)) throw new Exception("La descripción es obligatoria");

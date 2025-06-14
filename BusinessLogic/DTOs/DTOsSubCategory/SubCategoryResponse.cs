@@ -1,10 +1,4 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsCategory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessLogic.DTOs.DTOsCategory;
 
 namespace BusinessLogic.DTOs.DTOsSubCategory
 {
@@ -14,6 +8,5 @@ namespace BusinessLogic.DTOs.DTOsSubCategory
         public string Name { get; set; }
         public string Description { get; set; }
         public CategoryResponse Category { get; set; }
-
     }
 }

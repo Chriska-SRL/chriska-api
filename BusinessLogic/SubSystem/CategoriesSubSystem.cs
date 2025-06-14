@@ -21,6 +21,9 @@ namespace BusinessLogic.SubSystem
 
         public CategoryResponse AddCategory(AddCategoryRequest request)
         {
+            if (_categoryRepository.GetByName(request.Name) != null)
+                throw new ArgumentException("Ya existe una categoría con el mismo nombre.", nameof(request.Name));
+
             var category = CategoryMapper.ToDomain(request);
             category.Validate();
 
@@ -31,7 +34,10 @@ namespace BusinessLogic.SubSystem
         public CategoryResponse UpdateCategory(UpdateCategoryRequest request)
         {
             var existing = _categoryRepository.GetById(request.Id)
-                          ?? throw new InvalidOperationException("Categoría no encontrada.");
+                          ?? throw new ArgumentException("Categoría no encontrada.", nameof(request.Id));
+
+            if (existing.Name != request.Name && _categoryRepository.GetByName(request.Name) != null)
+                throw new ArgumentException("Ya existe una categoría con el mismo nombre.", nameof(request.Name));
 
             var updatedData = CategoryMapper.ToUpdatableData(request);
             existing.Update(updatedData);
@@ -40,10 +46,10 @@ namespace BusinessLogic.SubSystem
             return CategoryMapper.ToResponse(updated);
         }
 
-        public CategoryResponse DeleteCategory(DeleteCategoryRequest request)
+        public CategoryResponse DeleteCategory(int id)
         {
-            var deleted = _categoryRepository.Delete(request.Id)
-                          ?? throw new InvalidOperationException("Categoría no encontrada.");
+            var deleted = _categoryRepository.Delete(id)
+                          ?? throw new ArgumentException("Categoría no encontrada.", nameof(id));
 
             return CategoryMapper.ToResponse(deleted);
         }
@@ -51,7 +57,7 @@ namespace BusinessLogic.SubSystem
         public CategoryResponse GetCategoryById(int id)
         {
             var category = _categoryRepository.GetById(id)
-                          ?? throw new InvalidOperationException("Categoría no encontrada.");
+                          ?? throw new ArgumentException("Categoría no encontrada.", nameof(id));
 
             return CategoryMapper.ToResponse(category);
         }
@@ -67,6 +73,12 @@ namespace BusinessLogic.SubSystem
 
         public SubCategoryResponse AddSubCategory(AddSubCategoryRequest request)
         {
+            var existing = _categoryRepository.GetById(request.CategoryId)
+                       ?? throw new ArgumentException("Categoría no encontrada.", nameof(request.CategoryId));
+
+            if (_subCategoryRepository.GetByName(request.Name) != null)
+                throw new ArgumentException("Ya existe una subcategoría con el mismo nombre.", nameof(request.Name));
+
             var subCategory = SubCategoryMapper.ToDomain(request);
             subCategory.Validate();
 
@@ -77,7 +89,10 @@ namespace BusinessLogic.SubSystem
         public SubCategoryResponse UpdateSubCategory(UpdateSubCategoryRequest request)
         {
             var existing = _subCategoryRepository.GetById(request.Id)
-                           ?? throw new InvalidOperationException("Subcategoría no encontrada.");
+                           ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(request.Id));
+
+            if (existing.Name != request.Name && _subCategoryRepository.GetByName(request.Name) != null)
+                throw new ArgumentException("Ya existe una subcategoría con el mismo nombre.", nameof(request.Name));
 
             var updatedData = SubCategoryMapper.ToUpdatableData(request);
             existing.Update(updatedData);
@@ -86,10 +101,10 @@ namespace BusinessLogic.SubSystem
             return SubCategoryMapper.ToResponse(updated);
         }
 
-        public SubCategoryResponse DeleteSubCategory(DeleteSubCategoryRequest request)
+        public SubCategoryResponse DeleteSubCategory(int id)
         {
-            var deleted = _subCategoryRepository.Delete(request.Id)
-                           ?? throw new InvalidOperationException("Subcategoría no encontrada.");
+            var deleted = _subCategoryRepository.Delete(id)
+                           ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(id));
 
             return SubCategoryMapper.ToResponse(deleted);
         }
@@ -97,7 +112,7 @@ namespace BusinessLogic.SubSystem
         public SubCategoryResponse GetSubCategoryById(int id)
         {
             var subCategory = _subCategoryRepository.GetById(id)
-                              ?? throw new InvalidOperationException("Subcategoría no encontrada.");
+                              ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(id));
 
             return SubCategoryMapper.ToResponse(subCategory);
         }

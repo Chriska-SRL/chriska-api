@@ -27,9 +27,13 @@ namespace API.Controllers
             {
                 return Ok(_facade.GetAllCategory());
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al obtener las categorías." });
             }
         }
 
@@ -41,9 +45,13 @@ namespace API.Controllers
             {
                 return Ok(_facade.GetCategoryById(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = $"Error inesperado al obtener la categoría con id {id}." });
             }
         }
 
@@ -53,12 +61,15 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.AddCategory(request);
-                return Ok(response);
+                return Ok(_facade.AddCategory(request));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al agregar la categoría." });
             }
         }
 
@@ -68,29 +79,37 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.UpdateCategory(request);
-                return Ok(response);
+                return Ok(_facade.UpdateCategory(request));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al actualizar la categoría." });
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_CATEGORIES))]
-        public ActionResult<CategoryResponse> DeleteCategory([FromBody] DeleteCategoryRequest request)
+        public ActionResult<CategoryResponse> DeleteCategory(int id)
         {
             try
             {
-                var response = _facade.DeleteCategory(request);
-                return Ok(response);
+                return Ok(_facade.DeleteCategory(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al eliminar la categoría." });
             }
         }
+
+        // SubCategories
 
         [HttpGet("subcategories")]
         [Authorize(Policy = nameof(Permission.VIEW_CATEGORIES))]
@@ -100,9 +119,13 @@ namespace API.Controllers
             {
                 return Ok(_facade.GetAllSubCategories());
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al obtener las subcategorías." });
             }
         }
 
@@ -114,9 +137,13 @@ namespace API.Controllers
             {
                 return Ok(_facade.GetSubCategoryById(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = $"Error inesperado al obtener la subcategoría con id {id}." });
             }
         }
 
@@ -126,12 +153,15 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.AddSubCategory(request);
-                return Ok(response);
+                return Ok(_facade.AddSubCategory(request));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al agregar la subcategoría." });
             }
         }
 
@@ -141,28 +171,40 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.UpdateSubCategory(request);
-                return Ok(response);
+                return Ok(_facade.UpdateSubCategory(request));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al actualizar la subcategoría." });
             }
         }
 
-        [HttpDelete("subcategories")]
+        [HttpDelete("subcategories/{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_CATEGORIES))]
-        public ActionResult<SubCategoryResponse> DeleteSubCategory([FromBody] DeleteSubCategoryRequest request)
+        public ActionResult<SubCategoryResponse> DeleteSubCategory(int id)
         {
             try
             {
-                var response = _facade.DeleteSubCategory(request);
-                return Ok(response);
+                return Ok(_facade.DeleteSubCategory(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
             }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al eliminar la subcategoría." });
+            }
+        }
+
+        private static object FormatearError(ArgumentException ex)
+        {
+            var mensaje = ex.Message.Split(" (Parameter")[0];
+            return new { campo = ex.ParamName, error = mensaje };
         }
     }
 }

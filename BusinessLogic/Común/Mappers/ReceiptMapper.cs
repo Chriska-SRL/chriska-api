@@ -6,7 +6,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class ReceiptMapper
     {
-        public static Receipt toDomain(AddReceiptRequest addReceiptRequest)
+        public static Receipt ToDomain(AddReceiptRequest addReceiptRequest)
         {
             return new Receipt(
 
@@ -36,7 +36,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static Receipt.UpdatableData toDomain(UpdateReceiptRequest updateReceiptRequest)
+        public static Receipt.UpdatableData ToDomain(UpdateReceiptRequest updateReceiptRequest)
         {
             return new Receipt.UpdatableData
             {
@@ -67,7 +67,7 @@ namespace BusinessLogic.Común.Mappers
         }
 
 
-        public static ReceiptResponse toResponse(Receipt receipt)
+        public static ReceiptResponse ToResponse(Receipt receipt)
         {
             return new ReceiptResponse
             {

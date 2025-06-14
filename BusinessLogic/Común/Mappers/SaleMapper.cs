@@ -6,11 +6,11 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class SaleMapper
     {
-        public static Sale toDomain(AddSaleRequest addSaleRequest)
+        public static Sale ToDomain(AddSaleRequest addSaleRequest)
         {
             return new Sale(0, addSaleRequest.Date, addSaleRequest.Status, new List<SaleItem>());
         }
-        public static Sale.UpdatableData toDomain(UpdateSaleRequest updateSaleRequest)
+        public static Sale.UpdatableData ToDomain(UpdateSaleRequest updateSaleRequest)
         {
             return new Sale.UpdatableData
             {
@@ -18,7 +18,7 @@ namespace BusinessLogic.Común.Mappers
                 Status = updateSaleRequest.Status
             };
         }
-        public static SaleResponse toResponse(Sale sale)
+        public static SaleResponse ToResponse(Sale sale)
         {
             return new SaleResponse
             {

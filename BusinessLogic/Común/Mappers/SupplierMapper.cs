@@ -5,7 +5,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class SupplierMapper
     {
-        public static Supplier toDomain(AddSupplierRequest request)
+        public static Supplier ToDomain(AddSupplierRequest request)
         {
             return new Supplier(
                 id: 0,
@@ -26,7 +26,7 @@ namespace BusinessLogic.Común.Mappers
                 daysToDeliver: new List<Day>()
                 );
         }
-        public static Supplier.UpdatableData toDomain(UpdateSupplierRequest request)
+        public static Supplier.UpdatableData ToDomain(UpdateSupplierRequest request)
         {
             return new Supplier.UpdatableData
             {
@@ -42,7 +42,7 @@ namespace BusinessLogic.Común.Mappers
                 Observations = request.Observations
             };
         }
-        public static SupplierResponse toResponse(Supplier domain)
+        public static SupplierResponse ToResponse(Supplier domain)
         {
             return new SupplierResponse
             {

@@ -6,53 +6,27 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class OrderItemMapper
     {
-        public static OrderItem toDomain(AddOrderItemRequest dto)
+        public static OrderItem ToDomain(AddOrderItemRequest dto)
         {
             return new OrderItem(
                 id: 0,
                 quantity: dto.Quantity,
                 unitPrice: dto.UnitPrice,
-                product: new Product(
-                    id: dto.ProductId,
-                    internalCode: string.Empty,
-                    barcode: string.Empty,
-                    name: string.Empty,
-                    price: 0,
-                    image: string.Empty,
-                    stock: 0,
-                    description: string.Empty,
-                    unitType: string.Empty,
-                    temperatureCondition: string.Empty,
-                    observation: string.Empty,
-                    subCategory: null,
-                    suppliers: new List<Supplier>()
-                )
+                product: new Product(dto.ProductId)
             );
         }
-        public static OrderItem.UpdatableData toDomain(UpdateOrderItemRequest dto)
+
+        public static OrderItem.UpdatableData ToDomain(UpdateOrderItemRequest dto)
         {
             return new OrderItem.UpdatableData
             {
                 Quantity = dto.Quantity,
                 UnitPrice = dto.UnitPrice,
-                Product = new Product(
-                    id: dto.ProductId,
-                    internalCode: string.Empty,
-                    barcode: string.Empty,
-                    name: string.Empty,
-                    price: 0,
-                    image: string.Empty,
-                    stock: 0,
-                    description: string.Empty,
-                    unitType: string.Empty,
-                    temperatureCondition: string.Empty,
-                    observation: string.Empty,
-                    subCategory: null,
-                    suppliers: new List<Supplier>()
-                )
+                Product = new Product(dto.ProductId)
             };
         }
-        public static OrderItemResponse toResponse(OrderItem domain)
+
+        public static OrderItemResponse ToResponse(OrderItem domain)
         {
             return new OrderItemResponse
             {
@@ -72,7 +46,6 @@ namespace BusinessLogic.Común.Mappers
                     TemperatureCondition = domain.Product.TemperatureCondition,
                     Observation = domain.Product.Observation
                 }
-
             };
         }
     }

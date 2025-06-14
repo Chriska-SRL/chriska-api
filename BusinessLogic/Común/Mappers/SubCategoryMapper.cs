@@ -11,7 +11,7 @@ namespace BusinessLogic.Común.Mappers
                 id: 0,
                 name: dto.Name,
                 description: dto.Description,
-                category: new Category(dto.CategoryId, string.Empty, string.Empty)
+                category: new Category(dto.CategoryId)
             );
         }
 

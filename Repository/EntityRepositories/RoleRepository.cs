@@ -56,6 +56,8 @@ namespace Repository.EntityRepositories
                     return null;
                 }
 
+                role.Permissions = GetPermissionsForRole(role.Id, connection);
+
                 using (var deletePermissions = new SqlCommand("DELETE FROM Roles_Permissions WHERE RoleId = @Id", connection))
                 {
                     deletePermissions.Parameters.AddWithValue("@Id", id);
@@ -71,7 +73,7 @@ namespace Repository.EntityRepositories
                 }
 
                 _logger.LogInformation($"Rol con ID {id} eliminado correctamente.");
-                return new Role(role.Id, role.Name, role.Description, new List<Permission>());
+                return role;
             }
             catch (SqlException ex)
             {
@@ -84,6 +86,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
         }
+
 
         public List<Role> GetAll()
         {
