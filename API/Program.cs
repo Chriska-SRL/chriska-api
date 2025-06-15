@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Repository.EntityRepositories;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace API
 {
@@ -89,6 +90,12 @@ namespace API
                     options.AddPolicy(name, policy =>
                         policy.RequireClaim("permission", intValue));
                 }
+            });
+
+            builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
             builder.Services.AddControllers();

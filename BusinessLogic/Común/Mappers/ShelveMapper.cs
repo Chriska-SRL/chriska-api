@@ -6,7 +6,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class ShelveMapper
     {
-        public static Shelve toDomain(AddShelveRequest addShelveRequest)
+        public static Shelve ToDomain(AddShelveRequest addShelveRequest)
         {
             return new Shelve(
                 id: 0,
@@ -16,7 +16,7 @@ namespace BusinessLogic.Común.Mappers
                 stockMovements: new List<StockMovement>()
                 );
         }
-        public static Shelve.UpdatableData toDomain(UpdateShelveRequest shelve)
+        public static Shelve.UpdatableData ToDomain(UpdateShelveRequest shelve)
         {
             return new Shelve.UpdatableData
             {
@@ -24,7 +24,7 @@ namespace BusinessLogic.Común.Mappers
                 Warehouse = new Warehouse(shelve.WarehouseId, string.Empty, string.Empty, string.Empty, new List<Shelve>())
             };
         }
-        public static ShelveResponse toResponse(Shelve shelve)
+        public static ShelveResponse ToResponse(Shelve shelve)
         {
             return new ShelveResponse
             {

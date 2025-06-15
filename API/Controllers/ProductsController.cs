@@ -24,12 +24,15 @@ namespace API.Controllers
         {
             try
             {
-                var result = _facade.AddProduct(request);
-                return Ok(result);
+                return Ok(_facade.AddProduct(request));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al agregar el producto." });
             }
         }
 
@@ -39,27 +42,33 @@ namespace API.Controllers
         {
             try
             {
-                var result = _facade.UpdateProduct(request);
-                return Ok(result);
+                return Ok(_facade.UpdateProduct(request));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al actualizar el producto." });
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_PRODUCTS))]
-        public ActionResult<ProductResponse> DeleteProduct([FromBody] DeleteProductRequest request)
+        public ActionResult<ProductResponse> DeleteProduct(int id)
         {
             try
             {
-                var result = _facade.DeleteProduct(request);
-                return Ok(result);
+                return Ok(_facade.DeleteProduct(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al eliminar el producto." });
             }
         }
 
@@ -69,12 +78,15 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.GetProductById(id);
-                return Ok(response);
+                return Ok(_facade.GetProductById(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = $"Error inesperado al obtener el producto con id {id}." });
             }
         }
 
@@ -84,13 +96,22 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.GetAllProducts();
-                return Ok(response);
+                return Ok(_facade.GetAllProducts());
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
             }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al obtener los productos." });
+            }
+        }
+
+        private static object FormatearError(ArgumentException ex)
+        {
+            var mensaje = ex.Message.Split(" (Parameter")[0];
+            return new { campo = ex.ParamName, error = mensaje };
         }
     }
 }

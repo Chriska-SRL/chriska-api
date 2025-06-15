@@ -13,47 +13,19 @@ namespace BusinessLogic.Común.Mappers
             (
                 id: 0,
                 quantity: product.Quantity,
-                product: new Product
-                (
-                    id: product.ProductId,
-                    internalCode: string.Empty,
-                    barcode: string.Empty,
-                    name: string.Empty,
-                    price: 0,
-                    image: string.Empty,
-                    stock: 0,
-                    description: string.Empty,
-                    unitType: string.Empty,
-                    temperatureCondition: string.Empty,
-                    observation: string.Empty,
-                    subCategory: null,
-                    suppliers: new List<Supplier>()
-                )
+                product: new Product(product.ProductId)
             );
         }
+
         public static ProductStock.UpdatableData ToDomain(UpdateProductStockRequest product)
         {
             return new ProductStock.UpdatableData
             {
                 Quantity = product.Quantity,
-                Product = new Product
-                (
-                    id: product.ProductId,
-                    internalCode: string.Empty,
-                    barcode: string.Empty,
-                    name: string.Empty,
-                    price: 0,
-                    image: string.Empty,
-                    stock: 0,
-                    description: string.Empty,
-                    unitType: string.Empty,
-                    temperatureCondition: string.Empty,
-                    observation: string.Empty,
-                    subCategory: null,
-                    suppliers: new List<Supplier>()
-                )
+                Product = new Product(product.ProductId)
             };
         }
+
         public static ProductStockResponse ToResponse(ProductStock productStock)
         {
             return new ProductStockResponse

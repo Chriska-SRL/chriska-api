@@ -5,7 +5,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class ZoneMapper
     {
-        public static Zone toDomain(AddZoneRequest request)
+        public static Zone ToDomain(AddZoneRequest request)
         {
             return new Zone(
                 id:0,
@@ -14,7 +14,7 @@ namespace BusinessLogic.Común.Mappers
                 days: new List<Day>()
             );
         }
-        public static Zone.UpdatableData toDomain(UpdateZoneRequest request)
+        public static Zone.UpdatableData ToDomain(UpdateZoneRequest request)
         {
             return new Zone.UpdatableData
             {
@@ -22,7 +22,7 @@ namespace BusinessLogic.Común.Mappers
                 Description = request.Description
             };
         }
-        public static ZoneResponse toResponse(Zone zone)
+        public static ZoneResponse ToResponse(Zone zone)
         {
             return new ZoneResponse
             {
