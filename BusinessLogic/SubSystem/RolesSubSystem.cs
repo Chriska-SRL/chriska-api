@@ -48,8 +48,13 @@ namespace BusinessLogic.SubSystem
 
         public RoleResponse DeleteRole(int id)
         {
-            var deleted = _roleRepository.Delete(id)
+            Role deleted = _roleRepository.GetByIdWithUsers(id)
                           ?? throw new ArgumentException("No se encontro el rol seleccionado.", nameof(id));
+
+            if (deleted.Users.Any())
+                throw new InvalidOperationException("No se puede eliminar el rol porque tiene usuarios asociados.");
+
+            _roleRepository.Delete(id);
 
             return RoleMapper.ToResponse(deleted);
         }

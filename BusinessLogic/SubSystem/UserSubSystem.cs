@@ -58,6 +58,8 @@ namespace BusinessLogic.SubSystem
             var deleted = _userRepository.Delete(id)
                           ?? throw new ArgumentException("Usuario no encontrado.", nameof(id));
 
+            //TODO: Implementar control de integridad referencial:
+
             return UserMapper.ToResponse(deleted);
         }
 

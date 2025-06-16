@@ -4,6 +4,7 @@ namespace BusinessLogic.Repository
 {
     public interface IRoleRepository : IRepository<Role>
     {
-        Role GetByName(string name);
+        Role? GetByIdWithUsers(int id);
+        Role? GetByName(string name);
     }
 }

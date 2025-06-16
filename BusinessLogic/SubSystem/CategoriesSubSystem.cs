@@ -51,6 +51,8 @@ namespace BusinessLogic.SubSystem
             var deleted = _categoryRepository.Delete(id)
                           ?? throw new ArgumentException("Categoría no encontrada.", nameof(id));
 
+            //TODO: Implementar control de integridad referencial: no se puede borrar si hay Subcategorias asociadas
+
             return CategoryMapper.ToResponse(deleted);
         }
 
@@ -105,6 +107,8 @@ namespace BusinessLogic.SubSystem
         {
             var deleted = _subCategoryRepository.Delete(id)
                            ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(id));
+
+            //TODO: Implementar control de integridad referencial: no se puede borrar si hay productos asociados
 
             return SubCategoryMapper.ToResponse(deleted);
         }

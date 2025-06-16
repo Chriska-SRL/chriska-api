@@ -67,6 +67,10 @@ namespace API.Controllers
             {
                 return BadRequest(FormatearError(ex));
             }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { error = ex.Message});
+            }
             catch (Exception)
             {
                 return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar el rol." });
@@ -114,5 +118,6 @@ namespace API.Controllers
             var mensaje = ex.Message.Split(" (Parameter")[0];
             return new { campo = ex.ParamName, error = mensaje };
         }
+
     }
 }
