@@ -269,5 +269,46 @@ namespace Repository.EntityRepositories
             }
         }
 
+        public Role? GetByIdWithUsers(int id)
+        {
+            try
+            {
+                using var connection = CreateConnection();
+                connection.Open();
+
+                var role = GetRoleWithoutPermissions(id, connection);
+                if (role == null)
+                    return null;
+
+                role.Permissions = GetPermissionsForRole(role.Id, connection);
+
+                using var command = new SqlCommand(@"
+                SELECT Id, Name, Username, Password, IsEnabled, RoleId
+                FROM Users 
+                WHERE RoleId = @RoleId", connection);
+                command.Parameters.AddWithValue("@RoleId", id);
+
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var user = UserMapper.FromReader(reader);
+                    user.Role = role;
+                    role.Users.Add(user);
+                }
+
+                return role;
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error al acceder a la base de datos.");
+                throw new ApplicationException("Error al acceder a la base de datos.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado.");
+                throw new ApplicationException("Ocurrió un error inesperado.", ex);
+            }
+        }
+
     }
 }

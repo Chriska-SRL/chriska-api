@@ -160,14 +160,8 @@ namespace Repository.EntityRepositories
                     using var subReader = subCommand.ExecuteReader();
                     while (subReader.Read())
                     {
-                        var rawSub = SubCategoryMapper.FromReader(subReader);
-                        var subWithCategory = new SubCategory(
-                            id: rawSub.Id,
-                            name: rawSub.Name,
-                            description: rawSub.Description,
-                            category: category!
-                        );
-                        category!.SubCategories.Add(subWithCategory);
+                        SubCategory sub = SubCategoryMapper.FromReader(subReader);
+                        category.SubCategories.Add(sub);
                     }
                 }
 

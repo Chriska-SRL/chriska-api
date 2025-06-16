@@ -61,6 +61,8 @@ namespace BusinessLogic.SubSystem
             var deleted = _productRepository.Delete(id)
                           ?? throw new ArgumentException("Producto no encontrado.", nameof(id));
 
+            //TODO: Implementar control de integridad referencial:
+
             return ProductMapper.ToResponse(deleted);
         }
 

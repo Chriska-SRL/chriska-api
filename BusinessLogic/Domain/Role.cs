@@ -8,6 +8,7 @@ namespace BusinessLogic.Dominio
         public string Name { get; set; }
         public string Description { get; set; } = string.Empty;
         public List<Permission> Permissions { get; set; } = new List<Permission>();
+        public List<User> Users { get; set; } = new List<User>();
 
         public Role(int id, string name, string description, List<Permission> permissions)
         {

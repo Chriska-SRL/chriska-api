@@ -103,6 +103,10 @@ namespace API.Controllers
             {
                 return BadRequest(FormatearError(ex));
             }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { error = ex.Message });
+            }
             catch (Exception)
             {
                 return StatusCode(500, new { error = "Error inesperado al eliminar la categoría." });
@@ -194,6 +198,10 @@ namespace API.Controllers
             catch (ArgumentException ex)
             {
                 return BadRequest(FormatearError(ex));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { error = ex.Message });
             }
             catch (Exception)
             {
