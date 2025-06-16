@@ -77,6 +77,7 @@ namespace BusinessLogic.SubSystem
                           ?? throw new ArgumentException("Usuario no encontrado.", nameof(id));
 
             //TODO: Implementar control de integridad referencial:
+            //cuando se trabaje con entidades que tengan relación con esta.
 
             return UserMapper.ToResponse(deleted);
         }

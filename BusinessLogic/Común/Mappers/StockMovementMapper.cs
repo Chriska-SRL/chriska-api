@@ -1,7 +1,9 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsStockMovement;
+using BusinessLogic.DTOs.DTOsSubCategory;
 using BusinessLogic.DTOs.DTOsUser;
 
 namespace BusinessLogic.Común.Mappers

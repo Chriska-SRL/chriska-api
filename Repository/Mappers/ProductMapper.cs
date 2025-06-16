@@ -24,8 +24,8 @@ namespace Repository.Mappers
             string unitTypeStr = reader.GetString(reader.GetOrdinal("UnitType")).Trim();
             UnitType unitType = unitTypeStr switch
             {
-                "U" => UnitType.Unit,
-                "K" => UnitType.Kilo,
+                "Unit" => UnitType.Unit,
+                "Kilo" => UnitType.Kilo,
                 _ => UnitType.None
             };
 

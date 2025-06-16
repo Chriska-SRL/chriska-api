@@ -103,7 +103,6 @@ namespace BusinessLogic.Dominio
             Barcode = data.Barcode;
             Price = data.Price;
             Image = data.Image;
-            Stock = data.Stock;
             Description = data.Description;
             UnitType = data.UnitType;
             TemperatureCondition = data.TemperatureCondition;
@@ -117,10 +116,9 @@ namespace BusinessLogic.Dominio
         public class UpdatableData
         {
             public string Name { get; set; } = string.Empty;
-            public string Barcode { get; set; }
+            public string Barcode { get; set; } = string.Empty;
             public decimal Price { get; set; }
             public string Image { get; set; } = string.Empty;
-            public int Stock { get; set; }
             public string Description { get; set; } = string.Empty;
             public UnitType UnitType { get; set; }
             public TemperatureCondition TemperatureCondition { get; set; }
