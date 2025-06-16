@@ -14,7 +14,7 @@ namespace BusinessLogic.Común.Mappers
                 days: new List<Day>()
             );
         }
-        public static Zone.UpdatableData ToDomain(UpdateZoneRequest request)
+        public static Zone.UpdatableData ToUpdatableData(UpdateZoneRequest request)
         {
             return new Zone.UpdatableData
             {
@@ -29,7 +29,6 @@ namespace BusinessLogic.Común.Mappers
                 Id = zone.Id,
                 Name = zone.Name,
                 Description = zone.Description   
-                //Lista de dias que se hacen entregas?
             };
         }
     }

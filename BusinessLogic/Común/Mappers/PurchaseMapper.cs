@@ -34,7 +34,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static Purchase.UpdatableData ToDomain(UpdatePurchaseRequest purchaseRequest)
+        public static Purchase.UpdatableData ToUpdatableData(UpdatePurchaseRequest purchaseRequest)
         {
             return new Purchase.UpdatableData
             {

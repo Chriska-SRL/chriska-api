@@ -1,8 +1,8 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.Repository;
+﻿using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsReceipt;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.Dominio;
 
 namespace BusinessLogic.SubSystem
 {
@@ -17,75 +17,96 @@ namespace BusinessLogic.SubSystem
             _receiptRepository = receiptRepository;
         }
 
-        public void AddClient(AddClientRequest addClientRequest)
+        // Clientes
+
+        public ClientResponse AddClient(AddClientRequest request)
         {
-            Client client = ClientMapper.ToDomain(addClientRequest);
+            Client client = ClientMapper.ToDomain(request);
             client.Validate();
-            _clientRepository.Add(client);
+
+            Client added = _clientRepository.Add(client);
+            return ClientMapper.ToResponse(added);
         }
 
-        public void UpdateClient(UpdateClientRequest updateClientRequest)
+        public ClientResponse UpdateClient(UpdateClientRequest request)
         {
-            Client existingClient = _clientRepository.GetById(updateClientRequest.Id);
-            if (existingClient == null) throw new Exception("No se encontro el cliente");
-            existingClient.Update(ClientMapper.ToDomain(updateClientRequest));
-            _clientRepository.Update(existingClient);
+            Client existing = _clientRepository.GetById(request.Id)
+                              ?? throw new InvalidOperationException("Cliente no encontrado.");
+
+            Client.UpdatableData updatedData = ClientMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            Client updated = _clientRepository.Update(existing);
+            return ClientMapper.ToResponse(updated);
         }
 
-        public void DeleteClient(DeleteClientRequest deleteClientRequest)
+        public ClientResponse DeleteClient(DeleteClientRequest request)
         {
-            var client = _clientRepository.GetById(deleteClientRequest.Id);
-            if (client == null) throw new Exception("No se encontro el cliente");
-            _clientRepository.Delete(deleteClientRequest.Id);
-        }
+            Client deleted = _clientRepository.Delete(request.Id)
+                              ?? throw new InvalidOperationException("Cliente no encontrado.");
 
-        public List<ClientResponse> GetAllClients()
-        {
-            List<Client> listClient = _clientRepository.GetAll();
-            if (!listClient.Any()) throw new Exception("No se encontraron clientes");
-            return listClient.Select(ClientMapper.ToResponse).ToList();
+            return ClientMapper.ToResponse(deleted);
         }
 
         public ClientResponse GetClientById(int id)
         {
-            Client client = _clientRepository.GetById(id);
-            if (client == null) throw new Exception("No se encontro el cliente");
-            ClientResponse clientResponse = ClientMapper.ToResponse(client);
-            return clientResponse;
-        }
-        
-        public void AddReceipt(AddReceiptRequest receipt)
-        {
-            Receipt newReceipt = ReceiptMapper.ToDomain(receipt);
-            newReceipt.Validate();
-            _receiptRepository.Add(newReceipt);
+            Client client = _clientRepository.GetById(id)
+                              ?? throw new InvalidOperationException("Cliente no encontrado.");
+
+            return ClientMapper.ToResponse(client);
         }
 
-        public void UpdateReceipt(UpdateReceiptRequest receipt) {
+        public List<ClientResponse> GetAllClients()
+        {
+            return _clientRepository.GetAll()
+                                    .Select(ClientMapper.ToResponse)
+                                    .ToList();
+        }
 
-            Receipt existingReceipt = _receiptRepository.GetById(receipt.Id);
-            if (existingReceipt == null) throw new Exception("No se encontro el recibo");
-            existingReceipt.Update(ReceiptMapper.ToDomain(receipt));
-            _receiptRepository.Update(existingReceipt);
-        }
-        public void DeleteReceipt(DeleteReceiptRequest receipt)
+        // Recibos
+
+        public ReceiptResponse AddReceipt(AddReceiptRequest request)
         {
-            Receipt existingReceipt = _receiptRepository.GetById(receipt.Id);
-            if (existingReceipt == null) throw new Exception("No se encontro el recibo");
-            _receiptRepository.Delete(receipt.Id);
+            Receipt receipt = ReceiptMapper.ToDomain(request);
+            receipt.Validate();
+
+            Receipt added = _receiptRepository.Add(receipt);
+            return ReceiptMapper.ToResponse(added);
         }
-        public List<ReceiptResponse> GetAllReceipts()
+
+        public ReceiptResponse UpdateReceipt(UpdateReceiptRequest request)
         {
-            List<Receipt> listReceipt = _receiptRepository.GetAll();
-            if (!listReceipt.Any()) throw new Exception("No se encontraron recibos");
-            return listReceipt.Select(ReceiptMapper.ToResponse).ToList();
+            Receipt existing = _receiptRepository.GetById(request.Id)
+                               ?? throw new InvalidOperationException("Recibo no encontrado.");
+
+            Receipt.UpdatableData updatedData = ReceiptMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            Receipt updated = _receiptRepository.Update(existing);
+            return ReceiptMapper.ToResponse(updated);
         }
+
+        public ReceiptResponse DeleteReceipt(DeleteReceiptRequest request)
+        {
+            Receipt deleted = _receiptRepository.Delete(request.Id)
+                               ?? throw new InvalidOperationException("Recibo no encontrado.");
+
+            return ReceiptMapper.ToResponse(deleted);
+        }
+
         public ReceiptResponse GetReceiptById(int id)
         {
-            Receipt receipt = _receiptRepository.GetById(id);
-            if (receipt == null) throw new Exception("No se encontro el recibo");
-            ReceiptResponse receiptResponse = ReceiptMapper.ToResponse(receipt);
-            return receiptResponse;
+            Receipt receipt = _receiptRepository.GetById(id)
+                               ?? throw new InvalidOperationException("Recibo no encontrado.");
+
+            return ReceiptMapper.ToResponse(receipt);
+        }
+
+        public List<ReceiptResponse> GetAllReceipts()
+        {
+            return _receiptRepository.GetAll()
+                                     .Select(ReceiptMapper.ToResponse)
+                                     .ToList();
         }
     }
 }

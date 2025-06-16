@@ -23,7 +23,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static Vehicle.UpdatableData ToDomain(UpdateVehicleRequest data)
+        public static Vehicle.UpdatableData ToUpdatableData(UpdateVehicleRequest data)
         {
            return new Vehicle.UpdatableData
            {

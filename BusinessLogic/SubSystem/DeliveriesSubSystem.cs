@@ -1,8 +1,8 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.Repository;
+﻿using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsDelivery;
 using BusinessLogic.Común.Mappers;
 using BusinessLogic.DTOs.DTOsVehicle;
+using BusinessLogic.Dominio;
 
 namespace BusinessLogic.SubSystem
 {
@@ -17,69 +17,96 @@ namespace BusinessLogic.SubSystem
             _vehicleRepository = vehicleRepository;
         }
 
-        public void AddDelivery(AddDeliveryRequest deliveryRequest)
+        // Entregas
+
+        public DeliveryResponse AddDelivery(AddDeliveryRequest request)
         {
-            Delivery delivery = DeliveryMapper.ToDomain(deliveryRequest);
+            Delivery delivery = DeliveryMapper.ToDomain(request);
             delivery.Validate();
-            _deliveryRepository.Add(delivery);
+
+            Delivery added = _deliveryRepository.Add(delivery);
+            return DeliveryMapper.ToResponse(added);
         }
 
-        public void UpdateDelivery(UpdateDeliveryRequest deliveryRequest)
+        public DeliveryResponse UpdateDelivery(UpdateDeliveryRequest request)
         {
-            Delivery exisitingDelivery = _deliveryRepository.GetById(deliveryRequest.Id);
-            if (exisitingDelivery == null) throw new Exception("No se encontro la entrega");
-            exisitingDelivery.Update(DeliveryMapper.ToDomain(deliveryRequest));
-            _deliveryRepository.Update(exisitingDelivery);
+            Delivery existing = _deliveryRepository.GetById(request.Id)
+                                  ?? throw new InvalidOperationException("Entrega no encontrada.");
+
+            Delivery.UpdatableData updatedData = DeliveryMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            Delivery updated = _deliveryRepository.Update(existing);
+            return DeliveryMapper.ToResponse(updated);
         }
 
-        public void DeleteDelivery(DeleteDeliveryRequest deliveryRequest)
+        public DeliveryResponse DeleteDelivery(DeleteDeliveryRequest request)
         {
-            var delivery = _deliveryRepository.GetById(deliveryRequest.Id);
-            if (delivery == null) throw new Exception("No se encontro la entrega");
-            _deliveryRepository.Delete(deliveryRequest.Id);
+            Delivery deleted = _deliveryRepository.Delete(request.Id)
+                                  ?? throw new InvalidOperationException("Entrega no encontrada.");
+
+            return DeliveryMapper.ToResponse(deleted);
+        }
+
+        public DeliveryResponse GetDeliveryById(int id)
+        {
+            Delivery delivery = _deliveryRepository.GetById(id)
+                                   ?? throw new InvalidOperationException("Entrega no encontrada.");
+
+            return DeliveryMapper.ToResponse(delivery);
         }
 
         public List<DeliveryResponse> GetAllDeliveries()
         {
-            List<Delivery> deliveries = _deliveryRepository.GetAll();
-            if (!deliveries.Any()) throw new Exception("No se encontraron entregas");
-            return deliveries.Select(DeliveryMapper.ToResponse).ToList();
+            return _deliveryRepository.GetAll()
+                                      .Select(DeliveryMapper.ToResponse)
+                                      .ToList();
         }
 
+        // Vehículos
 
-        public void AddVehicle(AddVehicleRequest vehicle)
+        public VehicleResponse AddVehicle(AddVehicleRequest request)
         {
-            Vehicle newVehicle = VehicleMapper.ToDomain(vehicle);
-            newVehicle.Validate();
-            _vehicleRepository.Add(newVehicle);
-        }
+            Vehicle vehicle = VehicleMapper.ToDomain(request);
+            vehicle.Validate();
 
-        public void UpdateVehicle(UpdateVehicleRequest vehicle)
-        {
-            Vehicle existingVehicle = _vehicleRepository.GetById(vehicle.Id);
-            if (existingVehicle == null) throw new Exception("No se encontro el vehiculo");
-            existingVehicle.Update(VehicleMapper.ToDomain(vehicle));
-            _vehicleRepository.Update(existingVehicle);
+            Vehicle added = _vehicleRepository.Add(vehicle);
+            return VehicleMapper.ToResponse(added);
         }
 
-        public void DeleteVehicle(DeleteVehicleRequest vehicle)
+        public VehicleResponse UpdateVehicle(UpdateVehicleRequest request)
         {
-            var existingVehicle = _vehicleRepository.GetById(vehicle.Id);
-            if (existingVehicle == null) throw new Exception("No se encontro el vehiculo");
-            _vehicleRepository.Delete(vehicle.Id);
+            Vehicle existing = _vehicleRepository.GetById(request.Id)
+                                  ?? throw new InvalidOperationException("Vehículo no encontrado.");
+
+            Vehicle.UpdatableData updatedData = VehicleMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            Vehicle updated = _vehicleRepository.Update(existing);
+            return VehicleMapper.ToResponse(updated);
         }
-        public List<VehicleResponse> GetAllVehicles()
+
+        public VehicleResponse DeleteVehicle(DeleteVehicleRequest request)
         {
-            List<Vehicle> listVehicles = _vehicleRepository.GetAll();
-            if (!listVehicles.Any()) throw new Exception("No se encontraron vehiculos");
-            return listVehicles.Select(VehicleMapper.ToResponse).ToList();
+            Vehicle deleted = _vehicleRepository.Delete(request.Id)
+                                  ?? throw new InvalidOperationException("Vehículo no encontrado.");
+
+            return VehicleMapper.ToResponse(deleted);
         }
+
         public VehicleResponse GetVehicleById(int id)
         {
-            Vehicle vehicle = _vehicleRepository.GetById(id);
-            if (vehicle == null) throw new Exception("No se encontro el vehiculo");
-            VehicleResponse vehicleResponse = VehicleMapper.ToResponse(vehicle);
-            return vehicleResponse;
+            Vehicle vehicle = _vehicleRepository.GetById(id)
+                                  ?? throw new InvalidOperationException("Vehículo no encontrado.");
+
+            return VehicleMapper.ToResponse(vehicle);
+        }
+
+        public List<VehicleResponse> GetAllVehicles()
+        {
+            return _vehicleRepository.GetAll()
+                                     .Select(VehicleMapper.ToResponse)
+                                     .ToList();
         }
     }
 }

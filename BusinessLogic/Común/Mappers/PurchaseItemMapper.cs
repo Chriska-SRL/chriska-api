@@ -15,8 +15,7 @@ namespace BusinessLogic.Común.Mappers
                 product: new Product(dto.ProductId)
             );
         }
-
-        public static PurchaseItem.UpdatableData ToDomain(UpdatePurchaseItemRequest dto)
+        public static PurchaseItem.UpdatableData ToUpdatableData(UpdatePurchaseItemRequest dto)
         {
             return new PurchaseItem.UpdatableData
             {
@@ -24,7 +23,6 @@ namespace BusinessLogic.Común.Mappers
                 UnitPrice = dto.UnitPrice
             };
         }
-
         public static PurchaseItemResponse ToResponse(PurchaseItem purchaseItem)
         {
             return new PurchaseItemResponse

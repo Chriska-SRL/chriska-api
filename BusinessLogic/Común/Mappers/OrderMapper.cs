@@ -69,7 +69,7 @@ namespace BusinessLogic.Común.Mappers
             );
 
         }
-        public static Order.UpdatableData ToDomain(UpdateOrderRequest updatableOrderRequest)
+        public static Order.UpdatableData ToUpdatableData(UpdateOrderRequest updatableOrderRequest)
         {
             return new Order.UpdatableData
             {

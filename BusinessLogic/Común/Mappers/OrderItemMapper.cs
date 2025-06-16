@@ -15,8 +15,7 @@ namespace BusinessLogic.Común.Mappers
                 product: new Product(dto.ProductId)
             );
         }
-
-        public static OrderItem.UpdatableData ToDomain(UpdateOrderItemRequest dto)
+        public static OrderItem.UpdatableData ToUpdatableData(UpdateOrderItemRequest dto)
         {
             return new OrderItem.UpdatableData
             {
@@ -25,7 +24,6 @@ namespace BusinessLogic.Común.Mappers
                 Product = new Product(dto.ProductId)
             };
         }
-
         public static OrderItemResponse ToResponse(OrderItem domain)
         {
             return new OrderItemResponse

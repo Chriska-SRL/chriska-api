@@ -14,37 +14,46 @@ namespace BusinessLogic.SubSystem
             _returnRequestRepository = returnRequestRepository;
         }
 
-        public void AddReturnRequest(AddReturnRequest_Request request)
+        public ReturnRequestResponse AddReturnRequest(AddReturnRequest_Request request)
         {
             ReturnRequest newReturnRequest = ReturnRequestMapper.ToDomain(request);
             newReturnRequest.Validate();
-            _returnRequestRepository.Add(newReturnRequest);
+
+            ReturnRequest added = _returnRequestRepository.Add(newReturnRequest);
+            return ReturnRequestMapper.ToResponse(added);
         }
 
-        public void UpdateReturnRequest(UpdateReturnRequest_Request request)
+        public ReturnRequestResponse UpdateReturnRequest(UpdateReturnRequest_Request request)
         {
-            ReturnRequest existingRequest = _returnRequestRepository.GetById(request.Id);
-            if (existingRequest == null) throw new Exception("La solicitud de devolucion no existe");
-            existingRequest.Update(ReturnRequestMapper.ToDomain(request));
-            _returnRequestRepository.Update(existingRequest);
-        }
-        public void DeleteReturnRequest(DeleteReturnRequest_Request request)
-        {
-            var deleteRequest = _returnRequestRepository.GetById(request.Id);
-            if (deleteRequest == null) throw new Exception("La solicitud de devolucion no existe");
-            _returnRequestRepository.Delete(deleteRequest.Id);
+            ReturnRequest existing = _returnRequestRepository.GetById(request.Id)
+                                        ?? throw new InvalidOperationException("Solicitud de devolución no encontrada.");
 
+            ReturnRequest.UpdatableData updatedData = ReturnRequestMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            ReturnRequest updated = _returnRequestRepository.Update(existing);
+            return ReturnRequestMapper.ToResponse(updated);
         }
+
+        public ReturnRequestResponse DeleteReturnRequest(DeleteReturnRequest_Request request)
+        {
+            ReturnRequest deleted = _returnRequestRepository.Delete(request.Id)
+                                        ?? throw new InvalidOperationException("Solicitud de devolución no encontrada.");
+
+            return ReturnRequestMapper.ToResponse(deleted);
+        }
+
         public ReturnRequestResponse GetReturnRequestById(int id)
         {
-            ReturnRequest returnRequest = _returnRequestRepository.GetById(id);
-            if (returnRequest == null) throw new Exception("La solicitud de devolucion no existe");
+            ReturnRequest returnRequest = _returnRequestRepository.GetById(id)
+                                            ?? throw new InvalidOperationException("Solicitud de devolución no encontrada.");
+
             return ReturnRequestMapper.ToResponse(returnRequest);
         }
+
         public List<ReturnRequestResponse> GetAllReturnRequests()
         {
-            var returnRequests = _returnRequestRepository.GetAll();
-            if (!returnRequests.Any()) throw new Exception("No se encontraron solicitudes de devolucion");
+            List<ReturnRequest> returnRequests = _returnRequestRepository.GetAll();
             return returnRequests.Select(ReturnRequestMapper.ToResponse).ToList();
         }
     }

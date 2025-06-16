@@ -16,7 +16,7 @@ namespace BusinessLogic.Común.Mappers
                 shelves: new List<Shelve>()
             );
         }
-        public static Warehouse.UpdatableData ToDomain(UpdateWarehouseRequest updateWarehouseRequest)
+        public static Warehouse.UpdatableData ToUpdatableData(UpdateWarehouseRequest updateWarehouseRequest)
         {
             return new Warehouse.UpdatableData
             {
