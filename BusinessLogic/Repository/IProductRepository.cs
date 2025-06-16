@@ -6,5 +6,6 @@ namespace BusinessLogic.Repository
     {
         Product GetByBarcode(string barcode);
         Product GetByName(string name);
+        List<Product> GetBySubCategoryId(int id);
     }
 }

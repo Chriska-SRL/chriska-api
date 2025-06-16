@@ -249,6 +249,51 @@ namespace Repository.EntityRepositories
             }
         }
 
+        public List<Product> GetBySubCategoryId(int id)
+        {
+            try
+            {
+                var products = new List<Product>();
+
+                using var connection = CreateConnection();
+                connection.Open();
+
+                using var command = new SqlCommand(@"
+            SELECT 
+                p.*, 
+                sc.Name AS SubCategoryName, 
+                sc.Description AS SubCategoryDescription, 
+                c.Id AS CategoryId, 
+                c.Name AS CategoryName, 
+                c.Description AS CategoryDescription
+            FROM Products p
+            JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+            JOIN Categories c ON sc.CategoryId = c.Id
+            WHERE sc.Id = @SubCategoryId", connection);
+
+                command.Parameters.AddWithValue("@SubCategoryId", id);
+
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    products.Add(ProductMapper.FromReader(reader));
+                }
+
+                return products;
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error al acceder a la base de datos.");
+                throw new ApplicationException("Error al acceder a la base de datos.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado.");
+                throw new ApplicationException("Ocurrió un error inesperado.", ex);
+            }
+        }
+
+
         public Product Update(Product product)
         {
             try

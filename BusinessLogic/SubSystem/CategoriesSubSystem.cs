@@ -10,11 +10,13 @@ namespace BusinessLogic.SubSystem
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly ISubCategoryRepository _subCategoryRepository;
+        private readonly IProductRepository _productRepository;
 
-        public CategoriesSubSystem(ICategoryRepository categoryRepository, ISubCategoryRepository subCategoryRepository)
+        public CategoriesSubSystem(ICategoryRepository categoryRepository, ISubCategoryRepository subCategoryRepository, IProductRepository productRepository)
         {
             _categoryRepository = categoryRepository;
             _subCategoryRepository = subCategoryRepository;
+            _productRepository = productRepository;
         }
 
         // Categorías
@@ -48,10 +50,13 @@ namespace BusinessLogic.SubSystem
 
         public CategoryResponse DeleteCategory(int id)
         {
-            var deleted = _categoryRepository.Delete(id)
+            Category deleted = _categoryRepository.GetById(id)
                           ?? throw new ArgumentException("Categoría no encontrada.", nameof(id));
 
-            //TODO: Implementar control de integridad referencial: no se puede borrar si hay Subcategorias asociadas
+            if(deleted.SubCategories.Any())
+                throw new InvalidOperationException("No se puede eliminar una categoría que tiene subcategorías asociadas.");
+
+            _categoryRepository.Delete(id);
 
             return CategoryMapper.ToResponse(deleted);
         }
@@ -105,10 +110,13 @@ namespace BusinessLogic.SubSystem
 
         public SubCategoryResponse DeleteSubCategory(int id)
         {
-            var deleted = _subCategoryRepository.Delete(id)
+            var deleted = _subCategoryRepository.GetById(id)
                            ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(id));
 
-            //TODO: Implementar control de integridad referencial: no se puede borrar si hay productos asociados
+            if (_productRepository.GetBySubCategoryId(id).Count() > 0)
+                throw new InvalidOperationException("No se puede eliminar una subcategoría que tiene productos asociados.");
+
+            _subCategoryRepository.Delete(id);
 
             return SubCategoryMapper.ToResponse(deleted);
         }
