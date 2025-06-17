@@ -36,7 +36,7 @@ namespace BusinessLogic.Común.Mappers
                 )
             );
         }
-        public static Payment.UpdatableData ToDomain(UpdatePaymentRequest updatablePaymentRequest)
+        public static Payment.UpdatableData ToUpdatableData(UpdatePaymentRequest updatablePaymentRequest)
         {
             return new Payment.UpdatableData
             {

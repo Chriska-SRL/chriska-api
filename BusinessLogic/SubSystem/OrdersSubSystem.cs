@@ -1,9 +1,8 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.Repository;
+﻿using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsOrderItem;
-using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.Dominio;
 
 namespace BusinessLogic.SubSystem
 {
@@ -18,73 +17,96 @@ namespace BusinessLogic.SubSystem
             _orderItemRepository = orderItemRepository;
         }
 
-        public void AddOrder(AddOrderRequest orderRequest)
+        // Órdenes
+
+        public OrderResponse AddOrder(AddOrderRequest request)
         {
-            Order newOrder = OrderMapper.ToDomain(orderRequest);
-            newOrder.Validate();
-            _orderRepository.Add(newOrder);
+            Order order = OrderMapper.ToDomain(request);
+            order.Validate();
+
+            Order added = _orderRepository.Add(order);
+            return OrderMapper.ToResponse(added);
         }
 
-        public void UpdateOrder(UpdateOrderRequest orderRequest)
+        public OrderResponse UpdateOrder(UpdateOrderRequest request)
         {
-            Order exisitingOrder = _orderRepository.GetById(orderRequest.Id);
-            if (exisitingOrder == null) throw new Exception("No se encontro la orden");
-            exisitingOrder.Update(OrderMapper.ToDomain(orderRequest));
-            _orderRepository.Update(exisitingOrder);
+            Order existing = _orderRepository.GetById(request.Id)
+                              ?? throw new InvalidOperationException("Orden no encontrada.");
+
+            Order.UpdatableData updatedData = OrderMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            Order updated = _orderRepository.Update(existing);
+            return OrderMapper.ToResponse(updated);
         }
 
-        public void DeleteOrder(DeleteOrderRequest orderRequest)
+        public OrderResponse DeleteOrder(DeleteOrderRequest request)
         {
-            var order = _orderRepository.GetById(orderRequest.Id);
-            if (order == null) throw new Exception("No se encontro la orden");
-            _orderRepository.Delete(orderRequest.Id);
+            Order deleted = _orderRepository.Delete(request.Id)
+                              ?? throw new InvalidOperationException("Orden no encontrada.");
+
+            return OrderMapper.ToResponse(deleted);
         }
 
-       public OrderResponse GetOrderById(int id)
-       {
-           Order order = _orderRepository.GetById(id);
-           if (order == null) throw new Exception("No se encontro la orden");
-           OrderResponse orderResponse = OrderMapper.ToResponse(order);
-            return orderResponse;
+        public OrderResponse GetOrderById(int id)
+        {
+            Order order = _orderRepository.GetById(id)
+                             ?? throw new InvalidOperationException("Orden no encontrada.");
+
+            return OrderMapper.ToResponse(order);
         }
-       
+
         public List<OrderResponse> GetAllOrders()
         {
-            List<Order> orders = _orderRepository.GetAll();
-            if (!orders.Any()) throw new Exception("No se encontraron ordenes");
-            return orders.Select(OrderMapper.ToResponse).ToList();
-        }  
-        public void AddOrderItem(AddOrderItemRequest orderItem)
-        {
-            OrderItem newOrderItem = OrderItemMapper.ToDomain(orderItem);
-            newOrderItem.Validate();
-            _orderItemRepository.Add(newOrderItem);
+            return _orderRepository.GetAll()
+                                   .Select(OrderMapper.ToResponse)
+                                   .ToList();
         }
-        public void UpdateOrderItem(UpdateOrderItemRequest orderItem)
+
+        // Items de orden
+
+        public OrderItemResponse AddOrderItem(AddOrderItemRequest request)
         {
-            OrderItem existingOrderItem = _orderItemRepository.GetById(orderItem.Id);
-            if (existingOrderItem == null) throw new Exception("No se encontro el item de orden");
-            existingOrderItem.Update(OrderItemMapper.ToDomain(orderItem));
-            _orderItemRepository.Update(existingOrderItem);
+            OrderItem item = OrderItemMapper.ToDomain(request);
+            item.Validate();
+
+            OrderItem added = _orderItemRepository.Add(item);
+            return OrderItemMapper.ToResponse(added);
         }
-        public void DeleteOrderItem(DeleteOrderItemRequest orderItem)
+
+        public OrderItemResponse UpdateOrderItem(UpdateOrderItemRequest request)
         {
-            var orderItemToDelete = _orderItemRepository.GetById(orderItem.Id);
-            if (orderItemToDelete == null) throw new Exception("No se encontro el item de orden");
-            _orderItemRepository.Delete(orderItem.Id);
+            OrderItem existing = _orderItemRepository.GetById(request.Id)
+                                  ?? throw new InvalidOperationException("Ítem de orden no encontrado.");
+
+            OrderItem.UpdatableData updatedData = OrderItemMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            OrderItem updated = _orderItemRepository.Update(existing);
+            return OrderItemMapper.ToResponse(updated);
         }
+
+        public OrderItemResponse DeleteOrderItem(DeleteOrderItemRequest request)
+        {
+            OrderItem deleted = _orderItemRepository.Delete(request.Id)
+                                 ?? throw new InvalidOperationException("Ítem de orden no encontrado.");
+
+            return OrderItemMapper.ToResponse(deleted);
+        }
+
         public OrderItemResponse GetItemOrderById(int id)
         {
-            OrderItem orderItem = _orderItemRepository.GetById(id);
-            if (orderItem == null) throw new Exception("No se encontro el item de orden");
-            OrderItemResponse orderItemResponse = OrderItemMapper.ToResponse(orderItem);
-            return orderItemResponse;
+            OrderItem orderItem = _orderItemRepository.GetById(id)
+                                   ?? throw new InvalidOperationException("Ítem de orden no encontrado.");
+
+            return OrderItemMapper.ToResponse(orderItem);
         }
+
         public List<OrderItemResponse> GetAllOrderItems()
         {
-            List<OrderItem> orderItems = _orderItemRepository.GetAll();
-            if (!orderItems.Any()) throw new Exception("No se encontraron items de orden");
-            return orderItems.Select(OrderItemMapper.ToResponse).ToList();
+            return _orderItemRepository.GetAll()
+                                       .Select(OrderItemMapper.ToResponse)
+                                       .ToList();
         }
     }
 }

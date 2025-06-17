@@ -51,7 +51,7 @@ namespace BusinessLogic.Común.Mappers
                 requestItems: new List<RequestItem>()
             );
         }
-        public static ReturnRequest.UpdatableData ToDomain(UpdateReturnRequest_Request updateReturnRequestRequest)
+        public static ReturnRequest.UpdatableData ToUpdatableData(UpdateReturnRequest_Request updateReturnRequestRequest)
         {
             return new ReturnRequest.UpdatableData
             {

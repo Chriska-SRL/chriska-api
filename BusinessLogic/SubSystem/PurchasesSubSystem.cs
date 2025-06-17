@@ -17,76 +17,90 @@ namespace BusinessLogic.SubSystem
             _purchaseItemRepository = purchaseItemRepository;
         }
 
-        public void AddPurchase(AddPurchaseRequest purchase)
+        public PurchaseResponse AddPurchase(AddPurchaseRequest request)
         {
-            Purchase newPurchase = PurchaseMapper.ToDomain(purchase);
-            newPurchase.Validate();
-            _purchaseRepository.Add(newPurchase);
+            Purchase purchase = PurchaseMapper.ToDomain(request);
+            purchase.Validate();
+
+            Purchase added = _purchaseRepository.Add(purchase);
+            return PurchaseMapper.ToResponse(added);
         }
 
-        public void UpdatePurchase(UpdatePurchaseRequest purchase)
+        public PurchaseResponse UpdatePurchase(UpdatePurchaseRequest request)
         {
-            Purchase existingPurchase = _purchaseRepository.GetById(purchase.Id);
-            if (existingPurchase == null) throw new Exception("No se encontro la compra");
-            existingPurchase.Update(PurchaseMapper.ToDomain(purchase));
-            _purchaseRepository.Update(existingPurchase);
+            Purchase existing = _purchaseRepository.GetById(request.Id)
+                                 ?? throw new InvalidOperationException("Compra no encontrada.");
+
+            Purchase.UpdatableData updatedData = PurchaseMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            Purchase updated = _purchaseRepository.Update(existing);
+            return PurchaseMapper.ToResponse(updated);
         }
 
-        public void DeletePurchase(DeletePurchaseRequest deletePurchaseRequest)
+        public PurchaseResponse DeletePurchase(DeletePurchaseRequest request)
         {
-            Purchase existingPurchase = _purchaseRepository.GetById(deletePurchaseRequest.Id);
-            if (existingPurchase == null) throw new Exception("No se encontro la compra");
-            _purchaseRepository.Delete(deletePurchaseRequest.Id);
+            Purchase deleted = _purchaseRepository.Delete(request.Id)
+                                 ?? throw new InvalidOperationException("Compra no encontrada.");
+
+            return PurchaseMapper.ToResponse(deleted);
         }
 
         public PurchaseResponse GetPurchaseById(int id)
         {
-            Purchase purchase = _purchaseRepository.GetById(id);
-            if (purchase == null) throw new Exception("No se encontro la compra");
-            PurchaseResponse purchaseResponse = PurchaseMapper.ToResponse(purchase);
-            return purchaseResponse;
+            Purchase purchase = _purchaseRepository.GetById(id)
+                                ?? throw new InvalidOperationException("Compra no encontrada.");
+
+            return PurchaseMapper.ToResponse(purchase);
         }
 
         public List<PurchaseResponse> GetAllPurchases()
         {
             List<Purchase> purchases = _purchaseRepository.GetAll();
-            if(!purchases.Any()) throw new Exception("No se encontraron compras");
             return purchases.Select(PurchaseMapper.ToResponse).ToList();
         }
 
-        public void AddPurchaseItem(AddPurchaseItemRequest purchaseItem)
+        public PurchaseItemResponse AddPurchaseItem(AddPurchaseItemRequest request)
         {
-            PurchaseItem newPurchaseItem = PurchaseItemMapper.ToDomain(purchaseItem);
-            newPurchaseItem.Validate();
-            _purchaseItemRepository.Add(newPurchaseItem);
+            PurchaseItem item = PurchaseItemMapper.ToDomain(request);
+            item.Validate();
+
+            PurchaseItem added = _purchaseItemRepository.Add(item);
+            return PurchaseItemMapper.ToResponse(added);
         }
 
-        public void UpdatePurchaseItem(UpdatePurchaseItemRequest purchaseItem)
+        public PurchaseItemResponse UpdatePurchaseItem(UpdatePurchaseItemRequest request)
         {
-            PurchaseItem existingPurchaseItem = _purchaseItemRepository.GetById(purchaseItem.Id);
-            if (existingPurchaseItem == null) throw new Exception("No se encontro el item de compra");
-            existingPurchaseItem.Update(PurchaseItemMapper.ToDomain(purchaseItem));
-            _purchaseItemRepository.Update(existingPurchaseItem);
+            PurchaseItem existing = _purchaseItemRepository.GetById(request.Id)
+                                       ?? throw new InvalidOperationException("Ítem de compra no encontrado.");
+
+            PurchaseItem.UpdatableData updatedData = PurchaseItemMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            PurchaseItem updated = _purchaseItemRepository.Update(existing);
+            return PurchaseItemMapper.ToResponse(updated);
         }
 
-        public void DeletePurchaseItem(DeletePurchaseItemRequest purchaseItemRequest)
+        public PurchaseItemResponse DeletePurchaseItem(DeletePurchaseItemRequest request)
         {
-            var existingPurchaseItem = _purchaseItemRepository.GetById(purchaseItemRequest.Id);
-            if (existingPurchaseItem == null) throw new Exception("No se encontro el item de compra");
-            _purchaseItemRepository.Delete(existingPurchaseItem.Id);
+            PurchaseItem deleted = _purchaseItemRepository.Delete(request.Id)
+                                       ?? throw new InvalidOperationException("Ítem de compra no encontrado.");
+
+            return PurchaseItemMapper.ToResponse(deleted);
         }
+
         public PurchaseItemResponse GetPurchaseItemById(int id)
         {
-            PurchaseItem purchaseItem = _purchaseItemRepository.GetById(id);
-            if (purchaseItem == null) throw new Exception("No se encontro el item de compra");
-            PurchaseItemResponse purchaseItemResponse = PurchaseItemMapper.ToResponse(purchaseItem);
-            return purchaseItemResponse;
+            PurchaseItem item = _purchaseItemRepository.GetById(id)
+                                    ?? throw new InvalidOperationException("Ítem de compra no encontrado.");
+
+            return PurchaseItemMapper.ToResponse(item);
         }
+
         public List<PurchaseItemResponse> GetAllPurchaseItems()
         {
             List<PurchaseItem> purchaseItems = _purchaseItemRepository.GetAll();
-            if (!purchaseItems.Any()) throw new Exception("No se encontraron items de compra");
             return purchaseItems.Select(PurchaseItemMapper.ToResponse).ToList();
         }
-    } 
+    }
 }

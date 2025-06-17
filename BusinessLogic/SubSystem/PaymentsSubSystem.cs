@@ -1,7 +1,7 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.Repository;
+﻿using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsPayment;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.Dominio;
 
 namespace BusinessLogic.SubSystem
 {
@@ -14,40 +14,48 @@ namespace BusinessLogic.SubSystem
             _paymentRepository = paymentRepository;
         }
 
-        public void AddPayment(AddPaymentRequest paymentRequest)
+        public PaymentResponse AddPayment(AddPaymentRequest request)
         {
-            Payment newPayment = PaymentMapper.ToDomain(paymentRequest);
-            newPayment.Validate();
-            _paymentRepository.Add(newPayment);
+            Payment payment = PaymentMapper.ToDomain(request);
+            payment.Validate();
+
+            Payment added = _paymentRepository.Add(payment);
+            return PaymentMapper.ToResponse(added);
         }
 
-        public void UpdatePayment(UpdatePaymentRequest paymentRequest)
+        public PaymentResponse UpdatePayment(UpdatePaymentRequest request)
         {
-            Payment existingPayment = _paymentRepository.GetById(paymentRequest.Id);
-            if (existingPayment == null) throw new Exception("No se encontro el pago");
-            existingPayment.Update(PaymentMapper.ToDomain(paymentRequest));
-            _paymentRepository.Update(existingPayment);
+            Payment existing = _paymentRepository.GetById(request.Id)
+                                  ?? throw new InvalidOperationException("Pago no encontrado.");
+
+            Payment.UpdatableData updatedData = PaymentMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            Payment updated = _paymentRepository.Update(existing);
+            return PaymentMapper.ToResponse(updated);
         }
-        public void DeletePayment(DeletePaymentRequest paymentRequest)
+
+        public PaymentResponse DeletePayment(DeletePaymentRequest request)
         {
-            var payment = _paymentRepository.GetById(paymentRequest.Id);
-            if (payment == null) throw new Exception("No se encontro el pago");
-            _paymentRepository.Delete(paymentRequest.Id);
+            Payment deleted = _paymentRepository.Delete(request.Id)
+                                  ?? throw new InvalidOperationException("Pago no encontrado.");
+
+            return PaymentMapper.ToResponse(deleted);
         }
 
         public PaymentResponse GetPaymentById(int id)
         {
-            Payment payment = _paymentRepository.GetById(id);
-            if (payment == null) throw new Exception("No se encontro el pago");
-            PaymentResponse paymentResponse = PaymentMapper.ToResponse(payment);
-            return paymentResponse;
+            Payment payment = _paymentRepository.GetById(id)
+                                 ?? throw new InvalidOperationException("Pago no encontrado.");
+
+            return PaymentMapper.ToResponse(payment);
         }
+
         public List<PaymentResponse> GetAllPayments()
         {
-            List<Payment> payments = _paymentRepository.GetAll();
-            if(!payments.Any())
-                throw new Exception("No se encontraron pagos");
-            return payments.Select(PaymentMapper.ToResponse).ToList();
+            return _paymentRepository.GetAll()
+                                     .Select(PaymentMapper.ToResponse)
+                                     .ToList();
         }
     }
 }

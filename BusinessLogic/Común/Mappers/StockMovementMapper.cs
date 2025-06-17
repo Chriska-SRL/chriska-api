@@ -21,8 +21,7 @@ namespace BusinessLogic.Común.Mappers
                 product: new Product(dto.ProductId)
             );
         }
-
-        public static StockMovement.UpdatableData ToDomain(UpdateStockMovementRequest dto)
+        public static StockMovement.UpdatableData ToUpdatableData(UpdateStockMovementRequest dto)
         {
             return new StockMovement.UpdatableData
             {
@@ -35,7 +34,6 @@ namespace BusinessLogic.Común.Mappers
                 Product = new Product(dto.ProductId)
             };
         }
-
         public static StockMovementResponse ToResponse(StockMovement domain)
         {
             return new StockMovementResponse

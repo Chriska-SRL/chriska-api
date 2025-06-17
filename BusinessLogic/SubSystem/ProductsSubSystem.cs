@@ -1,7 +1,7 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsProduct;
+﻿using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.Repository;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.Dominio;
 
 namespace BusinessLogic.SubSystem
 {
@@ -49,10 +49,10 @@ namespace BusinessLogic.SubSystem
             if (existing.Name != request.Name &&  _productRepository.GetByName(request.Name) != null)
                 throw new ArgumentException("Ya existe un producto con el mismo nombre.", nameof(request.Name));
 
-            var data = ProductMapper.ToUpdatableData(request, subCategory);
+            Product.UpdatableData data = ProductMapper.ToUpdatableData(request, subCategory);
             existing.Update(data);
 
-            var updated = _productRepository.Update(existing);
+            Product updated = _productRepository.Update(existing);
             return ProductMapper.ToResponse(updated);
         }
 
@@ -60,6 +60,8 @@ namespace BusinessLogic.SubSystem
         {
             var deleted = _productRepository.Delete(id)
                           ?? throw new ArgumentException("Producto no encontrado.", nameof(id));
+
+            //TODO: Implementar control de integridad referencial:
 
             return ProductMapper.ToResponse(deleted);
         }

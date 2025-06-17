@@ -8,8 +8,8 @@ namespace BusinessLogic.SubSystem
 {
     public class WarehousesSubSystem
     {
-        private IWarehouseRepository _warehouseRepository;
-        private IShelveRepository _shelveRepository;
+        private readonly IWarehouseRepository _warehouseRepository;
+        private readonly IShelveRepository _shelveRepository;
 
         public WarehousesSubSystem(IWarehouseRepository warehouseRepository, IShelveRepository shelveRepository)
         {
@@ -17,71 +17,89 @@ namespace BusinessLogic.SubSystem
             _shelveRepository = shelveRepository;
         }
 
-        public void AddWarehouse(AddWarehouseRequest warehouse)
+        public WarehouseResponse AddWarehouse(AddWarehouseRequest request)
         {
-            Warehouse newWareHouse= WarehouseMapper.ToDomain(warehouse);
-            newWareHouse.Validate();
-            _warehouseRepository.Add(newWareHouse);
+            Warehouse newWarehouse = WarehouseMapper.ToDomain(request);
+            newWarehouse.Validate();
+
+            Warehouse added = _warehouseRepository.Add(newWarehouse);
+            return WarehouseMapper.ToResponse(added);
         }
 
-        public void UpdateWarehouse(UpdateWarehouseRequest warehouse)
+        public WarehouseResponse UpdateWarehouse(UpdateWarehouseRequest request)
         {
-            var existingWarehouse = _warehouseRepository.GetById(warehouse.Id);
-            if (existingWarehouse == null) throw new Exception("No se encontro el almacen");
-            existingWarehouse.Update(WarehouseMapper.ToDomain(warehouse));
-            _warehouseRepository.Update(existingWarehouse);
+            Warehouse existing = _warehouseRepository.GetById(request.Id)
+                                ?? throw new InvalidOperationException("Almacén no encontrado.");
+
+            Warehouse.UpdatableData updatedData = WarehouseMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            Warehouse updated = _warehouseRepository.Update(existing);
+            return WarehouseMapper.ToResponse(updated);
         }
 
-        public void DeleteWarehouse(DeleteWarehouseRequest warehouse)
+        public WarehouseResponse DeleteWarehouse(DeleteWarehouseRequest request)
         {
-            var existingWarehouse = _warehouseRepository.GetById(warehouse.Id);
-            if (existingWarehouse == null) throw new Exception("No se encontro el almacen");
-            _warehouseRepository.Delete(existingWarehouse.Id);
+            Warehouse deleted = _warehouseRepository.Delete(request.Id)
+                               ?? throw new InvalidOperationException("Almacén no encontrado.");
+
+            return WarehouseMapper.ToResponse(deleted);
         }
 
         public WarehouseResponse GetWarehouseById(int id)
         {
-            Warehouse warehouse = _warehouseRepository.GetById(id);
-            if (warehouse == null) throw new Exception("No se encontro el almacen");
+            Warehouse warehouse = _warehouseRepository.GetById(id)
+                                 ?? throw new InvalidOperationException("Almacén no encontrado.");
+
             return WarehouseMapper.ToResponse(warehouse);
         }
 
         public List<WarehouseResponse> GetAllWarehouses()
         {
             List<Warehouse> warehouses = _warehouseRepository.GetAll();
-            if (warehouses == null || warehouses.Count == 0) throw new Exception("No se encontraron almacenes");
             return warehouses.Select(WarehouseMapper.ToResponse).ToList();
         }
 
-        public void AddShelve(AddShelveRequest addShelveRequest)
+        public ShelveResponse AddShelve(AddShelveRequest request)
         {
-            Shelve newShelve= ShelveMapper.ToDomain(addShelveRequest);
+            Shelve newShelve = ShelveMapper.ToDomain(request);
             newShelve.Validate();
-            _shelveRepository.Add(newShelve);
+
+            Shelve added = _shelveRepository.Add(newShelve);
+            return ShelveMapper.ToResponse(added);
         }
-        public void UpdateShelve(UpdateShelveRequest updateShelveRequest)
+
+        public ShelveResponse UpdateShelve(UpdateShelveRequest request)
         {
-            Shelve existingShelve = _shelveRepository.GetById(updateShelveRequest.Id);
-            if (existingShelve == null) throw new Exception("No se encontro la estanteria");
-            existingShelve.Update(ShelveMapper.ToDomain(updateShelveRequest));
-            _shelveRepository.Update(existingShelve);
+            Shelve existing = _shelveRepository.GetById(request.Id)
+                              ?? throw new InvalidOperationException("Estantería no encontrada.");
+
+            Shelve.UpdatableData updatedData = ShelveMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            Shelve updated = _shelveRepository.Update(existing);
+            return ShelveMapper.ToResponse(updated);
         }
-        public void DeleteShelve(DeleteShelveRequest deleteShelveRequest)
+
+        public ShelveResponse DeleteShelve(DeleteShelveRequest request)
         {
-            Shelve existingShelve = _shelveRepository.GetById(deleteShelveRequest.Id);
-            if (existingShelve == null) throw new Exception("No se encontro la estanteria");
-            _shelveRepository.Delete(existingShelve.Id);
+            Shelve deleted = _shelveRepository.Delete(request.Id)
+                              ?? throw new InvalidOperationException("Estantería no encontrada.");
+
+            return ShelveMapper.ToResponse(deleted);
         }
+
         public ShelveResponse GetShelveById(int id)
         {
-            Shelve shelve = _shelveRepository.GetById(id);
-            if (shelve == null) throw new Exception("No se encontro la estanteria");
+            Shelve shelve = _shelveRepository.GetById(id)
+                             ?? throw new InvalidOperationException("Estantería no encontrada.");
+
             return ShelveMapper.ToResponse(shelve);
         }
+
         public List<ShelveResponse> GetAllShelves()
         {
             List<Shelve> shelves = _shelveRepository.GetAll();
-            if (shelves == null || shelves.Count == 0) throw new Exception("No se encontraron estanterias");
             return shelves.Select(ShelveMapper.ToResponse).ToList();
         }
     }

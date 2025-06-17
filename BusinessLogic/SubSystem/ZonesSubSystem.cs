@@ -9,44 +9,51 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IZoneRepository _zoneRepository;
 
-        public ZonesSubSystem(IZoneRepository zoneRepository, IClientRepository clientRepository)
+        public ZonesSubSystem(IZoneRepository zoneRepository)
         {
             _zoneRepository = zoneRepository;
         }
 
-        public void AddZone(AddZoneRequest zone)
+        public ZoneResponse AddZone(AddZoneRequest request)
         {
-            Zone newZone = ZoneMapper.ToDomain(zone);
+            Zone newZone = ZoneMapper.ToDomain(request);
             newZone.Validate();
-            _zoneRepository.Add(newZone);
+
+            Zone added = _zoneRepository.Add(newZone);
+            return ZoneMapper.ToResponse(added);
         }
 
-        public void UpdateZone(UpdateZoneRequest zone)
+        public ZoneResponse UpdateZone(UpdateZoneRequest request)
         {
-            Zone existingZone = _zoneRepository.GetById(zone.Id);
-            if (existingZone == null) throw new Exception("No se encontro la zona");
-            existingZone.Update(ZoneMapper.ToDomain(zone));
-            _zoneRepository.Update(existingZone);
+            Zone existingZone = _zoneRepository.GetById(request.Id)
+                                 ?? throw new InvalidOperationException("Zona no encontrada.");
+
+            Zone.UpdatableData updatedData = ZoneMapper.ToUpdatableData(request);
+            existingZone.Update(updatedData);
+
+            Zone updated = _zoneRepository.Update(existingZone);
+            return ZoneMapper.ToResponse(updated);
         }
 
-        public void DeleteZone(DeleteZoneRequest zone)
+        public ZoneResponse DeleteZone(DeleteZoneRequest request)
         {
-            Zone existingZone = _zoneRepository.GetById(zone.Id);
-            if (existingZone == null) throw new Exception("No se encontro la zona");
-            _zoneRepository.Delete(existingZone.Id);
+            Zone deleted = _zoneRepository.Delete(request.Id)
+                            ?? throw new InvalidOperationException("Zona no encontrada.");
+
+            return ZoneMapper.ToResponse(deleted);
         }
 
         public ZoneResponse GetZoneById(int id)
         {
-            Zone zone = _zoneRepository.GetById(id);
-            if (zone == null) throw new Exception("No se encontro la zona");
+            Zone zone = _zoneRepository.GetById(id)
+                         ?? throw new InvalidOperationException("Zona no encontrada.");
+
             return ZoneMapper.ToResponse(zone);
         }
 
         public List<ZoneResponse> GetAllZones()
         {
             List<Zone> zones = _zoneRepository.GetAll();
-            if (zones == null || zones.Count == 0) throw new Exception("No se encontraron zonas");
             return zones.Select(ZoneMapper.ToResponse).ToList();
         }
     }

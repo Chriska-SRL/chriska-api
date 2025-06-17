@@ -26,7 +26,7 @@ namespace BusinessLogic.Común.Mappers
                 daysToDeliver: new List<Day>()
                 );
         }
-        public static Supplier.UpdatableData ToDomain(UpdateSupplierRequest request)
+        public static Supplier.UpdatableData ToUpdatableData(UpdateSupplierRequest request)
         {
             return new Supplier.UpdatableData
             {
