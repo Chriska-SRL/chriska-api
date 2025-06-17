@@ -13,25 +13,7 @@ namespace BusinessLogic.Común.Mappers
                 id: 0,
                 date: purchaseRequest.Date,
                 status: purchaseRequest.Status,
-                supplier: new Supplier
-                (
-                    id: purchaseRequest.SupplierId,
-                    name: string.Empty,
-                    rut: string.Empty,
-                    razonSocial: string.Empty,
-                    address: string.Empty,
-                    mapsAddress: string.Empty,
-                    phone: string.Empty,
-                    contactName: string.Empty,
-                    email: string.Empty,
-                    bank: string.Empty,
-                    bankAccount: string.Empty,
-                    observations: string.Empty,
-                    products: new List<Product>(),
-                    payments: new List<Payment>(),
-                    purchases: new List<Purchase>(),
-                    daysToDeliver: new List<Day>()
-                )
+                supplier: new Supplier(purchaseRequest.SupplierId)
             );
         }
         public static Purchase.UpdatableData ToUpdatableData(UpdatePurchaseRequest purchaseRequest)
@@ -39,26 +21,7 @@ namespace BusinessLogic.Común.Mappers
             return new Purchase.UpdatableData
             {
                 Date = purchaseRequest.Date,
-                Status = purchaseRequest.Status,
-                Supplier = new Supplier
-                (
-                    id: purchaseRequest.SupplierId,
-                    name: string.Empty,
-                    rut: string.Empty,
-                    razonSocial: string.Empty,
-                    address: string.Empty,
-                    mapsAddress: string.Empty,
-                    phone: string.Empty,
-                    contactName: string.Empty,
-                    email: string.Empty,
-                    bank: string.Empty,
-                    bankAccount: string.Empty,
-                    observations: string.Empty,
-                    products: new List<Product>(),
-                    payments: new List<Payment>(),
-                    purchases: new List<Purchase>(),
-                    daysToDeliver: new List<Day>()
-                )
+                Status = purchaseRequest.Status
             };
         }
         public static PurchaseResponse ToResponse(Purchase purchase)

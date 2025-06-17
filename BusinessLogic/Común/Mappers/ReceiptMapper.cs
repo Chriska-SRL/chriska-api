@@ -27,12 +27,11 @@ namespace BusinessLogic.Común.Mappers
                     phone : "",
                     contactName : "",
                     email : "",
-                    observation : "",
+                    observations : "",
+                    bank: "",
                     bankAccount :"",
                     loanedCrates : 0,
-                    zone : null,
-                    receipts : new List<Receipt>(),
-                    requests : new List<Request>()
+                    zone : null
                 )
             );
         }
@@ -56,12 +55,11 @@ namespace BusinessLogic.Común.Mappers
                     phone: "",
                     contactName: "",
                     email: "",
-                    observation: "",
+                    observations: "",
+                    bank: "",
                     bankAccount: "",
                     loanedCrates: 0,
-                    zone: null,
-                    receipts: new List<Receipt>(),
-                    requests: new List<Request>()
+                    zone: null
                 )
             };
         }
@@ -71,6 +69,7 @@ namespace BusinessLogic.Común.Mappers
         {
             return new ReceiptResponse
             {
+                Id=receipt.Id,
                 Date = receipt.Date,
                 Amount = receipt.Amount,
                 PaymentMethod = receipt.PaymentMethod,
@@ -87,7 +86,7 @@ namespace BusinessLogic.Común.Mappers
                     Phone = receipt.Client.Phone,
                     ContactName = receipt.Client.ContactName,
                     Email = receipt.Client.Email,
-                    Observation = receipt.Client.Observation,
+                    Observations = receipt.Client.Observations,
                     BankAccount = receipt.Client.BankAccount,
                     LoanedCrates = receipt.Client.LoanedCrates
                 }

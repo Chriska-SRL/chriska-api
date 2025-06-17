@@ -10,8 +10,7 @@ namespace BusinessLogic.Común.Mappers
             return new Zone(
                 id:0,
                 name:request.Name,
-                description: request.Description,
-                days: new List<Day>()
+                description: request.Description
             );
         }
         public static Zone.UpdatableData ToUpdatableData(UpdateZoneRequest request)
