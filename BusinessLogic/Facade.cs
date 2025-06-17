@@ -91,14 +91,18 @@ namespace BusinessLogic
         public List<SubCategoryResponse> GetAllSubCategories() => Categories.GetAllSubCategories();
 
         // Clients
-        public void AddClient(AddClientRequest request) => Clients.AddClient(request);
-        public void UpdateClient(UpdateClientRequest request) => Clients.UpdateClient(request);
-        public void DeleteClient(DeleteClientRequest request) => Clients.DeleteClient(request);
+        public ClientResponse AddClient(AddClientRequest request) => Clients.AddClient(request);
+        public ClientResponse UpdateClient(UpdateClientRequest request) => Clients.UpdateClient(request);
+        public ClientResponse DeleteClient(int id) => Clients.DeleteClient(id);
         public List<ClientResponse> GetAllClients() => Clients.GetAllClients();
         public ClientResponse GetClientById(int id) => Clients.GetClientById(id);
 
         // Receipts
-        public void AddReceipt(AddReceiptRequest request) => Clients.AddReceipt(request);
+        public ReceiptResponse AddReceipt(AddReceiptRequest request) => Clients.AddReceipt(request);
+        public ReceiptResponse UpdateReceipt(UpdateReceiptRequest request) => Clients.UpdateReceipt(request);
+        public ReceiptResponse DeleteReceipt(int id) => Clients.DeleteReceipt(id);
+        public ReceiptResponse GetReceiptById(int id) => Clients.GetReceiptById(id);
+        public List<ReceiptResponse> GetAllReceipts() => Clients.GetAllReceipts();
 
         // Deliveries
         public void AddDelivery(AddDeliveryRequest request) => Deliveries.AddDelivery(request);
@@ -164,9 +168,9 @@ namespace BusinessLogic
         public List<StockMovementResponse> GetAllStockMovements() => Stock.GetAllStockMovements();
 
         // Suppliers
-        public void AddSupplier(AddSupplierRequest supplier) => Suppliers.AddSupplier(supplier);
-        public void UpdateSupplier(UpdateSupplierRequest supplier) => Suppliers.UpdateSupplier(supplier);
-        public void DeleteSupplier(DeleteSupplierRequest supplier) => Suppliers.DeleteSupplier(supplier);
+        public SupplierResponse AddSupplier(AddSupplierRequest supplier) => Suppliers.AddSupplier(supplier);
+        public SupplierResponse UpdateSupplier(UpdateSupplierRequest supplier) => Suppliers.UpdateSupplier(supplier);
+        public SupplierResponse DeleteSupplier(int id) => Suppliers.DeleteSupplier(id);
         public SupplierResponse GetSupplierById(int id) => Suppliers.GetSupplierById(id);
         public List<SupplierResponse> GetAllSuppliers() => Suppliers.GetAllSupplierResponse();
 

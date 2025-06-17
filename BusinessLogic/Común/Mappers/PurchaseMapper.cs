@@ -26,11 +26,7 @@ namespace BusinessLogic.Común.Mappers
                     email: string.Empty,
                     bank: string.Empty,
                     bankAccount: string.Empty,
-                    observations: string.Empty,
-                    products: new List<Product>(),
-                    payments: new List<Payment>(),
-                    purchases: new List<Purchase>(),
-                    daysToDeliver: new List<Day>()
+                    observations: string.Empty
                 )
             );
         }
@@ -53,11 +49,7 @@ namespace BusinessLogic.Común.Mappers
                     email: string.Empty,
                     bank: string.Empty,
                     bankAccount: string.Empty,
-                    observations: string.Empty,
-                    products: new List<Product>(),
-                    payments: new List<Payment>(),
-                    purchases: new List<Purchase>(),
-                    daysToDeliver: new List<Day>()
+                    observations: string.Empty
                 )
             };
         }

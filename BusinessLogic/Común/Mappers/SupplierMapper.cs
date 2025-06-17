@@ -19,11 +19,7 @@ namespace BusinessLogic.Común.Mappers
                 email: request.Email,
                 bank: request.Bank,
                 bankAccount: request.BankAccount,
-                observations: request.Observation,
-                products: new List<Product>(),
-                payments: new List<Payment>(),
-                purchases: new List<Purchase>(),
-                daysToDeliver: new List<Day>()
+                observations: request.Observation
                 );
         }
         public static Supplier.UpdatableData ToUpdatableData(UpdateSupplierRequest request)

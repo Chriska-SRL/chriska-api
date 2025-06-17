@@ -98,6 +98,12 @@
         CREATE_COLLECTIONS = 61,
         DELETE_COLLECTIONS = 62,
         EDIT_COLLECTIONS = 63,
-        VIEW_COLLECTIONS = 64
+        VIEW_COLLECTIONS = 64,
+
+        // Receipts
+        CREATE_RECEIPTS = 65,
+        DELETE_RECEIPTS = 66,
+        EDIT_RECEIPTS = 67,
+        VIEW_RECEIPTS = 68
     }
 }
