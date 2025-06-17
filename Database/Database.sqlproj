@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{28cef6af-a77d-40bc-bbe0-b8affb8b6daf}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -69,7 +69,6 @@
     <Folder Include="Tables\Orders" />
     <Folder Include="Tables\Orders\Relations" />
     <Folder Include="Tables\Stock\Relaciones" />
-    <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Users And Roles\Users.sql" />
@@ -103,8 +102,5 @@
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Database.refactorlog" />
-  </ItemGroup>
-  <ItemGroup>
-    <PostDeploy Include="Scripts\TestData.sql" />
   </ItemGroup>
 </Project>
