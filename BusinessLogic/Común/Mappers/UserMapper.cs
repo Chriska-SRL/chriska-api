@@ -36,6 +36,7 @@ namespace BusinessLogic.Común.Mappers
                 Id = user.Id,
                 Name = user.Name,
                 Username = user.Username,
+                needsPasswordChange = user.needsPasswordChange,
                 IsEnabled = user.isEnabled,
                 Role = RoleMapper.ToResponse(user.Role),
             };
