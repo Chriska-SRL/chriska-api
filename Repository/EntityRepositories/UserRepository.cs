@@ -16,14 +16,15 @@ namespace Repository.EntityRepositories
             {
                 using var connection = CreateConnection();
                 using var command = new SqlCommand(@"
-                    INSERT INTO Users (Name, Username, Password, IsEnabled, RoleId)
+                    INSERT INTO Users (Name, Username, Password, IsEnabled, needsPasswordChange, RoleId)
                     OUTPUT INSERTED.Id 
-                    VALUES (@Name, @Username, @Password, @IsEnabled, @RoleId)", connection);
+                    VALUES (@Name, @Username, @Password, @IsEnabled, @needsPasswordChange, @RoleId)", connection);
 
                 command.Parameters.AddWithValue("@Name", user.Name);
                 command.Parameters.AddWithValue("@Username", user.Username);
                 command.Parameters.AddWithValue("@Password", user.Password);
                 command.Parameters.AddWithValue("@IsEnabled", user.isEnabled ? 'T' : 'F');
+                command.Parameters.AddWithValue("@needsPasswordChange", user.needsPasswordChange ? 'T' : 'F');
                 command.Parameters.AddWithValue("@RoleId", user.Role.Id);
 
                 connection.Open();
@@ -33,7 +34,16 @@ namespace Repository.EntityRepositories
 
                 int userId = (int)result;
 
-                return new User(userId, user.Name, user.Username, user.Password, user.isEnabled, user.Role, new List<Request>());
+                return new User(
+                    id: userId,
+                    name: user.Name,
+                    username: user.Username,
+                    password: user.Password,
+                    isEnabled: user.isEnabled,
+                    needsPasswordChange: user.needsPasswordChange,
+                    role: user.Role,
+                    requests: new List<Request>() 
+                );
             }
             catch (SqlException ex)
             {
@@ -84,7 +94,7 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using (var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, RoleId FROM Users", connection))
+                using (var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, needsPasswordChange, RoleId FROM Users", connection))
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -195,7 +205,7 @@ namespace Repository.EntityRepositories
 
                 using var command = new SqlCommand(@"
                     UPDATE Users 
-                    SET Name = @Name, Username = @Username, Password = @Password, IsEnabled = @IsEnabled, RoleId = @RoleId 
+                    SET Name = @Name, Username = @Username, Password = @Password, IsEnabled = @IsEnabled, needsPasswordChange = @needsPasswordChange, RoleId = @RoleId 
                     WHERE Id = @Id", connection);
 
                 command.Parameters.AddWithValue("@Id", user.Id);
@@ -203,6 +213,7 @@ namespace Repository.EntityRepositories
                 command.Parameters.AddWithValue("@Username", user.Username);
                 command.Parameters.AddWithValue("@Password", user.Password);
                 command.Parameters.AddWithValue("@IsEnabled", user.isEnabled ? 'T' : 'F');
+                command.Parameters.AddWithValue("@needsPasswordChange", user.needsPasswordChange ? 'T' : 'F');
                 command.Parameters.AddWithValue("@RoleId", user.Role.Id);
 
                 int affected = command.ExecuteNonQuery();
@@ -225,7 +236,7 @@ namespace Repository.EntityRepositories
 
         private User? GetUserWithoutRole(int id, SqlConnection connection)
         {
-            using var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, RoleId FROM Users WHERE Id = @Id", connection);
+            using var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, needsPasswordChange, RoleId FROM Users WHERE Id = @Id", connection);
             command.Parameters.AddWithValue("@Id", id);
             using var reader = command.ExecuteReader();
             return reader.Read() ? UserMapper.FromReader(reader) : null;
@@ -233,7 +244,7 @@ namespace Repository.EntityRepositories
 
         private User? GetUserWithoutRole(string username, SqlConnection connection)
         {
-            using var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, RoleId FROM Users WHERE Username = @Username", connection);
+            using var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, needsPasswordChange, RoleId FROM Users WHERE Username = @Username", connection);
             command.Parameters.AddWithValue("@Username", username);
             using var reader = command.ExecuteReader();
             return reader.Read() ? UserMapper.FromReader(reader) : null;
@@ -249,7 +260,7 @@ namespace Repository.EntityRepositories
                 using var reader = command.ExecuteReader();
                 if (reader.Read())
                 {
-                    role = RoleMapper.FromReader(reader); // ← Correcto
+                    role = RoleMapper.FromReader(reader); 
                 }
             }
 

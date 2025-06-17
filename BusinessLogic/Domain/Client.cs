@@ -38,6 +38,26 @@
             Requests = requests;
             Receipts = receipts;
         }
+        public Client(int id)
+        {
+            Id = id;
+            //Terminar con datos genericos aceptables.
+          //  Name = name;
+          //  RUT = rut;
+          //  RazonSocial = razonSocial;
+          //  Address = address;
+           // MapsAddress = mapsAddress;
+          //  Schedule = schedule;
+          //  Phone = phone;
+          //  ContactName = contactName;
+          //  Email = email;
+          //  Observation = observation;
+           // BankAccount = bankAccount;
+          //  LoanedCrates = loanedCrates;
+          //  Zone = zone;
+          //  Requests = requests;
+          //  Receipts = receipts;
+        }
 
         public void Validate()
         {

@@ -12,6 +12,12 @@
             IssueDate = issueDate;
             ReturnRequest = returnRequest;
         }
+        public CreditNote(int id)
+        {
+            Id = id;
+            //IssueDate = issueDate;
+            //ReturnRequest = returnRequest;
+        }
         public void Validate()
         {
             if (ReturnRequest == null) throw new Exception("La solicitud de devolucion es obligatoria para una nota de credito");

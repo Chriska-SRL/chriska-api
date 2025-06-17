@@ -283,7 +283,7 @@ namespace Repository.EntityRepositories
                 role.Permissions = GetPermissionsForRole(role.Id, connection);
 
                 using var command = new SqlCommand(@"
-                SELECT Id, Name, Username, Password, IsEnabled, RoleId
+                SELECT Id, Name, Username, Password, IsEnabled, needsPasswordChange, RoleId
                 FROM Users 
                 WHERE RoleId = @RoleId", connection);
                 command.Parameters.AddWithValue("@RoleId", id);

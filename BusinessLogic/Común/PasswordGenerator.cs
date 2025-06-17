@@ -13,16 +13,24 @@ namespace BusinessLogic.Común
 
         public static string Generate()
         {
-            string chars = Uppercase + Lowercase + Digits + Symbols;
+            var password = new StringBuilder();
 
-            var password = new StringBuilder(12);
-            for (int i = 0; i < 12; i++)
+            // Asegurar uno de cada tipo
+            password.Append(Uppercase[_random.Next(Uppercase.Length)]);
+            password.Append(Lowercase[_random.Next(Lowercase.Length)]);
+            password.Append(Digits[_random.Next(Digits.Length)]);
+            password.Append(Symbols[_random.Next(Symbols.Length)]);
+
+            string allChars = Uppercase + Lowercase + Digits + Symbols;
+
+            // Completar hasta 12 caracteres
+            for (int i = 4; i < 12; i++)
             {
-                var index = _random.Next(chars.Length);
-                password.Append(chars[index]);
+                password.Append(allChars[_random.Next(allChars.Length)]);
             }
 
-            return password.ToString();
+            // Mezclar los caracteres para no dejar los primeros fijos
+            return new string(password.ToString().OrderBy(_ => _random.Next()).ToArray());
         }
     }
 }

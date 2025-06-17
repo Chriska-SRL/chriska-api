@@ -157,24 +157,24 @@ INSERT INTO Roles_Permissions (RoleId, PermissionId) VALUES (3, 49); -- CREATE_S
 INSERT INTO Roles_Permissions (RoleId, PermissionId) VALUES (3, 52); -- VIEW_STOCK_MOVEMENTS
 
 -- Usuario admin (rol 1: Administrador)
-INSERT INTO Users ( Name, Username, Password, IsEnabled, RoleId)
-VALUES ( 'Administrador', 'admin', 'admin', 'T', 1);
+INSERT INTO Users (Name, Username, Password, IsEnabled, needsPasswordChange, RoleId)
+VALUES ('Administrador', 'admin', '$2a$11$xUhbAODKIoeZBYbldQp0D.GtclUNQlpbLBmpvQVQeFyXJvS3hfDSK', 'T', 'F', 1);
 
 -- Usuario de ventas
-INSERT INTO Users ( Name, Username, Password, IsEnabled, RoleId)
-VALUES ( 'Empleado Ventas', 'ventas1', 'ventas123', 'T', 2);
+INSERT INTO Users (Name, Username, Password, IsEnabled, needsPasswordChange, RoleId)
+VALUES ('Empleado Ventas', 'ventas1', '$2a$11$Ia.H63qjEt49WuJRrw30K.jhPtCDmBb9/Mwf5hn1fXHG4WXWw6A82', 'T', 'F', 2);
 
 -- Usuario de depósito
-INSERT INTO Users ( Name, Username, Password, IsEnabled, RoleId)
-VALUES ( 'Empleado Depósito', 'deposito1', 'deposito123', 'T', 3);
+INSERT INTO Users (Name, Username, Password, IsEnabled, needsPasswordChange, RoleId)
+VALUES ('Empleado Depósito', 'deposito1', '$2a$11$EYhkxswV.jDPK6oUUzc5HuknP4t0eNSK2u8WSxf5kNyVBexeDI6ni', 'T', 'F', 3);
 
 -- Usuario de prueba inhabilitado
-INSERT INTO Users ( Name, Username, Password, IsEnabled, RoleId)
-VALUES ( 'Usuario Inactivo', 'inactivo', 'inactivo123', 'F', 2);
+INSERT INTO Users (Name, Username, Password, IsEnabled, needsPasswordChange, RoleId)
+VALUES ('Usuario Inactivo', 'inactivo', '$2a$11$9gSWHfLdhEhH.nXWC.JB7uNWvO/CTRZXYyY/7lxvxi2gVPWHbqo0.', 'F', 'T', 2);
 
 -- Segundo usuario admin
-INSERT INTO Users ( Name, Username, Password, IsEnabled, RoleId)
-VALUES ( 'Supervisor', 'supervisor', 'super123', 'T', 1);
+INSERT INTO Users (Name, Username, Password, IsEnabled, needsPasswordChange, RoleId)
+VALUES ('Supervisor', 'supervisor', '$2a$11$zGIZoVPAZd8J4dGhBAmKpOrIBgaf3u311zmevPqWDWIN1oDHtxgl2', 'T', 'T', 1);
 
 -- Insertar 2 categorías
 INSERT INTO Categories (Name, Description) VALUES ('Lácteos', 'Productos derivados de la leche');

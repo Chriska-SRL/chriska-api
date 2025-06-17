@@ -113,5 +113,23 @@ namespace API.Controllers
             var mensaje = ex.Message.Split(" (Parameter")[0];
             return new { campo = ex.ParamName, error = mensaje };
         }
+
+        [HttpPost("resetpassword")]
+        [Authorize(Policy = nameof(Permission.EDIT_USERS))]
+        public IActionResult ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            try
+            {
+                return Ok(new { message = "Contraseña restablecida correctamente:", password = _facade.ResetPassword(request.UserId, request.NewPassword)});
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 }

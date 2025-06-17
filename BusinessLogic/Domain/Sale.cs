@@ -14,6 +14,14 @@
             Status = status;
             SaleItems = saleItems;
         }
+
+        public Sale(int id)
+        {
+            Id = id;
+           // Date = date;
+           // Status = status;
+           // SaleItems = saleItems;
+        }
         public void Validate()
         {
             if (string.IsNullOrEmpty(Status)) throw new Exception("El estado de la venta no puede estar vacío");

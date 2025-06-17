@@ -8,6 +8,7 @@ namespace BusinessLogic.DTOs.DTOsUser
         public string Name { get; set; }
         public string Username { get; set; }
         public bool IsEnabled { get; set; }
+        public bool needsPasswordChange { get; set; }
         public RoleResponse Role { get; set; }
     }
 }
