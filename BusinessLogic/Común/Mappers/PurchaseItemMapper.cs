@@ -1,6 +1,8 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsPurchaseItem;
+using BusinessLogic.DTOs.DTOsSubCategory;
 
 namespace BusinessLogic.Común.Mappers
 {
@@ -41,7 +43,17 @@ namespace BusinessLogic.Común.Mappers
                     Description = purchaseItem.Product.Description,
                     UnitType = purchaseItem.Product.UnitType,
                     TemperatureCondition = purchaseItem.Product.TemperatureCondition,
-                    Observation = purchaseItem.Product.Observation
+                    Observation = purchaseItem.Product.Observation,
+                    SubCategory = new SubCategoryResponse
+                    {
+                        Id = purchaseItem.Product.SubCategory.Id,
+                        Name = purchaseItem.Product.SubCategory.Name,
+                        Category = new CategoryResponse
+                        {
+                            Id = purchaseItem.Product.SubCategory.Category.Id,
+                            Name = purchaseItem.Product.SubCategory.Category.Name
+                        }
+                    }
                 }
             };
         }
