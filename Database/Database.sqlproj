@@ -75,7 +75,7 @@
     <Build Include="Tables\Users And Roles\Roles.sql" />
     <Build Include="Tables\Users And Roles\Permissions.sql" />
     <Build Include="Tables\Vehicles\Vehicles.sql" />
-    <Build Include="Tables\Vehicles\Costs.sql" />
+    <Build Include="Tables\Vehicles\VehicleCosts.sql" />
     <Build Include="Tables\Clients\Clients.sql" />
     <Build Include="Tables\Clients\Receipts.sql" />
     <Build Include="Tables\Clients\Zones.sql" />

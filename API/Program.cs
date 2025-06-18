@@ -145,6 +145,7 @@ namespace API
             builder.Services.AddScoped<SuppliersSubSystem>();
             builder.Services.AddScoped<WarehousesSubSystem>();
             builder.Services.AddScoped<ZonesSubSystem>();
+            builder.Services.AddScoped<VehicleSubSystem>();
 
             builder.Services.AddScoped<Facade>();
 

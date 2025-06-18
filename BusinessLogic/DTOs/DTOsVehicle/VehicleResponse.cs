@@ -1,10 +1,4 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsCost;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessLogic.DTOs.DTOsCost;
 
 namespace BusinessLogic.DTOs.DTOsVehicle
 {
@@ -15,7 +9,6 @@ namespace BusinessLogic.DTOs.DTOsVehicle
         public string Brand { get; set; }
         public string Model { get; set; }
         public int CrateCapacity { get; set; }
-        public CostResponse Cost { get; set; }
-
+        public List<VehicleCostResponse> Costs { get; set; }
     }
 }
