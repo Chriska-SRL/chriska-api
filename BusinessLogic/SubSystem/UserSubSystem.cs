@@ -45,6 +45,7 @@ namespace BusinessLogic.SubSystem
                 newPassword = PasswordGenerator.Generate();
                 user.needsPasswordChange = true;
             }
+            else { user.needsPasswordChange = false; }
             User.ValidatePassword(newPassword);
             user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
             _userRepository.Update(user);
