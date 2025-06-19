@@ -120,9 +120,10 @@ namespace BusinessLogic
         // VehicleCosts
         public VehicleCostResponse AddVehicleCost(AddVehicleCostRequest request) => Vehicles.AddVehicleCost(request);
         public VehicleCostResponse UpdateVehicleCost(UpdateVehicleCostRequest request) => Vehicles.UpdateVehicleCost(request);
-        public VehicleCostResponse DeleteVehicleCost(int vehicleId, int costId) => Vehicles.DeleteVehicleCost(vehicleId, costId);
+        public VehicleCostResponse DeleteVehicleCost(int costId) => Vehicles.DeleteVehicleCost(costId);
         public List<VehicleCostResponse> GetVehicleCosts(int vehicleId) => Vehicles.GetVehicleCosts(vehicleId);
-
+        public List<VehicleCostResponse> GetVehicleCostsByDateRange(int vehicleId, DateTime from, DateTime to) => Vehicles.GetCostsByDateRange(vehicleId, from, to);
+        public VehicleCostResponse GetVehicleCostById(int id) => Vehicles.GetVehicleCostById(id);
 
 
         // Orders

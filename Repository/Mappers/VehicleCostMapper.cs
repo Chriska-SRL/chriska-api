@@ -13,7 +13,8 @@ namespace Repository.Mappers
                 vehicleId: reader.GetInt32(reader.GetOrdinal("VehicleId")),
                 type: (VehicleCostType)reader.GetInt32(reader.GetOrdinal("Type")),
                 description: reader.GetString(reader.GetOrdinal("Description")),
-                amount: reader.GetDecimal(reader.GetOrdinal("Amount"))
+                amount: reader.GetDecimal(reader.GetOrdinal("Amount")),
+                date: reader.GetDateTime(reader.GetOrdinal("Date"))
             );
         }
     }

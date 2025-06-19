@@ -11,17 +11,15 @@ namespace BusinessLogic.Dominio
         public string Brand { get; private set; }
         public string Model { get; private set; }
         public int CrateCapacity { get; private set; }
-        private int lastCostId = 0;
         public List<VehicleCost> VehicleCosts { get; private set; }
 
-        public Vehicle(int id, string plate, string brand, string model, int crateCapacity, int lastCostId, List<VehicleCost> costs)
+        public Vehicle(int id, string plate, string brand, string model, int crateCapacity, List<VehicleCost> costs)
         {
             Id = id;
             Plate = plate;
             Brand = brand;
             Model = model;
             CrateCapacity = crateCapacity;
-            this.lastCostId = lastCostId;
             VehicleCosts = costs;
             Validate();
         }
@@ -79,36 +77,5 @@ namespace BusinessLogic.Dominio
             public int? CrateCapacity { get; set; }
         }
 
-        public void AddCost(VehicleCostType type, decimal amount, string description)
-        {
-            VehicleCost cost = new VehicleCost(lastCostId + 1, this.Id, type, description, amount);
-            lastCostId++;
-            VehicleCosts.Add(cost);
-        }
-        public void UpdateCost(int costId, VehicleCost.UpdatableData data)
-        {
-            var cost = VehicleCosts.FirstOrDefault(c => c.Id == costId);
-            if (cost == null)
-                throw new ArgumentException("El costo especificado no existe.");
-
-            cost.Update(data);
-        }
-        public void RemoveCost(int costId)
-        {
-            var cost = VehicleCosts.FirstOrDefault(c => c.Id == costId);
-            if (cost == null)
-                throw new ArgumentException("El costo especificado no existe.");
-
-            VehicleCosts.Remove(cost);
-        }
-        public void SetCosts(List<VehicleCost> costs)
-        {
-            VehicleCosts = costs ?? new List<VehicleCost>();
-            lastCostId = VehicleCosts.Any() ? VehicleCosts.Max(c => c.Id) : 0;
-        }
-        public int GetLastCostId()
-        {
-            return lastCostId;
-        }
     }
 }

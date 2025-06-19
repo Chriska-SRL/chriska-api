@@ -7,7 +7,7 @@ using BusinessLogic.DTOs.DTOsCost;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api/vehicles/{vehicleId}/costs")]
+    [Route("api/[controller]")]
     [Authorize]
     public class VehicleCostsController : ControllerBase
     {
@@ -19,12 +19,11 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = nameof(Permission.EDIT_VEHICLES))]
-        public IActionResult AddVehicleCost(int vehicleId, [FromBody] AddVehicleCostRequest request)
+        [Authorize(Policy = nameof(Permission.CREATE_VEHICLES))]
+        public IActionResult Add([FromBody] AddVehicleCostRequest request)
         {
             try
             {
-                request.VehicleId = vehicleId;
                 var result = _facade.AddVehicleCost(request);
                 return Ok(result);
             }
@@ -40,13 +39,11 @@ namespace API.Controllers
 
         [HttpPut]
         [Authorize(Policy = nameof(Permission.EDIT_VEHICLES))]
-        public IActionResult UpdateVehicleCost(int vehicleId, [FromBody] UpdateVehicleCostRequest request)
+        public IActionResult Update([FromBody] UpdateVehicleCostRequest request)
         {
             try
             {
-                request.VehicleId = vehicleId;
-                var result = _facade.UpdateVehicleCost(request);
-                return Ok(result);
+                return Ok(_facade.UpdateVehicleCost(request));
             }
             catch (ArgumentException ex)
             {
@@ -58,18 +55,21 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete("{costId}")]
-        [Authorize(Policy = nameof(Permission.EDIT_VEHICLES))]
-        public IActionResult DeleteVehicleCost(int vehicleId, int costId)
+        [HttpDelete("{id}")]
+        [Authorize(Policy = nameof(Permission.DELETE_VEHICLES))]
+        public IActionResult Delete(int id)
         {
             try
             {
-                var result = _facade.DeleteVehicleCost(vehicleId, costId);
-                return Ok(result);
+                return Ok(_facade.DeleteVehicleCost(id));
             }
             catch (ArgumentException ex)
             {
                 return BadRequest(FormatearError(ex));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { error = ex.Message });
             }
             catch (Exception)
             {
@@ -77,14 +77,13 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("vehicle/{vehicleId}")]
         [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
-        public IActionResult GetVehicleCosts(int vehicleId)
+        public IActionResult GetAllForVehicle(int vehicleId)
         {
             try
             {
-                var result = _facade.GetVehicleCosts(vehicleId);
-                return Ok(result);
+                return Ok(_facade.GetVehicleCosts(vehicleId));
             }
             catch (ArgumentException ex)
             {
@@ -92,7 +91,43 @@ namespace API.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los costos." });
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al obtener los costos del vehículo." });
+            }
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
+        public IActionResult GetById(int id)
+        {
+            try
+            {
+                return Ok(_facade.GetVehicleCostById(id));
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener el costo con id {id}." });
+            }
+        }
+
+        [HttpGet("vehicle/{vehicleId}/rango")]
+        [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
+        public IActionResult GetCostsInRange(int vehicleId, [FromQuery] DateTime from, [FromQuery] DateTime to)
+        {
+            try
+            {
+                return Ok(_facade.GetVehicleCostsByDateRange(vehicleId, from, to));
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener los costos del vehículo {vehicleId}." });
             }
         }
 

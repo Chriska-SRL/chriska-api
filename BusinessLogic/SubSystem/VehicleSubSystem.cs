@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.Repository;
+﻿using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsVehicle;
 using BusinessLogic.Común.Mappers;
 using BusinessLogic.DTOs.DTOsCost;
@@ -9,10 +8,12 @@ namespace BusinessLogic.SubSystem
     public class VehicleSubSystem
     {
         private readonly IVehicleRepository _vehicleRepository;
+        private readonly IVehicleCostRepository _costRepository;
 
-        public VehicleSubSystem(IVehicleRepository vehicleRepository)
+        public VehicleSubSystem(IVehicleRepository vehicleRepository, IVehicleCostRepository costRepository)
         {
             _vehicleRepository = vehicleRepository;
+            _costRepository = costRepository;
         }
 
         public VehicleResponse AddVehicle(AddVehicleRequest request)
@@ -49,8 +50,9 @@ namespace BusinessLogic.SubSystem
             var vehicle = _vehicleRepository.GetById(id)
                           ?? throw new ArgumentException("No se encontró el vehículo seleccionado.", nameof(id));
 
-            if (vehicle.VehicleCosts.Any())
-                 throw new InvalidOperationException("No se puede eliminar el vehículo porque tiene costos asociados.");
+            var costs = _costRepository.GetAllForVehicle(id);
+            if (costs.Any())
+                throw new InvalidOperationException("No se puede eliminar el vehículo porque tiene costos asociados.");
 
             _vehicleRepository.Delete(id);
             return VehicleMapper.ToResponse(vehicle);
@@ -63,6 +65,7 @@ namespace BusinessLogic.SubSystem
 
             return VehicleMapper.ToResponse(vehicle);
         }
+
         public VehicleResponse GetVehicleByPlate(string plate)
         {
             var vehicle = _vehicleRepository.GetByPlate(plate)
@@ -78,58 +81,60 @@ namespace BusinessLogic.SubSystem
                                      .ToList();
         }
 
+
+        //Costs
         public VehicleCostResponse AddVehicleCost(AddVehicleCostRequest request)
         {
-            var vehicle = _vehicleRepository.GetById(request.VehicleId)
-                          ?? throw new ArgumentException("No se encontró el vehículo especificado.", nameof(request.VehicleId));
+            _ = _vehicleRepository.GetById(request.VehicleId)
+                ?? throw new ArgumentException("No se encontró el vehículo especificado.", nameof(request.VehicleId));
 
             var newCost = VehicleCostMapper.ToDomain(request);
             newCost.Validate();
 
-            vehicle.VehicleCosts.Add(newCost);
-            _vehicleRepository.Update(vehicle);
-
-            return VehicleCostMapper.ToResponse(newCost);
+            var added = _costRepository.Add(newCost);
+            return VehicleCostMapper.ToResponse(added);
         }
 
         public VehicleCostResponse UpdateVehicleCost(UpdateVehicleCostRequest request)
         {
-            var vehicle = _vehicleRepository.GetById(request.VehicleId)
-                          ?? throw new ArgumentException("No se encontró el vehículo especificado.", nameof(request.VehicleId));
-
-            VehicleCost cost = vehicle.VehicleCosts.FirstOrDefault(c => c.Id == request.Id)
-                          ?? throw new ArgumentException("No se encontró el costo especificado.", nameof(request.Id));
+            var existing = _costRepository.GetById(request.Id)
+                           ?? throw new ArgumentException("No se encontró el costo especificado.", nameof(request.Id));
 
             var updatedData = VehicleCostMapper.ToUpdatableData(request);
-            vehicle.UpdateCost(cost.Id, updatedData);
+            existing.Update(updatedData);
 
-            _vehicleRepository.Update(vehicle);
-
-            return VehicleCostMapper.ToResponse(cost);
+            var updated = _costRepository.Update(existing);
+            return VehicleCostMapper.ToResponse(updated);
         }
 
-        public VehicleCostResponse DeleteVehicleCost(int vehicleId, int costId)
+        public VehicleCostResponse DeleteVehicleCost(int costId)
         {
-            var vehicle = _vehicleRepository.GetById(vehicleId)
-                          ?? throw new ArgumentException("No se encontró el vehículo especificado.", nameof(vehicleId));
+            var deleted = _costRepository.Delete(costId)
+                           ?? throw new ArgumentException("No se encontró el costo especificado.", nameof(costId));
 
-            VehicleCost cost = vehicle.VehicleCosts.FirstOrDefault(c => c.Id == costId)
-                          ?? throw new ArgumentException("No se encontró el costo especificado.", nameof(costId));
-
-            vehicle.RemoveCost(costId);
-            _vehicleRepository.Update(vehicle);
-
-            return VehicleCostMapper.ToResponse(cost);
+            return VehicleCostMapper.ToResponse(deleted);
         }
 
         public List<VehicleCostResponse> GetVehicleCosts(int vehicleId)
         {
-            var vehicle = _vehicleRepository.GetById(vehicleId)
-                          ?? throw new ArgumentException("No se encontró el vehículo especificado.", nameof(vehicleId));
-
-            return vehicle.VehicleCosts
-                          .Select(VehicleCostMapper.ToResponse)
-                          .ToList();
+            return _costRepository.GetAllForVehicle(vehicleId)
+                                  .Select(VehicleCostMapper.ToResponse)
+                                  .ToList();
         }
+
+        public List<VehicleCostResponse> GetCostsByDateRange(int vehicleId, DateTime from, DateTime to)
+        {
+            return _costRepository.GetCostsForVehicleInDateRange(vehicleId, from, to)
+                                  .Select(VehicleCostMapper.ToResponse)
+                                  .ToList();
+        }
+        public VehicleCostResponse GetVehicleCostById(int id)
+        {
+            var cost = _costRepository.GetById(id)
+                       ?? throw new ArgumentException("No se encontró el costo especificado.", nameof(id));
+
+            return VehicleCostMapper.ToResponse(cost);
+        }
+
     }
 }

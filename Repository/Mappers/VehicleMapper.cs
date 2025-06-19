@@ -13,7 +13,6 @@ namespace Repository.Mappers
                 brand: reader.GetString(reader.GetOrdinal("Brand")),
                 model: reader.GetString(reader.GetOrdinal("Model")),
                 crateCapacity: reader.GetInt32(reader.GetOrdinal("CrateCapacity")),
-                lastCostId: reader.GetInt32(reader.GetOrdinal("LastCostId")),
                 costs: new List<VehicleCost>()
             );
         }

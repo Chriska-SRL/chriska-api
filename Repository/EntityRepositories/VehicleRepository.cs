@@ -19,40 +19,20 @@ namespace Repository.EntityRepositories
                 vehicle.Validate();
 
                 using var connection = CreateConnection();
-                connection.Open();
-
-                using var transaction = connection.BeginTransaction();
-
-                var insertVehicle = new SqlCommand(@"
-                    INSERT INTO Vehicles (Plate, CrateCapacity, Brand, Model, LastCostId)
+                using var command = new SqlCommand(@"
+                    INSERT INTO Vehicles (Plate, CrateCapacity, Brand, Model)
                     OUTPUT INSERTED.Id
-                    VALUES (@Plate, @CrateCapacity, @Brand, @Model, @LastCostId)", connection, transaction);
+                    VALUES (@Plate, @CrateCapacity, @Brand, @Model)", connection);
 
-                insertVehicle.Parameters.AddWithValue("@Plate", vehicle.Plate);
-                insertVehicle.Parameters.AddWithValue("@CrateCapacity", vehicle.CrateCapacity);
-                insertVehicle.Parameters.AddWithValue("@Brand", vehicle.Brand);
-                insertVehicle.Parameters.AddWithValue("@Model", vehicle.Model);
-                insertVehicle.Parameters.AddWithValue("@LastCostId", vehicle.GetLastCostId());
+                command.Parameters.AddWithValue("@Plate", vehicle.Plate);
+                command.Parameters.AddWithValue("@CrateCapacity", vehicle.CrateCapacity);
+                command.Parameters.AddWithValue("@Brand", vehicle.Brand);
+                command.Parameters.AddWithValue("@Model", vehicle.Model);
 
-                int vehicleId = (int)insertVehicle.ExecuteScalar();
-                vehicle = new Vehicle(vehicleId, vehicle.Plate, vehicle.Brand, vehicle.Model, vehicle.CrateCapacity, vehicle.GetLastCostId(), vehicle.VehicleCosts);
+                connection.Open();
+                int id = (int)command.ExecuteScalar();
 
-                foreach (var cost in vehicle.VehicleCosts)
-                {
-                    var insertCost = new SqlCommand(@"
-                        INSERT INTO VehicleCosts (VehicleId, Id, Type, Amount, Description)
-                        VALUES (@VehicleId, @Id, @Type, @Amount, @Description)", connection, transaction);
-
-                    insertCost.Parameters.AddWithValue("@VehicleId", vehicleId);
-                    insertCost.Parameters.AddWithValue("@Id", cost.Id);
-                    insertCost.Parameters.AddWithValue("@Type", (int)cost.Type);
-                    insertCost.Parameters.AddWithValue("@Amount", cost.Amount);
-                    insertCost.Parameters.AddWithValue("@Description", cost.Description);
-                    insertCost.ExecuteNonQuery();
-                }
-
-                transaction.Commit();
-                return vehicle;
+                return new Vehicle(id, vehicle.Plate, vehicle.Brand, vehicle.Model, vehicle.CrateCapacity, new List<VehicleCost>());
             }
             catch (SqlException ex)
             {
@@ -71,31 +51,20 @@ namespace Repository.EntityRepositories
             try
             {
                 _logger.LogInformation($"Intentando eliminar el vehículo con ID {id}.");
-                using var connection = CreateConnection();
-                connection.Open();
 
-                var vehicle = GetVehicleWithoutCosts(id, connection);
+                var vehicle = GetById(id);
                 if (vehicle == null)
                 {
                     _logger.LogWarning($"No se encontró el vehículo con ID {id} para eliminar.");
                     return null;
                 }
 
-                vehicle.SetCosts(GetCostsForVehicle(id, connection));
+                using var connection = CreateConnection();
+                using var command = new SqlCommand("DELETE FROM Vehicles WHERE Id = @Id", connection);
 
-                using (var deleteCosts = new SqlCommand("DELETE FROM VehicleCosts WHERE VehicleId = @Id", connection))
-                {
-                    deleteCosts.Parameters.AddWithValue("@Id", id);
-                    deleteCosts.ExecuteNonQuery();
-                }
-
-                using (var deleteVehicle = new SqlCommand("DELETE FROM Vehicles WHERE Id = @Id", connection))
-                {
-                    deleteVehicle.Parameters.AddWithValue("@Id", id);
-                    int deleted = deleteVehicle.ExecuteNonQuery();
-                    if (deleted == 0)
-                        throw new InvalidOperationException($"El vehículo con ID {id} no fue eliminado.");
-                }
+                command.Parameters.AddWithValue("@Id", id);
+                connection.Open();
+                command.ExecuteNonQuery();
 
                 _logger.LogInformation($"Vehículo con ID {id} eliminado correctamente.");
                 return vehicle;
@@ -119,20 +88,13 @@ namespace Repository.EntityRepositories
                 var vehicles = new List<Vehicle>();
 
                 using var connection = CreateConnection();
+                using var command = new SqlCommand("SELECT Id, Plate, CrateCapacity, Brand, Model FROM Vehicles", connection);
+
                 connection.Open();
-
-                using (var command = new SqlCommand("SELECT Id, Plate, Brand, Model, CrateCapacity, LastCostId FROM Vehicles", connection))
-                using (var reader = command.ExecuteReader())
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        vehicles.Add(VehicleMapper.FromReader(reader));
-                    }
-                }
-
-                foreach (var vehicle in vehicles)
-                {
-                    vehicle.SetCosts(GetCostsForVehicle(vehicle.Id, connection));
+                    vehicles.Add(VehicleMapper.FromReader(reader));
                 }
 
                 return vehicles;
@@ -154,13 +116,13 @@ namespace Repository.EntityRepositories
             try
             {
                 using var connection = CreateConnection();
+                using var command = new SqlCommand("SELECT Id, Plate, CrateCapacity, Brand, Model FROM Vehicles WHERE Id = @Id", connection);
+
+                command.Parameters.AddWithValue("@Id", id);
                 connection.Open();
 
-                var vehicle = GetVehicleWithoutCosts(id, connection);
-                if (vehicle == null) return null;
-
-                vehicle.SetCosts(GetCostsForVehicle(id, connection));
-                return vehicle;
+                using var reader = command.ExecuteReader();
+                return reader.Read() ? VehicleMapper.FromReader(reader) : null;
             }
             catch (SqlException ex)
             {
@@ -174,18 +136,18 @@ namespace Repository.EntityRepositories
             }
         }
 
-        public Vehicle GetByPlate(string plate)
+        public Vehicle? GetByPlate(string plate)
         {
             try
             {
                 using var connection = CreateConnection();
+                using var command = new SqlCommand("SELECT Id, Plate, CrateCapacity, Brand, Model FROM Vehicles WHERE Plate = @Plate", connection);
+
+                command.Parameters.AddWithValue("@Plate", plate);
                 connection.Open();
 
-                var vehicle = GetVehicleWithoutCosts(plate, connection);
-                if (vehicle == null) return null;
-
-                vehicle.SetCosts(GetCostsForVehicle(vehicle.Id, connection));
-                return vehicle;
+                using var reader = command.ExecuteReader();
+                return reader.Read() ? VehicleMapper.FromReader(reader) : null;
             }
             catch (SqlException ex)
             {
@@ -206,45 +168,22 @@ namespace Repository.EntityRepositories
                 vehicle.Validate();
 
                 using var connection = CreateConnection();
-                connection.Open();
-
-                using var transaction = connection.BeginTransaction();
-
-                var updateCommand = new SqlCommand(@"
+                using var command = new SqlCommand(@"
                     UPDATE Vehicles 
-                    SET Plate = @Plate, CrateCapacity = @CrateCapacity, Brand = @Brand, Model = @Model, LastCostId = @LastCostId 
-                    WHERE Id = @Id", connection, transaction);
+                    SET Plate = @Plate, CrateCapacity = @CrateCapacity, Brand = @Brand, Model = @Model 
+                    WHERE Id = @Id", connection);
 
-                updateCommand.Parameters.AddWithValue("@Plate", vehicle.Plate);
-                updateCommand.Parameters.AddWithValue("@CrateCapacity", vehicle.CrateCapacity);
-                updateCommand.Parameters.AddWithValue("@Brand", vehicle.Brand);
-                updateCommand.Parameters.AddWithValue("@Model", vehicle.Model);
-                updateCommand.Parameters.AddWithValue("@LastCostId", vehicle.GetLastCostId());
-                updateCommand.Parameters.AddWithValue("@Id", vehicle.Id);
+                command.Parameters.AddWithValue("@Plate", vehicle.Plate);
+                command.Parameters.AddWithValue("@CrateCapacity", vehicle.CrateCapacity);
+                command.Parameters.AddWithValue("@Brand", vehicle.Brand);
+                command.Parameters.AddWithValue("@Model", vehicle.Model);
+                command.Parameters.AddWithValue("@Id", vehicle.Id);
 
-                int rowsAffected = updateCommand.ExecuteNonQuery();
-                if (rowsAffected == 0)
+                connection.Open();
+                int updated = command.ExecuteNonQuery();
+                if (updated == 0)
                     throw new InvalidOperationException($"No se encontró el vehículo con ID {vehicle.Id} para actualizar.");
 
-                var deleteCosts = new SqlCommand("DELETE FROM VehicleCosts WHERE VehicleId = @VehicleId", connection, transaction);
-                deleteCosts.Parameters.AddWithValue("@VehicleId", vehicle.Id);
-                deleteCosts.ExecuteNonQuery();
-
-                foreach (var cost in vehicle.VehicleCosts)
-                {
-                    var insertCost = new SqlCommand(@"
-                        INSERT INTO VehicleCosts (VehicleId, Id, Type, Amount, Description)
-                        VALUES (@VehicleId, @Id, @Type, @Amount, @Description)", connection, transaction);
-
-                    insertCost.Parameters.AddWithValue("@VehicleId", vehicle.Id);
-                    insertCost.Parameters.AddWithValue("@Id", cost.Id);
-                    insertCost.Parameters.AddWithValue("@Type", (int)cost.Type);
-                    insertCost.Parameters.AddWithValue("@Amount", cost.Amount);
-                    insertCost.Parameters.AddWithValue("@Description", cost.Description);
-                    insertCost.ExecuteNonQuery();
-                }
-
-                transaction.Commit();
                 return vehicle;
             }
             catch (SqlException ex)
@@ -257,35 +196,6 @@ namespace Repository.EntityRepositories
                 _logger.LogError(ex, "Error inesperado.");
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
-        }
-
-        private Vehicle? GetVehicleWithoutCosts(int id, SqlConnection connection)
-        {
-            using var command = new SqlCommand("SELECT Id, Plate, Brand, Model, CrateCapacity, LastCostId FROM Vehicles WHERE Id = @Id", connection);
-            command.Parameters.AddWithValue("@Id", id);
-            using var reader = command.ExecuteReader();
-            return reader.Read() ? VehicleMapper.FromReader(reader) : null;
-        }
-
-        private Vehicle? GetVehicleWithoutCosts(string plate, SqlConnection connection)
-        {
-            using var command = new SqlCommand("SELECT Id, Plate, Brand, Model, CrateCapacity, LastCostId FROM Vehicles WHERE Plate = @Plate", connection);
-            command.Parameters.AddWithValue("@Plate", plate);
-            using var reader = command.ExecuteReader();
-            return reader.Read() ? VehicleMapper.FromReader(reader) : null;
-        }
-
-        private List<VehicleCost> GetCostsForVehicle(int vehicleId, SqlConnection connection)
-        {
-            var costs = new List<VehicleCost>();
-            using var command = new SqlCommand("SELECT Id, Type, Description, Amount FROM VehicleCosts WHERE VehicleId = @VehicleId", connection);
-            command.Parameters.AddWithValue("@VehicleId", vehicleId);
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                costs.Add(VehicleCostMapper.FromReader(reader));
-            }
-            return costs;
         }
     }
 }

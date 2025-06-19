@@ -15,7 +15,6 @@ namespace BusinessLogic.Común.Mappers
                 brand: data.Brand,
                 model: data.Model,
                 crateCapacity: data.CrateCapacity,
-                lastCostId: 0,
                 costs: new List<VehicleCost>()
             );
         }

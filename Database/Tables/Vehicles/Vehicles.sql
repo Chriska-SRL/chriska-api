@@ -5,9 +5,7 @@
     [CrateCapacity] INT NOT NULL,
     [Brand] NVARCHAR(50) NOT NULL,
     [Model] NVARCHAR(50) NOT NULL,
-    [LastCostId] INT NOT NULL,
     CONSTRAINT [CHK_Vehicles_CrateCapacity] CHECK ([CrateCapacity] > 0),
-    CONSTRAINT [CHK_Vehicles_LastCostId] CHECK ([LastCostId] >= 0),
     CONSTRAINT [CHK_Vehicles_PlateFormat] CHECK ([Plate] LIKE '[A-Z][A-Z][A-Z][0-9][0-9][0-9][0-9]')
 );
 
