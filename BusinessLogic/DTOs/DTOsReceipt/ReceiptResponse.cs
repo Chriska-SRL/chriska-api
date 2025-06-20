@@ -9,6 +9,7 @@ namespace BusinessLogic.DTOs.DTOsReceipt
 {
     public class ReceiptResponse
     {
+        public int Id { get; set; }
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public string PaymentMethod { get; set; }

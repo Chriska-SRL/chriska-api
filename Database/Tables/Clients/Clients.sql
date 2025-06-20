@@ -12,7 +12,7 @@
     [Schedule] NVARCHAR(100) NOT NULL, 
     [Bank] NVARCHAR(50) NOT NULL,
     [BankAccount] NVARCHAR(255) NOT NULL, 
-    [LoanedCreates] INT NOT NULL DEFAULT 0, 
+    [LoanedCrates] INT NOT NULL DEFAULT 0, 
     [Observations] NVARCHAR(255) NULL, 
     [ZoneId] INT NOT NULL,
     CONSTRAINT [FK_Clients_Zones] FOREIGN KEY ([ZoneId]) REFERENCES [Zones]([Id])

@@ -18,12 +18,16 @@ namespace BusinessLogic.Común.Mappers
                 phone: addClientRequest.Phone,
                 contactName: addClientRequest.ContactName,
                 email: addClientRequest.Email,
-                observation: addClientRequest.Observation,
+                observations: addClientRequest.Observations,
+                bank: addClientRequest.Bank,
                 bankAccount: addClientRequest.BankAccount,
                 loanedCrates: addClientRequest.LoanedCrates,
-                zone: null, 
-                requests: new List<Request>(),
-                receipts: new List<Receipt>()
+                zone: new Zone
+                (
+                    id: addClientRequest.ZoneId,
+                    name: "",
+                    description: ""
+                )
             );
 
         }
@@ -40,15 +44,15 @@ namespace BusinessLogic.Común.Mappers
                 Phone = updateClientRequest.Phone,
                 ContactName = updateClientRequest.ContactName,
                 Email = updateClientRequest.Email,
-                Observation = updateClientRequest.Observations,
+                Observations= updateClientRequest.Observations,
+                Bank = updateClientRequest.Bank,
                 BankAccount = updateClientRequest.BankAccount,
                 LoanedCrates = updateClientRequest.LoanedCrates,
                 Zone = new Zone
                 (
                     id: updateClientRequest.ZoneId,
                     name: "",
-                    description: "",
-                    days: new List<Day>()
+                    description: ""
                 )
 
             };
@@ -59,6 +63,7 @@ namespace BusinessLogic.Común.Mappers
 
             return new ClientResponse
             {
+                Id=client.Id,
                 Name = client.Name,
                 RUT = client.RUT,
                 RazonSocial = client.RazonSocial,
@@ -68,10 +73,11 @@ namespace BusinessLogic.Común.Mappers
                 Phone = client.Phone,
                 ContactName = client.ContactName,
                 Email = client.Email,
-                Observation = client.Observation,
+                Observations = client.Observations,
+                Bank = client.Bank,
                 BankAccount = client.BankAccount,
                 LoanedCrates = client.LoanedCrates,
-                zone = new ZoneResponse
+                Zone = new ZoneResponse
                 {
                     Id = client.Zone.Id,
                     Name = client.Zone.Name,

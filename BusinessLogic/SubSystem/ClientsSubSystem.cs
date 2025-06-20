@@ -10,39 +10,64 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IClientRepository _clientRepository;
         private readonly IReceiptRepository _receiptRepository;
+        private readonly IZoneRepository _zoneRepository;
 
-        public ClientsSubSystem(IClientRepository clientRepository, IReceiptRepository receiptRepository)
+        public ClientsSubSystem(IClientRepository clientRepository, IReceiptRepository receiptRepository, IZoneRepository zoneRepository)
         {
             _clientRepository = clientRepository;
             _receiptRepository = receiptRepository;
+            _zoneRepository = zoneRepository;
         }
 
         // Clientes
 
         public ClientResponse AddClient(AddClientRequest request)
         {
-            Client client = ClientMapper.ToDomain(request);
-            client.Validate();
+            
+                Zone zone = _zoneRepository.GetById(request.ZoneId)
+                               ?? throw new ArgumentException("Zona no encontrada.", nameof(request.ZoneId));
 
-            Client added = _clientRepository.Add(client);
-            return ClientMapper.ToResponse(added);
+                if (_clientRepository.GetByRUT(request.RUT) != null)
+                    throw new ArgumentException("Ya existe un cliente con el mismo RUT.", nameof(request.RUT));
+
+                if (_clientRepository.GetByName(request.Name) != null)
+                    throw new ArgumentException("Ya existe un cliente con el mismo nombre.", nameof(request.Name));
+
+                Client newclient = ClientMapper.ToDomain(request);
+                newclient.Zone = zone;
+                newclient.Validate();
+
+                Client added = _clientRepository.Add(newclient);
+                return ClientMapper.ToResponse(added);
+           
         }
 
         public ClientResponse UpdateClient(UpdateClientRequest request)
         {
+
+            Zone zone = _zoneRepository.GetById(request.ZoneId)
+                                         ?? throw new ArgumentException("Zona no encontrada.", nameof(request.ZoneId));
+
+            if (_clientRepository.GetByRUT(request.RUT) != null)
+                throw new ArgumentException("Ya existe un cliente con el mismo RUT.", nameof(request.RUT));
+
+            if (_clientRepository.GetByName(request.Name) != null)
+                throw new ArgumentException("Ya existe un cliente con el mismo nombre.", nameof(request.Name));
+
             Client existing = _clientRepository.GetById(request.Id)
                               ?? throw new InvalidOperationException("Cliente no encontrado.");
 
             Client.UpdatableData updatedData = ClientMapper.ToUpdatableData(request);
+            updatedData.Zone = zone;
             existing.Update(updatedData);
 
             Client updated = _clientRepository.Update(existing);
             return ClientMapper.ToResponse(updated);
         }
 
-        public ClientResponse DeleteClient(DeleteClientRequest request)
+        public ClientResponse DeleteClient(int id)
         {
-            Client deleted = _clientRepository.Delete(request.Id)
+            Client deleted = _clientRepository.Delete(id)
                               ?? throw new InvalidOperationException("Cliente no encontrado.");
 
             return ClientMapper.ToResponse(deleted);
@@ -67,7 +92,10 @@ namespace BusinessLogic.SubSystem
 
         public ReceiptResponse AddReceipt(AddReceiptRequest request)
         {
+            Client client = _clientRepository.GetById(request.ClientId)
+                             ?? throw new ArgumentException("Cliente no encontrado.", nameof(request.ClientId));
             Receipt receipt = ReceiptMapper.ToDomain(request);
+            receipt.Client = client;
             receipt.Validate();
 
             Receipt added = _receiptRepository.Add(receipt);
@@ -78,17 +106,20 @@ namespace BusinessLogic.SubSystem
         {
             Receipt existing = _receiptRepository.GetById(request.Id)
                                ?? throw new InvalidOperationException("Recibo no encontrado.");
+            Client client = _clientRepository.GetById(request.ClientId)
+                            ?? throw new ArgumentException("Cliente no encontrado.", nameof(request.ClientId));
 
             Receipt.UpdatableData updatedData = ReceiptMapper.ToUpdatableData(request);
+            updatedData.Client = client;
             existing.Update(updatedData);
 
             Receipt updated = _receiptRepository.Update(existing);
             return ReceiptMapper.ToResponse(updated);
         }
 
-        public ReceiptResponse DeleteReceipt(DeleteReceiptRequest request)
+        public ReceiptResponse DeleteReceipt(int id)
         {
-            Receipt deleted = _receiptRepository.Delete(request.Id)
+            Receipt deleted = _receiptRepository.Delete(id)
                                ?? throw new InvalidOperationException("Recibo no encontrado.");
 
             return ReceiptMapper.ToResponse(deleted);
@@ -98,7 +129,6 @@ namespace BusinessLogic.SubSystem
         {
             Receipt receipt = _receiptRepository.GetById(id)
                                ?? throw new InvalidOperationException("Recibo no encontrado.");
-
             return ReceiptMapper.ToResponse(receipt);
         }
 
