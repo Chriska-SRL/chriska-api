@@ -122,6 +122,7 @@ namespace API
             builder.Services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
             builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
             builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+            builder.Services.AddScoped<IVehicleCostRepository, VehicleCostRepository>();
             builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             builder.Services.AddScoped<IPurchaseItemRepository, PurchaseItemRepository>();
             builder.Services.AddScoped<ICreditNoteRepository, CreditNoteRepository>();
@@ -145,6 +146,7 @@ namespace API
             builder.Services.AddScoped<SuppliersSubSystem>();
             builder.Services.AddScoped<WarehousesSubSystem>();
             builder.Services.AddScoped<ZonesSubSystem>();
+            builder.Services.AddScoped<VehicleSubSystem>();
 
             builder.Services.AddScoped<Facade>();
 

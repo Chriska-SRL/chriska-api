@@ -16,17 +16,7 @@ namespace BusinessLogic.Común.Mappers
                 driverName: addDeliveryRequest.DriverName,
                 observation: addDeliveryRequest.Observation,
                 orders: new List<Order>(),
-                vehicle: new Vehicle(
-
-                    id: addDeliveryRequest.VehicleId,
-                    plate: "",
-                    brand: "",
-                    model: "",
-                    crateCapacity: 0,
-                    cost: null
-                )
-
-                );
+                vehicle: new Vehicle(id: addDeliveryRequest.VehicleId));
         }
         public static Delivery.UpdatableData ToUpdatableData(UpdateDeliveryRequest updateDeliveryRequest)
         {
@@ -35,15 +25,7 @@ namespace BusinessLogic.Común.Mappers
                 Date = updateDeliveryRequest.Date,
                 DriverName = updateDeliveryRequest.DriverName,
                 Observation = updateDeliveryRequest.Observation,
-                Vehicle = new Vehicle
-                (
-                    id : updateDeliveryRequest.VehicleId,
-                    plate : "",
-                    brand : "",
-                    model: "",
-                    crateCapacity : 0,
-                    cost: null
-                )
+                Vehicle = new Vehicle(updateDeliveryRequest.VehicleId)
             };
         }
 
@@ -55,20 +37,7 @@ namespace BusinessLogic.Común.Mappers
                 Date = delivery.Date,
                 DriverName = delivery.DriverName,
                 Observation = delivery.Observation,
-                Vehicle = new VehicleResponse
-                {
-                    Id = delivery.Vehicle.Id,
-                    Plate = delivery.Vehicle.Plate,
-                    Brand = delivery.Vehicle.Brand,
-                    Model = delivery.Vehicle.Model,
-                    CrateCapacity = delivery.Vehicle.CrateCapacity,
-                    Cost = new CostResponse
-                    {
-                        Id = delivery.Vehicle.Cost.Id,
-                        Description = delivery.Vehicle.Cost.Description,
-                        Amount = delivery.Vehicle.Cost.Amount
-                    }
-                }
+                Vehicle = VehicleMapper.ToResponse(delivery.Vehicle),
             };
         }
     }

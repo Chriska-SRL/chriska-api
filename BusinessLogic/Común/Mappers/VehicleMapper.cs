@@ -1,5 +1,4 @@
 ﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsCost;
 using BusinessLogic.DTOs.DTOsVehicle;
 
 
@@ -16,11 +15,7 @@ namespace BusinessLogic.Común.Mappers
                 brand: data.Brand,
                 model: data.Model,
                 crateCapacity: data.CrateCapacity,
-                cost: new Cost(
-                    id: data.CostId,
-                    description: string.Empty,
-                    amount: 0
-                )
+                costs: new List<VehicleCost>()
             );
         }
         public static Vehicle.UpdatableData ToUpdatableData(UpdateVehicleRequest data)
@@ -30,12 +25,7 @@ namespace BusinessLogic.Común.Mappers
                Plate = data.Plate,
                Brand = data.Brand,
                Model = data.Model,
-               CrateCapacity = data.CrateCapacity,
-               Cost = new Cost(
-                    id: data.CostId,
-                    description: string.Empty,
-                    amount: 0
-                )
+               CrateCapacity = data.CrateCapacity
            };
         }
         public static VehicleResponse ToResponse(Vehicle vehicle)
@@ -47,12 +37,7 @@ namespace BusinessLogic.Común.Mappers
                 Brand = vehicle.Brand,
                 Model = vehicle.Model,
                 CrateCapacity = vehicle.CrateCapacity,
-                Cost = new CostResponse
-                {
-                    Id = vehicle.Cost.Id,
-                    Description = vehicle.Cost.Description,
-                    Amount = vehicle.Cost.Amount
-                }
+                Costs = vehicle.VehicleCosts.Select(VehicleCostMapper.ToResponse).ToList()
             };
         }
     }
