@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsClient;
+using BusinessLogic.DTOs.DTOsCost;
 using BusinessLogic.DTOs.DTOsDelivery;
 using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsOrderItem;
@@ -38,7 +39,8 @@ namespace BusinessLogic
         private readonly UserSubSystem Users;
         private readonly WarehousesSubSystem Warehouses;
         private readonly ZonesSubSystem Zones;
-        private readonly RolesSubSystem Roles; 
+        private readonly RolesSubSystem Roles;
+        private readonly VehicleSubSystem Vehicles;
 
         public Facade(
             AuthSubSystem auth,
@@ -55,7 +57,8 @@ namespace BusinessLogic
             UserSubSystem users,
             WarehousesSubSystem warehouses,
             ZonesSubSystem zones,
-            RolesSubSystem roles)
+            RolesSubSystem roles,
+            VehicleSubSystem vehicles)
         {
             Auth = auth;
             Categories = categories;
@@ -72,6 +75,7 @@ namespace BusinessLogic
             Warehouses = warehouses;
             Zones = zones;
             Roles = roles;
+            Vehicles = vehicles;
         }
         // Authentication
         public UserResponse? Authenticate(string username, string password) => Auth.Authenticate(username, password);
@@ -106,7 +110,21 @@ namespace BusinessLogic
         public void DeleteDelivery(DeleteDeliveryRequest request) => Deliveries.DeleteDelivery(request);
 
         // Vehicles
-        public void AddVehicle(AddVehicleRequest vehicle) => Deliveries.AddVehicle(vehicle);
+        public VehicleResponse AddVehicle(AddVehicleRequest request) => Vehicles.AddVehicle(request);
+        public VehicleResponse UpdateVehicle(UpdateVehicleRequest request) => Vehicles.UpdateVehicle(request);
+        public VehicleResponse DeleteVehicle(int id) => Vehicles.DeleteVehicle(id);
+        public VehicleResponse GetVehicleById(int id) => Vehicles.GetVehicleById(id);
+        public VehicleResponse GetVehicleByPlate(string plate) => Vehicles.GetVehicleByPlate(plate);
+        public List<VehicleResponse> GetAllVehicles() => Vehicles.GetAllVehicles();
+
+        // VehicleCosts
+        public VehicleCostResponse AddVehicleCost(AddVehicleCostRequest request) => Vehicles.AddVehicleCost(request);
+        public VehicleCostResponse UpdateVehicleCost(UpdateVehicleCostRequest request) => Vehicles.UpdateVehicleCost(request);
+        public VehicleCostResponse DeleteVehicleCost(int costId) => Vehicles.DeleteVehicleCost(costId);
+        public List<VehicleCostResponse> GetVehicleCosts(int vehicleId) => Vehicles.GetVehicleCosts(vehicleId);
+        public List<VehicleCostResponse> GetVehicleCostsByDateRange(int vehicleId, DateTime from, DateTime to) => Vehicles.GetCostsByDateRange(vehicleId, from, to);
+        public VehicleCostResponse GetVehicleCostById(int id) => Vehicles.GetVehicleCostById(id);
+
 
         // Orders
         public void AddOrder(AddOrderRequest request) => Orders.AddOrder(request);

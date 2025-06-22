@@ -69,13 +69,14 @@
     <Folder Include="Tables\Orders" />
     <Folder Include="Tables\Orders\Relations" />
     <Folder Include="Tables\Stock\Relaciones" />
+    <Folder Include="Data" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Users And Roles\Users.sql" />
     <Build Include="Tables\Users And Roles\Roles.sql" />
     <Build Include="Tables\Users And Roles\Permissions.sql" />
     <Build Include="Tables\Vehicles\Vehicles.sql" />
-    <Build Include="Tables\Vehicles\Costs.sql" />
+    <Build Include="Tables\Vehicles\VehicleCosts.sql" />
     <Build Include="Tables\Clients\Clients.sql" />
     <Build Include="Tables\Clients\Receipts.sql" />
     <Build Include="Tables\Clients\Zones.sql" />
@@ -102,5 +103,9 @@
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Database.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\testdata.sql" />
+    <None Include="Data\cleardatabase.sql" />
   </ItemGroup>
 </Project>
