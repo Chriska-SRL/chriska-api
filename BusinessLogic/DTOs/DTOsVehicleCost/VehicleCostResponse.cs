@@ -6,8 +6,8 @@ namespace BusinessLogic.DTOs.DTOsCost
     {
         public int VehicleId { get; set; }
         public int Id { get; set; }
-        public DateTime date { get; set; }
-        public VehicleCostType CostType { get; set; }
+        public DateTime Date { get; set; }
+        public VehicleCostType Type { get; set; }
         public string? Description { get; set; }
         public decimal Amount { get; set; }
     }
