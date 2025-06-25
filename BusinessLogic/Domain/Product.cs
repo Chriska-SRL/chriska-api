@@ -18,7 +18,7 @@ namespace BusinessLogic.Dominio
         public SubCategory SubCategory { get; set; }
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
 
-        public Product(int id, string barcode, string name, decimal price, string image, int stock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observation, SubCategory subCategory, List<Supplier> suppliers)
+        public Product(int id, string barcode, string name, decimal price, string image, int stock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, List<Supplier> suppliers)
         {
             Id = id;
             Barcode = barcode;
@@ -29,7 +29,7 @@ namespace BusinessLogic.Dominio
             Description = description;
             UnitType = unitType;
             TemperatureCondition = temperatureCondition;
-            Observation = observation;
+            Observation = observations;
             SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
             Suppliers = suppliers ?? new List<Supplier>();
 
@@ -41,17 +41,17 @@ namespace BusinessLogic.Dominio
                 throw new ArgumentOutOfRangeException(nameof(id), "El ID del producto debe ser mayor a cero.");
 
             Id = id;
-            InternalCode = string.Empty;
+            InternalCode = "000000";
             Barcode = "0000000000000";
-            Name = "-";
+            Name = "Nombre Temporal";
             Price = 1;
-            Image = string.Empty;
+            Image = "ImagenTemporal.jpg";
             Stock = 0;
-            Description = "-";
+            Description = "Descripcion Temporal";
             UnitType = UnitType.Unit;
             TemperatureCondition = TemperatureCondition.None;
-            Observation = string.Empty;
-            SubCategory = new SubCategory(9999, "Temporal", new Category(9999, "Temporal"));
+            Observation = "Observaciones Temporales";
+            SubCategory = new SubCategory(9999);
             Suppliers = new List<Supplier>();
         }
 

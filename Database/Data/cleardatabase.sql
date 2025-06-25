@@ -23,6 +23,7 @@ DELETE FROM [dbo].[Shelves];
 DELETE FROM [dbo].[Clients];
 DELETE FROM [dbo].[Suppliers];
 DELETE FROM [dbo].[Products];
+DELETE FROM [dbo].[ProductsStock];
 DELETE FROM [dbo].[SubCategories];
 DELETE FROM [dbo].[Categories];
 DELETE FROM [dbo].[Vehicles];
@@ -36,6 +37,18 @@ EXEC sp_msforeachtable '
 IF OBJECTPROPERTY(OBJECT_ID(''?''), ''TableHasIdentity'') = 1
     DBCC CHECKIDENT (''?'', RESEED, 0);
 ';
+
+-- Eliminar todos los triggers definidos por el usuario
+DECLARE @sql NVARCHAR(MAX) = N'';
+
+SELECT @sql += 'DROP TRIGGER [' + s.name + '].[' + t.name + '];' + CHAR(13)
+FROM sys.triggers t
+JOIN sys.objects o ON t.parent_id = o.object_id
+JOIN sys.schemas s ON o.schema_id = s.schema_id
+WHERE t.is_ms_shipped = 0;
+
+EXEC sp_executesql @sql;
+
 
 -- Rehabilitar restricciones
 EXEC sp_msforeachtable 'ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL';

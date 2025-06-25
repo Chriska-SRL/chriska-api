@@ -94,7 +94,7 @@
     <Build Include="Tables\Orders\Orders.sql" />
     <Build Include="Tables\Orders\OrderRequests.sql" />
     <Build Include="Tables\Orders\ReturnRequests.sql" />
-    <Build Include="Tables\Orders\Deliverys.sql" />
+    <Build Include="Tables\Orders\Deliveries.sql" />
     <Build Include="Tables\Orders\Invoices.sql" />
     <Build Include="Tables\Orders\CreditNotes.sql" />
     <Build Include="Tables\Stock\Relaciones\ProductsStock.sql" />
@@ -107,5 +107,8 @@
   <ItemGroup>
     <None Include="Data\testdata.sql" />
     <None Include="Data\cleardatabase.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Triggers\trg_UpdateStockOnMovement.sql" />
   </ItemGroup>
 </Project>

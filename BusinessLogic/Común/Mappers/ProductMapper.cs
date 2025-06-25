@@ -20,7 +20,7 @@ namespace BusinessLogic.Común.Mappers
                 description: dto.Description,
                 unitType: dto.UnitType,
                 temperatureCondition: dto.TemperatureCondition,
-                observation: dto.Observation,
+                observations: dto.Observation,
                 subCategory: subCategory,
                 suppliers: new List<Supplier>()
             );

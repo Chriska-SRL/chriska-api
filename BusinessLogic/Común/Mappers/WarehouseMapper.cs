@@ -1,5 +1,4 @@
 ﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsWarehouse;
 
 namespace BusinessLogic.Común.Mappers
@@ -33,10 +32,7 @@ namespace BusinessLogic.Común.Mappers
                 Name = warehouse.Name,
                 Description = warehouse.Description,
                 Address = warehouse.Address,
-                Shelves = warehouse.Shelves.Select(s => new ShelveResponse
-                {
-                    Description = s.Description
-                }).ToList()
+                Shelves = warehouse.Shelves.Select(ShelveMapper.ToResponse).ToList()
             };
         }
     }

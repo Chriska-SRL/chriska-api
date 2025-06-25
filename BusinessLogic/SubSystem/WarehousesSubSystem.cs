@@ -1,8 +1,8 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsWarehouse;
-using BusinessLogic.Común.Mappers;
 using BusinessLogic.DTOs.DTOsShelve;
+using BusinessLogic.Común.Mappers;
 
 namespace BusinessLogic.SubSystem
 {
@@ -17,8 +17,13 @@ namespace BusinessLogic.SubSystem
             _shelveRepository = shelveRepository;
         }
 
+        // Almacenes
+
         public WarehouseResponse AddWarehouse(AddWarehouseRequest request)
         {
+            if (_warehouseRepository.GetByName(request.Name) != null)
+                throw new ArgumentException("Ya existe un almacén con el mismo nombre.", nameof(request.Name));
+
             Warehouse newWarehouse = WarehouseMapper.ToDomain(request);
             newWarehouse.Validate();
 
@@ -29,7 +34,11 @@ namespace BusinessLogic.SubSystem
         public WarehouseResponse UpdateWarehouse(UpdateWarehouseRequest request)
         {
             Warehouse existing = _warehouseRepository.GetById(request.Id)
-                                ?? throw new InvalidOperationException("Almacén no encontrado.");
+                ?? throw new ArgumentException("Almacén no encontrado.", nameof(request.Id));
+
+            if (existing.Name != request.Name &&
+                _warehouseRepository.GetByName(request.Name) != null)
+                throw new ArgumentException("Ya existe un almacén con el mismo nombre.", nameof(request.Name));
 
             Warehouse.UpdatableData updatedData = WarehouseMapper.ToUpdatableData(request);
             existing.Update(updatedData);
@@ -38,10 +47,16 @@ namespace BusinessLogic.SubSystem
             return WarehouseMapper.ToResponse(updated);
         }
 
-        public WarehouseResponse DeleteWarehouse(DeleteWarehouseRequest request)
+        public WarehouseResponse DeleteWarehouse(int id)
         {
-            Warehouse deleted = _warehouseRepository.Delete(request.Id)
-                               ?? throw new InvalidOperationException("Almacén no encontrado.");
+            Warehouse existing = _warehouseRepository.GetById(id)
+                ?? throw new ArgumentException("Almacén no encontrado.", nameof(id));
+
+            if (existing.Shelves.Any())
+                throw new InvalidOperationException("No se puede eliminar un almacén con estanterías asociadas.");
+
+            Warehouse deleted = _warehouseRepository.Delete(existing.Id)
+                ?? throw new InvalidOperationException("Error al eliminar el almacén.");
 
             return WarehouseMapper.ToResponse(deleted);
         }
@@ -49,7 +64,7 @@ namespace BusinessLogic.SubSystem
         public WarehouseResponse GetWarehouseById(int id)
         {
             Warehouse warehouse = _warehouseRepository.GetById(id)
-                                 ?? throw new InvalidOperationException("Almacén no encontrado.");
+                ?? throw new ArgumentException("Almacén no encontrado.", nameof(id));
 
             return WarehouseMapper.ToResponse(warehouse);
         }
@@ -60,8 +75,15 @@ namespace BusinessLogic.SubSystem
             return warehouses.Select(WarehouseMapper.ToResponse).ToList();
         }
 
+        // Estanterías
+
         public ShelveResponse AddShelve(AddShelveRequest request)
         {
+            Warehouse warehouse = _warehouseRepository.GetById(request.WarehouseId)
+                ?? throw new ArgumentException("Almacén no encontrado.", nameof(request.WarehouseId));
+            if (_shelveRepository.GetByName(request.Name) != null)
+                throw new ArgumentException("Ya existe una estantería con el mismo nombre.", nameof(request.Name));
+
             Shelve newShelve = ShelveMapper.ToDomain(request);
             newShelve.Validate();
 
@@ -72,7 +94,11 @@ namespace BusinessLogic.SubSystem
         public ShelveResponse UpdateShelve(UpdateShelveRequest request)
         {
             Shelve existing = _shelveRepository.GetById(request.Id)
-                              ?? throw new InvalidOperationException("Estantería no encontrada.");
+                ?? throw new ArgumentException("Estantería no encontrada.", nameof(request.Id));
+
+            if (existing.Name != request.Name && _shelveRepository.GetByName(request.Name) != null)
+                throw new ArgumentException("Ya existe una estantería con el mismo nombre.", nameof(request.Name));
+            
 
             Shelve.UpdatableData updatedData = ShelveMapper.ToUpdatableData(request);
             existing.Update(updatedData);
@@ -81,10 +107,10 @@ namespace BusinessLogic.SubSystem
             return ShelveMapper.ToResponse(updated);
         }
 
-        public ShelveResponse DeleteShelve(DeleteShelveRequest request)
+        public ShelveResponse DeleteShelve(int id)
         {
-            Shelve deleted = _shelveRepository.Delete(request.Id)
-                              ?? throw new InvalidOperationException("Estantería no encontrada.");
+            Shelve deleted = _shelveRepository.Delete(id)
+                ?? throw new ArgumentException("Estantería no encontrada.", nameof(id));
 
             return ShelveMapper.ToResponse(deleted);
         }
@@ -92,7 +118,7 @@ namespace BusinessLogic.SubSystem
         public ShelveResponse GetShelveById(int id)
         {
             Shelve shelve = _shelveRepository.GetById(id)
-                             ?? throw new InvalidOperationException("Estantería no encontrada.");
+                ?? throw new ArgumentException("Estantería no encontrada.", nameof(id));
 
             return ShelveMapper.ToResponse(shelve);
         }
