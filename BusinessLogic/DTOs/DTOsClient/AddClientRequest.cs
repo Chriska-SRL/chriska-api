@@ -17,9 +17,10 @@ namespace BusinessLogic.DTOs.DTOsClient
         public string Schedule { get; set; }
         public string Email { get; set; }
         public string ContactName { get; set; }
+        public string Bank { get; set; }
         public string BankAccount { get; set; }
-        public string Observation { get; set; }
-        public int LoanedCrates { get; set; }    
+        public string Observations { get; set; }
+        public int LoanedCrates { get; set; }
         public int ZoneId { get; set; }
 
 
