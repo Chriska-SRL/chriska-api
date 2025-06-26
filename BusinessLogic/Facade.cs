@@ -157,16 +157,16 @@ namespace BusinessLogic
         public List<ProductResponse> GetAllProducts() => Products.GetAllProducts();
 
         // Purchases
-        public void AddPurchase(AddPurchaseRequest purchase) => Purchases.AddPurchase(purchase);
-        public void UpdatePurchase(UpdatePurchaseRequest purchase) => Purchases.UpdatePurchase(purchase);
-        public void DeletePurchase(DeletePurchaseRequest request) => Purchases.DeletePurchase(request);
+        public PurchaseResponse AddPurchase(AddPurchaseRequest purchase) => Purchases.AddPurchase(purchase);
+        public PurchaseResponse UpdatePurchase(UpdatePurchaseRequest purchase) => Purchases.UpdatePurchase(purchase);
+        public PurchaseResponse DeletePurchase(int id) => Purchases.DeletePurchase(id);
         public PurchaseResponse GetPurchaseById(int id) => Purchases.GetPurchaseById(id);
         public List<PurchaseResponse> GetAllPurchases() => Purchases.GetAllPurchases();
 
         // Purchase Items
-        public void AddPurchaseItem(AddPurchaseItemRequest item) => Purchases.AddPurchaseItem(item);
-        public void UpdatePurchaseItem(UpdatePurchaseItemRequest item) => Purchases.UpdatePurchaseItem(item);
-        public void DeletePurchaseItem(DeletePurchaseItemRequest request) => Purchases.DeletePurchaseItem(request);
+        public PurchaseItemResponse AddPurchaseItem(AddPurchaseItemRequest item) => Purchases.AddPurchaseItem(item);
+        public PurchaseItemResponse UpdatePurchaseItem(UpdatePurchaseItemRequest item) => Purchases.UpdatePurchaseItem(item);
+        public PurchaseItemResponse DeletePurchaseItem(int id) => Purchases.DeletePurchaseItem(id);
 
         // Returns
         public void AddReturnRequest(AddReturnRequest_Request request) => Returns.AddReturnRequest(request);

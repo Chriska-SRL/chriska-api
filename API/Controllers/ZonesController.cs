@@ -1,5 +1,7 @@
 ﻿using BusinessLogic;
+using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsZone;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -16,6 +18,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = nameof(Permission.CREATE_ZONES))]
         public IActionResult AddZone([FromBody] AddZoneRequest request)
         {
             try
@@ -33,6 +36,7 @@ namespace API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Policy = nameof(Permission.EDIT_ZONES))]
         public IActionResult UpdateZone([FromBody] UpdateZoneRequest request)
         {
             try
@@ -49,7 +53,8 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
+        [Authorize(Policy = nameof(Permission.DELETE_ZONES))]
         public IActionResult DeleteZone(int id)
         {
             try
@@ -67,6 +72,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = nameof(Permission.VIEW_ZONES))]
         public ActionResult<ZoneResponse> GetZoneById(int id)
         {
             try
@@ -84,6 +90,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = nameof(Permission.VIEW_ZONES))]
         public ActionResult<List<ZoneResponse>> GetAllZones()
         {
             try

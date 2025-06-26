@@ -10,37 +10,47 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IPurchaseRepository _purchaseRepository;
         private readonly IPurchaseItemRepository _purchaseItemRepository;
+        private readonly ISupplierRepository _supplierResponse;
 
-        public PurchasesSubSystem(IPurchaseRepository purchaseRepository, IPurchaseItemRepository purchaseItemRepository)
+        public PurchasesSubSystem(IPurchaseRepository purchaseRepository, IPurchaseItemRepository purchaseItemRepository, ISupplierRepository supplierResponse)
         {
             _purchaseRepository = purchaseRepository;
             _purchaseItemRepository = purchaseItemRepository;
+            _supplierResponse = supplierResponse;
         }
 
         public PurchaseResponse AddPurchase(AddPurchaseRequest request)
         {
-            Purchase purchase = PurchaseMapper.ToDomain(request);
-            purchase.Validate();
+            Supplier supplier = _supplierResponse.GetById(request.SupplierId)
+                           ?? throw new ArgumentException("Proveedor no encontrado.", nameof(request.SupplierId));
 
-            Purchase added = _purchaseRepository.Add(purchase);
+            Purchase newPurchase = PurchaseMapper.ToDomain(request);
+            newPurchase.Supplier = supplier;
+            newPurchase.Validate();
+
+            Purchase added = _purchaseRepository.Add(newPurchase);
             return PurchaseMapper.ToResponse(added);
         }
 
         public PurchaseResponse UpdatePurchase(UpdatePurchaseRequest request)
         {
             Purchase existing = _purchaseRepository.GetById(request.Id)
-                                 ?? throw new InvalidOperationException("Compra no encontrada.");
+                               ?? throw new InvalidOperationException("Compra no encontrada.");
 
+            Supplier supplier = _supplierResponse.GetById(request.SupplierId)
+                        ?? throw new ArgumentException("Proveedor no encontrado.", nameof(request.SupplierId));
+      
             Purchase.UpdatableData updatedData = PurchaseMapper.ToUpdatableData(request);
+            updatedData.Supplier = supplier;
             existing.Update(updatedData);
 
             Purchase updated = _purchaseRepository.Update(existing);
             return PurchaseMapper.ToResponse(updated);
         }
 
-        public PurchaseResponse DeletePurchase(DeletePurchaseRequest request)
+        public PurchaseResponse DeletePurchase(int id)
         {
-            Purchase deleted = _purchaseRepository.Delete(request.Id)
+            Purchase deleted = _purchaseRepository.Delete(id)
                                  ?? throw new InvalidOperationException("Compra no encontrada.");
 
             return PurchaseMapper.ToResponse(deleted);
@@ -81,9 +91,9 @@ namespace BusinessLogic.SubSystem
             return PurchaseItemMapper.ToResponse(updated);
         }
 
-        public PurchaseItemResponse DeletePurchaseItem(DeletePurchaseItemRequest request)
+        public PurchaseItemResponse DeletePurchaseItem(int id)
         {
-            PurchaseItem deleted = _purchaseItemRepository.Delete(request.Id)
+            PurchaseItem deleted = _purchaseItemRepository.Delete(id)
                                        ?? throw new InvalidOperationException("Ítem de compra no encontrado.");
 
             return PurchaseItemMapper.ToResponse(deleted);

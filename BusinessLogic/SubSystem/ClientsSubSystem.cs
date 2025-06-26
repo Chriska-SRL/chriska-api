@@ -47,15 +47,16 @@ namespace BusinessLogic.SubSystem
 
             Zone zone = _zoneRepository.GetById(request.ZoneId)
                                          ?? throw new ArgumentException("Zona no encontrada.", nameof(request.ZoneId));
-
-            if (_clientRepository.GetByRUT(request.RUT) != null)
-                throw new ArgumentException("Ya existe un cliente con el mismo RUT.", nameof(request.RUT));
-
-            if (_clientRepository.GetByName(request.Name) != null)
-                throw new ArgumentException("Ya existe un cliente con el mismo nombre.", nameof(request.Name));
-
+     
             Client existing = _clientRepository.GetById(request.Id)
                               ?? throw new InvalidOperationException("Cliente no encontrado.");
+
+            if (existing.RUT != request.RUT && _clientRepository.GetByRUT(request.RUT) != null)
+                throw new ArgumentException("Ya existe un cliente con el mismo RUT.", nameof(request.RUT));
+
+            if (existing.Name != request.Name && _clientRepository.GetByName(request.Name) != null)
+                throw new ArgumentException("Ya existe un cliente con el mismo nombre.", nameof(request.Name));
+
 
             Client.UpdatableData updatedData = ClientMapper.ToUpdatableData(request);
             updatedData.Zone = zone;
