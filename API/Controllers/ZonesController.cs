@@ -20,12 +20,15 @@ namespace API.Controllers
         {
             try
             {
-                _facade.AddZone(request);
-                return Ok(new { message = "Zona agregada correctamente" });
+                return Ok(_facade.AddZone(request));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al agregar la zona." });
             }
         }
 
@@ -34,26 +37,32 @@ namespace API.Controllers
         {
             try
             {
-                _facade.UpdateZone(request);
-                return Ok(new { message = "Zona actualizada correctamente" });
+                return Ok(_facade.UpdateZone(request));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al actualizar la zona." });
             }
         }
 
         [HttpDelete]
-        public IActionResult DeleteZone([FromBody] DeleteZoneRequest request)
+        public IActionResult DeleteZone(int id)
         {
             try
             {
-                _facade.DeleteZone(request);
-                return Ok(new { message = "Zona eliminada correctamente" });
+                return Ok(_facade.DeleteZone(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al eliminar la zona." });
             }
         }
 
@@ -62,12 +71,15 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.GetZoneById(id);
-                return Ok(response);
+                return Ok(_facade.GetZoneById(id));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al obtener la zona." });
             }
         }
 
@@ -76,13 +88,21 @@ namespace API.Controllers
         {
             try
             {
-                var response = _facade.GetAllZones();
-                return Ok(response);
+                return Ok(_facade.GetAllZones());
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { error = ex.Message });
+                return BadRequest(FormatearError(ex));
             }
+            catch (Exception)
+            {
+                return StatusCode(500, new { error = "Error inesperado al obtener las zonas." });
+            }
+        }
+        private static object FormatearError(ArgumentException ex)
+        {
+            var mensaje = ex.Message.Split(" (Parameter")[0];
+            return new { campo = ex.ParamName, error = mensaje };
         }
     }
 }

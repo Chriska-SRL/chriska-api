@@ -131,5 +131,26 @@ namespace API.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpPost("resetmypassword")]
+        public IActionResult ResetMyPassword([FromBody] ResetMyPasswordRequest request)
+        {
+            try
+            {
+                UserResponse? user = _facade.Authenticate(request.Username, request.OldPassword);
+                if (user == null)
+                    return Unauthorized(new { error = "Credenciales inválidas" });
+
+                return Ok(new { message = "Contraseña restablecida correctamente:", password = _facade.ResetPassword(user.Id, request.NewPassword) });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(FormatearError(ex));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 }

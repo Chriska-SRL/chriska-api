@@ -19,11 +19,7 @@ namespace Repository.Mappers
             mapsAddress: reader.IsDBNull(reader.GetOrdinal("mapsAddress")) ? null : reader.GetString(reader.GetOrdinal("mapsAddress")),
             bank: reader.GetString(reader.GetOrdinal("Bank")),
             bankAccount: reader.GetString(reader.GetOrdinal("BankAccount")),
-            observations: reader.IsDBNull(reader.GetOrdinal("Observations")) ? null : reader.GetString(reader.GetOrdinal("Observations")),
-            products: new List<Product>(),
-            payments: new List<Payment>(),
-            purchases: new List<Purchase>(),
-            daysToDeliver: new List<Day>()
+            observations: reader.IsDBNull(reader.GetOrdinal("Observations")) ? null : reader.GetString(reader.GetOrdinal("Observations"))
 );
         }
     }

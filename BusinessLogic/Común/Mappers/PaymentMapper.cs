@@ -15,25 +15,7 @@ namespace BusinessLogic.Común.Mappers
                 amount: addPaymentRequest.Amount,
                 paymentMethod: addPaymentRequest.PaymentMethod,
                 note: addPaymentRequest.Note,
-                supplier: new Supplier
-                (
-                    id: addPaymentRequest.SupplierId,
-                    name: string.Empty,
-                    rut: string.Empty,
-                    razonSocial: string.Empty,
-                    address: string.Empty,
-                    mapsAddress: string.Empty,
-                    phone: string.Empty,
-                    contactName: string.Empty,
-                    email: string.Empty,
-                    bank: string.Empty,
-                    bankAccount: string.Empty,
-                    observations: string.Empty,
-                    products: new List<Product>(),
-                    payments: new List<Payment>(),
-                    purchases: new List<Purchase>(),
-                    daysToDeliver: new List<Day>()
-                )
+                supplier: new Supplier(addPaymentRequest.SupplierId)
             );
         }
         public static Payment.UpdatableData ToUpdatableData(UpdatePaymentRequest updatablePaymentRequest)
@@ -43,26 +25,7 @@ namespace BusinessLogic.Común.Mappers
                 Date = updatablePaymentRequest.Date,
                 Amount = updatablePaymentRequest.Amount,
                 PaymentMethod = updatablePaymentRequest.PaymentMethod,
-                Note = updatablePaymentRequest.Note,
-                Supplier = new Supplier
-                (
-                    id: updatablePaymentRequest.SupplierId,
-                    name: string.Empty,
-                    rut: string.Empty,
-                    razonSocial: string.Empty,
-                    address: string.Empty,
-                    mapsAddress: string.Empty,
-                    phone: string.Empty,
-                    contactName: string.Empty,
-                    email: string.Empty,
-                    bank: string.Empty,
-                    bankAccount: string.Empty,
-                    observations: string.Empty,
-                    products: new List<Product>(),
-                    payments: new List<Payment>(),
-                    purchases: new List<Purchase>(),
-                    daysToDeliver: new List<Day>()
-                )
+                Note = updatablePaymentRequest.Note
             };           
         }
         public static PaymentResponse ToResponse(Payment domain)

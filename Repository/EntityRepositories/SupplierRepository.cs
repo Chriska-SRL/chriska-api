@@ -137,6 +137,70 @@ namespace Repository.EntityRepositories
             }
         }
 
+        public Supplier? GetByName(string name)
+        {
+            try
+            {
+                using var connection = CreateConnection();
+                connection.Open();
+
+                using (var command = new SqlCommand(@"
+                    SELECT 
+                        s.*
+                    FROM Suppliers s
+                    WHERE s.Name = @Name", connection))
+                {
+                    command.Parameters.AddWithValue("@Name", name);
+                    using var reader = command.ExecuteReader();
+                    if (!reader.Read()) return null;
+
+                    return SupplierMapper.FromReader(reader);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error al acceder a la base de datos.");
+                throw new ApplicationException("Error al acceder a la base de datos.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado.");
+                throw new ApplicationException("Ocurrió un error inesperado.", ex);
+            }
+        }
+
+        public Supplier? GetByRUT(string rut)
+        {
+            try
+            {
+                using var connection = CreateConnection();
+                connection.Open();
+
+                using (var command = new SqlCommand(@"
+            SELECT 
+                s.*
+            FROM Suppliers s
+            WHERE s.RUT = @RUT", connection))
+                {
+                    command.Parameters.AddWithValue("@RUT", rut);
+                    using var reader = command.ExecuteReader();
+                    if (!reader.Read()) return null;
+
+                    return SupplierMapper.FromReader(reader);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error al acceder a la base de datos.");
+                throw new ApplicationException("Error al acceder a la base de datos.", ex);
+            }   
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado.");
+                throw new ApplicationException("Ocurrió un error inesperado.", ex);
+            }
+        }
+
         public Supplier Update(Supplier supplier)
         {
             try

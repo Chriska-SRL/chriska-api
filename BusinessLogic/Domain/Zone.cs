@@ -7,13 +7,20 @@
         public string Description { get; set; }
         public List<Day> Days { get; set; } = new List<Day>();
 
-        public Zone(int id, string name, string description,List<Day> days)
+        public Zone(int id, string name, string description)
         {
             Id = id;
             Name = name;
             Description = description;
-            Days = days;
         }
+        public Zone(int id)
+        {
+            Id = id;
+            Name = "Temporal";
+            Description = "TemporalDesc";
+        }
+
+
 
         public void Validate()
         {
@@ -23,14 +30,14 @@
 
         public void Update(UpdatableData data)
         {
-            Name = data.Name;
-            Description = data.Description;
+            Name = data.Name ?? Name;
+            Description = data.Description ?? Description;
             Validate();
         }
         public class UpdatableData
         {
-            public string Name { get; set; }
-            public string Description { get; set; }
+            public string? Name { get; set; }
+            public string? Description { get; set; }
         }
     }
 }

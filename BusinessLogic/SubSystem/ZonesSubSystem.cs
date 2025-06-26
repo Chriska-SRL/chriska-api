@@ -25,19 +25,19 @@ namespace BusinessLogic.SubSystem
 
         public ZoneResponse UpdateZone(UpdateZoneRequest request)
         {
-            Zone existingZone = _zoneRepository.GetById(request.Id)
-                                 ?? throw new InvalidOperationException("Zona no encontrada.");
+            Zone existing = _zoneRepository.GetById(request.Id)
+                                         ?? throw new ArgumentException("Zona no encontrada.");
 
             Zone.UpdatableData updatedData = ZoneMapper.ToUpdatableData(request);
-            existingZone.Update(updatedData);
+            existing.Update(updatedData);
 
-            Zone updated = _zoneRepository.Update(existingZone);
+            Zone updated = _zoneRepository.Update(existing);
             return ZoneMapper.ToResponse(updated);
         }
 
-        public ZoneResponse DeleteZone(DeleteZoneRequest request)
+        public ZoneResponse DeleteZone(int id)
         {
-            Zone deleted = _zoneRepository.Delete(request.Id)
+            Zone deleted = _zoneRepository.Delete(id)
                             ?? throw new InvalidOperationException("Zona no encontrada.");
 
             return ZoneMapper.ToResponse(deleted);
@@ -50,7 +50,7 @@ namespace BusinessLogic.SubSystem
 
             return ZoneMapper.ToResponse(zone);
         }
-
+         
         public List<ZoneResponse> GetAllZones()
         {
             List<Zone> zones = _zoneRepository.GetAll();
