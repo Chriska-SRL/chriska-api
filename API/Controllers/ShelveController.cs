@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using BusinessLogic;
-using BusinessLogic.DTOs.DTOsWarehouse;
+using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.Dominio;
 using BusinessLogic.Común;
 
@@ -10,22 +10,22 @@ namespace API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class WarehousesController : ControllerBase
+    public class ShelvesController : ControllerBase
     {
         private readonly Facade _facade;
 
-        public WarehousesController(Facade facade)
+        public ShelvesController(Facade facade)
         {
             _facade = facade;
         }
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_WAREHOUSES))]
-        public IActionResult AddWarehouse([FromBody] AddWarehouseRequest request)
+        public IActionResult AddShelve([FromBody] AddShelveRequest request)
         {
             try
             {
-                return Ok(_facade.AddWarehouse(request));
+                return Ok(_facade.AddShelve(request));
             }
             catch (ArgumentException ex)
             {
@@ -33,17 +33,17 @@ namespace API.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar agregar el deposito." });
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar agregar la estantería." });
             }
         }
 
         [HttpPut]
         [Authorize(Policy = nameof(Permission.EDIT_WAREHOUSES))]
-        public IActionResult UpdateWarehouse([FromBody] UpdateWarehouseRequest request)
+        public IActionResult UpdateShelve([FromBody] UpdateShelveRequest request)
         {
             try
             {
-                return Ok(_facade.UpdateWarehouse(request));
+                return Ok(_facade.UpdateShelve(request));
             }
             catch (ArgumentException ex)
             {
@@ -51,17 +51,17 @@ namespace API.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar actualizar el deposito." });
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar actualizar la estantería." });
             }
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_WAREHOUSES))]
-        public IActionResult DeleteWarehouse(int id)
+        public IActionResult DeleteShelve(int id)
         {
             try
             {
-                return Ok(_facade.DeleteWarehouse(id));
+                return Ok(_facade.DeleteShelve(id));
             }
             catch (ArgumentException ex)
             {
@@ -73,17 +73,17 @@ namespace API.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar el deposito." });
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar la estantería." });
             }
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_WAREHOUSES))]
-        public ActionResult<WarehouseResponse> GetWarehouseById(int id)
+        public ActionResult<ShelveResponse> GetShelveById(int id)
         {
             try
             {
-                return Ok(_facade.GetWarehouseById(id));
+                return Ok(_facade.GetShelveById(id));
             }
             catch (ArgumentException ex)
             {
@@ -91,23 +91,22 @@ namespace API.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener el deposito con id {id}." });
+                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener la estantería con id {id}." });
             }
         }
 
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_WAREHOUSES))]
-        public ActionResult<List<WarehouseResponse>> GetAllWarehouses()
+        public ActionResult<List<ShelveResponse>> GetAllShelves()
         {
             try
             {
-                return Ok(_facade.GetAllWarehouses());
+                return Ok(_facade.GetAllShelves());
             }
             catch (Exception)
             {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los depositos." });
+                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener las estanterías." });
             }
         }
-
     }
 }

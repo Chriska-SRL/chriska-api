@@ -1,9 +1,4 @@
-﻿using BusinessLogic.Dominio;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessLogic.Común.Enums;
 
 namespace BusinessLogic.DTOs.DTOsStockMovement
 {
@@ -11,7 +6,7 @@ namespace BusinessLogic.DTOs.DTOsStockMovement
     {
         public DateTime Date { get; set; }
         public int Quantity { get; set; }
-        public string Type { get; set; }
+        public StockMovementType Type { get; set; }
         public string Reason { get; set; }
         public int ShelveId { get; set; }
         public int UserId { get; set; }

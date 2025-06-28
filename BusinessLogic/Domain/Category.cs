@@ -21,8 +21,8 @@
         public Category(int id)
         {
             Id = id;
-            Name = "Temporal";
-            Description = "_";
+            Name = "Nombre Temporal";
+            Description = "Descripcion Temporal";
         }
 
         public Category(int v1, string v2)

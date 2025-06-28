@@ -20,11 +20,12 @@
             Validate();
         }
 
-        public SubCategory(int v1, string v2, Category category)
+        public SubCategory(int id)
         {
-            this.v1 = v1;
-            this.v2 = v2;
-            Category = category;
+            Id = id;
+            Name = "Nombre Temporal";
+            Description = "Descripción Temporal";
+            Category = new Category(9999);
         }
 
         public void Validate()

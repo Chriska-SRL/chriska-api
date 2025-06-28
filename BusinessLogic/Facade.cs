@@ -12,6 +12,7 @@ using BusinessLogic.DTOs.DTOsPurchaseItem;
 using BusinessLogic.DTOs.DTOsReceipt;
 using BusinessLogic.DTOs.DTOsReturnRequest;
 using BusinessLogic.DTOs.DTOsRole;
+using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsStockMovement;
 using BusinessLogic.DTOs.DTOsSubCategory;
 using BusinessLogic.DTOs.DTOsSupplier;
@@ -181,9 +182,11 @@ namespace BusinessLogic
         public List<RoleResponse> GetAllRoles() => Roles.GetAllRoles();
 
         // Stock 
-        public void AddStockMovement(AddStockMovementRequest stockMovement) => Stock.AddStockMovement(stockMovement);
+        public StockMovementResponse AddStockMovement(AddStockMovementRequest stockMovement) => Stock.AddStockMovement(stockMovement);
         public StockMovementResponse GetStockMovementById(int id) => Stock.GetStockMovementById(id);
-        public List<StockMovementResponse> GetAllStockMovements() => Stock.GetAllStockMovements();
+        public List<StockMovementResponse> GetAllStockMovements(DateTime from, DateTime to) => Stock.GetAllStockMovements(from, to);
+        public List<StockMovementResponse> GetAllStockMovementsByShelve(int id, DateTime from, DateTime to) => Stock.GetAllStockMovementsByShelve(id, from, to);
+        public List<StockMovementResponse> GetAllStockMovementsByWarehouse(int id, DateTime from, DateTime to) => Stock.GetAllStockMovementsByWarehouse(id, from, to);
 
         // Suppliers
         public SupplierResponse AddSupplier(AddSupplierRequest supplier) => Suppliers.AddSupplier(supplier);
@@ -201,12 +204,18 @@ namespace BusinessLogic
         public string ResetPassword(int userId, string? newPassword = null) => Users.ResetPassword(userId, newPassword);
 
         // Warehouses
-        public void AddWarehouse(AddWarehouseRequest warehouse) => Warehouses.AddWarehouse(warehouse);
-        public void UpdateWarehouse(UpdateWarehouseRequest warehouse) => Warehouses.UpdateWarehouse(warehouse);
-        public void DeleteWarehouse(DeleteWarehouseRequest warehouse) => Warehouses.DeleteWarehouse(warehouse);
+        public WarehouseResponse AddWarehouse(AddWarehouseRequest warehouse) => Warehouses.AddWarehouse(warehouse);
+        public WarehouseResponse UpdateWarehouse(UpdateWarehouseRequest warehouse) => Warehouses.UpdateWarehouse(warehouse);
+        public WarehouseResponse DeleteWarehouse(int id) => Warehouses.DeleteWarehouse(id);
         public WarehouseResponse GetWarehouseById(int id) => Warehouses.GetWarehouseById(id);
         public List<WarehouseResponse> GetAllWarehouses() => Warehouses.GetAllWarehouses();
 
+        //Shelves
+        public ShelveResponse AddShelve(AddShelveRequest warehouse) => Warehouses.AddShelve(warehouse);
+        public ShelveResponse UpdateShelve(UpdateShelveRequest warehouse) => Warehouses.UpdateShelve(warehouse);
+        public ShelveResponse DeleteShelve(int id) => Warehouses.DeleteShelve(id);
+        public ShelveResponse GetShelveById(int id) => Warehouses.GetShelveById(id);
+        public List<ShelveResponse> GetAllShelves() => Warehouses.GetAllShelves();
         // Zones
         public ZoneResponse AddZone(AddZoneRequest zone) => Zones.AddZone(zone);
         public ZoneResponse UpdateZone(UpdateZoneRequest zone) => Zones.UpdateZone(zone);

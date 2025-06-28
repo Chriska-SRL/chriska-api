@@ -48,7 +48,7 @@ namespace Repository.Mappers
                 description: reader.GetString(reader.GetOrdinal("Description")),
                 unitType: unitType,
                 temperatureCondition: tempCondition,
-                observation: reader.GetString(reader.GetOrdinal("Observations")),
+                observations: reader.GetString(reader.GetOrdinal("Observations")),
                 subCategory: subCategory,
                 suppliers: new List<Supplier>() // los proveedores se asignan aparte
             );
