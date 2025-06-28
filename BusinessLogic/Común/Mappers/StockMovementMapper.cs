@@ -1,10 +1,5 @@
 ﻿using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsCategory;
-using BusinessLogic.DTOs.DTOsProduct;
-using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsStockMovement;
-using BusinessLogic.DTOs.DTOsSubCategory;
-using BusinessLogic.DTOs.DTOsUser;
 
 namespace BusinessLogic.Común.Mappers
 {
@@ -23,23 +18,12 @@ namespace BusinessLogic.Común.Mappers
                 product: new Product(dto.ProductId)
             );
         }
-        public static StockMovement.UpdatableData ToUpdatableData(UpdateStockMovementRequest dto)
-        {
-            return new StockMovement.UpdatableData
-            {
-                Date = dto.Date,
-                Quantity = dto.Quantity,
-                Type = dto.Type,
-                Reason = dto.Reason,
-                Shelve = new Shelve(dto.ShelveId),
-                User = new User(dto.UserId),
-                Product = new Product(dto.ProductId)
-            };
-        }
+
         public static StockMovementResponse ToResponse(StockMovement domain)
         {
             return new StockMovementResponse
             {
+                Id = domain.Id,
                 Date = domain.Date,
                 Quantity = domain.Quantity,
                 Type = domain.Type,

@@ -190,3 +190,41 @@ INSERT INTO [dbo].[Products] (Name, BarCode, UnitType, Price, Description, Tempe
 -- Otros
 ('Prepizza con Salsa', '1234567890132', 'Unit', 700.00, 'Base de pizza precocida con salsa', 'Ambient', 60, 'prepizza.jpg', 'Lista para hornear', 11),
 ('Jugo Natural Naranja 1L', '1234567890133', 'Unit', 500.00, 'Jugo exprimido sin azúcar', 'Cold', 90, 'jugo_naranja.jpg', '100% exprimido', 12);
+
+INSERT INTO Warehouses (Name, Description, Address) VALUES
+('Depósito Central', 'Depósito principal de refrigerados y frescos', 'Av. Industria 1234, Córdoba'),
+('Depósito Secundario', 'Depósito para productos congelados y secos', 'Ruta 9 Km 45, Córdoba');
+
+INSERT INTO Shelves (Name, Description, WarehouseId) VALUES
+('Estantería Lácteos', 'Refrigeración media para lácteos', 1),
+('Estantería Chacinados', 'Refrigeración baja para fiambres', 1),
+('Estantería Congelados', 'Zona de frío - congelados', 2),
+('Estantería Secos', 'Para productos de ambiente seco', 2);
+
+INSERT INTO ProductsStock (ProductId, ShelveId, Quantity) VALUES
+(1, 2, 50),    -- Salame Milan en Estantería Chacinados
+(2, 2, 30),    -- Jamón Cocido Premium en Estantería Chacinados
+(3, 1, 40),    -- Queso Cremoso en Estantería Lácteos
+(4, 1, 20),    -- Queso Sardo en Estantería Lácteos
+(5, 1, 100),   -- Yogur Frutilla en Estantería Lácteos
+(6, 3, 25),    -- Empanadas de carne en Estantería Congelados
+(7, 3, 15),    -- Hamburguesas Vacuno en Estantería Congelados
+(8, 4, 200),   -- Leche Entera en Estantería Secos
+(9, 1, 80),   -- Crema de Leche en Estantería Lácteos
+(10, 4, 60),   -- Prepizza con Salsa en Estantería Secos
+(11, 1, 90);   -- Jugo Natural Naranja en Estantería Lácteos
+
+
+INSERT INTO StockMovements (Quantity, Type, Reason, Date, ProductId, ShelveId, UserId) VALUES
+(50, 'I', 'Ingreso inicial de Salame Milan', GETDATE(), 1, 2, 1),
+(30, 'I', 'Ingreso inicial de Jamón Cocido Premium', GETDATE(), 2, 2, 1),
+(40, 'I', 'Ingreso inicial de Queso Cremoso', GETDATE(), 3, 1, 1),
+(20, 'I', 'Ingreso inicial de Queso Sardo', GETDATE(), 4, 1, 1),
+(100, 'I', 'Ingreso inicial de Yogur Frutilla', GETDATE(), 5, 1, 1),
+(25, 'I', 'Ingreso inicial de Empanadas de carne', GETDATE(), 6, 3, 1),
+(15, 'I', 'Ingreso inicial de Hamburguesas Vacuno', GETDATE(), 7, 3, 1),
+(200, 'I', 'Ingreso inicial de Leche Entera', GETDATE(), 8, 4, 1),
+(80, 'I', 'Ingreso inicial de Crema de Leche', GETDATE(), 9, 1, 1),
+(60, 'I', 'Ingreso inicial de Prepizza con Salsa', GETDATE(), 10, 4, 1),
+(90, 'I', 'Ingreso inicial de Jugo Natural Naranja', GETDATE(), 11, 1, 1);
+

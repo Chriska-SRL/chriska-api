@@ -1,10 +1,13 @@
 ﻿CREATE TABLE [dbo].[ProductsStock]
-( 
-    [ProductId] INT NOT NULL, 
+(
+    [Id] INT NOT NULL PRIMARY KEY IDENTITY,
+    [ProductId] INT NOT NULL,
     [ShelveId] INT NOT NULL,
-    [Quantity] INT NOT NULL, 
-    CONSTRAINT [PK_Shelves_Products] PRIMARY KEY ([ShelveId],[ProductId]), 
-    CONSTRAINT [FK_Shelves_Products_Shelves] FOREIGN KEY ([ShelveId]) REFERENCES [Shelves]([Id]),
-    CONSTRAINT [FK_Shelves_Products_Products] FOREIGN KEY ([ProductId]) REFERENCES [Products]([Id]),
-    CONSTRAINT [CHK_ProductsStock_Quantity] CHECK ([Quantity] > 0)
-)
+    [Quantity] INT NOT NULL,
+    
+    CONSTRAINT [UQ_ProductsStock_Shelve_Product] UNIQUE ([ShelveId], [ProductId]),
+    CONSTRAINT [FK_ProductsStock_Shelves] FOREIGN KEY ([ShelveId]) REFERENCES [Shelves]([Id]),
+    CONSTRAINT [FK_ProductsStock_Products] FOREIGN KEY ([ProductId]) REFERENCES [Products]([Id]),
+    CONSTRAINT [CHK_ProductsStock_Quantity] CHECK ([Quantity] >= 0)
+);
+
