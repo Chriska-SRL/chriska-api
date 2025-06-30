@@ -51,17 +51,17 @@ namespace BusinessLogic.Dominio
             if (data.Permissions == null)
                 throw new ArgumentNullException(nameof(data.Permissions), "La lista de permisos no puede ser nula.");
 
-            Name = data.Name;
-            Description = data.Description;
-            Permissions = data.Permissions;
+            Name = data.Name ?? Name;
+            Description = data.Description ?? Description;
+            Permissions = data.Permissions ?? Permissions;
             Validate();
         }
 
         public class UpdatableData
         {
-            public string Name { get; set; } = string.Empty;
-            public string Description { get; set; } = string.Empty;
-            public List<Permission> Permissions { get; set; } = new List<Permission>();
+            public string? Name { get; set; } = string.Empty;
+            public string? Description { get; set; } = string.Empty;
+            public List<Permission>? Permissions { get; set; } = new List<Permission>();
         }
 
         public override string ToString()
