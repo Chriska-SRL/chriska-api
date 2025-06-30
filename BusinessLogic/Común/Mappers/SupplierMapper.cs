@@ -34,6 +34,7 @@ namespace BusinessLogic.Común.Mappers
                 Phone = request.Phone,
                 ContactName = request.ContactName,
                 Email = request.Email,
+                Bank = request.Bank,
                 BankAccount = request.BankAccount,
                 Observations = request.Observations
             };
@@ -51,6 +52,7 @@ namespace BusinessLogic.Común.Mappers
                 Phone = domain.Phone,
                 ContactName = domain.ContactName,
                 Email = domain.Email,
+                Bank = domain.Bank,
                 BankAccount = domain.BankAccount,
                 Observations = domain.Observations
             };
