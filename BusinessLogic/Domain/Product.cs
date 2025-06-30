@@ -57,10 +57,11 @@ namespace BusinessLogic.Dominio
 
         public void Validate()
         {
-            if (string.IsNullOrWhiteSpace(Barcode))
-                throw new ArgumentNullException(nameof(Barcode), "El código de barras es obligatorio.");
-            if (Barcode.Length != 13 || !Barcode.All(char.IsDigit))
-                throw new ArgumentException("El código de barras debe tener exactamente 13 dígitos numéricos.", nameof(Barcode));
+            if (!string.IsNullOrWhiteSpace(Barcode))
+            {
+                if (Barcode.Length != 13 || !Barcode.All(char.IsDigit))
+                    throw new ArgumentException("El código de barras debe tener exactamente 13 dígitos numéricos si se proporciona.", nameof(Barcode));
+            }
 
             if (string.IsNullOrWhiteSpace(Name))
                 throw new ArgumentNullException(nameof(Name), "El nombre es obligatorio.");

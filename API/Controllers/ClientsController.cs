@@ -92,7 +92,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_CLIENTS))]
         public IActionResult DeleteClient(int id)
         {
