@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Común.Enums;
+using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsSubCategory;
 using BusinessLogic.DTOs.DTOsSupplier;
 
@@ -18,6 +19,7 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public required string Observation { get; set; }
         public required string Image { get; set; }
         public required SubCategoryResponse SubCategory { get; set; }
+        public required BrandResponse Brand { get; set; }
         public List<SupplierResponse> Suppliers { get; set; } = new List<SupplierResponse>();
     }
 }

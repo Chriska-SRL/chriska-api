@@ -13,5 +13,6 @@
     [BankAccount] NVARCHAR(255) NOT NULL, 
     [Observations] NVARCHAR(255) NOT NULL,
     CONSTRAINT CHK_RUT_Format CHECK (RUT LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
-    CONSTRAINT CHK_Email_Format CHECK (Email LIKE '_%@_%._%')
+    CONSTRAINT CHK_Email_Format CHECK (Email LIKE '_%@_%._%'),
+    CONSTRAINT [CHK_Supplier_Bank] CHECK (Bank IN ('BROU', 'BBVA', 'Santander','Itau','Scotiabank','HSBC','Heritage','Bandes','Andbank','Otros'))
 )

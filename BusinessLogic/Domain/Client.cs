@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using BusinessLogic.Común.Enums;
+using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Dominio
 {
@@ -15,14 +16,14 @@ namespace BusinessLogic.Dominio
         public string ContactName { get; set; }
         public string Email { get; set; }
         public string Observations { get; set; }
-        public string Bank { get; set; }
+        public Bank Bank { get; set; }
         public string BankAccount { get; set; }
         public int LoanedCrates { get; set; }
         public Zone Zone { get; set; }
         public List<Request> Requests { get; set; } = new List<Request>();       
         public List<Receipt> Receipts { get; set; } = new List<Receipt>();
 
-        public Client(int id,string name, string rut, string razonSocial, string address, string mapsAddress, string schedule, string phone, string contactName, string email, string observations,string bank ,string bankAccount, int loanedCrates, Zone zone)
+        public Client(int id,string name, string rut, string razonSocial, string address, string mapsAddress, string schedule, string phone, string contactName, string email, string observations,Bank bank ,string bankAccount, int loanedCrates, Zone zone)
         {
             Id = id;
             Name = name;
@@ -53,7 +54,7 @@ namespace BusinessLogic.Dominio
             ContactName = "Contacto Temporal";
             Email = "email@temporal.com";
             Observations = "Sin observaciones";
-            Bank = "Banco Temporal";
+            Bank = Bank.Andbank;
             BankAccount = "0000000000";
             LoanedCrates = 0;
             Zone = new Zone(0, "Zona Temporal", "Descripción Temporal");
@@ -113,12 +114,6 @@ namespace BusinessLogic.Dominio
                 throw new ArgumentException("La cuenta bancaria debe contener solo dígitos.", nameof(BankAccount));
             if (BankAccount.Length < 10 || BankAccount.Length > 14)
                 throw new ArgumentOutOfRangeException(nameof(BankAccount), "La cuenta bancaria debe tener entre 10 y 14 dígitos.");
-
-            if (string.IsNullOrWhiteSpace(Bank))
-                throw new ArgumentNullException(nameof(Bank), "El banco es obligatorio.");
-            if (Bank.Length > 20)
-                throw new ArgumentOutOfRangeException(nameof(Bank), "El banco no puede superar los 50 caracteres.");
-
             if (LoanedCrates < 0)
                 throw new ArgumentOutOfRangeException(nameof(LoanedCrates), "La cantidad de cajones prestados no puede ser negativa.");
         }
@@ -153,7 +148,7 @@ namespace BusinessLogic.Dominio
             public string? ContactName;
             public string? Email;
             public string? Observations;
-            public string? Bank;
+            public Bank? Bank;
             public string? BankAccount;
             public int? LoanedCrates;
             public Zone? Zone;

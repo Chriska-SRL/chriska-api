@@ -3,11 +3,6 @@ using BusinessLogic.Repository;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Repository.Mappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repository.EntityRepositories
 {
@@ -38,7 +33,7 @@ namespace Repository.EntityRepositories
                 command.Parameters.AddWithValue("@Email", client.Email);
                 command.Parameters.AddWithValue("@ContactName", client.ContactName);
                 command.Parameters.AddWithValue("@Schedule", client.Schedule);
-                command.Parameters.AddWithValue("@Bank", client.Bank); 
+                command.Parameters.AddWithValue("@Bank", client.Bank.ToString()); 
                 command.Parameters.AddWithValue("@BankAccount", client.BankAccount);
                 command.Parameters.AddWithValue("@LoanedCrates", client.LoanedCrates);
                 command.Parameters.AddWithValue("@Observations", client.Observations);

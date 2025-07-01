@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.Común.Enums;
 using Microsoft.Data.SqlClient;
+using BusinessLogic.Domain;
 
 namespace Repository.Mappers
 {
@@ -20,7 +21,11 @@ namespace Repository.Mappers
                 description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
                 category: category
             );
-
+            var brand = new Brand(
+                id: reader.GetInt32(reader.GetOrdinal("BrandId")),
+                name: reader.GetString(reader.GetOrdinal("BrandName")),
+                description: reader.GetString(reader.GetOrdinal("BrandDescription"))
+            );
             string unitTypeStr = reader.GetString(reader.GetOrdinal("UnitType")).Trim();
             UnitType unitType = unitTypeStr switch
             {
@@ -50,6 +55,7 @@ namespace Repository.Mappers
                 temperatureCondition: tempCondition,
                 observations: reader.GetString(reader.GetOrdinal("Observations")),
                 subCategory: subCategory,
+                brand: brand,
                 suppliers: new List<Supplier>() // los proveedores se asignan aparte
             );
         }

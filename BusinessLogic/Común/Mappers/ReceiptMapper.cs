@@ -15,24 +15,7 @@ namespace BusinessLogic.Común.Mappers
                 amount: addReceiptRequest.Amount,
                 paymentMethod: addReceiptRequest.PaymentMethod,
                 notes: addReceiptRequest.Notes,
-                client: new Client
-                (
-                    id : addReceiptRequest.ClientId,
-                    name : "",
-                    rut : "",
-                    razonSocial : "",
-                    address : "",
-                    mapsAddress : "",
-                    schedule : "",
-                    phone : "",
-                    contactName : "",
-                    email : "",
-                    observations : "",
-                    bank: "",
-                    bankAccount :"",
-                    loanedCrates : 0,
-                    zone : null
-                )
+                client: new Client(id : addReceiptRequest.ClientId)
             );
         }
         public static Receipt.UpdatableData ToUpdatableData(UpdateReceiptRequest updateReceiptRequest)
@@ -43,24 +26,7 @@ namespace BusinessLogic.Común.Mappers
                 Amount = updateReceiptRequest.Amount,
                 PaymentMethod = updateReceiptRequest.PaymentMethod,
                 Notes = updateReceiptRequest.Notes,
-                Client = new Client
-                (
-                    id: updateReceiptRequest.ClientId,
-                    name: "",
-                    rut: "",
-                    razonSocial: "",
-                    address: "",
-                    mapsAddress: "",
-                    schedule: "",
-                    phone: "",
-                    contactName: "",
-                    email: "",
-                    observations: "",
-                    bank: "",
-                    bankAccount: "",
-                    loanedCrates: 0,
-                    zone: null
-                )
+                Client = new Client(id: updateReceiptRequest.ClientId)
             };
         }
 

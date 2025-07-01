@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Común.Enums;
+using BusinessLogic.Domain;
 
 namespace BusinessLogic.Dominio
 {
@@ -16,9 +17,10 @@ namespace BusinessLogic.Dominio
         public TemperatureCondition TemperatureCondition { get; set; }
         public string Observation { get; set; }
         public SubCategory SubCategory { get; set; }
+        public Brand Brand { get; set; }
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
 
-        public Product(int id, string barcode, string name, decimal price, string image, int stock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, List<Supplier> suppliers)
+        public Product(int id, string barcode, string name, decimal price, string image, int stock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
         {
             Id = id;
             Barcode = barcode;
@@ -31,6 +33,7 @@ namespace BusinessLogic.Dominio
             TemperatureCondition = temperatureCondition;
             Observation = observations;
             SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
+            Brand = brand ?? throw new ArgumentNullException(nameof(brand));
             Suppliers = suppliers ?? new List<Supplier>();
             Validate();
         }
@@ -89,6 +92,8 @@ namespace BusinessLogic.Dominio
 
             if (!string.IsNullOrWhiteSpace(Observation) && Observation.Length > 255)
                 throw new ArgumentOutOfRangeException(nameof(Observation), "La observación no puede superar los 255 caracteres.");
+
+
         }
 
         public void Update(UpdatableData data)
@@ -99,15 +104,16 @@ namespace BusinessLogic.Dominio
             if (data.SubCategory == null)
                 throw new ArgumentNullException(nameof(data.SubCategory), "La subcategoría es obligatoria.");
 
-            Name = data.Name;
-            Barcode = data.Barcode;
-            Price = data.Price;
-            Image = data.Image;
-            Description = data.Description;
-            UnitType = data.UnitType;
-            TemperatureCondition = data.TemperatureCondition;
-            Observation = data.Observation;
-            SubCategory = data.SubCategory;
+            Name = data.Name ?? Name;
+            Barcode = data.Barcode ?? Barcode;
+            Price = data.Price ?? Price;
+            Image = data.Image ?? Image;
+            Description = data.Description ?? Description;
+            UnitType = data.UnitType ?? UnitType;
+            TemperatureCondition = data.TemperatureCondition ?? TemperatureCondition;
+            Observation = data.Observation ?? Observation;
+            SubCategory = data.SubCategory ?? SubCategory;
+            Brand = data.Brand ?? Brand;
 
             SetInternalCode();
             Validate();
@@ -115,15 +121,16 @@ namespace BusinessLogic.Dominio
 
         public class UpdatableData
         {
-            public string Name { get; set; } = string.Empty;
-            public string Barcode { get; set; } = string.Empty;
-            public decimal Price { get; set; }
-            public string Image { get; set; } = string.Empty;
-            public string Description { get; set; } = string.Empty;
-            public UnitType UnitType { get; set; }
-            public TemperatureCondition TemperatureCondition { get; set; }
-            public string Observation { get; set; } = string.Empty;
-            public SubCategory SubCategory { get; set; } = null!;
+            public string? Name { get; set; } = string.Empty;
+            public string? Barcode { get; set; } = string.Empty;
+            public decimal? Price { get; set; }
+            public string? Image { get; set; } = string.Empty;
+            public string? Description { get; set; } = string.Empty;
+            public UnitType? UnitType { get; set; }
+            public TemperatureCondition? TemperatureCondition { get; set; }
+            public string? Observation { get; set; } = string.Empty;
+            public SubCategory? SubCategory { get; set; } = null!;
+            public Brand? Brand { get; set; } = null!;
         }
 
         public void SetInternalCode()

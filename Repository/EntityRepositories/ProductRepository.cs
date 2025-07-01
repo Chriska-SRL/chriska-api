@@ -18,11 +18,11 @@ namespace Repository.EntityRepositories
             {
                 using var connection = CreateConnection();
                 using var command = new SqlCommand(@"
-                    INSERT INTO Products 
-                    (Name, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId)
-                    OUTPUT INSERTED.Id 
-                    VALUES 
-                    (@Name, @BarCode, @UnitType, @Price, @Description, @TemperatureCondition, @Stock, @Image, @Observations, @SubCategoryId)", connection);
+                INSERT INTO Products 
+                (Name, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId, BrandId)
+                OUTPUT INSERTED.Id 
+                VALUES 
+                (@Name, @BarCode, @UnitType, @Price, @Description, @TemperatureCondition, @Stock, @Image, @Observations, @SubCategoryId, @BrandId)", connection);
 
                 command.Parameters.AddWithValue("@Name", product.Name);
                 command.Parameters.AddWithValue("@BarCode", product.Barcode);
@@ -34,13 +34,15 @@ namespace Repository.EntityRepositories
                 command.Parameters.AddWithValue("@Image", product.Image);
                 command.Parameters.AddWithValue("@Observations", product.Observation);
                 command.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
+                command.Parameters.AddWithValue("@BrandId", product.Brand.Id);
+
 
                 connection.Open();
                 int id = (int)command.ExecuteScalar();
 
                 return new Product(id, product.Barcode, product.Name, product.Price, product.Image, product.Stock,
                     product.Description, product.UnitType, product.TemperatureCondition, product.Observation,
-                    product.SubCategory, new());
+                    product.SubCategory,product.Brand, new());
             }
             catch (SqlException ex)
             {
@@ -100,16 +102,20 @@ namespace Repository.EntityRepositories
                 connection.Open();
 
                 using (var command = new SqlCommand(@"
-                    SELECT 
-                        p.*, 
-                        sc.Name AS SubCategoryName, 
-                        sc.Description AS SubCategoryDescription, 
-                        c.Id AS CategoryId, 
-                        c.Name AS CategoryName, 
-                        c.Description AS CategoryDescription
-                    FROM Products p
-                    JOIN SubCategories sc ON p.SubCategoryId = sc.Id
-                    JOIN Categories c ON sc.CategoryId = c.Id", connection))
+            SELECT 
+                p.*, 
+                sc.Name AS SubCategoryName, 
+                sc.Description AS SubCategoryDescription, 
+                c.Id AS CategoryId, 
+                c.Name AS CategoryName, 
+                c.Description AS CategoryDescription,
+                b.Id AS BrandId,
+                b.Name AS BrandName,
+                b.Description AS BrandDescription
+            FROM Products p
+            JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+            JOIN Categories c ON sc.CategoryId = c.Id
+            JOIN Brands b ON p.BrandId = b.Id", connection))
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -132,6 +138,7 @@ namespace Repository.EntityRepositories
             }
         }
 
+
         public Product GetByBarcode(string barcode)
         {
             try
@@ -146,11 +153,16 @@ namespace Repository.EntityRepositories
                         sc.Description AS SubCategoryDescription, 
                         c.Id AS CategoryId, 
                         c.Name AS CategoryName, 
-                        c.Description AS CategoryDescription
+                        c.Description AS CategoryDescription,
+                        b.Id AS BrandId,
+                        b.Name AS BrandName,
+                        b.Description AS BrandDescription
                     FROM Products p
                     JOIN SubCategories sc ON p.SubCategoryId = sc.Id
                     JOIN Categories c ON sc.CategoryId = c.Id
+                    JOIN Brands b ON p.BrandId = b.Id
                     WHERE p.Barcode = @Barcode", connection))
+
                 {
                     command.Parameters.AddWithValue("@Barcode", barcode);
                     using var reader = command.ExecuteReader();
@@ -179,17 +191,21 @@ namespace Repository.EntityRepositories
                 connection.Open();
 
                 using (var command = new SqlCommand(@"
-                    SELECT 
-                        p.*, 
-                        sc.Name AS SubCategoryName, 
-                        sc.Description AS SubCategoryDescription, 
-                        c.Id AS CategoryId, 
-                        c.Name AS CategoryName, 
-                        c.Description AS CategoryDescription
-                    FROM Products p
-                    JOIN SubCategories sc ON p.SubCategoryId = sc.Id
-                    JOIN Categories c ON sc.CategoryId = c.Id
-                    WHERE p.Id = @Id", connection))
+            SELECT 
+                p.*, 
+                sc.Name AS SubCategoryName, 
+                sc.Description AS SubCategoryDescription, 
+                c.Id AS CategoryId, 
+                c.Name AS CategoryName, 
+                c.Description AS CategoryDescription,
+                b.Id AS BrandId,
+                b.Name AS BrandName,
+                b.Description AS BrandDescription
+            FROM Products p
+            JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+            JOIN Categories c ON sc.CategoryId = c.Id
+            JOIN Brands b ON p.BrandId = b.Id
+            WHERE p.Id = @Id", connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
                     using var reader = command.ExecuteReader();
@@ -210,6 +226,7 @@ namespace Repository.EntityRepositories
             }
         }
 
+
         public Product GetByName(string name)
         {
             try
@@ -224,11 +241,16 @@ namespace Repository.EntityRepositories
                         sc.Description AS SubCategoryDescription, 
                         c.Id AS CategoryId, 
                         c.Name AS CategoryName, 
-                        c.Description AS CategoryDescription
+                        c.Description AS CategoryDescription,
+                        b.Id AS BrandId,
+                        b.Name AS BrandName,
+                        b.Description AS BrandDescription
                     FROM Products p
                     JOIN SubCategories sc ON p.SubCategoryId = sc.Id
                     JOIN Categories c ON sc.CategoryId = c.Id
+                    JOIN Brands b ON p.BrandId = b.Id
                     WHERE p.Name = @Name", connection))
+
                 {
                     command.Parameters.AddWithValue("@Name", name);
                     using var reader = command.ExecuteReader();
@@ -259,17 +281,22 @@ namespace Repository.EntityRepositories
                 connection.Open();
 
                 using var command = new SqlCommand(@"
-            SELECT 
-                p.*, 
-                sc.Name AS SubCategoryName, 
-                sc.Description AS SubCategoryDescription, 
-                c.Id AS CategoryId, 
-                c.Name AS CategoryName, 
-                c.Description AS CategoryDescription
-            FROM Products p
-            JOIN SubCategories sc ON p.SubCategoryId = sc.Id
-            JOIN Categories c ON sc.CategoryId = c.Id
-            WHERE sc.Id = @SubCategoryId", connection);
+                    SELECT 
+                        p.*, 
+                        sc.Name AS SubCategoryName, 
+                        sc.Description AS SubCategoryDescription, 
+                        c.Id AS CategoryId, 
+                        c.Name AS CategoryName, 
+                        c.Description AS CategoryDescription,
+                        b.Id AS BrandId,
+                        b.Name AS BrandName,
+                        b.Description AS BrandDescription
+                    FROM Products p
+                    JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+                    JOIN Categories c ON sc.CategoryId = c.Id
+                    JOIN Brands b ON p.BrandId = b.Id
+                    WHERE sc.Id = @SubCategoryId", connection);
+
 
                 command.Parameters.AddWithValue("@SubCategoryId", id);
 
@@ -312,7 +339,8 @@ namespace Repository.EntityRepositories
                         Stock = @Stock,
                         Image = @Image,
                         Observations = @Observations,
-                        SubCategoryId = @SubCategoryId
+                        SubCategoryId = @SubCategoryId,
+                        BrandId = @BrandId
                     WHERE Id = @Id", connection))
                 {
                     updateCommand.Parameters.AddWithValue("@Name", product.Name);
@@ -325,6 +353,7 @@ namespace Repository.EntityRepositories
                     updateCommand.Parameters.AddWithValue("@Image", product.Image);
                     updateCommand.Parameters.AddWithValue("@Observations", product.Observation);
                     updateCommand.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
+                    updateCommand.Parameters.AddWithValue("@BrandId", product.Brand.Id);
                     updateCommand.Parameters.AddWithValue("@Id", product.Id);
 
                     int affectedRows = updateCommand.ExecuteNonQuery();

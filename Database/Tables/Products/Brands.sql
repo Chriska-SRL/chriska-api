@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[Brands]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [Name] NVARCHAR(50) NULL UNIQUE, 
+    [Description] NVARCHAR(100) NULL 
+)
