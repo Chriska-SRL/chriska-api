@@ -53,6 +53,7 @@ namespace BusinessLogic.SubSystem
             existing.Update(data);
 
             Product updated = _productRepository.Update(existing);
+            updated.SetInternalCode();
             return ProductMapper.ToResponse(updated);
         }
 
@@ -64,22 +65,27 @@ namespace BusinessLogic.SubSystem
 
             //TODO: Implementar control de integridad referencial:
             //cuado se trabaje con entidades que tengan relacion con esta.
-
-            return ProductMapper.ToResponse(_productRepository.Delete(id));
+            deleted = _productRepository.Delete(id);
+            deleted.SetInternalCode();
+            return ProductMapper.ToResponse(deleted);
         }
 
         public ProductResponse GetProductById(int id)
         {
             var product = _productRepository.GetById(id)
                           ?? throw new ArgumentException("Producto no encontrado.", nameof(id));
-
+            product.SetInternalCode();
             return ProductMapper.ToResponse(product);
         }
 
         public List<ProductResponse> GetAllProducts()
         {
             return _productRepository.GetAll()
-                                     .Select(ProductMapper.ToResponse)
+                                     .Select(p =>
+                                     {
+                                         p.SetInternalCode();
+                                         return ProductMapper.ToResponse(p);
+                                     })
                                      .ToList();
         }
     }

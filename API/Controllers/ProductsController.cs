@@ -30,7 +30,7 @@ namespace API.Controllers
             {
                 return BadRequest(FormatearError(ex));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(500, new { error = "Error inesperado al agregar el producto." });
             }
