@@ -32,7 +32,6 @@ namespace BusinessLogic.Dominio
             Observation = observations;
             SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
             Suppliers = suppliers ?? new List<Supplier>();
-
             Validate();
         }
         public Product(int id)
