@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using BusinessLogic.Común.Enums;
+using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Dominio
 {
@@ -13,7 +14,7 @@ namespace BusinessLogic.Dominio
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
-        public string Bank { get; set; }
+        public Bank Bank { get; set; }
         public string BankAccount { get; set; }
         public string Observations { get; set; }
         public List<Product> Products { get; set; } = new List<Product>();
@@ -21,7 +22,7 @@ namespace BusinessLogic.Dominio
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public List<Day> DaysToDeliver { get; set; } = new List<Day>();
 
-        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, string bank, string bankAccount, string observations)
+        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, Bank bank, string bankAccount, string observations)
         {
             Id = id;
             Name = name;
@@ -47,7 +48,7 @@ namespace BusinessLogic.Dominio
             Phone = "099000000";
             ContactName = "Contacto Temporal";
             Email = "email@temporal.com";
-            Bank = "Banco Temporal";
+            Bank = Bank.Andbank;
             BankAccount = "0000000000";
             Observations = "Sin observaciones";
         }
@@ -95,11 +96,6 @@ namespace BusinessLogic.Dominio
             if (!Regex.IsMatch(Email, emailRegex))
                 throw new ArgumentException("El email tiene un formato inválido.", nameof(Email));
 
-            if (string.IsNullOrWhiteSpace(Bank))
-                throw new ArgumentNullException(nameof(Bank), "El banco es obligatorio.");
-            if (Bank.Length > 20)
-                throw new ArgumentOutOfRangeException(nameof(Bank), "El banco no puede superar los 50 caracteres.");
-
             if (string.IsNullOrEmpty(BankAccount)) throw new Exception("La cuenta bancaria es obligatoria");
             if (BankAccount.Length > 20)
                 throw new ArgumentOutOfRangeException(nameof(BankAccount), "La cuenta bancaria no puede superar los 20 caracteres.");
@@ -137,7 +133,7 @@ namespace BusinessLogic.Dominio
             public string? Phone { get; set; }
             public string? ContactName { get; set; }
             public string? Email { get; set; }
-            public string? Bank { get; set; }
+            public Bank? Bank { get; set; }
             public string? BankAccount { get; set; }
             public string? Observations { get; set; }
         }

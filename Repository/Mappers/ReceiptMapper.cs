@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Común.Enums;
+using BusinessLogic.Dominio;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
@@ -7,6 +8,22 @@ namespace Repository.Mappers
     {
         public static Receipt FromReader(SqlDataReader reader)
         {
+            string bankStr = reader.GetString(reader.GetOrdinal("Bank")).Trim();
+
+            Bank bank = bankStr switch
+            {
+                "BROU" => Bank.BROU,
+                "BBVA" => Bank.BBVA,
+                "Santander" => Bank.Santander,
+                "Itaú" => Bank.Itau,
+                "Scotiabank" => Bank.Scotiabank,
+                "HSBC" => Bank.HSBC,
+                "Heritage" => Bank.Heritage,
+                "Bandes" => Bank.Bandes,
+                "Andbank" => Bank.Andbank,
+                _ => Bank.Otros // Por si viene algo no esperado
+            };
+
             var client = new Client(
                 id: reader.GetInt32(reader.GetOrdinal("ClientId")),
                 name: reader.GetString(reader.GetOrdinal("ClientName")),
@@ -19,7 +36,7 @@ namespace Repository.Mappers
                 contactName: reader.GetString(reader.GetOrdinal("ClientContactName")),
                 email: reader.GetString(reader.GetOrdinal("ClientEmail")),
                 observations: reader.GetString(reader.GetOrdinal("ClientObservations")),
-                bank: reader.GetString(reader.GetOrdinal("ClientBank")),
+                bank: bank,
                 bankAccount: reader.GetString(reader.GetOrdinal("ClientBankAccount")),
                 loanedCrates: reader.GetInt32(reader.GetOrdinal("ClientLoanedCrates")),
                 zone: new Zone(

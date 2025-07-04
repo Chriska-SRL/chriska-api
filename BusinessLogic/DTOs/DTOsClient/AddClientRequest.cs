@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessLogic.Común.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace BusinessLogic.DTOs.DTOsClient
         public string Schedule { get; set; }
         public string Email { get; set; }
         public string ContactName { get; set; }
-        public string Bank { get; set; }
+        public Bank Bank { get; set; }
         public string BankAccount { get; set; }
         public string Observations { get; set; }
         public int LoanedCrates { get; set; }

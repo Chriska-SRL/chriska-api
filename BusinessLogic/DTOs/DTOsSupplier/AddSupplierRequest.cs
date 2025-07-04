@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Común.Enums;
+using BusinessLogic.Dominio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace BusinessLogic.DTOs.DTOsSupplier
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
-        public string Bank { get; set; }
+        public Bank Bank { get; set; }
         public string BankAccount { get; set; }
         public string Observation { get; set; }
     }
