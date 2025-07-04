@@ -128,6 +128,7 @@ namespace API
             builder.Services.AddScoped<ICreditNoteRepository, CreditNoteRepository>();
             builder.Services.AddScoped<IShelveRepository, ShelveRepository>();
             builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+            builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 
 
 

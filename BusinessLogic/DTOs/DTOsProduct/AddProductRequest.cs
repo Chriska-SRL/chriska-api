@@ -10,6 +10,7 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public UnitType UnitType { get; set; }
         public decimal Price { get; set; }
         public int SubCategoryId { get; set; }
+        public int BrandId { get; set; }
         public TemperatureCondition TemperatureCondition { get; set; }
         public string? Observation { get; set; }
         public string? Image { get; set; }

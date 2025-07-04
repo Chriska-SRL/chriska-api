@@ -1,4 +1,6 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Domain;
+using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsSubCategory;
@@ -22,6 +24,7 @@ namespace BusinessLogic.Común.Mappers
                 temperatureCondition: dto.TemperatureCondition,
                 observations: dto.Observation,
                 subCategory: subCategory,
+                brand: new Brand(dto.BrandId),
                 suppliers: new List<Supplier>()
             );
         }
@@ -68,6 +71,12 @@ namespace BusinessLogic.Común.Mappers
                         Name = domain.SubCategory.Category.Name,
                         Description = domain.SubCategory.Category.Description
                     }
+                },
+                Brand= new BrandResponse
+                {
+                    Id = domain.Brand.Id,
+                    Name = domain.Brand.Name,
+                    Description = domain.Brand.Description
                 },
                 Suppliers = domain.Suppliers.Select(s => new SupplierResponse
                 {

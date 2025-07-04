@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsCost;
@@ -222,5 +223,12 @@ namespace BusinessLogic
         public ZoneResponse DeleteZone(int id) => Zones.DeleteZone(id);
         public ZoneResponse GetZoneById(int id) => Zones.GetZoneById(id);
         public List<ZoneResponse> GetAllZones() => Zones.GetAllZones();
+
+        // Brand
+        public BrandResponse AddBrand(AddBrandRequest brand) => Products.AddBrand(brand);
+        public BrandResponse UpdateBrand(UpdateBrandRequest brand) => Products.UpdateBrand(brand);
+        public BrandResponse DeleteBrand(int id) => Products.DeleteBrand(id);
+        public BrandResponse GetBrand(int id) => Products.GetBrandById(id);
+        public List<BrandResponse> GetAllBrand() => Products.GetAllBrands();
     }
 }

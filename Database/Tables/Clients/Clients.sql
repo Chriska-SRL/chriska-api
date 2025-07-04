@@ -15,5 +15,7 @@
     [LoanedCrates] INT NOT NULL DEFAULT 0, 
     [Observations] NVARCHAR(255) NULL, 
     [ZoneId] INT NOT NULL,
-    CONSTRAINT [FK_Clients_Zones] FOREIGN KEY ([ZoneId]) REFERENCES [Zones]([Id])
+    CONSTRAINT [FK_Clients_Zones] FOREIGN KEY ([ZoneId]) REFERENCES [Zones]([Id]),
+    CONSTRAINT [CHK_Client_Bank] CHECK (Bank IN ('BROU', 'BBVA', 'Santander','Itau','Scotiabank','HSBC','Heritage','Bandes','Andbank','Otros'))
+
 )

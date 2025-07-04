@@ -1,4 +1,5 @@
-﻿using BusinessLogic.DTOs.DTOsZone;
+﻿using BusinessLogic.Común.Enums;
+using BusinessLogic.DTOs.DTOsZone;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace BusinessLogic.DTOs.DTOsClient
         public string ContactName { get; set; }
         public string Email { get; set; }
         public string Observations { get; set; }
-        public string Bank { get; set; }
+        public Bank Bank { get; set; }
         public string BankAccount { get; set; }
         public int LoanedCrates { get; set; }
         public ZoneResponse Zone  { get; set; }

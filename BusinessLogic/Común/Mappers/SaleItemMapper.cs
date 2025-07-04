@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsSaleItem;
 
@@ -50,6 +51,11 @@ namespace BusinessLogic.Común.Mappers
                     {
                         Id = domain.Product.SubCategory.Id,
                         Name = domain.Product.SubCategory.Name
+                    },
+                    Brand = new BrandResponse
+                    {
+                        Id = domain.Product.Brand.Id,
+                        Name = domain.Product.Brand.Name
                     }
                 }
             };

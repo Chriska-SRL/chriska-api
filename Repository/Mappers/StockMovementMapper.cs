@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Común.Enums;
+using BusinessLogic.Domain;
 using BusinessLogic.Dominio;
 using Microsoft.Data.SqlClient;
 
@@ -37,6 +38,11 @@ namespace Repository.Mappers
                 description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
                 category: category
             );
+            var brand = new Brand(
+                id: reader.GetInt32(reader.GetOrdinal("BrandId")),
+                name: reader.GetString(reader.GetOrdinal("BrandName")),
+                description: reader.GetString(reader.GetOrdinal("BrandDescription"))
+            );
 
             var product = new Product(
                 id: reader.GetInt32(reader.GetOrdinal("ProductId")),
@@ -50,6 +56,7 @@ namespace Repository.Mappers
                 image: reader.GetString(reader.GetOrdinal("Image")),
                 observations: reader.GetString(reader.GetOrdinal("Observations")),
                 subCategory: subCategory,
+                brand:brand,
                 suppliers: new List<Supplier>() // proveedores no incluidos
             );
 
