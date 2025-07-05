@@ -7,7 +7,7 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public int Id { get; set; }
         public required string Name { get; set; }
         public string? Description { get; set; }
-        public required string Barcode { get; set; }
+        public string? Barcode { get; set; }
         public UnitType UnitType { get; set; }
         public decimal Price { get; set; }
         public int SubCategoryId { get; set; }

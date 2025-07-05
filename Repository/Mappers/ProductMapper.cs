@@ -33,6 +33,7 @@ namespace Repository.Mappers
                 "Kilo" => UnitType.Kilo,
                 _ => UnitType.None
             };
+            string? barcode = reader.IsDBNull(reader.GetOrdinal("BarCode")) ? null : reader.GetString(reader.GetOrdinal("BarCode"));
 
             string tempStr = reader.GetString(reader.GetOrdinal("TemperatureCondition")).Trim();
             TemperatureCondition tempCondition = tempStr switch
@@ -45,7 +46,7 @@ namespace Repository.Mappers
 
             return new Product(
                 id: reader.GetInt32(reader.GetOrdinal("Id")),
-                barcode: reader.GetString(reader.GetOrdinal("BarCode")),
+                barcode:barcode ?? "",
                 name: reader.GetString(reader.GetOrdinal("Name")),
                 price: reader.GetDecimal(reader.GetOrdinal("Price")),
                 image: reader.GetString(reader.GetOrdinal("Image")),

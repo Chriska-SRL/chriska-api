@@ -26,5 +26,11 @@ namespace BusinessLogic.DTOs.DTOsClient
         public int LoanedCrates { get; set; }
         public ZoneResponse Zone  { get; set; }
 
+
+        // Timestamps
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+
     }
 }
