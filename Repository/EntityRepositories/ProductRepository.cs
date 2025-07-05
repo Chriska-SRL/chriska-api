@@ -25,7 +25,7 @@ namespace Repository.EntityRepositories
                 (@Name, @BarCode, @UnitType, @Price, @Description, @TemperatureCondition, @Stock, @Image, @Observations, @SubCategoryId, @BrandId)", connection);
 
                 command.Parameters.AddWithValue("@Name", product.Name);
-                command.Parameters.AddWithValue("@BarCode", product.Barcode);
+                command.Parameters.AddWithValue("@BarCode", (object?)product.Barcode ?? DBNull.Value); ;
                 command.Parameters.AddWithValue("@UnitType", product.UnitType.ToString());
                 command.Parameters.AddWithValue("@Price", product.Price);
                 command.Parameters.AddWithValue("@Description", product.Description);
@@ -139,8 +139,11 @@ namespace Repository.EntityRepositories
         }
 
 
-        public Product GetByBarcode(string barcode)
+        public Product? GetByBarcode(string? barcode)
         {
+
+            if (string.IsNullOrWhiteSpace(barcode)) return null;
+
             try
             {
                 using var connection = CreateConnection();
@@ -344,7 +347,7 @@ namespace Repository.EntityRepositories
                     WHERE Id = @Id", connection))
                 {
                     updateCommand.Parameters.AddWithValue("@Name", product.Name);
-                    updateCommand.Parameters.AddWithValue("@BarCode", product.Barcode);
+                    updateCommand.Parameters.AddWithValue("@BarCode", (object?)product.Barcode ?? DBNull.Value);
                     updateCommand.Parameters.AddWithValue("@UnitType", product.UnitType.ToString());
                     updateCommand.Parameters.AddWithValue("@Price", product.Price);
                     updateCommand.Parameters.AddWithValue("@Description", product.Description);

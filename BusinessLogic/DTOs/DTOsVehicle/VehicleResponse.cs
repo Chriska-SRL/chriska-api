@@ -10,5 +10,11 @@ namespace BusinessLogic.DTOs.DTOsVehicle
         public string Model { get; set; }
         public int CrateCapacity { get; set; }
         public List<VehicleCostResponse> Costs { get; set; }
+
+
+        // Timestamps
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
     }
 }
