@@ -23,6 +23,11 @@ namespace BusinessLogic.Dominio
         public List<Request> Requests { get; set; } = new List<Request>();       
         public List<Receipt> Receipts { get; set; } = new List<Receipt>();
 
+        // Timestamps
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+
         public Client(int id,string name, string rut, string razonSocial, string address, string mapsAddress, string schedule, string phone, string contactName, string email, string observations,Bank bank ,string bankAccount, int loanedCrates, Zone zone)
         {
             Id = id;
