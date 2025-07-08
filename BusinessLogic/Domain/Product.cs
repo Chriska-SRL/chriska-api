@@ -20,6 +20,12 @@ namespace BusinessLogic.Dominio
         public Brand Brand { get; set; }
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
 
+        // Timestamps
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+
+
         public Product(int id, string? barcode, string name, decimal price, string image, int stock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
         {
             Id = id;
@@ -37,6 +43,8 @@ namespace BusinessLogic.Dominio
             Suppliers = suppliers ?? new List<Supplier>();
             Validate();
         }
+
+       
         public Product(int id)
         {
             if (id <= 0)

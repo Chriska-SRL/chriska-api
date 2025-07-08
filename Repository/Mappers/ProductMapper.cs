@@ -43,7 +43,9 @@ namespace Repository.Mappers
                 "Ambient" => TemperatureCondition.Ambient,
                 _ => TemperatureCondition.None
             };
-
+            //product.CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"));
+            //product.UpdatedAt = reader.IsDBNull(reader.GetOrdinal("UpdatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("UpdatedAt"));
+            //product.DeletedAt = reader.IsDBNull(reader.GetOrdinal("DeletedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("DeletedAt"));
             return new Product(
                 id: reader.GetInt32(reader.GetOrdinal("Id")),
                 barcode:barcode ?? "",
@@ -59,6 +61,7 @@ namespace Repository.Mappers
                 brand: brand,
                 suppliers: new List<Supplier>() // los proveedores se asignan aparte
             );
+
         }
     }
 }

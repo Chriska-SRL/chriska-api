@@ -10,6 +10,7 @@
         public string Description { get; set; }
         public List<SubCategory> SubCategories { get; set; } = new List<SubCategory>();
 
+
         public Category(int id, string name, string description)
         {
             Id = id;

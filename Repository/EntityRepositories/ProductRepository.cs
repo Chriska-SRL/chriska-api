@@ -17,15 +17,20 @@ namespace Repository.EntityRepositories
             try
             {
                 using var connection = CreateConnection();
+
+                // Setear el timestamp antes de guardar
+                product.CreatedAt = DateTime.Now;
+
                 using var command = new SqlCommand(@"
-                INSERT INTO Products 
-                (Name, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId, BrandId)
-                OUTPUT INSERTED.Id 
-                VALUES 
-                (@Name, @BarCode, @UnitType, @Price, @Description, @TemperatureCondition, @Stock, @Image, @Observations, @SubCategoryId, @BrandId)", connection);
+            INSERT INTO Products 
+            (Name, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId, BrandId, CreatedAt)
+            OUTPUT INSERTED.Id 
+            VALUES 
+            (@Name, @BarCode, @UnitType, @Price, @Description, @TemperatureCondition, @Stock, @Image, @Observations, @SubCategoryId, @BrandId, @CreatedAt)",
+                    connection);
 
                 command.Parameters.AddWithValue("@Name", product.Name);
-                command.Parameters.AddWithValue("@BarCode", (object?)product.Barcode ?? DBNull.Value); ;
+                command.Parameters.AddWithValue("@BarCode", (object?)product.Barcode ?? DBNull.Value);
                 command.Parameters.AddWithValue("@UnitType", product.UnitType.ToString());
                 command.Parameters.AddWithValue("@Price", product.Price);
                 command.Parameters.AddWithValue("@Description", product.Description);
@@ -35,14 +40,17 @@ namespace Repository.EntityRepositories
                 command.Parameters.AddWithValue("@Observations", product.Observation);
                 command.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
                 command.Parameters.AddWithValue("@BrandId", product.Brand.Id);
-
+                command.Parameters.AddWithValue("@CreatedAt", product.CreatedAt);
 
                 connection.Open();
                 int id = (int)command.ExecuteScalar();
 
                 return new Product(id, product.Barcode, product.Name, product.Price, product.Image, product.Stock,
                     product.Description, product.UnitType, product.TemperatureCondition, product.Observation,
-                    product.SubCategory,product.Brand, new());
+                    product.SubCategory, product.Brand, new())
+                {
+                    CreatedAt = product.CreatedAt
+                };
             }
             catch (SqlException ex)
             {
@@ -55,6 +63,7 @@ namespace Repository.EntityRepositories
                 throw new ApplicationException("Ocurrió un error inesperado.", ex);
             }
         }
+
 
         public Product? Delete(int id)
         {

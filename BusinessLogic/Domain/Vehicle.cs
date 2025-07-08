@@ -13,6 +13,7 @@ namespace BusinessLogic.Dominio
         public int CrateCapacity { get; private set; }
         public List<VehicleCost> VehicleCosts { get; private set; }
 
+
         public Vehicle(int id, string plate, string brand, string model, int crateCapacity, List<VehicleCost> costs)
         {
             Id = id;

@@ -22,6 +22,7 @@ namespace BusinessLogic.Dominio
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public List<Day> DaysToDeliver { get; set; } = new List<Day>();
 
+
         public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, Bank bank, string bankAccount, string observations)
         {
             Id = id;

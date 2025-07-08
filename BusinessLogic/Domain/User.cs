@@ -14,8 +14,7 @@ namespace BusinessLogic.Dominio
         public Boolean needsPasswordChange { get; set; }
         public Role Role { get; set; }
         public List<Request> Requests { get; set; } = new List<Request>();
-       
-        
+
         public User(int id, string name, string username, string password, Boolean isEnabled, Boolean needsPasswordChange, Role role,List<Request> requests)
         {
             Id = id;
