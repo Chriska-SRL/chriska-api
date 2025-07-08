@@ -11,7 +11,7 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public required string Name { get; set; }
         public required string Description { get; set; }
         public required string InternalCode { get; set; }
-        public required string Barcode { get; set; }
+        public string? Barcode { get; set; }
         public decimal Price { get; set; }
         public int Stock { get; set; }
         public UnitType UnitType { get; set; }
