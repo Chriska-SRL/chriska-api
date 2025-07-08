@@ -72,7 +72,7 @@ namespace BusinessLogic.Común.Mappers
                         Description = domain.SubCategory.Category.Description
                     }
                 },
-                Brand= new BrandResponse
+                Brand = new BrandResponse
                 {
                     Id = domain.Brand.Id,
                     Name = domain.Brand.Name,
@@ -82,8 +82,12 @@ namespace BusinessLogic.Común.Mappers
                 {
                     Id = s.Id,
                     Name = s.Name
-                }).ToList()
+                }).ToList(),
+                CreatedAt = domain.CreatedAt ?? DateTime.MinValue,
+                UpdatedAt = domain.UpdatedAt,
+                DeletedAt = domain.DeletedAt
             };
         }
+
     }
 }

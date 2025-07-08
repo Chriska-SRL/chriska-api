@@ -21,7 +21,7 @@ namespace BusinessLogic.Dominio
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
 
         // Timestamps
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
 

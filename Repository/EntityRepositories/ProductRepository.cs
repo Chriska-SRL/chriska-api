@@ -112,7 +112,21 @@ namespace Repository.EntityRepositories
 
                 using (var command = new SqlCommand(@"
             SELECT 
-                p.*, 
+    p.Id,
+    p.Name,
+    p.BarCode,
+    p.UnitType,
+    p.Price,
+    p.Description,
+    p.TemperatureCondition,
+    p.Stock,
+    p.Image,
+    p.Observations,
+    p.SubCategoryId,
+    p.BrandId,
+    p.CreatedAt,
+    p.UpdatedAt,
+    p.DeletedAt, 
                 sc.Name AS SubCategoryName, 
                 sc.Description AS SubCategoryDescription, 
                 c.Id AS CategoryId, 
