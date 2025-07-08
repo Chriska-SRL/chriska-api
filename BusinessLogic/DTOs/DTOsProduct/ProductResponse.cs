@@ -21,9 +21,6 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public required SubCategoryResponse SubCategory { get; set; }
         public required BrandResponse Brand { get; set; }
         public List<SupplierResponse> Suppliers { get; set; } = new List<SupplierResponse>();
-
-
-        // Timestamps
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
