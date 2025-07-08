@@ -356,7 +356,7 @@ namespace Repository.EntityRepositories
                     WHERE Id = @Id", connection))
                 {
                     updateCommand.Parameters.AddWithValue("@Name", product.Name);
-                    updateCommand.Parameters.AddWithValue("@BarCode",string.IsNullOrWhiteSpace(product.Barcode) ? DBNull.Value : product.Barcode);
+                    updateCommand.Parameters.AddWithValue("@BarCode", string.IsNullOrWhiteSpace(product.Barcode) ? DBNull.Value : product.Barcode);
                     updateCommand.Parameters.AddWithValue("@UnitType", product.UnitType.ToString());
                     updateCommand.Parameters.AddWithValue("@Price", product.Price);
                     updateCommand.Parameters.AddWithValue("@Description", product.Description);
