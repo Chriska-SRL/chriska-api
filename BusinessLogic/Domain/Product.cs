@@ -7,7 +7,7 @@ namespace BusinessLogic.Dominio
     {
         public int Id { get; set; }
         public string InternalCode { get; set; } = string.Empty;
-        public string Barcode { get; set; }
+        public string? Barcode { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
         public string Image { get; set; }
@@ -20,7 +20,8 @@ namespace BusinessLogic.Dominio
         public Brand Brand { get; set; }
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
 
-        public Product(int id, string barcode, string name, decimal price, string image, int stock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
+
+        public Product(int id, string? barcode, string name, decimal price, string image, int stock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
         {
             Id = id;
             Barcode = barcode;
@@ -37,6 +38,8 @@ namespace BusinessLogic.Dominio
             Suppliers = suppliers ?? new List<Supplier>();
             Validate();
         }
+
+
         public Product(int id)
         {
             if (id <= 0)
