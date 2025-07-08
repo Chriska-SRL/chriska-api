@@ -4,11 +4,6 @@ using BusinessLogic.Repository;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Repository.Mappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repository.EntityRepositories
 {

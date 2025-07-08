@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Products]
 (
-	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [Name] NVARCHAR(50) NOT NULL UNIQUE,
     [BarCode] NCHAR(13) NULL UNIQUE, 
     [UnitType] NCHAR(10) NOT NULL,
@@ -11,13 +11,16 @@
     [Image] NVARCHAR(255) NOT NULL, 
     [Observations] NVARCHAR(255) NOT NULL, 
     [SubCategoryId] INT NOT NULL, 
-    [BrandId] INT NOT NULL, 
+    [BrandId] INT NOT NULL,
+    [CreatedAt] DATETIME NOT NULL DEFAULT GETDATE(),
+    [UpdatedAt] DATETIME NULL,
+    [DeletedAt] DATETIME NULL,
+
     CONSTRAINT [FK_Products_SubCategories] FOREIGN KEY ([SubCategoryId]) REFERENCES [SubCategories]([Id]),
+    CONSTRAINT [FK_Products_Brands] FOREIGN KEY ([BrandId]) REFERENCES [Brands]([Id]),
     CONSTRAINT [CHK_Product_UnitType] CHECK (UnitType IN ('Kilo', 'Unit')),
     CONSTRAINT [CHK_Product_TempCondition] CHECK (TemperatureCondition IN ('Cold', 'Frozen', 'Ambient')),
     CONSTRAINT [CHK_Product_Price] CHECK (Price > 0),
     CONSTRAINT [CHK_Product_Stock] CHECK (Stock >= 0),
-    CONSTRAINT [CHK_Product_BarcodeFormat] CHECK ([Barcode] IS NULL OR [Barcode] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'), 
-    CONSTRAINT [FK_Products_Brands] FOREIGN KEY ([BrandId]) REFERENCES [Brands]([Id])
-
-)
+    CONSTRAINT [CHK_Product_BarcodeFormat] CHECK ([Barcode] IS NULL OR [Barcode] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
+);
