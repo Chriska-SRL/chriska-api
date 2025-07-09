@@ -5,7 +5,8 @@
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<Day> Days { get; set; } = new List<Day>();
+        public List<Day> DeliveryDays { get; set; } = new List<Day>();
+        public List<Day> RequestDays { get; set; } = new List<Day>();
 
         public Zone(int id, string name, string description)
         {
