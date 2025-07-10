@@ -112,4 +112,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="LoanedCrates" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="74ac69e6-be7f-4f29-bf79-c5c4d7302e16" ChangeDateTime="07/10/2025 19:59:03">
+    <Property Name="ElementName" Value="[dbo].[Zones].[DeleteBy]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Zones]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DeletedBy" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="82b1dbd6-a065-48cd-a661-3a0c82cbe7e2" ChangeDateTime="07/10/2025 19:59:05">
+    <Property Name="ElementName" Value="[dbo].[Zones].[DeleteAt]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Zones]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DeletedAt" />
+  </Operation>
 </Operations>

@@ -168,28 +168,61 @@ INSERT INTO [dbo].[SubCategories] (Name, Description, CategoryId) VALUES
 ('Panificados', 'Pan, prepizzas y productos de panadería.', 5),
 ('Bebidas', 'Jugos y bebidas complementarias.', 5);
 
+INSERT INTO [dbo].[Brands] (Name, Description) VALUES
+('Calcar', 'Cooperativa Láctea de Carmelo'),
+('Frigorífico Modelo', 'Carnes y embutidos'),
+('Frigorífico Canelones', 'Procesadora de carnes y fiambres'),
+('Saray', 'Productos congelados uruguayos'),
+('Otros', 'Marca genérica para productos sin fabricante específico');
+
+
 
 -- Productos de Chacinados
-INSERT INTO [dbo].[Products] (Name, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId) VALUES
-('Salame Milan', '1234567890123', 'Kilo', 3200.00, 'Salame tipo milan madurado', 'Cold', 50, 'salame_milan.jpg', 'Curado natural', 1),
-('Jamón Cocido Premium', '1234567890124', 'Kilo', 4500.00, 'Jamón cocido sin cuero', 'Cold', 30, 'jamon_cocido.jpg', 'Sin fécula agregada', 2),
+INSERT INTO [dbo].[Products] (Name, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId, BrandId) VALUES
+('Salame Milan', '1234567890123', 'Kilo', 3200.00, 'Salame tipo milan madurado', 'Cold', 50, 'salame_milan.jpg', 'Curado natural', 1, 2), -- Frigorífico Modelo
+('Jamón Cocido Premium', '1234567890124', 'Kilo', 4500.00, 'Jamón cocido sin cuero', 'Cold', 30, 'jamon_cocido.jpg', 'Sin fécula agregada', 2, 3), -- Frigorífico Canelones
 
 -- Productos de Lácteos
-('Queso Cremoso', '1234567890125', 'Kilo', 2800.00, 'Queso fresco tipo cremoso', 'Cold', 40, 'queso_cremoso.jpg', 'Ideal para pizzas', 4),
-('Queso Sardo', '1234567890126', 'Kilo', 3900.00, 'Queso duro estacionado', 'Cold', 20, 'queso_sardo.jpg', 'Rallado fino', 5),
-('Yogur Bebible Frutilla', '1234567890127', 'Unit', 250.00, 'Yogur bebible sabor frutilla 1L', 'Cold', 100, 'yogur_frutilla.jpg', 'Con pulpa natural', 6),
+('Queso Cremoso', '1234567890125', 'Kilo', 2800.00, 'Queso fresco tipo cremoso', 'Cold', 40, 'queso_cremoso.jpg', 'Ideal para pizzas', 4, 1), -- Calcar
+('Queso Sardo', '1234567890126', 'Kilo', 3900.00, 'Queso duro estacionado', 'Cold', 20, 'queso_sardo.jpg', 'Rallado fino', 5, 1),
+('Yogur Bebible Frutilla', '1234567890127', 'Unit', 250.00, 'Yogur bebible sabor frutilla 1L', 'Cold', 100, 'yogur_frutilla.jpg', 'Con pulpa natural', 6, 1),
 
--- Congelados
-('Empanadas de Carne', '1234567890128', 'Unit', 1500.00, 'Caja de 12 empanadas congeladas', 'Frozen', 25, 'empanadas_carne.jpg', 'Masa casera', 7),
-('Hamburguesas Vacuno', '1234567890129', 'Unit', 2200.00, 'Caja con 8 hamburguesas de carne vacuna', 'Frozen', 15, 'hamburguesas.jpg', '80% carne', 8),
+-- Productos de Congelados
+('Empanadas de Carne', '1234567890128', 'Unit', 1500.00, 'Caja de 12 empanadas congeladas', 'Frozen', 25, 'empanadas_carne.jpg', 'Masa casera', 7, 4), -- Saray
+('Hamburguesas Vacuno', '1234567890129', 'Unit', 2200.00, 'Caja con 8 hamburguesas de carne vacuna', 'Frozen', 15, 'hamburguesas.jpg', '80% carne', 8, 2); -- Frigorífico Modelo
 
--- Frescos
-('Leche Entera 1L', '1234567890130', 'Unit', 350.00, 'Leche entera larga vida', 'Ambient', 200, 'leche_entera.jpg', 'Sin conservantes', 9),
-('Crema de Leche 200ml', '1234567890131', 'Unit', 600.00, 'Crema para cocinar', 'Cold', 80, 'crema_leche.jpg', 'Alta densidad', 10),
+-- Frescos y Otros
+INSERT INTO [dbo].[Products] (Name, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId, BrandId) VALUES
+('Leche Entera 1L', '1234567890130', 'Unit', 350.00, 'Leche entera larga vida', 'Ambient', 200, 'leche_entera.jpg', 'Sin conservantes', 9, 5), -- Otros
+('Crema de Leche 200ml', '1234567890131', 'Unit', 600.00, 'Crema para cocinar', 'Cold', 80, 'crema_leche.jpg', 'Alta densidad', 10, 5), -- Otros
 
--- Otros
-('Prepizza con Salsa', '1234567890132', 'Unit', 700.00, 'Base de pizza precocida con salsa', 'Ambient', 60, 'prepizza.jpg', 'Lista para hornear', 11),
-('Jugo Natural Naranja 1L', '1234567890133', 'Unit', 500.00, 'Jugo exprimido sin azúcar', 'Cold', 90, 'jugo_naranja.jpg', '100% exprimido', 12);
+('Prepizza con Salsa', '1234567890132', 'Unit', 700.00, 'Base de pizza precocida con salsa', 'Ambient', 60, 'prepizza.jpg', 'Lista para hornear', 11, 5), -- Otros
+('Jugo Natural Naranja 1L', '1234567890133', 'Unit', 500.00, 'Jugo exprimido sin azúcar', 'Cold', 90, 'jugo_naranja.jpg', '100% exprimido', 12, 5); -- Otros
+
+
+-- Zonas
+INSERT INTO [dbo].[Zones] (Id, Name, Description) VALUES
+(1, 'Zona Centro', 'Reparto diario en el casco céntrico de la ciudad'),
+(2, 'Zona Norte', 'Reparto matutino en barrios residenciales del norte'),
+(3, 'Zona Sur', 'Reparto en zonas industriales y comercios del sur'),
+(4, 'Zona Oeste', 'Reparto en supermercados y almacenes del oeste'),
+(5, 'Zona Rural', 'Reparto semanal en localidades rurales cercanas'),
+(6, 'Zona Costera', 'Reparto especial para balnearios y restaurantes de la costa');
+
+-- Clientes
+INSERT INTO [dbo].[Clients] (Id, Name, Rut, RazonSocial, Address, MapsAddress, Schedule, Phone, ContactName, Email, Observations, Bank, BankAccount, LoanedCrates, ZoneId) VALUES
+(13, 'Almacén San Martín', '201234560001', 'San Martín S.R.L.', 'Calle Falsa 123', 'Calle Falsa 123, Ciudad', 'Lunes a Viernes de 8 a 12 hs', '099876543', 'José Pérez', 'contacto@sanmartin.com', 'Cliente puntual', 'Otros', '123456789012', 10, 1),
+(14, 'La Vaquita Feliz', '202345670002', 'Vaquita Feliz S.A.', 'Av. Leche 456', 'Av. Leche 456, Ciudad', 'Lunes a Sábado de 7 a 13 hs', '099234567', 'Ana Gómez', 'pedidos@vaquitafeliz.com', '', 'Santander', '123456789013', 15, 2),
+(15, 'Supermercado Sur', '203456780003', 'Super Sur S.A.', 'Ruta 3 Km 25', 'Ruta 3 Km 25, Ciudad', 'Lunes a Viernes de 9 a 17 hs', '099345678', 'Carlos Méndez', 'sur@supersur.com', 'Requiere factura A', 'Otros', '123456789014', 20, 3),
+(16, 'Carnicería El Oeste', '204567890004', 'Carnes Oeste S.R.L.', 'Calle Carne 789', 'Calle Carne 789, Ciudad', 'Martes y Jueves de 10 a 14 hs', '099456789', 'María López', 'carnes@oeste.com', '', 'Otros', '123456789015', 8, 4),
+(17, 'Estancia Rural', '205678900005', 'Estancia La Lechera', 'Camino Rural', 'Camino Rural, Colonia San José', 'Miércoles de 6 a 9 hs', '099567890', 'Juan Estévez', 'estancia@lechera.com', 'Difícil acceso en lluvia', 'HSBC', '123456789016', 5, 5),
+(18, 'Restaurante Costa Azul', '206789010006', 'Costa Azul S.A.', 'Av. Costanera 321', 'Av. Costanera 321, Ciudad', 'Todos los días de 11 a 15 hs', '099678901', 'Lucía Fernández', 'reservas@costazul.com', '', 'Otros', '123456789017', 12, 6);
+
+-- Proveedores
+INSERT INTO [dbo].[Suppliers] (Id, Name, Rut, RazonSocial, Address, MapsAddress, Phone, ContactName, Email, Bank, BankAccount, Observations) VALUES
+(1, 'Tambo Santa Clara', '201234560001', 'Santa Clara S.A.', 'Ruta 5 Km 32', 'Ruta 5 Km 32, Santa Clara', '0991234567', 'Alejandro Ruiz', 'proveedor@santaclara.com', 'Otros', 'CBU0001234567890001', 'Suministra leche entera y descremada'),
+(2, 'Quesos Don Mario', '202345670002', 'Don Mario S.R.L.', 'Av. de los Quesos 123', 'Av. de los Quesos 123, Pueblo Nuevo', '0992345678', 'Mariela González', 'contacto@donmario.com', 'Otros', 'CBU0001234567890002', 'Entrega semanal, productos frescos');
+
 
 INSERT INTO Warehouses (Name, Description, Address) VALUES
 ('Depósito Central', 'Depósito principal de refrigerados y frescos', 'Av. Industria 1234, Córdoba'),

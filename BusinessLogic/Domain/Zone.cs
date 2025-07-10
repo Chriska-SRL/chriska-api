@@ -1,11 +1,26 @@
-﻿namespace BusinessLogic.Dominio
+﻿using BusinessLogic.Común;
+
+namespace BusinessLogic.Dominio
 {
-    public class Zone : IEntity<Zone.UpdatableData>
+    public class Zone : IEntity<Zone.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<Day> Days { get; set; } = new List<Day>();
+        public string? Image { get; set; }
+        public List<Day> DeliveryDays { get; set; } = new List<Day>();
+        public List<Day> RequestDays { get; set; } = new List<Day>();
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public string? CreatedBy { get; set; }
+        public string? CreatedLocation { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public string? UpdatedBy { get; set; }
+        public string? UpdatedLocation { get; set; }
+        public DateTime? DeletedAt { get; set; }
+        public string? DeletedBy { get; set; }
+        public string? DeletedLocation { get; set; }
+
+        public Zone() { }
 
         public Zone(int id, string name, string description)
         {
@@ -19,8 +34,6 @@
             Name = "Temporal";
             Description = "TemporalDesc";
         }
-
-
 
         public void Validate()
         {
