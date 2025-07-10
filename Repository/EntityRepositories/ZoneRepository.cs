@@ -37,15 +37,10 @@ namespace Repository.EntityRepositories
 
                 return new Zone(zoneId, zone.Name, zone.Description, zone.DeliveryDays, zone.RequestDays);
             }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error SQL al insertar zona.");
-                throw new ApplicationException("Error SQL al insertar zona.", ex);
-            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error inesperado al insertar zona.");
-                throw new ApplicationException("Ocurrió un error inesperado al insertar zona.", ex);
+                _logger.LogError(ex, "Error al insertar zona.");
+                throw new ApplicationException("Error al insertar zona.", ex);
             }
         }
 
@@ -53,15 +48,11 @@ namespace Repository.EntityRepositories
         {
             try
             {
-                var existing = GetById(id);
-                if (existing == null)
-                {
-                    _logger.LogWarning($"Zona con ID {id} no encontrada para eliminar.");
-                    return null;
-                }
-
                 using var connection = CreateConnection();
                 connection.Open();
+
+                var zone = GetById(id);
+                if (zone == null) return null;
 
                 DeleteZoneDays(connection, id, "Zones_DeliveryDays");
                 DeleteZoneDays(connection, id, "Zones_RequestDays");
@@ -70,18 +61,12 @@ namespace Repository.EntityRepositories
                 command.Parameters.AddWithValue("@Id", id);
                 command.ExecuteNonQuery();
 
-                _logger.LogInformation($"Zona con ID {id} eliminada correctamente.");
-                return existing;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error SQL al eliminar zona.");
-                throw new ApplicationException("Error SQL al eliminar zona.", ex);
+                return zone;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error inesperado al eliminar zona.");
-                throw new ApplicationException("Ocurrió un error inesperado al eliminar zona.", ex);
+                _logger.LogError(ex, "Error al eliminar zona.");
+                throw new ApplicationException("Error al eliminar zona.", ex);
             }
         }
 
@@ -96,10 +81,12 @@ namespace Repository.EntityRepositories
 
                 using var command = new SqlCommand("SELECT Id, Name, Description FROM Zones", connection);
                 using var reader = command.ExecuteReader();
+
                 while (reader.Read())
                 {
                     zones.Add(ZoneMapper.FromReader(reader));
                 }
+                reader.Close(); 
 
                 foreach (var zone in zones)
                 {
@@ -109,15 +96,10 @@ namespace Repository.EntityRepositories
 
                 return zones;
             }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error SQL al obtener todas las zonas.");
-                throw new ApplicationException("Error SQL al obtener todas las zonas.", ex);
-            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error inesperado al obtener todas las zonas.");
-                throw new ApplicationException("Ocurrió un error inesperado al obtener zonas.", ex);
+                _logger.LogError(ex, "Error al obtener todas las zonas.");
+                throw new ApplicationException("Error al obtener zonas.", ex);
             }
         }
 
@@ -131,24 +113,20 @@ namespace Repository.EntityRepositories
                 using var command = new SqlCommand("SELECT Id, Name, Description FROM Zones WHERE Id = @Id", connection);
                 command.Parameters.AddWithValue("@Id", id);
                 using var reader = command.ExecuteReader();
-                if (!reader.Read()) return null;
 
+                if (!reader.Read()) return null;
                 var zone = ZoneMapper.FromReader(reader);
+                reader.Close();
 
                 zone.DeliveryDays = GetZoneDays(connection, zone.Id, "Zones_DeliveryDays");
                 zone.RequestDays = GetZoneDays(connection, zone.Id, "Zones_RequestDays");
 
                 return zone;
             }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error SQL al obtener zona por ID.");
-                throw new ApplicationException("Error SQL al obtener zona.", ex);
-            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error inesperado al obtener zona.");
-                throw new ApplicationException("Ocurrió un error inesperado al obtener zona.", ex);
+                _logger.LogError(ex, "Error al obtener zona por ID.");
+                throw new ApplicationException("Error al obtener zona.", ex);
             }
         }
 
@@ -159,16 +137,12 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using var command = new SqlCommand(@"
-                    UPDATE Zones 
-                    SET Name = @Name, Description = @Description 
-                    WHERE Id = @Id", connection);
-
+                using var command = new SqlCommand("UPDATE Zones SET Name = @Name, Description = @Description WHERE Id = @Id", connection);
                 command.Parameters.AddWithValue("@Id", zone.Id);
                 command.Parameters.AddWithValue("@Name", zone.Name);
                 command.Parameters.AddWithValue("@Description", zone.Description);
 
-                var rows = command.ExecuteNonQuery();
+                int rows = command.ExecuteNonQuery();
                 if (rows == 0)
                     throw new InvalidOperationException($"No se encontró la zona con ID {zone.Id} para actualizar.");
 
@@ -180,19 +154,12 @@ namespace Repository.EntityRepositories
 
                 return zone;
             }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error SQL al actualizar zona.");
-                throw new ApplicationException("Error SQL al actualizar zona.", ex);
-            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error inesperado al actualizar zona.");
-                throw new ApplicationException("Ocurrió un error inesperado al actualizar zona.", ex);
+                _logger.LogError(ex, "Error al actualizar zona.");
+                throw new ApplicationException("Error al actualizar zona.", ex);
             }
         }
-
-        // Helpers
 
         private void InsertZoneDays(SqlConnection connection, int zoneId, List<Day> days, string tableName)
         {
@@ -224,6 +191,7 @@ namespace Repository.EntityRepositories
                 if (Enum.IsDefined(typeof(Day), value))
                     days.Add((Day)value);
             }
+            reader.Close();
             return days;
         }
     }

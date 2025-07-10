@@ -39,11 +39,7 @@ namespace Repository.Mappers
                 bank: bank,
                 bankAccount: reader.GetString(reader.GetOrdinal("ClientBankAccount")),
                 loanedCrates: reader.GetInt32(reader.GetOrdinal("ClientLoanedCrates")),
-                zone: new Zone(
-                    id: reader.GetInt32(reader.GetOrdinal("ZoneId")),
-                    name: reader.GetString(reader.GetOrdinal("ZoneName")),
-                    description: reader.GetString(reader.GetOrdinal("ZoneDescription"))
-                )
+                zone: new Zone(id: reader.GetInt32(reader.GetOrdinal("ZoneId")))
             );
 
             return new Receipt(

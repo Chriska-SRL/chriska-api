@@ -57,7 +57,7 @@ namespace BusinessLogic.Dominio
             Bank = Bank.Andbank;
             BankAccount = "0000000000";
             LoanedCrates = 0;
-            Zone = new Zone(0, "Zona Temporal", "Descripción Temporal");
+            Zone = new Zone(0, "Zona Temporal", "Descripción Temporal",new(),new());
         }
 
 
