@@ -25,6 +25,8 @@ namespace BusinessLogic.Dominio
             Id = id;
             Name = "Temporal";
             Description = "TemporalDesc";
+            DeliveryDays = new List<Day>();
+            RequestDays = new List<Day>();
         }
 
 
@@ -39,6 +41,8 @@ namespace BusinessLogic.Dominio
         {
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;
+            DeliveryDays = data.DeliveryDays ?? DeliveryDays;
+            RequestDays = data.RequestDays ?? RequestDays;
             Validate();
         }
         public class UpdatableData

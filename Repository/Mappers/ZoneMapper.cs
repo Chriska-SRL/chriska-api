@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Común.Enums;
+using BusinessLogic.Dominio;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,9 @@ namespace Repository.Mappers
             return new Zone(
                id: reader.GetInt32(reader.GetOrdinal("Id")),
                name: reader.GetString(reader.GetOrdinal("Name")),
-               description: reader.GetString(reader.GetOrdinal("Description"))
+               description: reader.GetString(reader.GetOrdinal("Description")),
+               deliveryDays: new List<Day>(),
+               requestDays: new List<Day>()
            );
         }
     }
