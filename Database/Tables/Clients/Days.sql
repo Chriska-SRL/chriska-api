@@ -1,0 +1,6 @@
+CREATE TABLE [dbo].[Days]
+(
+    [Id] INT NOT NULL PRIMARY KEY,
+    [Name] NVARCHAR(15) NOT NULL UNIQUE,
+    CONSTRAINT [CHK_Days_ValidId] CHECK ([Id] BETWEEN 0 AND 6)
+)
