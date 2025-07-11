@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Dominio;
+﻿
+using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsZone;
 
 namespace BusinessLogic.Común.Mappers
@@ -8,9 +9,11 @@ namespace BusinessLogic.Común.Mappers
         public static Zone ToDomain(AddZoneRequest request)
         {
             return new Zone(
-                id:0,
-                name:request.Name,
-                description: request.Description
+                id: 0,
+                name: request.Name,
+                description: request.Description,
+                deliveryDays: request.DeliveryDays.Select(d => Enum.Parse<Day>(d, ignoreCase: true)).ToList(),
+                requestDays: request.RequestDays.Select(d => Enum.Parse<Day>(d, ignoreCase: true)).ToList()
             );
         }
         public static Zone.UpdatableData ToUpdatableData(UpdateZoneRequest request)
@@ -18,7 +21,9 @@ namespace BusinessLogic.Común.Mappers
             return new Zone.UpdatableData
             {
                 Name = request.Name,
-                Description = request.Description
+                Description = request.Description,
+                DeliveryDays = request.DeliveryDays.Select(d => Enum.Parse<Day>(d, ignoreCase: true)).ToList(),
+                RequestDays = request.RequestDays.Select(d => Enum.Parse<Day>(d, ignoreCase: true)).ToList()
             };
         }
         public static ZoneResponse ToResponse(Zone zone)
@@ -27,7 +32,9 @@ namespace BusinessLogic.Común.Mappers
             {
                 Id = zone.Id,
                 Name = zone.Name,
-                Description = zone.Description   
+                Description = zone.Description,
+                DeliveryDays = zone.DeliveryDays.Select(d => d.ToString()).ToList(),
+                RequestDays = zone.RequestDays.Select(d => d.ToString()).ToList()
             };
         }
     }

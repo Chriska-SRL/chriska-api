@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Común.Enums;
-
+﻿
 namespace BusinessLogic.Dominio
 {
     public class Zone : IEntity<Zone.UpdatableData>
