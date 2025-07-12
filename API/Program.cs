@@ -1,6 +1,7 @@
 ﻿using BusinessLogic;
 using BusinessLogic.Dominio;
 using BusinessLogic.Repository;
+using BusinessLogic.Services;
 using BusinessLogic.SubSystem;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -82,6 +83,21 @@ namespace API
 
             builder.Services.AddAuthorization(options =>
             {
+                options.AddPolicy("ManageImages", policy =>
+                    policy.RequireAssertion(context =>
+                    {
+                        var allowedPermissions = new[]
+                        {
+                            ((int)Permission.CREATE_PRODUCTS).ToString(),
+                            ((int)Permission.CREATE_ZONES).ToString(),
+                            ((int)Permission.EDIT_PRODUCTS).ToString(),
+                            ((int)Permission.EDIT_ZONES).ToString()
+                        };
+
+                        return context.User.HasClaim(c =>
+                            c.Type == "permission" && allowedPermissions.Contains(c.Value));
+                    }));
+
                 foreach (var value in Enum.GetValues(typeof(Permission)))
                 {
                     var intValue = ((int)value).ToString();
@@ -91,6 +107,7 @@ namespace API
                         policy.RequireClaim("permission", intValue));
                 }
             });
+
 
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
@@ -130,7 +147,9 @@ namespace API
             builder.Services.AddScoped<ISaleRepository, SaleRepository>();
             builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 
-
+            builder.Services.AddScoped<IAzureBlobService, AzureBlobService>();
+            builder.Services.AddScoped<IImageRepository, ImageRepository>();
+            builder.Services.AddScoped<ImagesSubSystem>();
 
             builder.Services.AddScoped<RolesSubSystem>();
             builder.Services.AddScoped<UserSubSystem>();
@@ -157,19 +176,19 @@ namespace API
             {
                 options.AddPolicy("PermitirFrontend", policy =>
                  {
-                    // policy.WithOrigins(allowedOrigins)
-                    policy.AllowAnyOrigin()
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
-                });
+                     // policy.WithOrigins(allowedOrigins)
+                     policy.AllowAnyOrigin()
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                 });
             });
 
             var app = builder.Build();
 
             // if (app.Environment.IsDevelopment())
             // {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+            app.UseSwagger();
+            app.UseSwaggerUI();
             // }
 
             app.UseCors("PermitirFrontend");

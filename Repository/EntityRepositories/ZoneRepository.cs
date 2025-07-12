@@ -1,11 +1,11 @@
-﻿
-using BusinessLogic.Dominio;
+﻿using BusinessLogic.Dominio;
 using BusinessLogic.Repository;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Repository.Mappers;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,7 +39,6 @@ namespace Repository.EntityRepositories
             }
         }
 
-
         public Zone? Delete(int id)
         {
             try
@@ -71,11 +70,18 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using var command = new SqlCommand("SELECT Id, Name, Description FROM Zones", connection);
+                using var command = new SqlCommand(@"
+                    SELECT z.Id, z.Name, z.Description, i.BlobName
+                    FROM Zones z
+                    LEFT JOIN Images i ON i.EntityType = 'zones' AND i.EntityId = z.Id
+                    ORDER BY z.Id", connection);
+
                 using var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    zones.Add(ZoneMapper.FromReader(reader));
+                    var zone = ZoneMapper.FromReader(reader);
+
+                    zones.Add(zone);
                 }
                 return zones;
             }
@@ -93,23 +99,28 @@ namespace Repository.EntityRepositories
                 using var connection = CreateConnection();
                 connection.Open();
 
-                using var command = new SqlCommand("SELECT Id, Name, Description FROM Zones WHERE Id = @Id", connection);
+                using var command = new SqlCommand(@"
+                    SELECT z.Id, z.Name, z.Description, i.BlobName
+                    FROM Zones z
+                    LEFT JOIN Images i ON i.EntityType = 'zones' AND i.EntityId = z.Id
+                    WHERE z.Id = @Id", connection);
+
                 command.Parameters.AddWithValue("@Id", id);
                 using var reader = command.ExecuteReader();
-                return reader.Read() ? ZoneMapper.FromReader(reader) : null;
 
+                if (!reader.Read()) return null;
+
+                var zone = ZoneMapper.FromReader(reader);
+
+                return zone;
             }
             catch (SqlException ex)
             {
                 _logger.LogError(ex, "Error al acceder a la base de datos.");
                 throw new ApplicationException("Error al acceder a la base de datos.", ex);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
         }
+
         public Zone Update(Zone entity)
         {
             try
@@ -126,9 +137,9 @@ namespace Repository.EntityRepositories
                 if (rowsAffected == 0)
                     throw new ApplicationException($"No se encontró ninguna zona con el ID {entity.Id}");
 
-                return entity;
+                return GetById(entity.Id) ?? entity;
             }
-            catch (SqlException ex) 
+            catch (SqlException ex)
             {
                 _logger.LogError(ex, "Error al actualizar zona.");
                 throw new ApplicationException("Error al actualizar zona.", ex);
