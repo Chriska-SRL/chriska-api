@@ -83,7 +83,7 @@ namespace API
 
             builder.Services.AddAuthorization(options =>
             {
-                options.AddPolicy("ManageZonesOrProducts", policy =>
+                options.AddPolicy("ManageImages", policy =>
                     policy.RequireAssertion(context =>
                     {
                         var allowedPermissions = new[]
