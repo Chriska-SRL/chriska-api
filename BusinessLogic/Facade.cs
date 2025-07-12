@@ -4,6 +4,7 @@ using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsCost;
 using BusinessLogic.DTOs.DTOsDelivery;
+using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsOrderItem;
 using BusinessLogic.DTOs.DTOsPayment;
@@ -22,6 +23,7 @@ using BusinessLogic.DTOs.DTOsVehicle;
 using BusinessLogic.DTOs.DTOsWarehouse;
 using BusinessLogic.DTOs.DTOsZone;
 using BusinessLogic.SubSystem;
+using Microsoft.AspNetCore.Http;
 
 namespace BusinessLogic
 {
@@ -43,6 +45,7 @@ namespace BusinessLogic
         private readonly ZonesSubSystem Zones;
         private readonly RolesSubSystem Roles;
         private readonly VehicleSubSystem Vehicles;
+        private readonly ImagesSubSystem Images;
 
         public Facade(
             AuthSubSystem auth,
@@ -60,7 +63,8 @@ namespace BusinessLogic
             WarehousesSubSystem warehouses,
             ZonesSubSystem zones,
             RolesSubSystem roles,
-            VehicleSubSystem vehicles)
+            VehicleSubSystem vehicles,
+            ImagesSubSystem images)
         {
             Auth = auth;
             Categories = categories;
@@ -78,6 +82,7 @@ namespace BusinessLogic
             Zones = zones;
             Roles = roles;
             Vehicles = vehicles;
+            Images = images;
         }
         // Authentication
         public UserResponse? Authenticate(string username, string password) => Auth.Authenticate(username, password);
@@ -230,5 +235,10 @@ namespace BusinessLogic
         public BrandResponse DeleteBrand(int id) => Products.DeleteBrand(id);
         public BrandResponse GetBrand(int id) => Products.GetBrandById(id);
         public List<BrandResponse> GetAllBrand() => Products.GetAllBrands();
+
+        // Image
+        public ImageResponse UploadImage(string entityType, int entityId, IFormFile file) => Images.UploadImage(entityType, entityId, file);
+        public ImageResponse? GetImage(string entityType, int entityId) => Images.GetImage(entityType, entityId);
+        public bool DeleteImage(string entityType, int entityId) => Images.DeleteImage(entityType, entityId);
     }
 }
