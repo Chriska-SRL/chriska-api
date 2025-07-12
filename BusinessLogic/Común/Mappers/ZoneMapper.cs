@@ -27,7 +27,8 @@ namespace BusinessLogic.Común.Mappers
             {
                 Id = zone.Id,
                 Name = zone.Name,
-                Description = zone.Description   
+                Description = zone.Description,
+                ImageUrl = zone.ImageUrl // ← AGREGAR ESTA LÍNEA
             };
         }
     }

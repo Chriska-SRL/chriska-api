@@ -6,6 +6,7 @@
         public string Name { get; set; }
         public string Description { get; set; }
         public List<Day> Days { get; set; } = new List<Day>();
+        public string? ImageUrl { get; set; }
 
         public Zone(int id, string name, string description)
         {
@@ -18,9 +19,13 @@
             Id = id;
             Name = "Temporal";
             Description = "TemporalDesc";
+            ImageUrl = "TemporalImage";
         }
 
-
+        public void SetImageUrl(string? imageUrl)
+        {
+            ImageUrl = imageUrl;
+        }
 
         public void Validate()
         {
