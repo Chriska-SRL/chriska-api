@@ -1,25 +1,64 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
+using Repository.Mappers;
 using System.Data;
+using System.Data.Common;
 
-namespace Repository.Mappers
+public static class UserMapper
 {
-    public static class UserMapper
+    public static User FromReader(SqlDataReader reader, bool includePermissions)
     {
-        public static User FromReader(SqlDataReader reader)
-        {
-            var id = reader.GetInt32(reader.GetOrdinal("Id"));
-            var name = reader.GetString(reader.GetOrdinal("Name"));
-            var username = reader.GetString(reader.GetOrdinal("Username"));
-            var password = reader.GetString(reader.GetOrdinal("Password"));
-            var isEnabledChar = reader.GetString(reader.GetOrdinal("IsEnabled"))[0];
-            var isEnabled = isEnabledChar == 'T';
-            var needsPasswordChangeChar = reader.GetString(reader.GetOrdinal("needsPasswordChange"))[0];
-            var needsPasswordChange = needsPasswordChangeChar == 'T';
-            var roleId = reader.GetInt32(reader.GetOrdinal("RoleId"));
-            var role = new Role(roleId);
+        var role = new Role(
+            id: reader.GetInt32(reader.GetOrdinal("RoleId")),
+            name: reader.GetString(reader.GetOrdinal("RoleName")),
+            description: reader.GetString(reader.GetOrdinal("RoleDescription")),
+            permissions: includePermissions ? ParsePermissions(reader) : new List<Permission>(),
+            auditInfo:null
+        );
 
-            return new User(id, name, username, password, isEnabled, needsPasswordChange, role, new List<Request>());
-        }
+        var user = new User(
+            id: reader.GetInt32(reader.GetOrdinal("Id")),
+            name: reader.GetString(reader.GetOrdinal("Name")),
+            username: reader.GetString(reader.GetOrdinal("Username")),
+            password: null,
+            isEnabled: reader.GetString(reader.GetOrdinal("IsEnabled")) == "T",
+            needsPasswordChange: reader.GetString(reader.GetOrdinal("NeedsPasswordChange")) == "T",
+            role: role,
+            auditInfo: AuditInfoMapper.FromReader(reader)
+        );
+
+        return user;
     }
+
+    private static List<Permission> ParsePermissions(SqlDataReader reader)
+    {
+        var permissions = new List<Permission>();
+
+        if (!reader.IsDBNull(reader.GetOrdinal("Permissions")))
+        {
+            var raw = reader.GetString(reader.GetOrdinal("Permissions"));
+            foreach (var idStr in raw.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (int.TryParse(idStr, out int id) && Enum.IsDefined(typeof(Permission), id))
+                    permissions.Add((Permission)id);
+            }
+        }
+
+        return permissions;
+    }
+
+    public static User FromReaderForRole(DbDataReader reader)
+    {
+        return new User(
+            id: reader.GetInt32(reader.GetOrdinal("UserId")),
+            name: reader.GetString(reader.GetOrdinal("UserName")),
+            username: reader.GetString(reader.GetOrdinal("UserUsername")),
+            password: null,
+            isEnabled: reader.GetString(reader.GetOrdinal("UserIsEnabled")) == "T",
+            needsPasswordChange: reader.GetString(reader.GetOrdinal("UserNeedsPasswordChange")) == "T",
+            role: null,
+            auditInfo: null
+        );
+    }
+
 }

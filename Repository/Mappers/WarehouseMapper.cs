@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
@@ -12,7 +13,8 @@ namespace Repository.Mappers
                 name: reader.GetString(reader.GetOrdinal(prefix + "Name")),
                 description: reader.GetString(reader.GetOrdinal(prefix + "Description")),
                 address: reader.GetString(reader.GetOrdinal(prefix + "Address")),
-                shelves: new List<Shelve>()
+                shelves: new List<Shelve>(),
+                auditInfo: new AuditInfo()
             );
         }
     }

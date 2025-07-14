@@ -1,383 +1,174 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Domain;
 using BusinessLogic.Repository;
+using Repository.Logging;
 using Repository.Mappers;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging;
 
 namespace Repository.EntityRepositories
 {
-    public class ProductRepository : Repository<ProductRepository>, IProductRepository
+    public class ProductRepository : Repository<Product, Product.UpdatableData>, IProductRepository
     {
-        public ProductRepository(string connectionString, ILogger<ProductRepository> logger) : base(connectionString, logger)
+        public ProductRepository(string connectionString, AuditLogger auditLogger)
+            : base(connectionString, auditLogger) { }
+
+        #region Add
+
+        public async Task<Product> AddAsync(Product product)
         {
-        }
-
-        public Product Add(Product product)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-
-                using var command = new SqlCommand(@"
-            INSERT INTO Products 
-            (Name, BarCode, UnitType, Price, Description, TemperatureCondition, Stock, Image, Observations, SubCategoryId, BrandId)
-            OUTPUT INSERTED.Id 
-            VALUES 
-            (@Name, @BarCode, @UnitType, @Price, @Description, @TemperatureCondition, @Stock, @Image, @Observations, @SubCategoryId, @BrandId)",
-                    connection);
-
-                command.Parameters.AddWithValue("@Name", product.Name);
-                command.Parameters.AddWithValue("@BarCode", (object?)product.Barcode ?? DBNull.Value);
-                command.Parameters.AddWithValue("@UnitType", product.UnitType.ToString());
-                command.Parameters.AddWithValue("@Price", product.Price);
-                command.Parameters.AddWithValue("@Description", product.Description);
-                command.Parameters.AddWithValue("@TemperatureCondition", product.TemperatureCondition.ToString());
-                command.Parameters.AddWithValue("@Stock", product.Stock);
-                command.Parameters.AddWithValue("@Image", product.Image);
-                command.Parameters.AddWithValue("@Observations", product.Observation);
-                command.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
-                command.Parameters.AddWithValue("@BrandId", product.Brand.Id);
-                connection.Open();
-                int id = (int)command.ExecuteScalar();
-
-                return new Product(id, product.Barcode, product.Name, product.Price, product.Image, product.Stock,
-                    product.Description, product.UnitType, product.TemperatureCondition, product.Observation,
-                    product.SubCategory, product.Brand, new());
-                
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-
-
-        public Product? Delete(int id)
-        {
-            try
-            {
-                _logger.LogInformation($"Intentando eliminar el producto con ID {id}.");
-                using var connection = CreateConnection();
-                connection.Open();
-
-                var product = GetById(id);
-                if (product == null)
+            int newId = await ExecuteWriteWithAuditAsync(
+                "INSERT INTO Products (BarCode, Name, UnitType, Price, Description, TemperatureCondition, Stock, AvailableStock, Observations, SubCategoryId, BrandId) " +
+                "OUTPUT INSERTED.Id VALUES (@BarCode, @Name, @UnitType, @Price, @Description, @TemperatureCondition, @Stock, @AvailableStock, @Observations, @SubCategoryId, @BrandId)",
+                product,
+                AuditAction.Insert,
+                configureCommand: cmd =>
                 {
-                    _logger.LogWarning($"No se encontró el producto con ID {id} para eliminar.");
-                    return null;
+                    cmd.Parameters.AddWithValue("@BarCode", product.Barcode ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Name", product.Name);
+                    cmd.Parameters.AddWithValue("@UnitType", product.UnitType.ToString());
+                    cmd.Parameters.AddWithValue("@Price", product.Price);
+                    cmd.Parameters.AddWithValue("@Description", product.Description);
+                    cmd.Parameters.AddWithValue("@TemperatureCondition", product.TemperatureCondition.ToString());
+                    cmd.Parameters.AddWithValue("@Stock", product.Stock);
+                    cmd.Parameters.AddWithValue("@AvailableStock", product.AviableStock);
+                    cmd.Parameters.AddWithValue("@Observations", product.Observation);
+                    cmd.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
+                    cmd.Parameters.AddWithValue("@BrandId", product.Brand.Id);
+                },
+                async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
+            );
+
+            if (newId == 0)
+                throw new InvalidOperationException("No se pudo obtener el Id insertado.");
+
+            // Asociar la imagen al producto
+            product.SetInternalCode(); // Generar el código interno
+            return product;
+        }
+
+        #endregion
+
+        #region Update
+
+        public async Task<Product> UpdateAsync(Product product)
+        {
+            int rows = await ExecuteWriteWithAuditAsync(
+                "UPDATE Products SET BarCode = @BarCode, Name = @Name, UnitType = @UnitType, Price = @Price, Description = @Description, TemperatureCondition = @TemperatureCondition, Stock = @Stock, AvailableStock = @AvailableStock, Observations = @Observations, SubCategoryId = @SubCategoryId, BrandId = @BrandId " +
+                "WHERE Id = @Id",
+                product,
+                AuditAction.Update,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", product.Id);
+                    cmd.Parameters.AddWithValue("@BarCode", product.Barcode ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Name", product.Name);
+                    cmd.Parameters.AddWithValue("@UnitType", product.UnitType.ToString());
+                    cmd.Parameters.AddWithValue("@Price", product.Price);
+                    cmd.Parameters.AddWithValue("@Description", product.Description);
+                    cmd.Parameters.AddWithValue("@TemperatureCondition", product.TemperatureCondition.ToString());
+                    cmd.Parameters.AddWithValue("@Stock", product.Stock);
+                    cmd.Parameters.AddWithValue("@AvailableStock", product.AviableStock);
+                    cmd.Parameters.AddWithValue("@Observations", product.Observation);
+                    cmd.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
+                    cmd.Parameters.AddWithValue("@BrandId", product.Brand.Id);
                 }
+            );
 
-                using (var command = new SqlCommand("DELETE FROM Products WHERE Id = @Id", connection))
-                {
-                    command.Parameters.AddWithValue("@Id", id);
-                    command.ExecuteNonQuery();
-                }
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo actualizar el producto con Id {product.Id}");
 
-                _logger.LogInformation($"Producto con ID {id} eliminado correctamente.");
-                return product;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
+            return product;
         }
 
-        public List<Product> GetAll()
+        #endregion
+
+        #region Delete
+
+        public async Task<Product> DeleteAsync(Product product)
         {
-            try
-            {
-                var products = new List<Product>();
+            if (product == null)
+                throw new ArgumentNullException(nameof(product), "El producto no puede ser nulo.");
 
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using (var command = new SqlCommand(@"
-            SELECT 
-                p.*, 
-                sc.Name AS SubCategoryName, 
-                sc.Description AS SubCategoryDescription, 
-                c.Id AS CategoryId, 
-                c.Name AS CategoryName, 
-                c.Description AS CategoryDescription,
-                b.Id AS BrandId,
-                b.Name AS BrandName,
-                b.Description AS BrandDescription
-            FROM Products p
-            JOIN SubCategories sc ON p.SubCategoryId = sc.Id
-            JOIN Categories c ON sc.CategoryId = c.Id
-            JOIN Brands b ON p.BrandId = b.Id", connection))
-                using (var reader = command.ExecuteReader())
+            int rows = await ExecuteWriteWithAuditAsync(
+                "UPDATE Products SET IsDeleted = 1, DeletedAt = @DeletedAt, DeletedBy = @DeletedBy, DeletedLocation = @DeletedLocation WHERE Id = @Id",
+                product,
+                AuditAction.Delete,
+                configureCommand: cmd =>
                 {
+                    cmd.Parameters.AddWithValue("@Id", product.Id);
+                }
+            );
+
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo eliminar el producto con Id {product.Id}");
+
+            return product;
+        }
+
+
+        #endregion
+
+        #region GetAll
+
+        public async Task<List<Product>> GetAllAsync(QueryOptions options)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: @"
+                    SELECT p.*, 
+                           sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, 
+                           b.Id AS BrandId, b.Name AS BrandName,
+                           img.FileName AS ImageFileName, img.BlobName AS ImageBlobName
+                    FROM Products p
+                    INNER JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+                    INNER JOIN Brands b ON p.BrandId = b.Id
+                    LEFT JOIN Images img ON img.EntityType = 'products' AND img.EntityId = p.Id
+                    WHERE p.IsDeleted = 0",
+                map: reader =>
+                {
+                    var products = new List<Product>();
                     while (reader.Read())
                     {
-                        products.Add(ProductMapper.FromReader(reader));
+                        var product = ProductMapper.FromReader(reader);
+                        products.Add(product);
                     }
-                }
-
-                return products;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
+                    return products;
+                },
+                options: options
+            );
         }
 
+        #endregion
 
-        public Product? GetByBarcode(string? barcode)
+        #region GetById
+
+        public async Task<Product?> GetByIdAsync(int id)
         {
-
-            if (string.IsNullOrWhiteSpace(barcode)) return null;
-
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using (var command = new SqlCommand(@"
-                    SELECT 
-                        p.*, 
-                        sc.Name AS SubCategoryName, 
-                        sc.Description AS SubCategoryDescription, 
-                        c.Id AS CategoryId, 
-                        c.Name AS CategoryName, 
-                        c.Description AS CategoryDescription,
-                        b.Id AS BrandId,
-                        b.Name AS BrandName,
-                        b.Description AS BrandDescription
+            return await ExecuteReadAsync(
+                baseQuery: @"
+                    SELECT p.*, 
+                           sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, 
+                           b.Id AS BrandId, b.Name AS BrandName,
+                           img.FileName AS ImageFileName, img.BlobName AS ImageBlobName
                     FROM Products p
-                    JOIN SubCategories sc ON p.SubCategoryId = sc.Id
-                    JOIN Categories c ON sc.CategoryId = c.Id
-                    JOIN Brands b ON p.BrandId = b.Id
-                    WHERE p.Barcode = @Barcode", connection))
-
+                    INNER JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+                    INNER JOIN Brands b ON p.BrandId = b.Id
+                    LEFT JOIN Images img ON img.EntityType = 'products' AND img.EntityId = p.Id
+                    WHERE p.Id = @Id",
+                map: reader =>
                 {
-                    command.Parameters.AddWithValue("@Barcode", barcode);
-                    using var reader = command.ExecuteReader();
-                    if (!reader.Read()) return null;
-
-                    return ProductMapper.FromReader(reader);
+                    if (reader.Read())
+                    {
+                        return ProductMapper.FromReader(reader);
+                    }
+                    return null;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
                 }
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
+            );
         }
 
-        public Product? GetById(int id)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using (var command = new SqlCommand(@"
-            SELECT 
-                p.*, 
-                sc.Name AS SubCategoryName, 
-                sc.Description AS SubCategoryDescription, 
-                c.Id AS CategoryId, 
-                c.Name AS CategoryName, 
-                c.Description AS CategoryDescription,
-                b.Id AS BrandId,
-                b.Name AS BrandName,
-                b.Description AS BrandDescription
-            FROM Products p
-            JOIN SubCategories sc ON p.SubCategoryId = sc.Id
-            JOIN Categories c ON sc.CategoryId = c.Id
-            JOIN Brands b ON p.BrandId = b.Id
-            WHERE p.Id = @Id", connection))
-                {
-                    command.Parameters.AddWithValue("@Id", id);
-                    using var reader = command.ExecuteReader();
-                    if (!reader.Read()) return null;
-
-                    return ProductMapper.FromReader(reader);
-                }
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-
-
-        public Product GetByName(string name)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using (var command = new SqlCommand(@"
-                    SELECT 
-                        p.*, 
-                        sc.Name AS SubCategoryName, 
-                        sc.Description AS SubCategoryDescription, 
-                        c.Id AS CategoryId, 
-                        c.Name AS CategoryName, 
-                        c.Description AS CategoryDescription,
-                        b.Id AS BrandId,
-                        b.Name AS BrandName,
-                        b.Description AS BrandDescription
-                    FROM Products p
-                    JOIN SubCategories sc ON p.SubCategoryId = sc.Id
-                    JOIN Categories c ON sc.CategoryId = c.Id
-                    JOIN Brands b ON p.BrandId = b.Id
-                    WHERE p.Name = @Name", connection))
-
-                {
-                    command.Parameters.AddWithValue("@Name", name);
-                    using var reader = command.ExecuteReader();
-                    if (!reader.Read()) return null;
-
-                    return ProductMapper.FromReader(reader);
-                }
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-
-        public List<Product> GetBySubCategoryId(int id)
-        {
-            try
-            {
-                var products = new List<Product>();
-
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using var command = new SqlCommand(@"
-                    SELECT 
-                        p.*, 
-                        sc.Name AS SubCategoryName, 
-                        sc.Description AS SubCategoryDescription, 
-                        c.Id AS CategoryId, 
-                        c.Name AS CategoryName, 
-                        c.Description AS CategoryDescription,
-                        b.Id AS BrandId,
-                        b.Name AS BrandName,
-                        b.Description AS BrandDescription
-                    FROM Products p
-                    JOIN SubCategories sc ON p.SubCategoryId = sc.Id
-                    JOIN Categories c ON sc.CategoryId = c.Id
-                    JOIN Brands b ON p.BrandId = b.Id
-                    WHERE sc.Id = @SubCategoryId", connection);
-
-
-                command.Parameters.AddWithValue("@SubCategoryId", id);
-
-                using var reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    products.Add(ProductMapper.FromReader(reader));
-                }
-
-                return products;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-
-
-        public Product Update(Product product)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using (var updateCommand = new SqlCommand(@"
-                    UPDATE Products SET 
-                        Name = @Name,
-                        BarCode = @BarCode,
-                        UnitType = @UnitType,
-                        Price = @Price,
-                        Description = @Description,
-                        TemperatureCondition = @TemperatureCondition,
-                        Stock = @Stock,
-                        Image = @Image,
-                        Observations = @Observations,
-                        SubCategoryId = @SubCategoryId,
-                        BrandId = @BrandId
-                    WHERE Id = @Id", connection))
-                {
-                    updateCommand.Parameters.AddWithValue("@Name", product.Name);
-                    updateCommand.Parameters.AddWithValue("@BarCode",string.IsNullOrWhiteSpace(product.Barcode) ? DBNull.Value : product.Barcode);
-                    updateCommand.Parameters.AddWithValue("@UnitType", product.UnitType.ToString());
-                    updateCommand.Parameters.AddWithValue("@Price", product.Price);
-                    updateCommand.Parameters.AddWithValue("@Description", product.Description);
-                    updateCommand.Parameters.AddWithValue("@TemperatureCondition", product.TemperatureCondition.ToString());
-                    updateCommand.Parameters.AddWithValue("@Stock", product.Stock);
-                    updateCommand.Parameters.AddWithValue("@Image", product.Image);
-                    updateCommand.Parameters.AddWithValue("@Observations", product.Observation);
-                    updateCommand.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
-                    updateCommand.Parameters.AddWithValue("@BrandId", product.Brand.Id);
-                    updateCommand.Parameters.AddWithValue("@Id", product.Id);
-
-                    int affectedRows = updateCommand.ExecuteNonQuery();
-                    if (affectedRows == 0)
-                        throw new InvalidOperationException($"No se encontró el producto con ID {product.Id} para actualizar.");
-                }
-
-                return product;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
+        #endregion
     }
 }

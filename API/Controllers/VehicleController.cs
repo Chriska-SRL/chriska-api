@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using API.Utils;
 using BusinessLogic;
-using BusinessLogic.Dominio;
+using BusinessLogic.Común;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsVehicle;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -12,125 +15,65 @@ namespace API.Controllers
     public class VehiclesController : ControllerBase
     {
         private readonly Facade _facade;
+        private readonly TokenUtils _tokenUtils;
 
-        public VehiclesController(Facade facade)
+        public VehiclesController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_VEHICLES))]
-        public IActionResult AddVehicle([FromBody] AddVehicleRequest request)
+        public async Task<ActionResult<VehicleResponse>> AddVehicleAsync([FromBody] AddVehicleRequest request)
         {
-            try
-            {
-                var result = _facade.AddVehicle(request);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar agregar el vehículo." });
-            }
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.AddVehicleAsync(request);
+            return CreatedAtAction(nameof(GetVehicleByIdAsync), new { id = result.Id }, result);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_VEHICLES))]
-        public IActionResult UpdateVehicle([FromBody] UpdateVehicleRequest request)
+        public async Task<ActionResult<VehicleResponse>> UpdateVehicleAsync(int id, [FromBody] UpdateVehicleRequest request)
         {
-            try
-            {
-                return Ok(_facade.UpdateVehicle(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar actualizar el vehículo." });
-            }
+            request.Id = id;
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.UpdateVehicleAsync(request);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_VEHICLES))]
-        public IActionResult DeleteVehicle(int id)
+        public async Task<IActionResult> DeleteVehicleAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.DeleteVehicle(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { error = ex.Message });
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar el vehículo." });
-            }
+            var request = new DeleteRequest(id);
+            request.setUserId(_tokenUtils.GetUserId());
+            await _facade.DeleteVehicleAsync(request);
+            return NoContent();
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
-        public IActionResult GetVehicleById(int id)
+        public async Task<ActionResult<VehicleResponse>> GetVehicleByIdAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.GetVehicleById(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener el vehículo con id {id}." });
-            }
+            var result = await _facade.GetVehicleByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
-        public IActionResult GetAllVehicles()
+        public async Task<ActionResult<List<VehicleResponse>>> GetAllVehiclesAsync([FromQuery] QueryOptions options)
         {
-            try
-            {
-                return Ok(_facade.GetAllVehicles());
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los vehículos." });
-            }
+            var result = await _facade.GetAllVehiclesAsync(options);
+            return Ok(result);
         }
 
         [HttpGet("matricula/{plate}")]
         [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
-        public IActionResult GetVehicleByPlate(string plate)
+        public async Task<ActionResult<VehicleResponse>> GetVehicleByPlateAsync(string plate)
         {
-            try
-            {
-                return Ok(_facade.GetVehicleByPlate(plate));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener el vehículo con matrícula {plate}." });
-            }
-        }
-
-        private static object FormatearError(ArgumentException ex)
-        {
-            var mensaje = ex.Message.Split(" (Parameter")[0];
-            return new { campo = ex.ParamName, error = mensaje };
+            var result = await _facade.GetVehicleByPlateAsync(plate);
+            return Ok(result);
         }
     }
 }

@@ -1,248 +1,143 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Domain;
 using BusinessLogic.Repository;
+using Repository.Logging;
 using Repository.Mappers;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging;
+using BusinessLogic.Común;
 
 namespace Repository.EntityRepositories
 {
-    public class SubCategoryRepository : Repository<SubCategoryRepository>, ISubCategoryRepository
+    public class SubCategoryRepository : Repository<SubCategory, SubCategory.UpdatableData>, ISubCategoryRepository
     {
-        public SubCategoryRepository(string connectionString, ILogger<SubCategoryRepository> logger) : base(connectionString, logger)
+        public SubCategoryRepository(string connectionString, AuditLogger auditLogger)
+            : base(connectionString, auditLogger) { }
+
+        #region Add
+
+        public async Task<SubCategory> AddAsync(SubCategory subCategory)
         {
-        }
-
-        public SubCategory Add(SubCategory subCategory)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                using var command = new SqlCommand(@"
-                    INSERT INTO SubCategories (Name, Description, CategoryId) 
-                    OUTPUT INSERTED.Id 
-                    VALUES (@Name, @Description, @CategoryId)", connection);
-
-                command.Parameters.AddWithValue("@Name", subCategory.Name);
-                command.Parameters.AddWithValue("@Description", subCategory.Description);
-                command.Parameters.AddWithValue("@CategoryId", subCategory.Category.Id);
-
-                connection.Open();
-                int id = (int)command.ExecuteScalar();
-
-                return new SubCategory(id, subCategory.Name, subCategory.Description, subCategory.Category);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-
-        public SubCategory? Delete(int id)
-        {
-            try
-            {
-                _logger.LogInformation($"Intentando eliminar la subcategoría con ID {id}.");
-                using var connection = CreateConnection();
-                connection.Open();
-
-                var subCategory = GetById(id);
-                if (subCategory == null)
+            int newId = await ExecuteWriteWithAuditAsync(
+                "INSERT INTO SubCategories (Name, Description, CategoryId) OUTPUT INSERTED.Id VALUES (@Name, @Description, @CategoryId)",
+                subCategory,
+                AuditAction.Insert,
+                configureCommand: cmd =>
                 {
-                    _logger.LogWarning($"No se encontró la subcategoría con ID {id} para eliminar.");
-                    return null;
+                    cmd.Parameters.AddWithValue("@Name", subCategory.Name);
+                    cmd.Parameters.AddWithValue("@Description", subCategory.Description);
+                    cmd.Parameters.AddWithValue("@CategoryId", subCategory.Category.Id);
+                },
+                async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
+            );
+
+            if (newId == 0)
+                throw new InvalidOperationException("No se pudo obtener el Id insertado.");
+
+            return new SubCategory(newId, subCategory.Name, subCategory.Description, subCategory.Category, subCategory.AuditInfo);
+        }
+
+        #endregion
+
+        #region Update
+
+        public async Task<SubCategory> UpdateAsync(SubCategory subCategory)
+        {
+            int rows = await ExecuteWriteWithAuditAsync(
+                "UPDATE SubCategories SET Name = @Name, Description = @Description, CategoryId = @CategoryId WHERE Id = @Id",
+                subCategory,
+                AuditAction.Update,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", subCategory.Id);
+                    cmd.Parameters.AddWithValue("@Name", subCategory.Name);
+                    cmd.Parameters.AddWithValue("@Description", subCategory.Description);
+                    cmd.Parameters.AddWithValue("@CategoryId", subCategory.Category.Id);
                 }
+            );
 
-                using (var command = new SqlCommand("DELETE FROM SubCategories WHERE Id = @Id", connection))
-                {
-                    command.Parameters.AddWithValue("@Id", id);
-                    command.ExecuteNonQuery();
-                }
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo actualizar la subcategoría con Id {subCategory.Id}");
 
-                _logger.LogInformation($"Subcategoría con ID {id} eliminada correctamente.");
-                return subCategory;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
+            return subCategory;
         }
 
-        public SubCategory? GetById(int id)
+        #endregion
+
+        #region Delete
+
+        public async Task<SubCategory> DeleteAsync(SubCategory subCategory)
         {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
+            if (subCategory == null)
+                throw new ArgumentNullException(nameof(subCategory), "La subcategoría no puede ser nula.");
 
-                SubCategory? subCategory = null;
-
-                using (var command = new SqlCommand("SELECT Id, Name, Description, CategoryId FROM SubCategories WHERE Id = @Id", connection))
+            int rows = await ExecuteWriteWithAuditAsync(
+                "UPDATE SubCategories SET IsDeleted = 1 WHERE Id = @Id",
+                subCategory,
+                AuditAction.Delete,
+                configureCommand: cmd =>
                 {
-                    command.Parameters.AddWithValue("@Id", id);
-                    using var reader = command.ExecuteReader();
-
-                    if (reader.Read())
-                        subCategory = SubCategoryMapper.FromReader(reader);
-                    else
-                        return null;
+                    cmd.Parameters.AddWithValue("@Id", subCategory.Id);
                 }
+            );
 
-                if (subCategory != null)
-                    subCategory.Category = GetCategory(subCategory.Category.Id);
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo eliminar la subcategoría con Id {subCategory.Id}");
 
-                return subCategory;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
+            return subCategory;
         }
 
-        public List<SubCategory> GetAll()
+        #endregion
+
+        #region GetAll
+
+        public async Task<List<SubCategory>> GetAllAsync(QueryOptions options)
         {
-            try
-            {
-                var subCategories = new List<SubCategory>();
-
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using (var command = new SqlCommand("SELECT Id, Name, Description, CategoryId FROM SubCategories", connection))
-                using (var reader = command.ExecuteReader())
+            return await ExecuteReadAsync(
+                baseQuery: @"
+                SELECT sc.*, 
+                       c.Id AS CategoryId, c.Name AS CategoryName, c.Description AS CategoryDescription
+                FROM SubCategories sc
+                INNER JOIN Categories c ON sc.CategoryId = c.Id",
+                map: reader =>
                 {
+                    var subCategories = new List<SubCategory>();
                     while (reader.Read())
                     {
                         subCategories.Add(SubCategoryMapper.FromReader(reader));
                     }
-                }
-
-                foreach (var subCategory in subCategories)
-                {
-                    subCategory.Category = GetCategory(subCategory.Category.Id);
-                }
-
-                return subCategories;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
+                    return subCategories;
+                },
+                options: options
+            );
         }
 
 
-        public SubCategory Update(SubCategory subCategory)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
+        #endregion
 
-                using (var updateCommand = new SqlCommand("UPDATE SubCategories SET Name = @Name, Description = @Description, CategoryId = @CategoryId WHERE Id = @Id", connection))
+        #region GetById
+
+        public async Task<SubCategory?> GetByIdAsync(int id)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: @"
+                SELECT sc.*, 
+                       c.Id AS CategoryId, c.Name AS CategoryName, c.Description AS CategoryDescription
+                FROM SubCategories sc
+                INNER JOIN Categories c ON sc.CategoryId = c.Id
+                WHERE sc.Id = @Id",
+                map: reader =>
                 {
-                    updateCommand.Parameters.AddWithValue("@Name", subCategory.Name);
-                    updateCommand.Parameters.AddWithValue("@Description", subCategory.Description);
-                    updateCommand.Parameters.AddWithValue("@CategoryId", subCategory.Category.Id);
-                    updateCommand.Parameters.AddWithValue("@Id", subCategory.Id);
-
-                    int affectedRows = updateCommand.ExecuteNonQuery();
-                    if (affectedRows == 0)
-                        throw new InvalidOperationException($"No se encontró la subcategoría con ID {subCategory.Id} para actualizar.");
-                }
-
-                return subCategory;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-        private Category GetCategory(int categoryId)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using var command = new SqlCommand("SELECT Id, Name, Description FROM Categories WHERE Id = @Id", connection);
-                command.Parameters.AddWithValue("@Id", categoryId);
-
-                using var reader = command.ExecuteReader();
-                if (!reader.Read()) throw new InvalidOperationException($"Categoría con ID {categoryId} no encontrada.");
-
-                return CategoryMapper.FromReader(reader);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al obtener la categoría.");
-                throw;
-            }
-        }
-
-        public SubCategory GetByName(string name)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                SubCategory? subCategory = null;
-
-                using (var command = new SqlCommand("SELECT Id, Name, Description, CategoryId FROM SubCategories WHERE Name = @Name", connection))
-                {
-                    command.Parameters.AddWithValue("@Name", name);
-                    using var reader = command.ExecuteReader();
-
                     if (reader.Read())
-                        subCategory = SubCategoryMapper.FromReader(reader);
-                    else
-                        return null;
+                        return SubCategoryMapper.FromReader(reader);
+                    return null;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
                 }
-
-                if (subCategory != null)
-                    subCategory.Category = GetCategory(subCategory.Category.Id);
-
-                return subCategory;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
+            );
         }
+
+
+        #endregion
     }
 }

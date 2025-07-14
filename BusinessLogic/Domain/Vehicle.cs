@@ -1,19 +1,22 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
+using BusinessLogic.Común.Enums;
 using BusinessLogic.DTOs.DTOsCost;
 using System.Text.RegularExpressions;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
-    public class Vehicle : IEntity<Vehicle.UpdatableData>
+    public class Vehicle : IEntity<Vehicle.UpdatableData>, IAuditable
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Plate { get; private set; }
         public string Brand { get; private set; }
         public string Model { get; private set; }
         public int CrateCapacity { get; private set; }
         public List<VehicleCost> VehicleCosts { get; private set; }
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Vehicle(int id, string plate, string brand, string model, int crateCapacity, List<VehicleCost> costs)
+        public Vehicle(int id, string plate, string brand, string model, int crateCapacity, List<VehicleCost> costs,AuditInfo auditInfo)
         {
             Id = id;
             Plate = plate;
@@ -21,18 +24,16 @@ namespace BusinessLogic.Dominio
             Model = model;
             CrateCapacity = crateCapacity;
             VehicleCosts = costs;
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
             Validate();
         }
-        public Vehicle(int id) {
-            // Constructor temporal utilizado únicamente para instanciar por Id.
-            // No debe usarse para lógica de negocio que requiera datos válidos.
-            Id = id;
-            Plate = "AAA1234";
-            Brand = "Marca Temporal";
-            Model = "Modelo Temporal";
-            CrateCapacity = 0;
-            VehicleCosts = new List<VehicleCost>();
-            // No se llama a Validate() porque no se pretende usar la instancia completa
+        public Vehicle(string plate, string brand, string model, int crateCapacity)
+        {
+            Plate = plate;
+            Brand = brand;
+            Model = model;
+            CrateCapacity = crateCapacity;
+            Validate();
         }
 
         public void Validate()
@@ -67,9 +68,10 @@ namespace BusinessLogic.Dominio
             Brand = data.Brand ?? Brand;
             Model = data.Model ?? Model;
             CrateCapacity = data.CrateCapacity ?? CrateCapacity;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
         }
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public string? Plate { get; set; }
             public string? Brand { get; set; }

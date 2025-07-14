@@ -1,24 +1,37 @@
-﻿using System.Xml.Linq;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
+using System.Xml.Linq;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
-    public class Role : IEntity<Role.UpdatableData>
+    public class Role : IEntity<Role.UpdatableData>, IAuditable
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string Description { get; set; } = string.Empty;
         public List<Permission> Permissions { get; set; } = new List<Permission>();
         public List<User> Users { get; set; } = new List<User>();
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Role(int id, string name, string description, List<Permission> permissions)
+        public Role(string name, string description, List<Permission> permissions)
         {
-            Id = id;
             Name = name;
             Description = description;
             Permissions = permissions ?? throw new ArgumentNullException(nameof(permissions));
 
             Validate();
         }
+        public Role(int id, string name, string description, List<Permission> permissions, AuditInfo auditInfo)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+            Permissions = permissions ?? throw new ArgumentNullException(nameof(permissions));
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+
+            Validate();
+        }
+       
         public Role(int id)
         {
             Id = id;
@@ -42,6 +55,12 @@ namespace BusinessLogic.Dominio
                 throw new ArgumentOutOfRangeException(nameof(Description), "La descripción del rol no puede superar los 255 caracteres.");
         }
 
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            AuditInfo.SetDeleted(userId, location);
+            Validate();
+        }
+
 
         public void Update(UpdatableData data)
         {
@@ -54,10 +73,11 @@ namespace BusinessLogic.Dominio
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;
             Permissions = data.Permissions ?? Permissions;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public string? Name { get; set; } = string.Empty;
             public string? Description { get; set; } = string.Empty;

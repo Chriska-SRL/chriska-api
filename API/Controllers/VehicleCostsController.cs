@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using API.Utils;
 using BusinessLogic;
-using BusinessLogic.Dominio;
+using BusinessLogic.Común;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsCost;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -12,129 +15,58 @@ namespace API.Controllers
     public class VehicleCostsController : ControllerBase
     {
         private readonly Facade _facade;
+        private readonly TokenUtils _tokenUtils;
 
-        public VehicleCostsController(Facade facade)
+        public VehicleCostsController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_VEHICLES))]
-        public IActionResult Add([FromBody] AddVehicleCostRequest request)
+        public async Task<ActionResult<VehicleCostResponse>> AddVehicleCostAsync([FromBody] AddVehicleCostRequest request)
         {
-            try
-            {
-                var result = _facade.AddVehicleCost(request);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar agregar el costo." });
-            }
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.AddVehicleCostAsync(request);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = result.Id }, result);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_VEHICLES))]
-        public IActionResult Update([FromBody] UpdateVehicleCostRequest request)
+        public async Task<ActionResult<VehicleCostResponse>> UpdateVehicleCostAsync(int id, [FromBody] UpdateVehicleCostRequest request)
         {
-            try
-            {
-                return Ok(_facade.UpdateVehicleCost(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar actualizar el costo." });
-            }
+            request.Id = id;
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.UpdateVehicleCostAsync(request);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_VEHICLES))]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteVehicleCostAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.DeleteVehicleCost(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { error = ex.Message });
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar el costo." });
-            }
-        }
-
-        [HttpGet("vehicle/{vehicleId}")]
-        [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
-        public IActionResult GetAllForVehicle(int vehicleId)
-        {
-            try
-            {
-                return Ok(_facade.GetVehicleCosts(vehicleId));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al obtener los costos del vehículo." });
-            }
+            var request = new DeleteRequest(id);
+            request.setUserId(_tokenUtils.GetUserId());
+            await _facade.DeleteVehicleCostAsync(request);
+            return NoContent();
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
-        public IActionResult GetById(int id)
+        public async Task<ActionResult<VehicleCostResponse>> GetByIdAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.GetVehicleCostById(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener el costo con id {id}." });
-            }
+            var result = await _facade.GetVehicleCostByIdAsync(id);
+            return Ok(result);
         }
 
-        [HttpGet("vehicle/{vehicleId}/rango")]
+        [HttpGet("vehicle/{vehicleId}")]
         [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
-        public IActionResult GetCostsInRange(int vehicleId, [FromQuery] DateTime from, [FromQuery] DateTime to)
+        public async Task<ActionResult<List<VehicleCostResponse>>> GetAllForVehicleAsync(int vehicleId)
         {
-            try
-            {
-                return Ok(_facade.GetVehicleCostsByDateRange(vehicleId, from, to));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener los costos del vehículo {vehicleId}." });
-            }
+            var result = await _facade.GetVehicleCostsAsync(vehicleId);
+            return Ok(result);
         }
 
-        private static object FormatearError(ArgumentException ex)
-        {
-            var mensaje = ex.Message.Split(" (Parameter")[0];
-            return new { campo = ex.ParamName, error = mensaje };
-        }
     }
 }

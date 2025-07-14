@@ -10,7 +10,8 @@ namespace Repository.Mappers
             return new Brand(
                 id: reader.GetInt32(reader.GetOrdinal("Id")),
                 name: reader.GetString(reader.GetOrdinal("Name")),
-                description: reader.GetString(reader.GetOrdinal("Description"))
+                description: reader.GetString(reader.GetOrdinal("Description")),
+                auditInfo: AuditInfoMapper.FromReader(reader)
             );
         }
     }

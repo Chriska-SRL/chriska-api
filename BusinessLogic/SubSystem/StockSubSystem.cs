@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsStockMovement;
 using BusinessLogic.Común.Mappers;
@@ -15,7 +15,11 @@ namespace BusinessLogic.SubSystem
         private readonly IUserRepository _userRepository;
 
         public StockSubSystem(
-            IStockMovementRepository stockMovementRepository, IShelveRepository shelveRepository, IWarehouseRepository warehouseRepository, IProductRepository productRepository, IUserRepository userRepository)
+            IStockMovementRepository stockMovementRepository,
+            IShelveRepository shelveRepository,
+            IWarehouseRepository warehouseRepository,
+            IProductRepository productRepository,
+            IUserRepository userRepository)
         {
             _stockMovementRepository = stockMovementRepository;
             _shelveRepository = shelveRepository;
@@ -24,79 +28,34 @@ namespace BusinessLogic.SubSystem
             _userRepository = userRepository;
         }
 
-        public StockMovementResponse AddStockMovement(AddStockMovementRequest request)
+        public async Task<StockMovementResponse> AddStockMovementAsync(AddStockMovementRequest request)
         {
-            Product product = _productRepository.GetById(request.ProductId)
-                ?? throw new ArgumentException("Producto no encontrado.", nameof(request.ProductId));
-            Shelve shelve = _shelveRepository.GetById(request.ShelveId)
-                ?? throw new ArgumentException("Estantería no encontrada.", nameof(request.ShelveId));
-            User user = _userRepository.GetById(request.UserId)
-                ?? throw new ArgumentException("Usuario no encontrado.", nameof(request.UserId));
-            int shelveStock = shelve.Stocks.FirstOrDefault(s => s.Product.Id == product.Id)?.Quantity ?? 0;
-            if(request.Type == StockMovementType.Egreso && shelveStock < request.Quantity)
-                throw new InvalidOperationException($"No hay suficiente stock en la estantería para realizar el movimiento. El stock disponible es: {shelveStock}");
-            
-
-            StockMovement newStockMovement = StockMovementMapper.ToDomain(request);
-            newStockMovement.Validate();
-
-            StockMovement added = _stockMovementRepository.Add(newStockMovement);
-            return StockMovementMapper.ToResponse(added);
-        }
-        public StockMovementResponse GetStockMovementById(int id)
-        {
-            StockMovement stockMovement = _stockMovementRepository.GetById(id)
-                                            ?? throw new InvalidOperationException("Movimiento de stock no encontrado.");
-
-            return StockMovementMapper.ToResponse(stockMovement);
+            throw new NotImplementedException();
         }
 
-        public List<StockMovementResponse> GetAllStockMovements(DateTime from, DateTime to)
+        public async Task<StockMovementResponse> GetStockMovementByIdAsync(int id)
         {
-            checkRangeDate(from, to);
-            List<StockMovement> stockMovements = _stockMovementRepository.GetAll(from, to);
-            return stockMovements.Select(StockMovementMapper.ToResponse).ToList();
+            throw new NotImplementedException();
         }
 
-        internal List<StockMovementResponse> GetAllStockMovementsByShelve(int id, DateTime from, DateTime to)
+        public async Task<List<StockMovementResponse>> GetAllStockMovementsAsync(DateTime from, DateTime to)
         {
-            checkRangeDate(from, to);
-            var shelve = _shelveRepository.GetById(id)
-                         ?? throw new ArgumentException("Estantería no encontrada.", nameof(id));
-
-            var movements = _stockMovementRepository.GetAllByShelve(id, from, to);
-
-            return movements
-                         .Select(StockMovementMapper.ToResponse)
-                         .ToList();
+            throw new NotImplementedException();
         }
 
-        internal List<StockMovementResponse> GetAllStockMovementsByWarehouse(int id, DateTime from, DateTime to)
+        public async Task<List<StockMovementResponse>> GetAllStockMovementsByShelveAsync(int shelveId, DateTime from, DateTime to)
         {
-            checkRangeDate(from, to);
-            var shelve = _warehouseRepository.GetById(id)
-                         ?? throw new ArgumentException("deposito no encontrada.", nameof(id));
-
-            var movements = _stockMovementRepository.GetAllByWarehouse(id, from, to);
-
-            return movements
-                         .Select(StockMovementMapper.ToResponse)
-                         .ToList();
+            throw new NotImplementedException();
         }
-        private void checkRangeDate(DateTime from, DateTime to)
+
+        public async Task<List<StockMovementResponse>> GetAllStockMovementsByWarehouseAsync(int warehouseId, DateTime from, DateTime to)
         {
-            if (from > to)
-            {
-                throw new ArgumentException("La fecha de inicio no puede ser posterior a la fecha de fin.", nameof(from));
-            }
-            if (from < DateTime.MinValue || to > DateTime.MaxValue)
-            {
-                throw new ArgumentOutOfRangeException("Las fechas deben estar dentro de los límites permitidos.");
-            }
-            if(to-from > TimeSpan.FromDays(60))
-            {
-                throw new ArgumentException("El rango de fechas no puede ser mayor a 60 dias", nameof(from));
-            }
+            throw new NotImplementedException();
+        }
+
+        private void CheckRangeDate(DateTime from, DateTime to)
+        {
+            throw new NotImplementedException();
         }
     }
 }

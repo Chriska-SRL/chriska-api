@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using API.Utils;
 using BusinessLogic;
-using BusinessLogic.Dominio;
+using BusinessLogic.Común;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsUser;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -12,145 +15,76 @@ namespace API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly Facade _facade;
+        private readonly TokenUtils _tokenUtils;
 
-        public UsersController(Facade facade)
+        public UsersController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_USERS))]
-        public IActionResult AddUser([FromBody] AddUserRequest request)
+        public async Task<ActionResult<UserResponse>> AddUserAsync([FromBody] AddUserRequest request)
         {
-            try
-            {
-                return Ok(_facade.AddUser(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar agregar el usuario." });
-            }
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.AddUserAsync(request);
+            return CreatedAtAction(nameof(GetUserByIdAsync), new { id = result.Id }, result);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_USERS))]
-        public IActionResult UpdateUser([FromBody] UpdateUserRequest request)
+        public async Task<ActionResult<UserResponse>> UpdateUserAsync(int id, [FromBody] UpdateUserRequest request)
         {
-            try
-            {
-                return Ok(_facade.UpdateUser(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar actualizar el usuario." });
-            }
+            request.Id = id;
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.UpdateUserAsync(request);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_USERS))]
-        public IActionResult DeleteUser(int id)
+        public async Task<IActionResult> DeleteUserAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.DeleteUser(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar el usuario." });
-            }
+            var request = new DeleteRequest(id);
+            request.setUserId(_tokenUtils.GetUserId());
+            await _facade.DeleteUserAsync(request);
+            return NoContent();
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_USERS))]
-        public ActionResult<UserResponse> GetUserById(int id)
+        public async Task<ActionResult<UserResponse>> GetUserByIdAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.GetUserById(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener el usuario con id {id}." });
-            }
+            var result = await _facade.GetUserByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_USERS))]
-        public ActionResult<List<UserResponse>> GetAllUsers()
+        public async Task<ActionResult<List<UserResponse>>> GetAllUsersAsync([FromQuery] QueryOptions options)
         {
-            try
-            {
-                return Ok(_facade.GetAllUsers());
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los usuarios." });
-            }
-        }
-
-        private static object FormatearError(ArgumentException ex)
-        {
-            var mensaje = ex.Message.Split(" (Parameter")[0];
-            return new { campo = ex.ParamName, error = mensaje };
+            var result = await _facade.GetAllUsersAsync(options);
+            return Ok(result);
         }
 
         [HttpPost("resetpassword")]
         [Authorize(Policy = nameof(Permission.EDIT_USERS))]
-        public IActionResult ResetPassword([FromBody] ResetPasswordRequest request)
+        public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordRequest request)
         {
-            try
-            {
-                return Ok(new { message = "Contraseña restablecida correctamente:", password = _facade.ResetPassword(request.UserId, request.NewPassword)});
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            await _facade.ResetPasswordAsync(request.UserId, request.NewPassword);
+            return Ok(new { message = "Contraseña restablecida correctamente" });
         }
 
         [HttpPost("resetmypassword")]
-        public IActionResult ResetMyPassword([FromBody] ResetMyPasswordRequest request)
+        public async Task<IActionResult> ResetMyPasswordAsync([FromBody] ResetMyPasswordRequest request)
         {
-            try
-            {
-                UserResponse? user = _facade.Authenticate(request.Username, request.OldPassword);
-                if (user == null)
-                    return Unauthorized(new { error = "Credenciales inválidas" });
+            var user = await _facade.AuthenticateAsync(request.Username, request.OldPassword);
+            if (user == null)
+                return Unauthorized(new { error = "Credenciales inválidas" });
 
-                return Ok(new { message = "Contraseña restablecida correctamente:", password = _facade.ResetPassword(user.Id, request.NewPassword) });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            await _facade.ResetPasswordAsync(user.Id, request.NewPassword);
+            return Ok(new { message = "Contraseña restablecida correctamente" });
         }
     }
 }

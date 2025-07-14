@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Común.Enums;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs.DTOsAudit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOs.DTOsSupplier
 {
-    public class AddSupplierRequest
+    public class AddSupplierRequest : AuditableRequest
     {
         public string Name { get; set; }
         public string RUT { get; set; }
@@ -18,8 +19,7 @@ namespace BusinessLogic.DTOs.DTOsSupplier
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
-        public Bank Bank { get; set; }
-        public string BankAccount { get; set; }
+        public int BankAccountId { get; set; }
         public string Observation { get; set; }
     }
 }

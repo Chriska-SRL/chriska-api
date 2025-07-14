@@ -1,0 +1,49 @@
+﻿using BusinessLogic.Domain;
+using BusinessLogic.DTOs.DTOsCost;
+
+namespace BusinessLogic.Común.Mappers
+{
+    public static class VehicleCostMapper
+    {
+        public static VehicleCost ToDomain(AddVehicleCostRequest request)
+        {
+            var cost = new VehicleCost(
+                vehicleId: request.VehicleId,
+                type: request.Type,
+                description: request.Description,
+                amount: request.Amount,
+                date: request.Date
+            );
+
+            cost.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return cost;
+        }
+
+        public static VehicleCost.UpdatableData ToUpdatableData(UpdateVehicleCostRequest request)
+        {
+            return new VehicleCost.UpdatableData
+            {
+                Type = request.Type,
+                Description = request.Description,
+                Amount = request.Amount,
+                Date = request.Date,
+                UserId = request.getUserId(),
+                Location = request.Location
+            };
+        }
+
+        public static VehicleCostResponse ToResponse(VehicleCost cost)
+        {
+            return new VehicleCostResponse
+            {
+                VehicleId = cost.VehicleId,
+                Id = cost.Id,
+                Date = cost.Date,
+                Type = cost.Type,
+                Description = cost.Description,
+                Amount = cost.Amount,
+                AuditInfo = AuditMapper.ToResponse(cost.AuditInfo)
+            };
+        }
+    }
+}

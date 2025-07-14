@@ -1,4 +1,4 @@
-﻿namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Domain
 {
     public enum Day
     {

@@ -1,8 +1,10 @@
-﻿using BusinessLogic.Repository;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Común.Mappers;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsSubCategory;
-using BusinessLogic.Común.Mappers;
-using BusinessLogic.Dominio;
+using BusinessLogic.Repository;
 
 namespace BusinessLogic.SubSystem
 {
@@ -21,119 +23,56 @@ namespace BusinessLogic.SubSystem
 
         // Categorías
 
-        public CategoryResponse AddCategory(AddCategoryRequest request)
+        public async Task<CategoryResponse> AddCategoryAsync(AddCategoryRequest request)
         {
-            if (_categoryRepository.GetByName(request.Name) != null)
-                throw new ArgumentException("Ya existe una categoría con el mismo nombre.", nameof(request.Name));
-
-            var category = CategoryMapper.ToDomain(request);
-            category.Validate();
-
-            Category added = _categoryRepository.Add(category);
-            return CategoryMapper.ToResponse(added);
+            throw new NotImplementedException();
         }
 
-        public CategoryResponse UpdateCategory(UpdateCategoryRequest request)
+        public async Task<CategoryResponse> UpdateCategoryAsync(UpdateCategoryRequest request)
         {
-            var existing = _categoryRepository.GetById(request.Id)
-                          ?? throw new ArgumentException("Categoría no encontrada.", nameof(request.Id));
-
-            if (existing.Name != request.Name && _categoryRepository.GetByName(request.Name) != null)
-                throw new ArgumentException("Ya existe una categoría con el mismo nombre.", nameof(request.Name));
-
-            var updatedData = CategoryMapper.ToUpdatableData(request);
-            existing.Update(updatedData);
-
-            Category updated = _categoryRepository.Update(existing);
-            return CategoryMapper.ToResponse(updated);
+            throw new NotImplementedException();
         }
 
-        public CategoryResponse DeleteCategory(int id)
+        public async Task DeleteCategoryAsync(DeleteRequest request)
         {
-            Category deleted = _categoryRepository.GetById(id)
-                          ?? throw new ArgumentException("Categoría no encontrada.", nameof(id));
-
-            if(deleted.SubCategories.Any())
-                throw new InvalidOperationException("No se puede eliminar una categoría que tiene subcategorías asociadas.");
-
-            _categoryRepository.Delete(id);
-
-            return CategoryMapper.ToResponse(deleted);
+            throw new NotImplementedException();
         }
 
-        public CategoryResponse GetCategoryById(int id)
+        public async Task<CategoryResponse> GetCategoryByIdAsync(int id)
         {
-            var category = _categoryRepository.GetById(id)
-                          ?? throw new ArgumentException("Categoría no encontrada.", nameof(id));
-
-            return CategoryMapper.ToResponse(category);
+            throw new NotImplementedException();
         }
 
-        public List<CategoryResponse> GetAllCategory()
+        public async Task<List<CategoryResponse>> GetAllCategoriesAsync(QueryOptions options)
         {
-            return _categoryRepository.GetAll()
-                                      .Select(CategoryMapper.ToResponse)
-                                      .ToList();
+            throw new NotImplementedException();
         }
 
         // Subcategorías
 
-        public SubCategoryResponse AddSubCategory(AddSubCategoryRequest request)
+        public async Task<SubCategoryResponse> AddSubCategoryAsync(AddSubCategoryRequest request)
         {
-            var existing = _categoryRepository.GetById(request.CategoryId)
-                       ?? throw new ArgumentException("Categoría no encontrada.", nameof(request.CategoryId));
-
-            if (_subCategoryRepository.GetByName(request.Name) != null)
-                throw new ArgumentException("Ya existe una subcategoría con el mismo nombre.", nameof(request.Name));
-
-            var subCategory = SubCategoryMapper.ToDomain(request);
-            subCategory.Validate();
-
-            SubCategory added = _subCategoryRepository.Add(subCategory);
-            return SubCategoryMapper.ToResponse(added);
+            throw new NotImplementedException();
         }
 
-        public SubCategoryResponse UpdateSubCategory(UpdateSubCategoryRequest request)
+        public async Task<SubCategoryResponse> UpdateSubCategoryAsync(UpdateSubCategoryRequest request)
         {
-            var existing = _subCategoryRepository.GetById(request.Id)
-                           ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(request.Id));
-
-            if (existing.Name != request.Name && _subCategoryRepository.GetByName(request.Name) != null)
-                throw new ArgumentException("Ya existe una subcategoría con el mismo nombre.", nameof(request.Name));
-
-            SubCategory.UpdatableData updatedData = SubCategoryMapper.ToUpdatableData(request);
-            existing.Update(updatedData);
-
-            SubCategory updated = _subCategoryRepository.Update(existing);
-            return SubCategoryMapper.ToResponse(updated);
+            throw new NotImplementedException();
         }
 
-        public SubCategoryResponse DeleteSubCategory(int id)
+        public async Task DeleteSubCategoryAsync(DeleteRequest request)
         {
-            var deleted = _subCategoryRepository.GetById(id)
-                           ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(id));
-
-            if (_productRepository.GetBySubCategoryId(id).Count() > 0)
-                throw new InvalidOperationException("No se puede eliminar una subcategoría que tiene productos asociados.");
-
-            _subCategoryRepository.Delete(id);
-
-            return SubCategoryMapper.ToResponse(deleted);
+            throw new NotImplementedException();
         }
 
-        public SubCategoryResponse GetSubCategoryById(int id)
+        public async Task<SubCategoryResponse> GetSubCategoryByIdAsync(int id)
         {
-            var subCategory = _subCategoryRepository.GetById(id)
-                              ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(id));
-
-            return SubCategoryMapper.ToResponse(subCategory);
+            throw new NotImplementedException();
         }
 
-        public List<SubCategoryResponse> GetAllSubCategories()
+        public async Task<List<SubCategoryResponse>> GetAllSubCategoriesAsync(QueryOptions options)
         {
-            return _subCategoryRepository.GetAll()
-                                         .Select(SubCategoryMapper.ToResponse)
-                                         .ToList();
+            throw new NotImplementedException();
         }
     }
 }

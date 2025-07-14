@@ -1,6 +1,8 @@
-﻿namespace BusinessLogic.DTOs.DTOsVehicle
+﻿using BusinessLogic.DTOs.DTOsAudit;
+
+namespace BusinessLogic.DTOs.DTOsVehicle
 {
-    public class UpdateVehicleRequest
+    public class UpdateVehicleRequest : AuditableRequest
     {
         public int Id { get; set; }
         public string Plate { get; set; }

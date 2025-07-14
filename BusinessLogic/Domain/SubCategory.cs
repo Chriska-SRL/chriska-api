@@ -1,18 +1,28 @@
-﻿namespace BusinessLogic.Dominio
-{
-    public class SubCategory : IEntity<SubCategory.UpdatableData>
-    {
-        private int v1;
-        private string v2;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 
-        public int Id { get; set; }
+namespace BusinessLogic.Domain
+{
+    public class SubCategory : IEntity<SubCategory.UpdatableData>, IAuditable
+    {
+        public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string Description { get; set; }
         public Category Category { get; set; }
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public SubCategory(int id, string name, string description, Category category)
+        public SubCategory(int id, string name, string description, Category category, AuditInfo auditInfo)
         {
             Id = id;
+            Name = name;
+            Description = description;
+            Category = category ?? throw new ArgumentNullException(nameof(category));
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+
+            Validate();
+        }
+        public SubCategory(string name, string description, Category category)
+        {
             Name = name;
             Description = description;
             Category = category ?? throw new ArgumentNullException(nameof(category));
@@ -53,10 +63,11 @@
 
             Name = data.Name;
             Description = data.Description;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public string Name { get; set; } = string.Empty;
             public string Description { get; set; } = string.Empty;

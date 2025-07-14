@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
@@ -13,7 +14,8 @@ namespace Repository.Mappers
                 brand: reader.GetString(reader.GetOrdinal("Brand")),
                 model: reader.GetString(reader.GetOrdinal("Model")),
                 crateCapacity: reader.GetInt32(reader.GetOrdinal("CrateCapacity")),
-                costs: new List<VehicleCost>()
+                costs: new List<VehicleCost>(),
+                auditInfo: new AuditInfo()
             );
         }
     }

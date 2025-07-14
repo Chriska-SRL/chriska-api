@@ -1,8 +1,9 @@
 ﻿using BusinessLogic.Común.Enums;
+using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsCost
 {
-    public class UpdateVehicleCostRequest
+    public class UpdateVehicleCostRequest : AuditableRequest
     {
         public int VehicleId { get; set; }
         public int Id { get; set; }

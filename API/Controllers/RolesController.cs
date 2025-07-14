@@ -1,123 +1,71 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using API.Utils;
 using BusinessLogic;
-using BusinessLogic.Dominio;
+using BusinessLogic.Común;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsRole;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // Aplica autenticación por defecto
+    [Authorize]
     public class RolesController : ControllerBase
     {
         private readonly Facade _facade;
+        private readonly TokenUtils _tokenUtils;
 
-        public RolesController(Facade facade)
+        public RolesController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_ROLES))]
-        public IActionResult AddRole([FromBody] AddRoleRequest request)
+        public async Task<ActionResult<RoleResponse>> AddRoleAsync([FromBody] AddRoleRequest request)
         {
-            try
-            {
-                var result = _facade.AddRole(request);
-                return Ok(result);
-            }
-            catch (ArgumentException ex) 
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar agregar el rol." });
-            }
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.AddRoleAsync(request);
+            return Created(String.Empty,result);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_ROLES))]
-        public IActionResult UpdateRole([FromBody] UpdateRoleRequest request)
+        public async Task<ActionResult<RoleResponse>> UpdateRoleAsync(int id, [FromBody] UpdateRoleRequest request)
         {
-            try
-            {
-                return Ok(_facade.UpdateRole(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar actualizar el rol." });
-            }
+            request.Id = id;
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.UpdateRoleAsync(request);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_ROLES))]
-        public IActionResult DeleteRole(int id)
+        public async Task<IActionResult> DeleteRoleAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.DeleteRole(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { error = ex.Message});
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar el rol." });
-            }
+            DeleteRequest request = new DeleteRequest(id);
+            request.setUserId(_tokenUtils.GetUserId());
+            await _facade.DeleteRoleAsync(request);
+            return NoContent();
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_ROLES))]
-        public ActionResult<RoleResponse> GetRoleById(int id)
+        public async Task<ActionResult<RoleResponse>> GetRoleByIdAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.GetRoleById(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener el rol con id {id}." });
-            }
+            var result = await _facade.GetRoleByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_ROLES))]
-        public ActionResult<List<RoleResponse>> GetAllRoles()
+        public async Task<ActionResult<List<RoleResponse>>> GetAllRolesAsync([FromQuery] QueryOptions options)
         {
-            try
-            {
-                return Ok(_facade.GetAllRoles());
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los roles." });
-            }
+            var result = await _facade.GetAllRolesAsync(options);
+            return Ok(result);
         }
-
-        private static object FormatearError(ArgumentException ex)
-        {
-            var mensaje = ex.Message.Split(" (Parameter")[0];
-            return new { campo = ex.ParamName, error = mensaje };
-        }
-
     }
 }

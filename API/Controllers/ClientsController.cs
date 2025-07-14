@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using API.Utils;
 using BusinessLogic;
+using BusinessLogic.Común;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsClient;
-using BusinessLogic.DTOs.DTOsReceipt;
 using Microsoft.AspNetCore.Authorization;
-using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsProduct;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -14,198 +15,58 @@ namespace API.Controllers
     public class ClientsController : ControllerBase
     {
         private readonly Facade _facade;
+        private readonly TokenUtils _tokenUtils;
 
-        public ClientsController(Facade facade)
+        public ClientsController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
-        }
-
-        [HttpGet]
-        [Authorize(Policy = nameof(Permission.VIEW_CLIENTS))]
-        public ActionResult<List<ClientResponse>> GetAllClients()
-        {
-            try
-            {
-                return Ok(_facade.GetAllClients());
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Error inesperado al obtener los clientes.",ex.Message });
-            }
-        }
-
-        [HttpGet("{id}")]
-        [Authorize(Policy = nameof(Permission.VIEW_CLIENTS))]
-        public ActionResult<ClientResponse> GetClientById(int id)
-        {
-            try
-            {
-                return Ok(_facade.GetClientById(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Error inesperado al obtener el cliente con id {id}." });
-            }
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_CLIENTS))]
-        public IActionResult AddClient([FromBody] AddClientRequest request)
+        public async Task<ActionResult<ClientResponse>> AddClientAsync([FromBody] AddClientRequest request)
         {
-            try
-            {
-                return Ok(_facade.AddClient(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Error inesperado al agregar el cliente." });
-            }
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.AddClientAsync(request);
+            return CreatedAtAction(nameof(GetClientByIdAsync), new { id = result.Id }, result);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_CLIENTS))]
-        public IActionResult UpdateClient([FromBody] UpdateClientRequest request)
+        public async Task<ActionResult<ClientResponse>> UpdateClientAsync(int id, [FromBody] UpdateClientRequest request)
         {
-            try
-            {
-                return Ok(_facade.UpdateClient(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Error inesperado al actualizar el cliente." });
-            }
+            request.Id = id;
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.UpdateClientAsync(request);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_CLIENTS))]
-        public IActionResult DeleteClient(int id)
+        public async Task<IActionResult> DeleteClientAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.DeleteClient(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Error inesperado al eliminar el cliente." });
-            }
+            var request = new DeleteRequest(id);
+            request.setUserId(_tokenUtils.GetUserId());
+            await _facade.DeleteClientAsync(request);
+            return NoContent();
         }
 
-
-        //Recibos
-
-        [HttpPost("receipts")]
-        [Authorize(Policy = nameof(Permission.CREATE_CLIENTS))]
-        public IActionResult AddReceipt([FromBody] AddReceiptRequest request)
-        {
-            try
-            {
-                return Ok(_facade.AddReceipt(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Error inesperado al eliminar el recibo." });
-            }
-        }
-        [HttpPut("receipts")]
-        [Authorize(Policy = nameof(Permission.EDIT_CLIENTS))]
-        public IActionResult UpdateReceipt([FromBody] UpdateReceiptRequest request)
-        {
-            try
-            {
-                return Ok(_facade.UpdateReceipt(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Error inesperado al actualizar el recibo." });
-            }
-        }
-
-        [HttpDelete("receipts/{id}")]
-        [Authorize(Policy = nameof(Permission.DELETE_CLIENTS))]
-        public IActionResult DeleteReceipt(int id)
-        {
-            try
-            {
-                return Ok(_facade.DeleteReceipt(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Error inesperado al eliminar el recibo." });
-            }
-        }
-
-        [HttpGet("receipts/{id}")]
+        [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_CLIENTS))]
-        public ActionResult<ProductResponse> GetReceiptsByClientId(int id)
+        public async Task<ActionResult<ClientResponse>> GetClientByIdAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.GetReceiptById(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Error inesperado al obtener el recibo con id {id}." });
-            }
+            var result = await _facade.GetClientByIdAsync(id);
+            return Ok(result);
         }
 
-        [HttpGet("receipts")]
+        [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_CLIENTS))]
-        public ActionResult<List<ReceiptResponse>> GetAllReceipts()
+        public async Task<ActionResult<List<ClientResponse>>> GetAllClientsAsync([FromQuery] QueryOptions options)
         {
-            try
-            {
-                return Ok(_facade.GetAllReceipts());
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Error inesperado al obtener los recibos." });
-            }
+            var result = await _facade.GetAllClientsAsync(options);
+            return Ok(result);
         }
 
-        private static object FormatearError(ArgumentException ex)
-        {
-            var mensaje = ex.Message.Split(" (Parameter")[0];
-            return new { campo = ex.ParamName, error = mensaje };
-        }
     }
 }

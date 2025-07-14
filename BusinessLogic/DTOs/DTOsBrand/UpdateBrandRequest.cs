@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsBrand
 {
-    public class UpdateBrandRequest
+    public class UpdateBrandRequest: AuditableRequest
     {
         public int Id { get; set; }
         public required string Name { get; set; }

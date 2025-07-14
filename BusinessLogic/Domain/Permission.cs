@@ -1,4 +1,4 @@
-﻿namespace BusinessLogic.Dominio
+﻿namespace BusinessLogic.Domain
 {
     public enum Permission
     {
@@ -99,5 +99,11 @@
         DELETE_COLLECTIONS = 62,
         EDIT_COLLECTIONS = 63,
         VIEW_COLLECTIONS = 64,
+
+        //Brands
+        CREATE_BRANDS = 65,
+        DELETE_BRANDS = 66,
+        EDIT_BRANDS = 67,
+        VIEW_BRANDS = 68,
     }
 }

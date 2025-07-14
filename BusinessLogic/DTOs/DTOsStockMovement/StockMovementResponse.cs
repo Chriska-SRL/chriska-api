@@ -1,10 +1,11 @@
 ﻿using BusinessLogic.Común.Enums;
+using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsUser;
 namespace BusinessLogic.DTOs.DTOsStockMovement
 {
-    public class StockMovementResponse
+    public class StockMovementResponse : AuditableResponse
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
