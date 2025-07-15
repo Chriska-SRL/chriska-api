@@ -7,23 +7,24 @@ namespace BusinessLogic.Dominio
     public class Product : IEntity<Product.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
-        public string InternalCode { get; set; } = string.Empty;
-        public string? Barcode { get; set; }
         public string Name { get; set; }
-        public decimal Price { get; set; }
-        public string Image { get; set; }
-        public int Stock { get; set; }
-        public string Description { get; set; }
+        public string? Barcode { get; set; }
+        public string InternalCode { get; set; } = string.Empty;
         public UnitType UnitType { get; set; }
+        public decimal Price { get; set; }
+        public string Description { get; set; }
         public TemperatureCondition TemperatureCondition { get; set; }
+        public int Stock { get; set; }
+        public int AviableStock { get; set; }
+        public string Image { get; set; }
         public string Observation { get; set; }
         public SubCategory SubCategory { get; set; }
         public Brand Brand { get; set; }
+        public List<Discount> Discounts { get; set; } = new List<Discount>();
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+        public AuditInfo AuditInfo { get; set ; }
 
-
-        public Product(int id, string? barcode, string name, decimal price, string image, int stock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
+        public Product(int id, string? barcode, string name, decimal price, string image, int stock, int aviableStock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand,List<Supplier> supplier)
         {
             Id = id;
             Barcode = barcode;
@@ -31,16 +32,16 @@ namespace BusinessLogic.Dominio
             Price = price;
             Image = image;
             Stock = stock;
+            AviableStock = aviableStock;
             Description = description;
             UnitType = unitType;
             TemperatureCondition = temperatureCondition;
             Observation = observations;
             SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
             Brand = brand ?? throw new ArgumentNullException(nameof(brand));
-            Suppliers = suppliers ?? new List<Supplier>();
+            Suppliers = supplier ?? throw new ArgumentNullException(nameof(supplier));
             Validate();
         }
-
 
         public Product(int id)
         {
@@ -54,11 +55,13 @@ namespace BusinessLogic.Dominio
             Price = 1;
             Image = "ImagenTemporal.jpg";
             Stock = 0;
+            AviableStock = 0;
             Description = "Descripcion Temporal";
             UnitType = UnitType.Unit;
             TemperatureCondition = TemperatureCondition.None;
             Observation = "Observaciones Temporales";
             SubCategory = new SubCategory(9999);
+            Brand = new Brand(9999);
             Suppliers = new List<Supplier>();
         }
 
@@ -81,6 +84,9 @@ namespace BusinessLogic.Dominio
             if (Stock < 0)
                 throw new ArgumentOutOfRangeException(nameof(Stock), "El stock no puede ser negativo.");
 
+            if (AviableStock < 0)
+                throw new ArgumentOutOfRangeException(nameof(AviableStock), "El stock disponible no puede ser negativo.");
+
             if (string.IsNullOrWhiteSpace(Description))
                 throw new ArgumentNullException(nameof(Description), "La descripción es obligatoria.");
             if (Description.Length > 255)
@@ -97,8 +103,6 @@ namespace BusinessLogic.Dominio
 
             if (!string.IsNullOrWhiteSpace(Observation) && Observation.Length > 255)
                 throw new ArgumentOutOfRangeException(nameof(Observation), "La observación no puede superar los 255 caracteres.");
-
-
         }
 
         public void Update(UpdatableData data)
@@ -119,6 +123,8 @@ namespace BusinessLogic.Dominio
             Observation = data.Observation ?? Observation;
             SubCategory = data.SubCategory ?? SubCategory;
             Brand = data.Brand ?? Brand;
+            AviableStock = data.AviableStock ?? AviableStock;
+            Stock = data.Stock ?? Stock;
 
             SetInternalCode();
             Validate();
@@ -136,6 +142,8 @@ namespace BusinessLogic.Dominio
             public string? Observation { get; set; } = string.Empty;
             public SubCategory? SubCategory { get; set; } = null!;
             public Brand? Brand { get; set; } = null!;
+            public int? Stock { get; set; }
+            public int? AviableStock { get; set; }
         }
 
         public void SetInternalCode()

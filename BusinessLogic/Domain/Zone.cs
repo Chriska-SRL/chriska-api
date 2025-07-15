@@ -7,7 +7,8 @@ namespace BusinessLogic.Dominio
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<Day> Days { get; set; } = new List<Day>();
+        public List<Day> DeliveryDays { get; set; } = new List<Day>();
+        public List<Day> RequestDays { get; set; } = new List<Day>();
         public string? ImageUrl { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 

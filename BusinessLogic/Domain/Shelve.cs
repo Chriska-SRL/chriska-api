@@ -9,6 +9,7 @@ namespace BusinessLogic.Dominio
         public string Description { get; set; } = string.Empty;
         public Warehouse Warehouse { get; set; }
         public List<StockMovement> StockMovements { get; set; } = new List<StockMovement>();
+        public List<Product> Products { get; set; } = new List<Product>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Shelve(int id,string name, string description, Warehouse warehouse, List<StockMovement> stockMovements)

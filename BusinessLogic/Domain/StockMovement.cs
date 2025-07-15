@@ -13,6 +13,7 @@ namespace BusinessLogic.Dominio
         public Shelve Shelve { get; set; }
         public User User { get; set; }
         public Product Product { get; set; }
+        public StockMovementType StockMovementType { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public StockMovement(int id, DateTime date, int quantity, StockMovementType type, string reason, Shelve shelve, User user, Product product)

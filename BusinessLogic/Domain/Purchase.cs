@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Común;
+using BusinessLogic.Domain;
 using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Dominio
@@ -7,17 +8,19 @@ namespace BusinessLogic.Dominio
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public string Status { get; set; }
+        public string Reference { get; set; }
         public Supplier Supplier { get; set; }
-        public List<PurchaseItem> PurchaseItems { get; set; } = new List<PurchaseItem>();
+        public List<Payment> Payments { get; set; } = new List<Payment>();
+        public List<ProductDocument> ProductDocument { get; set; } 
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Purchase(int id,DateTime date, string status, Supplier supplier)
+        public Purchase(int id,DateTime date, string referece, Supplier supplier,List<Payment> payments)
         {
             Id = id;
             Date = date;
-            Status = status;
+            Reference = referece;
             Supplier = supplier;
+            Payments = payments ?? new List<Payment>();
         }
 
         public void Validate()
