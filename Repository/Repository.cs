@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Repository
 {
-    public abstract class Repository<T> where T : IEntity<object>, IAuditable
+    public abstract class Repository<T, TData> where T : IEntity<TData>, IAuditable
     {
         private readonly string _connectionString;
         protected readonly ILogger<T> _logger;
@@ -22,20 +22,90 @@ namespace Repository
         }
 
         protected TResult ExecuteRead<TResult>(
-            string baseQuery,
-            Action<SqlCommand>? configureCommand,
-            Func<SqlDataReader, TResult> map)
+            string tableName,
+            Func<SqlDataReader, TResult> map,
+            Dictionary<string, string>? filters = null)
         {
             try
             {
                 using var connection = CreateConnection();
                 connection.Open();
 
-                // Agregar campos de auditoría automáticamente al SELECT
-                var query = AppendAuditFields(baseQuery, AuditAction.Read);
+                var query = $"SELECT * FROM {tableName} WHERE IsDeleted = 0";
+                var parameters = new List<SqlParameter>();
+
+                int page = 1;
+                int pageSize = 20;
+                string sortBy = "Id";
+                string sortDirection = "ASC";
+
+                if (filters != null)
+                {
+                    foreach (var kvp in filters)
+                    {
+                        var key = kvp.Key;
+                        var value = kvp.Value;
+
+                        if (string.IsNullOrWhiteSpace(value))
+                            continue;
+
+                        if (key.Equals("page", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (int.TryParse(value, out var p)) page = p;
+                            continue;
+                        }
+
+                        if (key.Equals("pageSize", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (int.TryParse(value, out var ps)) pageSize = ps;
+                            continue;
+                        }
+
+                        if (key.Equals("sortBy", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sortBy = value;
+                            continue;
+                        }
+
+                        if (key.Equals("sortDirection", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (value.Equals("DESC", StringComparison.OrdinalIgnoreCase))
+                                sortDirection = "DESC";
+                            continue;
+                        }
+
+                        var paramName = $"@{key}";
+                        if (key.EndsWith("From", StringComparison.OrdinalIgnoreCase))
+                        {
+                            query += $" AND {key[..^4]} >= {paramName}";
+                        }
+                        else if (key.EndsWith("To", StringComparison.OrdinalIgnoreCase))
+                        {
+                            query += $" AND {key[..^2]} <= {paramName}";
+                        }
+                        else if (key.Equals("Id", StringComparison.OrdinalIgnoreCase) || key.EndsWith("Id", StringComparison.OrdinalIgnoreCase))
+                        {
+                            query += $" AND {key} = {paramName}";
+                        }
+                        else
+                        {
+                            query += $" AND {key} LIKE {paramName}";
+                            value = $"%{value}%"; // Agregar comodines para LIKE
+                        }
+
+                        parameters.Add(new SqlParameter(paramName, value));
+                    }
+                }
+
+                // Orden y paginación
+                query += $" ORDER BY {sortBy} {sortDirection}";
+                query += " OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+                parameters.Add(new SqlParameter("@Offset", (page - 1) * pageSize));
+                parameters.Add(new SqlParameter("@PageSize", pageSize));
 
                 using var command = new SqlCommand(query, connection);
-                configureCommand?.Invoke(command);
+                foreach (var param in parameters)
+                    command.Parameters.Add(param);
 
                 using var reader = command.ExecuteReader();
                 return map(reader);
@@ -50,31 +120,33 @@ namespace Repository
             }
         }
 
-        protected int ExecuteWriteWithAudit(
+
+
+        // ✅ Versión genérica para Insert con OUTPUT INSERTED.Id
+        protected TResult ExecuteWriteWithAudit<TResult>(
             string baseQuery,
             T entity,
             AuditAction action,
-            Action<SqlCommand> configureCommand)
+            Action<SqlCommand> configureCommand,
+            Func<SqlCommand, TResult> resultHandler)
         {
             try
             {
                 using var connection = CreateConnection();
                 connection.Open();
 
-                // Construir la query con campos de auditoría correctamente insertados
                 var auditQuery = AppendAuditFields(baseQuery, action);
 
                 using var command = new SqlCommand(auditQuery, connection);
 
                 var auditInfo = entity.AuditInfo;
 
-                // Inyectar parámetros de auditoría según la acción
                 switch (action)
                 {
                     case AuditAction.Insert:
                         command.Parameters.AddWithValue("@CreatedAt", auditInfo.CreatedAt);
                         command.Parameters.AddWithValue("@CreatedBy", auditInfo.CreatedBy);
-                        command.Parameters.AddWithValue("@CreatedLocation", auditInfo.CreatdedLocation);
+                        command.Parameters.AddWithValue("@CreatedLocation", auditInfo.CreatedLocation);
                         break;
 
                     case AuditAction.Update:
@@ -90,10 +162,9 @@ namespace Repository
                         break;
                 }
 
-                // Configura parámetros adicionales de la entidad
                 configureCommand(command);
 
-                return command.ExecuteNonQuery();
+                return resultHandler(command);
             }
             catch (SqlException ex)
             {
@@ -103,6 +174,22 @@ namespace Repository
             {
                 throw new ApplicationException("Error inesperado.", ex);
             }
+        }
+
+        // ✅ Versión corta para Update y Delete (devuelve filas afectadas)
+        protected int ExecuteWriteWithAudit(
+            string baseQuery,
+            T entity,
+            AuditAction action,
+            Action<SqlCommand> configureCommand)
+        {
+            return ExecuteWriteWithAudit(
+                baseQuery,
+                entity,
+                action,
+                configureCommand,
+                cmd => cmd.ExecuteNonQuery()
+            );
         }
 
         private string AppendAuditFields(string baseQuery, AuditAction action)
@@ -122,14 +209,12 @@ namespace Repository
 
             if (baseQuery.StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
             {
-                // Insertar campos de auditoría después de SELECT
                 int selectIndex = "SELECT ".Length;
                 return baseQuery.Insert(selectIndex, $"{auditFields}, ");
             }
 
             if (baseQuery.StartsWith("INSERT", StringComparison.OrdinalIgnoreCase))
             {
-                // Agregar campos de auditoría en columnas y valores
                 var colStart = baseQuery.IndexOf('(');
                 var colEnd = baseQuery.IndexOf(')', colStart);
                 var valStart = baseQuery.IndexOf("VALUES", StringComparison.OrdinalIgnoreCase);
@@ -155,12 +240,10 @@ namespace Repository
 
                 if (whereIndex != -1)
                 {
-                    // Insertar antes del WHERE
                     return baseQuery.Insert(whereIndex, $", {auditFields} ");
                 }
                 else
                 {
-                    // No hay WHERE, solo agregar al final del SET
                     return $"{baseQuery}, {auditFields}";
                 }
             }

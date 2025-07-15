@@ -4,7 +4,7 @@
     {
         public DateTime CreatedAt { get; set; }
         public int CreatedBy { get; set; }
-        public string CreatdedLocation { get; set; }
+        public string CreatedLocation { get; set; }
 
 
         public DateTime? UpdatedAt { get; set; }
@@ -15,5 +15,7 @@
         public DateTime? DeletedAt { get; set; }
         public int DeletedBy { get; set; }
         public string DeletedLocation { get; set; }
+
+        public AuditInfo() { }
     }
 }

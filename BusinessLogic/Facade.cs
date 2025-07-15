@@ -235,6 +235,7 @@ namespace BusinessLogic
         public BrandResponse DeleteBrand(int id) => Products.DeleteBrand(id);
         public BrandResponse GetBrand(int id) => Products.GetBrandById(id);
         public List<BrandResponse> GetAllBrand() => Products.GetAllBrands();
+        public List<BrandResponse> GetAllBrand(Dictionary<string, string>? filters) => Products.GetAllBrands(filters);
 
         // Image
         public ImageResponse UploadImage(string entityType, int entityId, IFormFile file) => Images.UploadImage(entityType, entityId, file);

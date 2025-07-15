@@ -1,18 +1,21 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Dominio;
 
 namespace BusinessLogic.Domain
 {
-    public class Brand : IEntity<Brand.UpdatableData>
+    public class Brand : IEntity<Brand.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Brand(int id, string name, string description)
+        public Brand(int id, string name, string description, AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
+            AuditInfo = auditInfo; ;
 
             Validate();
         }

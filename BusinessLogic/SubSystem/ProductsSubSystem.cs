@@ -137,10 +137,15 @@ namespace BusinessLogic.SubSystem
 
             return BrandMapper.ToResponse(brand);
         }
-
         public List<BrandResponse> GetAllBrands()
         {
             return _brandRepository.GetAll()
+                                   .Select(BrandMapper.ToResponse)
+                                   .ToList();
+        }
+        public List<BrandResponse> GetAllBrands(Dictionary<string, string> filters)
+        {
+            return _brandRepository.GetAll(filters)
                                    .Select(BrandMapper.ToResponse)
                                    .ToList();
         }

@@ -183,11 +183,34 @@ namespace API.Controllers
 
         [HttpGet("brands")]
         [Authorize(Policy = nameof(Permission.VIEW_PRODUCTS))]
-        public ActionResult<List<BrandResponse>> GetAllBrands()
+        public ActionResult<List<BrandResponse>> GetAllBrands(
+            int? page,
+            int? pageSize,
+            string? name,
+            DateTime? createdAtFrom,
+            DateTime? createdAtTo,
+            string? sortBy = "Id")
         {
             try
             {
-                return Ok(_facade.GetAllBrand());
+                var filters = new Dictionary<string, string>();
+
+                if (page.HasValue)
+                    filters["page"] = page.Value.ToString();
+                if (pageSize.HasValue)
+                    filters["pageSize"] = pageSize.Value.ToString();
+                if (!string.IsNullOrWhiteSpace(name))
+                    filters["Name"] = name;
+                if (createdAtFrom.HasValue)
+                    filters["CreatedAtFrom"] = createdAtFrom.Value.ToString("yyyy-MM-dd HH:mm:ss");
+                if (createdAtTo.HasValue)
+                    filters["CreatedAtTo"] = createdAtTo.Value.ToString("yyyy-MM-dd HH:mm:ss");
+                if (!string.IsNullOrWhiteSpace(sortBy))
+                    filters["sortBy"] = sortBy;
+
+                var result = _facade.GetAllBrand(filters);
+
+                return Ok(result);
             }
             catch (ArgumentException ex)
             {
@@ -198,6 +221,7 @@ namespace API.Controllers
                 return StatusCode(500, new { error = "Error inesperado al obtener las marcas." });
             }
         }
+
         private static object FormatearError(ArgumentException ex)
         {
             var mensaje = ex.Message.Split(" (Parameter")[0];
