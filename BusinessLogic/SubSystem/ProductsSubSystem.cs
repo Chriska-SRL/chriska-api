@@ -106,6 +106,8 @@ namespace BusinessLogic.SubSystem
             var newBrand = BrandMapper.ToDomain(request);
             newBrand.Validate();
 
+            //chequear si hay nuevo igual.
+
             var added = await _brandRepository.AddAsync(newBrand);
             return BrandMapper.ToResponse(added);
         }
