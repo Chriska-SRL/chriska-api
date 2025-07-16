@@ -1,13 +1,16 @@
 ﻿CREATE TABLE [dbo].[Zones]
 (
-	 -- Clave primaria de la entidad
+    -- Clave primaria
     [Id] INT NOT NULL PRIMARY KEY IDENTITY,
 
     -- Campos de la entidad
     [Name] NVARCHAR(50) NULL UNIQUE,
     [Description] NVARCHAR(100) NULL,
+    [ImageId] INT NULL,
+    [DeliveryDays] NVARCHAR(MAX) NULL, -- JSON: [1,3,5]
+    [RequestDays] NVARCHAR(MAX) NULL,  -- JSON: [2,4,6]
 
-    -- Campos de auditoría
+    -- Auditoría
     [CreatedAt] DATETIME2 NOT NULL,
     [CreatedBy] INT NOT NULL,
     [CreatedLocation] NVARCHAR(50) NULL, -- Coordenadas GPS: "lat,long"
@@ -18,11 +21,12 @@
     [DeletedBy] INT NULL,
     [DeletedLocation] NVARCHAR(50) NULL, -- Coordenadas GPS: "lat,long"
 
-    -- Soft delete flag
+    -- Soft delete
     [IsDeleted] BIT NOT NULL DEFAULT 0,
 
-    -- Foreign keys de auditoría
-    CONSTRAINT FK_Zones_CreatedBy FOREIGN KEY (CreatedBy) REFERENCES Users(Id),
-    CONSTRAINT FK_Zones_UpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES Users(Id),
-    CONSTRAINT FK_Zones_DeletedBy FOREIGN KEY (DeletedBy) REFERENCES Users(Id)
+    -- Foreign keys
+    CONSTRAINT [FK_Zones_CreatedBy] FOREIGN KEY ([CreatedBy]) REFERENCES [Users]([Id]),
+    CONSTRAINT [FK_Zones_UpdatedBy] FOREIGN KEY ([UpdatedBy]) REFERENCES [Users]([Id]),
+    CONSTRAINT [FK_Zones_DeletedBy] FOREIGN KEY ([DeletedBy]) REFERENCES [Users]([Id]),
+    CONSTRAINT [FK_Zones_ImageId] FOREIGN KEY ([ImageId]) REFERENCES [ZoneImages]([Id])
 )
