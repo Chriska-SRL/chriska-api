@@ -1,11 +1,12 @@
-﻿CREATE TABLE [dbo].[Zones]
+﻿CREATE TABLE [dbo].[ClientBankAccounts]
 (
 	 -- Clave primaria de la entidad
     [Id] INT NOT NULL PRIMARY KEY IDENTITY,
 
     -- Campos de la entidad
-    [Name] NVARCHAR(50) NULL UNIQUE,
-    [Description] NVARCHAR(100) NULL,
+    [BankName] NVARCHAR(50) NULL, 
+    [AccountName] NVARCHAR(50) NOT NULL, 
+    [AccountNumber] NVARCHAR(50) NOT NULL, 
 
     -- Campos de auditoría
     [CreatedAt] DATETIME2 NOT NULL,
@@ -21,8 +22,8 @@
     -- Soft delete flag
     [IsDeleted] BIT NOT NULL DEFAULT 0,
 
-    -- Foreign keys de auditoría
-    CONSTRAINT FK_Zones_CreatedBy FOREIGN KEY (CreatedBy) REFERENCES Users(Id),
-    CONSTRAINT FK_Zones_UpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES Users(Id),
-    CONSTRAINT FK_Zones_DeletedBy FOREIGN KEY (DeletedBy) REFERENCES Users(Id)
+        -- Foreign keys de auditoría
+    CONSTRAINT FK_ClientBankAccounts_CreatedBy FOREIGN KEY (CreatedBy) REFERENCES Users(Id),
+    CONSTRAINT FK_ClientBankAccounts_UpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES Users(Id),
+    CONSTRAINT FK_ClientBankAccounts_DeletedBy FOREIGN KEY (DeletedBy) REFERENCES Users(Id)
 )
