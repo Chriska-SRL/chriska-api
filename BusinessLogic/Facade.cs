@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsClient;
@@ -229,13 +230,21 @@ namespace BusinessLogic
         public ZoneResponse GetZoneById(int id) => Zones.GetZoneById(id);
         public List<ZoneResponse> GetAllZones() => Zones.GetAllZones();
 
-        // Brand
-        public BrandResponse AddBrand(AddBrandRequest brand) => Products.AddBrand(brand);
-        public BrandResponse UpdateBrand(UpdateBrandRequest brand) => Products.UpdateBrand(brand);
-        public BrandResponse DeleteBrand(int id) => Products.DeleteBrand(id);
-        public BrandResponse GetBrand(int id) => Products.GetBrandById(id);
-        public List<BrandResponse> GetAllBrand() => Products.GetAllBrands();
-        public List<BrandResponse> GetAllBrand(Dictionary<string, string>? filters) => Products.GetAllBrands(filters);
+        // Brands
+        public async Task<BrandResponse> AddBrandAsync(AddBrandRequest brand)
+            => await Products.AddBrandAsync(brand);
+
+        public async Task<BrandResponse> UpdateBrandAsync(UpdateBrandRequest brand)
+            => await Products.UpdateBrandAsync(brand);
+
+        public async Task<BrandResponse> DeleteBrandAsync(int id)
+            => await Products.DeleteBrandAsync(id);
+
+        public async Task<BrandResponse> GetBrandByIdAsync(int id)
+            => await Products.GetBrandByIdAsync(id);
+
+        public async Task<List<BrandResponse>> GetAllBrandsAsync(QueryOptions options)
+            => await Products.GetAllBrandsAsync(options);
 
         // Image
         public ImageResponse UploadImage(string entityType, int entityId, IFormFile file) => Images.UploadImage(entityType, entityId, file);

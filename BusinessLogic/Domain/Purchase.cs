@@ -1,14 +1,16 @@
-﻿using System.Text.RegularExpressions;
+﻿using BusinessLogic.Común;
+using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Dominio
 {
-    public class Purchase:IEntity<Purchase.UpdatableData>
+    public class Purchase:IEntity<Purchase.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public string Status { get; set; }
         public Supplier Supplier { get; set; }
         public List<PurchaseItem> PurchaseItems { get; set; } = new List<PurchaseItem>();
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Purchase(int id,DateTime date, string status, Supplier supplier)
         {

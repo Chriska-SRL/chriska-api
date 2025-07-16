@@ -1,6 +1,8 @@
-﻿namespace BusinessLogic.Dominio
+﻿using BusinessLogic.Común;
+
+namespace BusinessLogic.Dominio
 {
-    public class Payment : IEntity<Payment.UpdatableData>
+    public class Payment : IEntity<Payment.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
@@ -8,6 +10,7 @@
         public string PaymentMethod { get; set; }
         public string Note { get; set; }
         public Supplier Supplier { get; set; }
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Payment(int id, DateTime date, decimal amount, string paymentMethod, string note, Supplier supplier)
         {

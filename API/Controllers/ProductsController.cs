@@ -4,6 +4,7 @@ using BusinessLogic;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsBrand;
+using BusinessLogic.Común;
 
 namespace API.Controllers
 {
@@ -111,11 +112,12 @@ namespace API.Controllers
 
         [HttpPost("brand")]
         [Authorize(Policy = nameof(Permission.CREATE_PRODUCTS))]
-        public ActionResult<BrandResponse> AddBrand([FromBody] AddBrandRequest request)
+        public async Task<ActionResult<BrandResponse>> AddBrandAsync([FromBody] AddBrandRequest request)
         {
             try
             {
-                return Ok(_facade.AddBrand(request));
+                var result = await _facade.AddBrandAsync(request);
+                return Ok(result);
             }
             catch (ArgumentException ex)
             {
@@ -129,11 +131,12 @@ namespace API.Controllers
 
         [HttpPut("brand")]
         [Authorize(Policy = nameof(Permission.EDIT_PRODUCTS))]
-        public ActionResult<BrandResponse> UpdateBrand([FromBody] UpdateBrandRequest request)
+        public async Task<ActionResult<BrandResponse>> UpdateBrandAsync([FromBody] UpdateBrandRequest request)
         {
             try
             {
-                return Ok(_facade.UpdateBrand(request));
+                var result = await _facade.UpdateBrandAsync(request);
+                return Ok(result);
             }
             catch (ArgumentException ex)
             {
@@ -147,11 +150,12 @@ namespace API.Controllers
 
         [HttpDelete("brand/{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_PRODUCTS))]
-        public ActionResult<BrandResponse> DeleteBrand(int id)
+        public async Task<ActionResult<BrandResponse>> DeleteBrandAsync(int id)
         {
             try
             {
-                return Ok(_facade.DeleteBrand(id));
+                var result = await _facade.DeleteBrandAsync(id);
+                return Ok(result);
             }
             catch (ArgumentException ex)
             {
@@ -165,11 +169,12 @@ namespace API.Controllers
 
         [HttpGet("brand/{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_PRODUCTS))]
-        public ActionResult<BrandResponse> GetBrandById(int id)
+        public async Task<ActionResult<BrandResponse>> GetBrandByIdAsync(int id)
         {
             try
             {
-                return Ok(_facade.GetBrand(id));
+                var result = await _facade.GetBrandByIdAsync(id);
+                return Ok(result);
             }
             catch (ArgumentException ex)
             {
@@ -183,33 +188,11 @@ namespace API.Controllers
 
         [HttpGet("brands")]
         [Authorize(Policy = nameof(Permission.VIEW_PRODUCTS))]
-        public ActionResult<List<BrandResponse>> GetAllBrands(
-            int? page,
-            int? pageSize,
-            string? name,
-            DateTime? createdAtFrom,
-            DateTime? createdAtTo,
-            string? sortBy = "Id")
+        public async Task<ActionResult<List<BrandResponse>>> GetAllBrandsAsync([FromQuery] QueryOptions options)
         {
             try
             {
-                var filters = new Dictionary<string, string>();
-
-                if (page.HasValue)
-                    filters["page"] = page.Value.ToString();
-                if (pageSize.HasValue)
-                    filters["pageSize"] = pageSize.Value.ToString();
-                if (!string.IsNullOrWhiteSpace(name))
-                    filters["Name"] = name;
-                if (createdAtFrom.HasValue)
-                    filters["CreatedAtFrom"] = createdAtFrom.Value.ToString("yyyy-MM-dd HH:mm:ss");
-                if (createdAtTo.HasValue)
-                    filters["CreatedAtTo"] = createdAtTo.Value.ToString("yyyy-MM-dd HH:mm:ss");
-                if (!string.IsNullOrWhiteSpace(sortBy))
-                    filters["sortBy"] = sortBy;
-
-                var result = _facade.GetAllBrand(filters);
-
+                var result = await _facade.GetAllBrandsAsync(options);
                 return Ok(result);
             }
             catch (ArgumentException ex)

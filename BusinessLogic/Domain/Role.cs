@@ -1,14 +1,16 @@
-﻿using System.Xml.Linq;
+﻿using BusinessLogic.Común;
+using System.Xml.Linq;
 
 namespace BusinessLogic.Dominio
 {
-    public class Role : IEntity<Role.UpdatableData>
+    public class Role : IEntity<Role.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; } = string.Empty;
         public List<Permission> Permissions { get; set; } = new List<Permission>();
         public List<User> Users { get; set; } = new List<User>();
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Role(int id, string name, string description, List<Permission> permissions)
         {

@@ -4,6 +4,7 @@ using BusinessLogic.Común.Mappers;
 using BusinessLogic.Dominio;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsBrand;
+using BusinessLogic.Común;
 
 namespace BusinessLogic.SubSystem
 {
@@ -100,54 +101,49 @@ namespace BusinessLogic.SubSystem
                                      .ToList();
         }
 
-        public BrandResponse AddBrand(AddBrandRequest request)
+        public async Task<BrandResponse> AddBrandAsync(AddBrandRequest request)
         {
             var newBrand = BrandMapper.ToDomain(request);
             newBrand.Validate();
 
-            var added = _brandRepository.Add(newBrand);
+            var added = await _brandRepository.AddAsync(newBrand);
             return BrandMapper.ToResponse(added);
         }
 
-        public BrandResponse UpdateBrand(UpdateBrandRequest request)
+        public async Task<BrandResponse> UpdateBrandAsync(UpdateBrandRequest request)
         {
-            var existing = _brandRepository.GetById(request.Id)
-                           ?? throw new ArgumentException("Marca no encontrada.", nameof(request.Id));
+            var existing = await _brandRepository.GetByIdAsync(request.Id)
+                            ?? throw new ArgumentException("Marca no encontrada.", nameof(request.Id));
 
             Brand.UpdatableData data = BrandMapper.ToUpdatableData(request);
             existing.Update(data);
 
-            var updated = _brandRepository.Update(existing);
+            var updated = await _brandRepository.UpdateAsync(existing);
             return BrandMapper.ToResponse(updated);
         }
 
-        public BrandResponse DeleteBrand(int id)
+        public async Task<BrandResponse> DeleteBrandAsync(int id)
         {
-            var brand = _brandRepository.GetById(id)
-                        ?? throw new ArgumentException("Marca no encontrada.", nameof(id));
+            var brand = await _brandRepository.GetByIdAsync(id)
+                         ?? throw new ArgumentException("Marca no encontrada.", nameof(id));
 
-            var deleted = _brandRepository.Delete(id);
+            var deleted = await _brandRepository.DeleteAsync(brand);
             return BrandMapper.ToResponse(deleted);
         }
 
-        public BrandResponse GetBrandById(int id)
+        public async Task<BrandResponse> GetBrandByIdAsync(int id)
         {
-            var brand = _brandRepository.GetById(id)
-                        ?? throw new ArgumentException("Marca no encontrada.", nameof(id));
+            var brand = await _brandRepository.GetByIdAsync(id)
+                         ?? throw new ArgumentException("Marca no encontrada.", nameof(id));
 
             return BrandMapper.ToResponse(brand);
         }
-        public List<BrandResponse> GetAllBrands()
+
+        public async Task<List<BrandResponse>> GetAllBrandsAsync(QueryOptions options)
         {
-            return _brandRepository.GetAll()
-                                   .Select(BrandMapper.ToResponse)
-                                   .ToList();
+            var brands = await _brandRepository.GetAllAsync(options);
+            return brands.Select(BrandMapper.ToResponse).ToList();
         }
-        public List<BrandResponse> GetAllBrands(Dictionary<string, string> filters)
-        {
-            return _brandRepository.GetAll(filters)
-                                   .Select(BrandMapper.ToResponse)
-                                   .ToList();
-        }
+
     }
 }

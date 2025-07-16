@@ -1,9 +1,10 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Común.Enums;
 using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Dominio
 {
-    public class Supplier:IEntity<Supplier.UpdatableData>
+    public class Supplier:IEntity<Supplier.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -21,6 +22,7 @@ namespace BusinessLogic.Dominio
         public List<Payment> Payments { get; set; } = new List<Payment>();
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public List<Day> DaysToDeliver { get; set; } = new List<Day>();
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, Bank bank, string bankAccount, string observations)
         {

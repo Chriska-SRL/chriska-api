@@ -1,18 +1,21 @@
-﻿using BusinessLogic.Domain;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Domain;
 using BusinessLogic.Repository;
-using Microsoft.Extensions.Logging;
+using Repository.Logging;
 using Repository.Mappers;
 
 namespace Repository.EntityRepositories
 {
     public class BrandRepository : Repository<Brand, Brand.UpdatableData>, IBrandRepository
     {
-        public BrandRepository(string connectionString, ILogger<Brand> logger)
-            : base(connectionString, logger) { }
+        public BrandRepository(string connectionString, AuditLogger auditLogger)
+            : base(connectionString, auditLogger) { }
 
-        public Brand Add(Brand brand)
+        #region Add
+
+        public async Task<Brand> AddAsync(Brand brand)
         {
-            int newId = ExecuteWriteWithAudit(
+            int newId = await ExecuteWriteWithAuditAsync(
                 "INSERT INTO Brands (Name, Description) OUTPUT INSERTED.Id VALUES (@Name, @Description)",
                 brand,
                 AuditAction.Insert,
@@ -21,15 +24,23 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Name", brand.Name);
                     cmd.Parameters.AddWithValue("@Description", brand.Description);
                 },
-                cmd => (int)cmd.ExecuteScalar()
+                async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
             );
+
+            if (newId == 0)
+                throw new InvalidOperationException("No se pudo obtener el Id insertado.");
 
             return new Brand(newId, brand.Name, brand.Description, brand.AuditInfo);
         }
 
-        public Brand Update(Brand brand)
+
+        #endregion
+
+        #region Update
+
+        public async Task<Brand> UpdateAsync(Brand brand)
         {
-            int rows = ExecuteWriteWithAudit(
+            int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE Brands SET Name = @Name, Description = @Description WHERE Id = @Id",
                 brand,
                 AuditAction.Update,
@@ -47,12 +58,16 @@ namespace Repository.EntityRepositories
             return brand;
         }
 
-        public Brand Delete(Brand brand)
+        #endregion
+
+        #region Delete
+
+        public async Task<Brand> DeleteAsync(Brand brand)
         {
             if (brand == null)
                 throw new ArgumentNullException(nameof(brand), "La marca no puede ser nula.");
 
-            int rows = ExecuteWriteWithAudit(
+            int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE Brands SET IsDeleted = 1 WHERE Id = @Id",
                 brand,
                 AuditAction.Delete,
@@ -68,50 +83,14 @@ namespace Repository.EntityRepositories
             return brand;
         }
 
-        public List<Brand> GetAll()
+        #endregion
+
+        #region GetAll
+
+        public async Task<List<Brand>> GetAllAsync(QueryOptions options)
         {
-            return ExecuteRead(
-               tableName: "Brands",
-               map: reader =>
-               {
-                   var brands = new List<Brand>();
-                   while (reader.Read())
-                   {
-                       brands.Add(BrandMapper.FromReader(reader));
-                   }
-                   return brands;
-               }
-           );
-        }
-
-        public Brand? GetById(int id)
-        {
-            return ExecuteRead(
-                tableName: "Brands",
-                map: reader =>
-                {
-                    if (reader.Read())
-                        return BrandMapper.FromReader(reader);
-
-                    return null;
-                },
-                filters: new Dictionary<string, string>
-                {
-                    ["Id"] = id.ToString()
-                }
-            );
-        }
-
-
-        public Brand? Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Brand> GetAll(Dictionary<string, string>? filters)
-        {
-            return ExecuteRead(
-                tableName: "Brands",
+            return await ExecuteReadAsync(
+                baseQuery: "SELECT * FROM Brands",
                 map: reader =>
                 {
                     var brands = new List<Brand>();
@@ -121,9 +100,36 @@ namespace Repository.EntityRepositories
                     }
                     return brands;
                 },
-                filters: filters
+                options: options
             );
         }
 
+        #endregion
+
+        #region GetById
+
+        public async Task<Brand?> GetByIdAsync(int id)
+        {
+            var options = new QueryOptions
+            {
+                Filters = new Dictionary<string, string>
+                {
+                    ["Id"] = id.ToString()
+                }
+            };
+
+            return await ExecuteReadAsync(
+                baseQuery: "SELECT * FROM Brands",
+                map: reader =>
+                {
+                    if (reader.Read())
+                        return BrandMapper.FromReader(reader);
+                    return null;
+                },
+                options: options
+            );
+        }
+
+        #endregion
     }
 }

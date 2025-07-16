@@ -1,6 +1,8 @@
-﻿namespace BusinessLogic.Dominio
+﻿using BusinessLogic.Común;
+
+namespace BusinessLogic.Dominio
 {
-    public class SubCategory : IEntity<SubCategory.UpdatableData>
+    public class SubCategory : IEntity<SubCategory.UpdatableData>, IAuditable
     {
         private int v1;
         private string v2;
@@ -9,6 +11,7 @@
         public string Name { get; set; }
         public string Description { get; set; }
         public Category Category { get; set; }
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public SubCategory(int id, string name, string description, Category category)
         {

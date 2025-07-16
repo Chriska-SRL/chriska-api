@@ -1,9 +1,10 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Común.Enums;
 using BusinessLogic.Domain;
 
 namespace BusinessLogic.Dominio
 {
-    public class Product : IEntity<Product.UpdatableData>
+    public class Product : IEntity<Product.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public string InternalCode { get; set; } = string.Empty;
@@ -19,6 +20,7 @@ namespace BusinessLogic.Dominio
         public SubCategory SubCategory { get; set; }
         public Brand Brand { get; set; }
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
 
         public Product(int id, string? barcode, string name, decimal price, string image, int stock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand, List<Supplier> suppliers)

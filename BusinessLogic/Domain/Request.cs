@@ -9,7 +9,6 @@
         public string Observation { get; set; }
         public User User { get; set; }
         public Client Client { get; set; }
-        public List<RequestItem> RequestItems { get; set; } = new List<RequestItem>();
 
         public abstract void Validate();
 

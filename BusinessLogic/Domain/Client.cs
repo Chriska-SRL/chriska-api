@@ -1,9 +1,10 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Común.Enums;
 using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Dominio
 {
-    public class Client:IEntity<Client.UpdatableData>
+    public class Client:IEntity<Client.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -22,6 +23,7 @@ namespace BusinessLogic.Dominio
         public Zone Zone { get; set; }
         public List<Request> Requests { get; set; } = new List<Request>();       
         public List<Receipt> Receipts { get; set; } = new List<Receipt>();
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Client(int id,string name, string rut, string razonSocial, string address, string mapsAddress, string schedule, string phone, string contactName, string email, string observations,Bank bank ,string bankAccount, int loanedCrates, Zone zone)
         {

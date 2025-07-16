@@ -1,21 +1,22 @@
-﻿namespace BusinessLogic.Dominio
+﻿using BusinessLogic.Común;
+
+namespace BusinessLogic.Dominio
 {
-    public class Shelve : IEntity<Shelve.UpdatableData>
+    public class Shelve : IEntity<Shelve.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public Warehouse Warehouse { get; set; }
-        public List<ProductStock> Stocks { get; set; } = new List<ProductStock>();
         public List<StockMovement> StockMovements { get; set; } = new List<StockMovement>();
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Shelve(int id,string name, string description, Warehouse warehouse, List<ProductStock> productStocks, List<StockMovement> stockMovements)
+        public Shelve(int id,string name, string description, Warehouse warehouse, List<StockMovement> stockMovements)
         {
             Id = id;
             Name = name;
             Description = description;
             Warehouse = warehouse ?? throw new ArgumentNullException(nameof(warehouse));
-            Stocks = productStocks ?? throw new ArgumentNullException(nameof(productStocks));
             StockMovements = stockMovements ?? throw new ArgumentNullException(nameof(stockMovements));
 
             Validate();
@@ -30,7 +31,6 @@
             Name = "Nombre Temporal";
             Description = "Descripcion Temporal";
             Warehouse = new Warehouse(9999);
-            Stocks = new List<ProductStock>();
             StockMovements = new List<StockMovement>();
         }
 

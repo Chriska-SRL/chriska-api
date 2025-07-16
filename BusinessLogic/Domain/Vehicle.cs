@@ -1,10 +1,11 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Común.Enums;
 using BusinessLogic.DTOs.DTOsCost;
 using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Dominio
 {
-    public class Vehicle : IEntity<Vehicle.UpdatableData>
+    public class Vehicle : IEntity<Vehicle.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public string Plate { get; private set; }
@@ -12,6 +13,7 @@ namespace BusinessLogic.Dominio
         public string Model { get; private set; }
         public int CrateCapacity { get; private set; }
         public List<VehicleCost> VehicleCosts { get; private set; }
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Vehicle(int id, string plate, string brand, string model, int crateCapacity, List<VehicleCost> costs)
         {

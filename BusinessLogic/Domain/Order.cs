@@ -1,6 +1,8 @@
-﻿namespace BusinessLogic.Dominio
+﻿using BusinessLogic.Común;
+
+namespace BusinessLogic.Dominio
 {
-    public class Order : IEntity<Order.UpdatableData>
+    public class Order : IEntity<Order.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
@@ -13,6 +15,7 @@
         public User PreparedBy { get; set; }
         public User DeliveredBy { get; set; }
         public OrderRequest OrderRequest { get; set; }
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Order(int id, DateTime date, string clientName, int crates, string status, Delivery delivery, Sale sale, User preparedBy, User deliveredBy, OrderRequest orderRequest, List<OrderItem> orderItems)
         {

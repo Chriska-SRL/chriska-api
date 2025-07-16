@@ -1,12 +1,15 @@
-﻿namespace BusinessLogic.Dominio
+﻿using BusinessLogic.Común;
+
+namespace BusinessLogic.Dominio
 {
-    public class Warehouse : IEntity<Warehouse.UpdatableData>
+    public class Warehouse : IEntity<Warehouse.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public List<Shelve> Shelves { get; set; } = new List<Shelve>();
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Warehouse(int id, string name, string description, string address, List<Shelve> shelves)
         {

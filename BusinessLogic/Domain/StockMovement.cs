@@ -1,8 +1,9 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Común.Enums;
 
 namespace BusinessLogic.Dominio
 {
-    public class StockMovement : IEntity<StockMovement.UpdatableData>
+    public class StockMovement : IEntity<StockMovement.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
@@ -12,6 +13,7 @@ namespace BusinessLogic.Dominio
         public Shelve Shelve { get; set; }
         public User User { get; set; }
         public Product Product { get; set; }
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public StockMovement(int id, DateTime date, int quantity, StockMovementType type, string reason, Shelve shelve, User user, Product product)
         {

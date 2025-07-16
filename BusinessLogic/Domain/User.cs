@@ -1,10 +1,11 @@
-﻿using System.Data;
+﻿using BusinessLogic.Común;
+using System.Data;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace BusinessLogic.Dominio
 {
-    public class User:IEntity<User.UpdatableData>
+    public class User:IEntity<User.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -14,8 +15,9 @@ namespace BusinessLogic.Dominio
         public Boolean needsPasswordChange { get; set; }
         public Role Role { get; set; }
         public List<Request> Requests { get; set; } = new List<Request>();
-       
-        
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+
+
         public User(int id, string name, string username, string password, Boolean isEnabled, Boolean needsPasswordChange, Role role,List<Request> requests)
         {
             Id = id;

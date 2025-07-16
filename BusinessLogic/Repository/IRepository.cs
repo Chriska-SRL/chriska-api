@@ -1,15 +1,15 @@
-﻿namespace BusinessLogic.Repository
+﻿using BusinessLogic.Común;
+
+namespace BusinessLogic.Repository
 {
     public interface IRepository<T>
     {
-        T? GetById(int id);
-        List<T> GetAll();
-        List<T> GetAll(Dictionary<string, string>? filters);
-        T Add(T entity);
-        T Update(T entity);
-        T? Delete(int id);
-        T? Delete(T entity);
+        Task<T?> GetByIdAsync(int id);
+        Task<List<T>> GetAllAsync(QueryOptions options);
+        Task<T> AddAsync(T entity);
+        Task<T> UpdateAsync(T entity);
+        Task<T> DeleteAsync(T entity);
 
-        //De necesitar mas metodos de escritura o obtencion de datos, agregar en la interfaz correspondiente que herede de esta.
+        // Si necesitas métodos de escritura/lectura adicionales, agregarlos en las interfaces específicas que hereden de esta.
     }
 }

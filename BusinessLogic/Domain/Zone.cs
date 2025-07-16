@@ -1,12 +1,15 @@
-﻿namespace BusinessLogic.Dominio
+﻿using BusinessLogic.Común;
+
+namespace BusinessLogic.Dominio
 {
-    public class Zone : IEntity<Zone.UpdatableData>
+    public class Zone : IEntity<Zone.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public List<Day> Days { get; set; } = new List<Day>();
         public string? ImageUrl { get; set; }
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Zone(int id, string name, string description)
         {

@@ -1,28 +1,32 @@
 ﻿using BusinessLogic.Domain;
-using BusinessLogic.Dominio;
 using BusinessLogic.Repository;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging;
 using Repository.Mappers;
 
 namespace Repository.EntityRepositories
 {
-    public class ImageRepository : Repository<Image>, IImageRepository
+    public class ImageRepository : IImageRepository
     {
-        public ImageRepository(string connectionString, ILogger<Image> logger) : base(connectionString, logger)
+        private readonly string _connectionString;
+
+        public ImageRepository(string connectionString)
         {
+            _connectionString = connectionString;
         }
 
-        public Image Add(Image entity)
+        private SqlConnection CreateConnection()
+            => new SqlConnection(_connectionString);
+
+        public async Task<Image> AddAsync(Image entity)
         {
             try
             {
-                using var connection = CreateConnection();
-                connection.Open();
+                await using var connection = CreateConnection();
+                await connection.OpenAsync();
 
                 using var command = new SqlCommand(@"
-                    INSERT INTO Images (EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate) 
-                    OUTPUT INSERTED.Id 
+                    INSERT INTO Images (EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate)
+                    OUTPUT INSERTED.Id
                     VALUES (@EntityType, @EntityId, @FileName, @BlobName, @ContentType, @Size, @UploadDate)", connection);
 
                 command.Parameters.AddWithValue("@EntityType", entity.EntityType);
@@ -33,104 +37,102 @@ namespace Repository.EntityRepositories
                 command.Parameters.AddWithValue("@Size", entity.Size);
                 command.Parameters.AddWithValue("@UploadDate", entity.UploadDate);
 
-                int insertedId = (int)command.ExecuteScalar();
+                int insertedId = (int)await command.ExecuteScalarAsync();
+
                 return new Image(insertedId, entity.EntityType, entity.EntityId, entity.FileName,
-                               entity.BlobName, entity.ContentType, entity.Size, entity.UploadDate);
+                                 entity.BlobName, entity.ContentType, entity.Size, entity.UploadDate);
             }
             catch (SqlException ex)
             {
-                _logger.LogError(ex, "Error al insertar imagen.");
                 throw new ApplicationException("Error al insertar imagen.", ex);
             }
         }
 
-        public Image? GetByEntityTypeAndId(string entityType, int entityId)
+        public async Task<Image?> GetByEntityTypeAndIdAsync(string entityType, int entityId)
         {
             try
             {
-                using var connection = CreateConnection();
-                connection.Open();
+                await using var connection = CreateConnection();
+                await connection.OpenAsync();
 
                 using var command = new SqlCommand(@"
-                    SELECT Id, EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate 
-                    FROM Images 
+                    SELECT Id, EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate
+                    FROM Images
                     WHERE EntityType = @EntityType AND EntityId = @EntityId", connection);
 
                 command.Parameters.AddWithValue("@EntityType", entityType);
                 command.Parameters.AddWithValue("@EntityId", entityId);
 
-                using var reader = command.ExecuteReader();
-                return reader.Read() ? ImageMapper.FromReader(reader) : null;
+                using var reader = await command.ExecuteReaderAsync();
+                return await reader.ReadAsync() ? ImageMapper.FromReader(reader) : null;
             }
             catch (SqlException ex)
             {
-                _logger.LogError(ex, "Error al obtener imagen por entidad.");
                 throw new ApplicationException("Error al obtener imagen.", ex);
             }
         }
 
-        public Image? Delete(int id)
+        public async Task<Image?> GetByIdAsync(int id)
         {
             try
             {
-                Image? existing = GetById(id);
-                if (existing == null) return null;
-
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using var command = new SqlCommand("DELETE FROM Images WHERE Id = @Id", connection);
-                command.Parameters.AddWithValue("@Id", id);
-
-                command.ExecuteNonQuery();
-                return existing;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al eliminar imagen.");
-                throw new ApplicationException("Error al eliminar imagen.", ex);
-            }
-        }
-
-        public Image? GetById(int id)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
+                await using var connection = CreateConnection();
+                await connection.OpenAsync();
 
                 using var command = new SqlCommand(@"
-                    SELECT Id, EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate 
-                    FROM Images 
+                    SELECT Id, EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate
+                    FROM Images
                     WHERE Id = @Id", connection);
 
                 command.Parameters.AddWithValue("@Id", id);
 
-                using var reader = command.ExecuteReader();
-                return reader.Read() ? ImageMapper.FromReader(reader) : null;
+                using var reader = await command.ExecuteReaderAsync();
+                return await reader.ReadAsync() ? ImageMapper.FromReader(reader) : null;
             }
             catch (SqlException ex)
             {
-                _logger.LogError(ex, "Error al obtener imagen por ID.");
-                throw new ApplicationException("Error al obtener imagen.", ex);
+                throw new ApplicationException("Error al obtener imagen por ID.", ex);
             }
         }
 
-        public List<Image> GetAll()
+        public async Task<Image?> DeleteAsync(int id)
+        {
+            try
+            {
+                var existing = await GetByIdAsync(id);
+                if (existing == null) return null;
+
+                await using var connection = CreateConnection();
+                await connection.OpenAsync();
+
+                using var command = new SqlCommand("DELETE FROM Images WHERE Id = @Id", connection);
+                command.Parameters.AddWithValue("@Id", id);
+
+                await command.ExecuteNonQueryAsync();
+
+                return existing;
+            }
+            catch (SqlException ex)
+            {
+                throw new ApplicationException("Error al eliminar imagen.", ex);
+            }
+        }
+
+        public async Task<List<Image>> GetAllAsync()
         {
             var images = new List<Image>();
             try
             {
-                using var connection = CreateConnection();
-                connection.Open();
+                await using var connection = CreateConnection();
+                await connection.OpenAsync();
 
                 using var command = new SqlCommand(@"
-                    SELECT Id, EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate 
-                    FROM Images 
+                    SELECT Id, EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate
+                    FROM Images
                     ORDER BY UploadDate DESC", connection);
 
-                using var reader = command.ExecuteReader();
-                while (reader.Read())
+                using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
                     images.Add(ImageMapper.FromReader(reader));
                 }
@@ -138,7 +140,6 @@ namespace Repository.EntityRepositories
             }
             catch (SqlException ex)
             {
-                _logger.LogError(ex, "Error al obtener todas las imágenes.");
                 throw new ApplicationException("Error al obtener todas las imágenes.", ex);
             }
         }
