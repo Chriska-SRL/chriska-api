@@ -19,7 +19,7 @@ namespace Repository.EntityRepositories
                 "INSERT INTO Brands (Name, Description) OUTPUT INSERTED.Id VALUES (@Name, @Description)",
                 brand,
                 AuditAction.Insert,
-                cmd =>
+                configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Name", brand.Name);
                     cmd.Parameters.AddWithValue("@Description", brand.Description);
@@ -44,7 +44,7 @@ namespace Repository.EntityRepositories
                 "UPDATE Brands SET Name = @Name, Description = @Description WHERE Id = @Id",
                 brand,
                 AuditAction.Update,
-                cmd =>
+                configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Id", brand.Id);
                     cmd.Parameters.AddWithValue("@Name", brand.Name);
@@ -71,7 +71,7 @@ namespace Repository.EntityRepositories
                 "UPDATE Brands SET IsDeleted = 1 WHERE Id = @Id",
                 brand,
                 AuditAction.Delete,
-                cmd =>
+                configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Id", brand.Id);
                 }
@@ -110,23 +110,19 @@ namespace Repository.EntityRepositories
 
         public async Task<Brand?> GetByIdAsync(int id)
         {
-            var options = new QueryOptions
-            {
-                Filters = new Dictionary<string, string>
-                {
-                    ["Id"] = id.ToString()
-                }
-            };
-
             return await ExecuteReadAsync(
-                baseQuery: "SELECT * FROM Brands",
+                baseQuery: "SELECT * FROM Brands WHERE Id = @Id",
                 map: reader =>
                 {
                     if (reader.Read())
                         return BrandMapper.FromReader(reader);
                     return null;
                 },
-                options: options
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                }
             );
         }
 

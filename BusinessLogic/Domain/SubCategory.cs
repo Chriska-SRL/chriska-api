@@ -13,6 +13,16 @@ namespace BusinessLogic.Dominio
         public Category Category { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
+        public SubCategory(int id, string name, string description, Category category, AuditInfo auditInfo)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+            Category = category ?? throw new ArgumentNullException(nameof(category));
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+
+            Validate();
+        }
         public SubCategory(int id, string name, string description, Category category)
         {
             Id = id;

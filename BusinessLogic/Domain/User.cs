@@ -17,7 +17,20 @@ namespace BusinessLogic.Dominio
         public List<Request> Requests { get; set; } = new List<Request>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
+        public User() { }
+        public User(int id, string name, string username, string password, Boolean isEnabled, Boolean needsPasswordChange, Role role, AuditInfo auditInfo)
+        {
+            Id = id;
+            Name = name;
+            Username = username;
+            Password = password;
+            this.isEnabled = isEnabled;
+            this.needsPasswordChange = needsPasswordChange;
+            Role = role ?? throw new ArgumentNullException(nameof(role));
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
 
+            Validate();
+        }
         public User(int id, string name, string username, string password, Boolean isEnabled, Boolean needsPasswordChange, Role role,List<Request> requests)
         {
             Id = id;

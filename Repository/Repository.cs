@@ -23,15 +23,15 @@ namespace Repository
         #region Read
 
         protected async Task<TResult> ExecuteReadAsync<TResult>(
-            string baseQuery,
-            Func<SqlDataReader, TResult> map,
-            QueryOptions options)
+        string baseQuery,
+        Func<SqlDataReader, TResult> map,
+        QueryOptions options,
+        Action<SqlCommand>? configureCommand = null)
         {
             try
             {
                 await using var connection = CreateConnection();
                 await connection.OpenAsync();
-
 
                 var queryBuilder = new QueryBuilder(baseQuery)
                     .AddIsDeletedFilter()
@@ -41,6 +41,8 @@ namespace Repository
 
                 using var command = new SqlCommand(queryBuilder.Sql, connection);
                 command.Parameters.AddRange(queryBuilder.Parameters.ToArray());
+                
+                configureCommand?.Invoke(command);
 
                 await using var reader = await command.ExecuteReaderAsync();
                 return map(reader);
@@ -54,6 +56,7 @@ namespace Repository
                 throw;
             }
         }
+
 
         #endregion
 

@@ -4,20 +4,27 @@ namespace BusinessLogic.Dominio
 {
     public class Category : IEntity<Category.UpdatableData>, IAuditable
     {
-        private int v1;
-        private string v2;
-
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string Name { get; set; } 
+        public string Description { get; set; } 
         public List<SubCategory> SubCategories { get; set; } = new List<SubCategory>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
+        
         public Category(int id, string name, string description)
         {
             Id = id;
             Name = name;
             Description = description;
+
+            Validate();
+        }
+        public Category(int id, string name, string description, AuditInfo auditInfo)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+            AuditInfo = auditInfo;
 
             Validate();
         }
@@ -28,11 +35,6 @@ namespace BusinessLogic.Dominio
             Description = "Descripcion Temporal";
         }
 
-        public Category(int v1, string v2)
-        {
-            this.v1 = v1;
-            this.v2 = v2;
-        }
 
         public void Validate()
         {

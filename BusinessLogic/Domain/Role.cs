@@ -12,6 +12,17 @@ namespace BusinessLogic.Dominio
         public List<User> Users { get; set; } = new List<User>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
+        public Role() { }
+        public Role(int id, string name, string description, List<Permission> permissions, AuditInfo auditInfo)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+            Permissions = permissions ?? throw new ArgumentNullException(nameof(permissions));
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+
+            Validate();
+        }
         public Role(int id, string name, string description, List<Permission> permissions)
         {
             Id = id;
