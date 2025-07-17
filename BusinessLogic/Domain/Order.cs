@@ -10,8 +10,6 @@ namespace BusinessLogic.Dominio
         public int Crates { get; set; }
         public string Status { get; set; }
         public Delivery Delivery { get; set; }
-        public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
-        public Sale Sale { get; set; }
         public User PreparedBy { get; set; }
         public User DeliveredBy { get; set; }
         public OrderRequest OrderRequest { get; set; }
@@ -25,11 +23,9 @@ namespace BusinessLogic.Dominio
             Crates = crates;
             Status = status;
             Delivery = delivery;
-            Sale = sale;
             PreparedBy = preparedBy;
             DeliveredBy = deliveredBy;
             OrderRequest = orderRequest;
-            OrderItems = orderItems;
         }
 
         public void Validate()
@@ -38,7 +34,6 @@ namespace BusinessLogic.Dominio
             if (Crates <= 0) throw new Exception("La cantidad de cajas debe ser mayor a cero");
             if (string.IsNullOrEmpty(Status)) throw new Exception("El estado no puede estar vacío");
             if (Delivery == null) throw new Exception("La entrega no puede estar vacía");
-            if (OrderItems == null || OrderItems.Count == 0) throw new Exception("Los items de la orden no pueden estar vacíos");
             if (PreparedBy == null) throw new Exception("El usuario que preparó la orden no puede estar vacío");
             if (DeliveredBy == null) throw new Exception("El usuario que entregó la orden no puede estar vacío");
         }
@@ -50,7 +45,6 @@ namespace BusinessLogic.Dominio
             Crates = data.Crates;
             Status = data.Status;
             Delivery = data.Delivery;
-            Sale = data.Sale;
             PreparedBy = data.PreparedBy;
             DeliveredBy = data.DeliveredBy;
             OrderRequest = data.OrderRequest;
@@ -63,7 +57,6 @@ namespace BusinessLogic.Dominio
             public int Crates { get; set; }
             public string Status { get; set; }
             public Delivery Delivery { get; set; }
-            public Sale Sale { get; set; }
             public User PreparedBy { get; set; }
             public User DeliveredBy { get; set; }
             public OrderRequest OrderRequest { get; set; }

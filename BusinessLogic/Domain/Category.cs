@@ -9,7 +9,7 @@ namespace BusinessLogic.Dominio
         public string Description { get; set; } 
         public List<SubCategory> SubCategories { get; set; } = new List<SubCategory>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
-
+        
         
         public Category(int id, string name, string description)
         {

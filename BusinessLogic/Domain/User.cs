@@ -11,10 +11,9 @@ namespace BusinessLogic.Dominio
         public string Name { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public Boolean isEnabled { get; set; }
-        public Boolean needsPasswordChange { get; set; }
+        public Boolean IsEnabled { get; set; }
+        public Boolean NeedsPasswordChange { get; set; }
         public Role Role { get; set; }
-        public List<Request> Requests { get; set; } = new List<Request>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public User() { }
@@ -24,8 +23,8 @@ namespace BusinessLogic.Dominio
             Name = name;
             Username = username;
             Password = password;
-            this.isEnabled = isEnabled;
-            this.needsPasswordChange = needsPasswordChange;
+            IsEnabled = isEnabled;
+            NeedsPasswordChange = needsPasswordChange;
             Role = role ?? throw new ArgumentNullException(nameof(role));
             AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
 
@@ -37,10 +36,9 @@ namespace BusinessLogic.Dominio
             Name = name;
             Username = username;
             Password = password;
-            this.isEnabled = isEnabled;
-            this.needsPasswordChange = needsPasswordChange;
+            IsEnabled = isEnabled;
+            NeedsPasswordChange = needsPasswordChange;
             Role = role ?? throw new ArgumentNullException(nameof(role));
-            Requests = requests ?? new List<Request>();
 
             Validate();
         }
@@ -49,10 +47,10 @@ namespace BusinessLogic.Dominio
             Id = id;
             Name = "Usuario Temporal";
             Username = "usuariotemporal";
-            Password = "password.temporal.123";isEnabled = false;
-            needsPasswordChange = false;
+            Password = "password.temporal.123";
+            IsEnabled = false;
+            NeedsPasswordChange = false;
             Role = new Role(0);
-            Requests = new List<Request>();
         }
 
         public void Validate()
@@ -98,9 +96,9 @@ namespace BusinessLogic.Dominio
 
             Name = data.Name ?? Name;
             Username = data.Username ?? Username;
-            isEnabled = data.isEnabled;
+            IsEnabled = data.isEnabled;
             Role = data.Role ?? Role;
-            needsPasswordChange = data.needsPasswordChange;
+            NeedsPasswordChange = data.needsPasswordChange;
             Validate();
         }
 

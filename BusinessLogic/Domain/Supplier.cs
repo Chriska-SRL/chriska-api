@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Dominio
 {
-    public class Supplier:IEntity<Supplier.UpdatableData>, IAuditable
+    public class Supplier:IEntity<Supplier.UpdatableData>, IAuditable,IBankUser
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -15,16 +15,13 @@ namespace BusinessLogic.Dominio
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
-        public Bank Bank { get; set; }
-        public string BankAccount { get; set; }
         public string Observations { get; set; }
+        public List<BankAccount> BankAccounts { get; set; }
         public List<Product> Products { get; set; } = new List<Product>();
-        public List<Payment> Payments { get; set; } = new List<Payment>();
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
-        public List<Day> DaysToDeliver { get; set; } = new List<Day>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, Bank bank, string bankAccount, string observations)
+        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, Bank bank, string bankAccount, string observations, List<BankAccount> bankAccounts)
         {
             Id = id;
             Name = name;
@@ -35,9 +32,8 @@ namespace BusinessLogic.Dominio
             Phone = phone;
             ContactName = contactName;
             Email = email;
-            Bank = bank;
-            BankAccount = bankAccount;
             Observations = observations;
+            BankAccounts = bankAccounts;
         }
         public Supplier(int id)
         {
@@ -50,8 +46,7 @@ namespace BusinessLogic.Dominio
             Phone = "099000000";
             ContactName = "Contacto Temporal";
             Email = "email@temporal.com";
-            Bank = Bank.Andbank;
-            BankAccount = "0000000000";
+            BankAccounts = new();
             Observations = "Sin observaciones";
         }
 
@@ -98,14 +93,6 @@ namespace BusinessLogic.Dominio
             if (!Regex.IsMatch(Email, emailRegex))
                 throw new ArgumentException("El email tiene un formato inválido.", nameof(Email));
 
-            if (string.IsNullOrEmpty(BankAccount)) throw new Exception("La cuenta bancaria es obligatoria");
-            if (BankAccount.Length > 20)
-                throw new ArgumentOutOfRangeException(nameof(BankAccount), "La cuenta bancaria no puede superar los 20 caracteres.");
-            if (!BankAccount.All(char.IsDigit))
-                throw new ArgumentException("La cuenta bancaria debe contener solo dígitos.", nameof(BankAccount));
-            if (BankAccount.Length < 10 || BankAccount.Length > 14)
-                throw new ArgumentOutOfRangeException(nameof(BankAccount), "La cuenta bancaria debe tener entre 10 y 14 dígitos.");
-
             if (Observations.Length > 255)
                 throw new ArgumentOutOfRangeException(nameof(Observations), "Las observaciones no pueden superar los 255 caracteres.");
         }
@@ -119,8 +106,6 @@ namespace BusinessLogic.Dominio
             Phone = data.Phone ?? Phone;
             ContactName = data.ContactName ?? ContactName;
             Email = data.Email ?? Email;
-            Bank = data.Bank ?? Bank;
-            BankAccount = data.BankAccount ?? BankAccount;
             Observations = data.Observations ?? Observations;
             Validate();
         }
@@ -135,8 +120,6 @@ namespace BusinessLogic.Dominio
             public string? Phone { get; set; }
             public string? ContactName { get; set; }
             public string? Email { get; set; }
-            public Bank? Bank { get; set; }
-            public string? BankAccount { get; set; }
             public string? Observations { get; set; }
         }
     }

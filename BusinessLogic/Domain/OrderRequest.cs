@@ -24,7 +24,6 @@
             Observation = observation;
             User = user;
             Client = client;
-            RequestItems = requestsItems;
         }
         public OrderRequest(int id)
         {

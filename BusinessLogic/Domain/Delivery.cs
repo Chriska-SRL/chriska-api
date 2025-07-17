@@ -24,7 +24,7 @@ namespace BusinessLogic.Dominio
         public Delivery(int id)
         {
             Id = id;
-            //Date = date;
+          //Date = date;
           // DriverName = driverName;
           //  Observation = observation;
           //  Orders = orders;
