@@ -24,7 +24,7 @@ namespace BusinessLogic.Dominio
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
         public AuditInfo AuditInfo { get; set ; }
 
-        public Product(int id, string? barcode, string name, decimal price, string image, int stock, int aviableStock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand,List<Supplier> supplier)
+        public Product(int id, string? barcode, string name, decimal price, string image, int stock, int aviableStock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand,List<Supplier> suppliers, AuditInfo auditInfo)
         {
             Id = id;
             Barcode = barcode;
@@ -39,7 +39,8 @@ namespace BusinessLogic.Dominio
             Observation = observations;
             SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
             Brand = brand ?? throw new ArgumentNullException(nameof(brand));
-            Suppliers = supplier ?? throw new ArgumentNullException(nameof(supplier));
+            Suppliers = suppliers ?? throw new ArgumentNullException(nameof(suppliers));
+            AuditInfo = auditInfo;
             Validate();
         }
 
