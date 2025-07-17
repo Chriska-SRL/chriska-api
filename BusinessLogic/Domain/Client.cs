@@ -62,9 +62,9 @@ namespace BusinessLogic.Dominio
             Email = "email@temporal.com";
             Observations = "Sin observaciones";
             Qualification = "3/5";
-            BankAccounts = new List<BankAccount> { new BankAccount(0, "Banco Temporal", "0000000000") };
+            BankAccounts = new List<BankAccount>();
             LoanedCrates = 0;
-            Zone = new Zone(0, "Zona Temporal", "Descripción Temporal");
+            Zone = new Zone(99999);
         }
 
         public void Validate()
@@ -108,8 +108,7 @@ namespace BusinessLogic.Dominio
             if (LoanedCrates < 0)
                 throw new ArgumentOutOfRangeException(nameof(LoanedCrates), "La cantidad de cajones prestados no puede ser negativa.");
 
-            foreach (var bankAccount in BankAccounts)
-                bankAccount.Validate();
+     
         }
 
         public void Update(UpdatableData data)

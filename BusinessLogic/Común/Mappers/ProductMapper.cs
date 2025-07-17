@@ -1,54 +1,44 @@
-﻿using BusinessLogic.Domain;
-using BusinessLogic.Dominio;
-using BusinessLogic.DTOs.DTOsBrand;
-using BusinessLogic.DTOs.DTOsCategory;
+﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsSubCategory;
-using BusinessLogic.DTOs.DTOsSupplier;
-using BusinessLogic.Común.Audits;
+using BusinessLogic.DTOs.DTOsCategory;
+using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsDiscount;
+using BusinessLogic.Común.Audits;
+using BusinessLogic.Domain;
 
 namespace BusinessLogic.Común.Mappers
 {
     public static class ProductMapper
     {
-        public static Product ToDomain(ProductAddRequest dto, SubCategory subCategory)
+        public static Product FromAddRequest(ProductAddRequest dto, SubCategory subCategory)
         {
-            var product = new Product(
+            return new Product(
                 id: 0,
                 barcode: dto.Barcode,
                 name: dto.Name,
                 price: dto.Price,
                 image: dto.Image,
                 stock: dto.Stock,
+                aviableStock: dto.AvailableStock,
                 description: dto.Description,
                 unitType: dto.UnitType,
                 temperatureCondition: dto.TemperatureCondition,
                 observations: dto.Observations,
                 subCategory: subCategory,
-                brand: new Brand(dto.BrandId)
-            )
-            {
-                AviableStock = dto.AvailableStock
-            };
-
-            if (dto.AuditInfo?.Created != null)
-            {
-                product.CreatedAt = dto.AuditInfo.Created.At;
-                product.CreatedBy = dto.AuditInfo.Created.By?.Username;
-                product.CreatedLocation = dto.AuditInfo.Created.Location;
-            }
-
-            return product;
+                brand: new Brand(dto.BrandId),
+                suppliers: new List<Supplier>(), // TODO: mapear si vienen en el DTO
+                auditInfo: AuditMapper.ToDomain(dto.AuditInfo)
+            );
         }
 
-        public static Product.UpdatableData ToUpdatableData(ProductUpdateRequest dto, SubCategory subCategory)
+        public static Product.UpdatableData FromUpdateRequest(ProductUpdateRequest dto, SubCategory subCategory)
         {
             return new Product.UpdatableData
             {
                 Name = dto.Name,
-                Price = dto.Price,
                 Barcode = dto.Barcode,
+                Price = dto.Price,
                 Image = dto.Image,
                 Description = dto.Description,
                 UnitType = dto.UnitType,
@@ -57,73 +47,52 @@ namespace BusinessLogic.Común.Mappers
                 SubCategory = subCategory,
                 Brand = new Brand(dto.BrandId),
                 Stock = dto.Stock,
-                AviableStock = dto.AvailableStock,
-                AuditInfo = dto.AuditInfo
+                AviableStock = dto.AvailableStock
             };
         }
 
-        public static ProductResponse ToResponse(Product domain)
+        public static ProductResponse ToResponse(Product product)
         {
             return new ProductResponse
             {
-                Id = domain.Id,
-                InternalCode = domain.InternalCode,
-                Barcode = domain.Barcode,
-                Name = domain.Name,
-                Price = domain.Price,
-                Image = domain.Image,
-                Stock = domain.Stock,
-                AvailableStock = domain.AviableStock,
-                Description = domain.Description,
-                UnitType = domain.UnitType,
-                TemperatureCondition = domain.TemperatureCondition,
-                Observations = domain.Observation,
+                Id = product.Id,
+                InternalCode = product.InternalCode,
+                Barcode = product.Barcode,
+                Name = product.Name,
+                Price = product.Price,
+                Image = product.Image,
+                Stock = product.Stock,
+                AvailableStock = product.AviableStock,
+                Description = product.Description,
+                UnitType = product.UnitType,
+                TemperatureCondition = product.TemperatureCondition,
+                Observations = product.Observation,
                 SubCategory = new SubCategoryResponse
                 {
-                    Id = domain.SubCategory.Id,
-                    Name = domain.SubCategory.Name,
-                    Description = domain.SubCategory.Description,
+                    Id = product.SubCategory.Id,
+                    Name = product.SubCategory.Name,
+                    Description = product.SubCategory.Description,
                     Category = new CategoryResponse
                     {
-                        Id = domain.SubCategory.Category.Id,
-                        Name = domain.SubCategory.Category.Name,
-                        Description = domain.SubCategory.Category.Description
+                        Id = product.SubCategory.Category.Id,
+                        Name = product.SubCategory.Category.Name,
+                        Description = product.SubCategory.Category.Description
                     }
                 },
                 Brand = new BrandResponse
                 {
-                    Id = domain.Brand.Id,
-                    Name = domain.Brand.Name,
-                    Description = domain.Brand.Description
+                    Id = product.Brand.Id,
+                    Name = product.Brand.Name,
+                    Description = product.Brand.Description
                 },
-                Discounts = domain.Discounts.Select(d => new DiscountResponse
+                Discounts = product.Discounts.Select(d => new DiscountResponse
                 {
                     Description = d.Description,
                     ExpirationDate = d.ExpirationDate,
                     Percentage = d.Percentage,
                     ProductQuantity = d.ProductQuantity
                 }).ToList(),
-                AuditInfo = new AuditInfoResponse
-                {
-                    Created = domain.CreatedAt != default ? new AuditAction
-                    {
-                        At = domain.CreatedAt,
-                        By = new AuditUser { Username = domain.CreatedBy ?? string.Empty },
-                        Location = domain.CreatedLocation ?? string.Empty
-                    } : null,
-                    Updated = domain.UpdatedAt.HasValue ? new AuditAction
-                    {
-                        At = domain.UpdatedAt.Value,
-                        By = new AuditUser { Username = domain.UpdatedBy ?? string.Empty },
-                        Location = domain.UpdatedLocation ?? string.Empty
-                    } : null,
-                    Deleted = domain.DeletedAt.HasValue ? new AuditAction
-                    {
-                        At = domain.DeletedAt.Value,
-                        By = new AuditUser { Username = domain.DeletedBy ?? string.Empty },
-                        Location = domain.DeletedLocation ?? string.Empty
-                    } : null
-                }
+                AuditInfo = AuditMapper.ToResponse(product.AuditInfo)
             };
         }
     }

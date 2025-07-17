@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsClient;
-using BusinessLogic.DTOs.DTOsZone;
+using BusinessLogic.Mappers;
+
 namespace BusinessLogic.Común.Mappers
 {
     public static class ClientMapper
@@ -19,13 +20,16 @@ namespace BusinessLogic.Común.Mappers
                 contactName: addClientRequest.ContactName,
                 email: addClientRequest.Email,
                 observations: addClientRequest.Observations,
-                bank: addClientRequest.Bank,
-                bankAccount: addClientRequest.BankAccount,
-                loanedCrates: addClientRequest.LoanedCrates,
-                zone: new Zone( addClientRequest.ZoneId)
-            );
-
+                bankAccounts: new List<BankAccount>(), 
+                loanedCrates: 0,
+                qualification: addClientRequest.Qualification,
+                zone: new Zone(addClientRequest.ZoneId)
+            )
+            {
+                AuditInfo = AuditMapper.ToDomain(addClientRequest.AuditInfo)
+            };
         }
+
         public static Client.UpdatableData ToUpdatableData(UpdateClientRequest updateClientRequest)
         {
             return new Client.UpdatableData
@@ -39,19 +43,19 @@ namespace BusinessLogic.Común.Mappers
                 Phone = updateClientRequest.Phone,
                 ContactName = updateClientRequest.ContactName,
                 Email = updateClientRequest.Email,
-                Observations= updateClientRequest.Observations,
-                Bank = updateClientRequest.Bank,
-                BankAccount = updateClientRequest.BankAccount,
-                LoanedCrates = updateClientRequest.LoanedCrates
+                Observations = updateClientRequest.Observations,
+                LoanedCrates = updateClientRequest.LoanedCrates,
+                Qualification = updateClientRequest.Qualification,
+                Zone = new Zone(updateClientRequest.ZoneId),
+                BankAccounts = new List<BankAccount>() 
             };
         }
 
         public static ClientResponse ToResponse(Client client)
         {
-
             return new ClientResponse
             {
-                Id=client.Id,
+                Id = client.Id,
                 Name = client.Name,
                 RUT = client.RUT,
                 RazonSocial = client.RazonSocial,
@@ -62,12 +66,11 @@ namespace BusinessLogic.Común.Mappers
                 ContactName = client.ContactName,
                 Email = client.Email,
                 Observations = client.Observations,
-                Bank = client.Bank,
-                BankAccount = client.BankAccount,
                 LoanedCrates = client.LoanedCrates,
-                Zone = ZoneMapper.ToResponse(client.Zone)
+                Qualification = client.Qualification,
+                ZoneId = client.Zone.Id,
+                AuditInfo = AuditMapper.ToResponse(client.AuditInfo)
             };
         }
-       
     }
 }

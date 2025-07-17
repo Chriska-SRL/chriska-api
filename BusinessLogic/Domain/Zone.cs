@@ -9,14 +9,17 @@ namespace BusinessLogic.Dominio
         public string Description { get; set; }
         public List<Day> DeliveryDays { get; set; } = new List<Day>();
         public List<Day> RequestDays { get; set; } = new List<Day>();
+        public List<Client> Clients { get; set; } = new List<Client>();
         public string? ImageUrl { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Zone(int id, string name, string description)
+        public Zone(int id, string name, string description,List<Day> deliveryDays,List<Day> requestDays)
         {
             Id = id;
             Name = name;
             Description = description;
+            DeliveryDays = deliveryDays;
+            RequestDays = requestDays;
         }
         public Zone(int id)
         {
@@ -24,6 +27,8 @@ namespace BusinessLogic.Dominio
             Name = "Temporal";
             Description = "TemporalDesc";
             ImageUrl = "TemporalImage";
+            DeliveryDays = new List<Day>();
+            RequestDays = new List<Day>();
         }
 
         public void SetImageUrl(string? imageUrl)
