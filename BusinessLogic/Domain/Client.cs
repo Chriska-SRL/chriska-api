@@ -28,7 +28,7 @@ namespace BusinessLogic.Dominio
 
         public Client(int id, string name, string rut, string razonSocial, string address, string mapsAddress,
                       string schedule, string phone, string contactName, string email, string observations,
-                      List<BankAccount> bankAccounts, int loanedCrates, string qualification, Zone zone)
+                      List<BankAccount> bankAccounts, int loanedCrates, string qualification, Zone zone,AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
@@ -45,6 +45,7 @@ namespace BusinessLogic.Dominio
             LoanedCrates = loanedCrates;
             Qualification = qualification;
             Zone = zone;
+            AuditInfo = auditInfo;
             Validate();
         }
 
@@ -127,6 +128,7 @@ namespace BusinessLogic.Dominio
             Qualification = data.Qualification ?? Qualification;
             Zone = data.Zone ?? Zone;
             BankAccounts = data.BankAccounts ?? BankAccounts;
+            AuditInfo = data.AuditInfo ?? AuditInfo;
             Validate();
         }
 
@@ -146,6 +148,7 @@ namespace BusinessLogic.Dominio
             public string? Qualification;
             public Zone? Zone;
             public List<BankAccount>? BankAccounts;
+            public AuditInfo? AuditInfo;
         }
     }
 }

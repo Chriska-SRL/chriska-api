@@ -1,10 +1,9 @@
 ﻿using BusinessLogic.Común.Enums;
 using BusinessLogic.DTOs.DTOsAudit;
-using BusinessLogic.DTOs.Shared;
 
 namespace BusinessLogic.DTOs.DTOsProduct
 {
-    public class ProductUpdateRequest
+    public class ProductUpdateRequest : AuditableRequest
     {
         public int Id { get; set; }
         public required string Name { get; set; }
@@ -19,6 +18,5 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public required string Observations { get; set; }
         public int SubCategoryId { get; set; }
         public int BrandId { get; set; }
-        public required AuditInfoRequest AuditInfo { get; set; }
     }
 }

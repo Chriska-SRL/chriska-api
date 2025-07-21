@@ -15,7 +15,8 @@ namespace BusinessLogic.Común.Mappers
                 reason: dto.Reason,
                 shelve: new Shelve(dto.ShelveId),
                 user: new User(dto.UserId),
-                product: new Product(dto.ProductId)
+                product: new Product(dto.ProductId),
+                auditInfo: AuditMapper.ToDomain(dto.AuditInfo)
             );
         }
 
@@ -30,7 +31,8 @@ namespace BusinessLogic.Común.Mappers
                 Reason = domain.Reason,
                 Shelve = ShelveMapper.ToResponse(domain.Shelve),
                 User = UserMapper.ToResponse(domain.User),
-                Product = ProductMapper.ToResponse(domain.Product)
+                Product = ProductMapper.ToResponse(domain.Product),
+                AuditInfo = AuditMapper.ToResponse(domain.AuditInfo)
             };
         }
     }

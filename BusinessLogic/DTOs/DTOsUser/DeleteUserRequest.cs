@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOs.DTOsPurchaseItem
+namespace BusinessLogic.DTOs.DTOsUser
 {
-    public class DeletePurchaseItemRequest
+    public class DeleteUserRequest : DeleteRequest
     {
-        public int Id { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace BusinessLogic.Dominio
         public OrderRequest OrderRequest { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Order(int id, DateTime date, string clientName, int crates, string status, Delivery delivery, Sale sale, User preparedBy, User deliveredBy, OrderRequest orderRequest, List<OrderItem> orderItems)
+        public Order(int id, DateTime date, string clientName, int crates, string status, Delivery delivery, User preparedBy, User deliveredBy, OrderRequest orderRequest)
         {
             Id = id;
             Date = date;
@@ -60,6 +60,7 @@ namespace BusinessLogic.Dominio
             public User PreparedBy { get; set; }
             public User DeliveredBy { get; set; }
             public OrderRequest OrderRequest { get; set; }
+            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
     }
 }

@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOs.DTOsZone
 {
-    public class DeleteZoneRequest
+    public class DeleteZoneRequest:DeleteRequest
     {
-        public int Id { get; set; }
-        public AuditInfo? auditInfo { get; set; }
     }
 }

@@ -12,8 +12,9 @@ namespace BusinessLogic.Común.Mappers
                 name: addShelveRequest.Name,
                 description: addShelveRequest.Description,
                 warehouse: new Warehouse(addShelveRequest.WarehouseId),
-                productStocks: new List<ProductStock>(),
-                stockMovements: new List<StockMovement>()
+                stockMovements: new List<StockMovement>(),
+                product: new List<Product>(),
+                auditInfo: AuditMapper.ToDomain(addShelveRequest.AuditInfo)
                 );
         }
         public static Shelve.UpdatableData ToUpdatableData(UpdateShelveRequest shelve)
@@ -22,7 +23,8 @@ namespace BusinessLogic.Común.Mappers
             {
                 Name = shelve.Name,
                 Description = shelve.Description,
-                Warehouse = new Warehouse(shelve.WarehouseId)
+                Warehouse = new Warehouse(shelve.WarehouseId),
+                AuditInfo = AuditMapper.ToDomain(shelve.AuditInfo)
             };
         }
         public static ShelveResponse ToResponse(Shelve shelve)
@@ -33,17 +35,20 @@ namespace BusinessLogic.Común.Mappers
                 Name = shelve.Name,
                 Description = shelve.Description,
                 Warehouse = WarehouseMapper.ToResponse(shelve.Warehouse),
-                Stocks = shelve.Stocks.Select(ToResponse).ToList()
+                Stocks = shelve.StockMovements.Select(StockMovementMapper.ToResponse).ToList(),
+                Products = shelve.Products.Select(ProductMapper.ToResponse).ToList(),
+                AuditInfo = AuditMapper.ToResponse(shelve.AuditInfo)
             };
         }
 
-        public static ProductStockResponse ToResponse(ProductStock productStock)
-        {
-            return new ProductStockResponse
-            {
-                Quantity = productStock.Quantity,
-                Product = ProductMapper.ToResponse(productStock.Product)
-            };
-        }
+        //public static ProductStockResponse ToResponse(ProductStock productStock)
+        //{
+        //    return new ProductStockResponse
+        //    {
+        //        Quantity = productStock.Quantity,
+        //        Product = ProductMapper.ToResponse(productStock.Product)
+        //    };
+        //}
+
     }
 }

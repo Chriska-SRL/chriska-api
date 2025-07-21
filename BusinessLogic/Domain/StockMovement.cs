@@ -16,7 +16,7 @@ namespace BusinessLogic.Dominio
         public StockMovementType StockMovementType { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public StockMovement(int id, DateTime date, int quantity, StockMovementType type, string reason, Shelve shelve, User user, Product product)
+        public StockMovement(int id, DateTime date, int quantity, StockMovementType type, string reason, Shelve shelve, User user, Product product,AuditInfo auditInfo)
         {
             Id = id;
             Date = date;
@@ -66,7 +66,7 @@ namespace BusinessLogic.Dominio
             Shelve = data.Shelve ?? Shelve;
             User = data.User ?? User;
             Product = data.Product ?? Product;
-
+            AuditInfo = data.AuditInfo ?? AuditInfo;
             Validate();
         }
 
@@ -79,6 +79,7 @@ namespace BusinessLogic.Dominio
             public Shelve? Shelve { get; set; }
             public User? User { get; set; }
             public Product? Product { get; set; }
+            public AuditInfo? AuditInfo { get; set; }
         }
 
         public override string ToString()

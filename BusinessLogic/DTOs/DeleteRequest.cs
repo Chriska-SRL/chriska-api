@@ -2,9 +2,9 @@
 
 namespace BusinessLogic.DTOs
 {
-    public class DeleteRequest
+    public class DeleteRequest:AuditInfoRequest
     {
         public int Id { get; set; }
-        public AuditInfoRequest AuditInfo { get; set; } = null!;
+
     }
 }

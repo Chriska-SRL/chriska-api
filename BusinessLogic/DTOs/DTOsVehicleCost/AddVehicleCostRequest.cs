@@ -1,8 +1,9 @@
 ﻿using BusinessLogic.Común.Enums;
+using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsCost
 {
-    public class AddVehicleCostRequest
+    public class AddVehicleCostRequest : AuditableRequest
     {
         public int VehicleId { get; set; }
         public DateTime Date { get; set; }

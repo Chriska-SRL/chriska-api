@@ -126,6 +126,7 @@ namespace BusinessLogic.Dominio
             Brand = data.Brand ?? Brand;
             AviableStock = data.AviableStock ?? AviableStock;
             Stock = data.Stock ?? Stock;
+            AuditInfo = data.AuditInfo ?? AuditInfo;
 
             SetInternalCode();
             Validate();
@@ -145,6 +146,7 @@ namespace BusinessLogic.Dominio
             public Brand? Brand { get; set; } = null!;
             public int? Stock { get; set; }
             public int? AviableStock { get; set; }
+            public AuditInfo? AuditInfo { get; set; } = null!;
         }
 
         public void SetInternalCode()

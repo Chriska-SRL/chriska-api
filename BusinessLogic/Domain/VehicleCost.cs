@@ -12,7 +12,7 @@ namespace BusinessLogic.Dominio
         public DateTime Date { get; private set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public VehicleCost(int id, int vehicleId, VehicleCostType type, string description, decimal amount, DateTime date)
+        public VehicleCost(int id, int vehicleId, VehicleCostType type, string description, decimal amount, DateTime date,AuditInfo auditInfo)
         {
             Id = id;
             VehicleId = vehicleId;
@@ -20,6 +20,7 @@ namespace BusinessLogic.Dominio
             Description = description;
             Amount = amount;
             Date = date;
+            AuditInfo = auditInfo;
             Validate();
         }
 
@@ -59,6 +60,7 @@ namespace BusinessLogic.Dominio
             Description = data.Description ?? Description;
             Amount = data.Amount ?? Amount;
             Date = data.Date ?? Date;
+            AuditInfo = data.AuditInfo ?? AuditInfo;
 
             Validate();
         }
@@ -68,6 +70,7 @@ namespace BusinessLogic.Dominio
             public string? Description { get; set; }
             public decimal? Amount { get; set; }
             public DateTime? Date { get; set; }
+            public AuditInfo? AuditInfo { get; set; } = null;
         }
     }
 }

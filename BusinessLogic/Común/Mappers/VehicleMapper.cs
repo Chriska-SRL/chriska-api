@@ -15,7 +15,8 @@ namespace BusinessLogic.Común.Mappers
                 brand: data.Brand,
                 model: data.Model,
                 crateCapacity: data.CrateCapacity,
-                costs: new List<VehicleCost>()
+                costs: new List<VehicleCost>(),
+                auditInfo: AuditMapper.ToDomain(data.AuditInfo)
             );
         }
         public static Vehicle.UpdatableData ToUpdatableData(UpdateVehicleRequest data)
@@ -25,7 +26,8 @@ namespace BusinessLogic.Común.Mappers
                Plate = data.Plate,
                Brand = data.Brand,
                Model = data.Model,
-               CrateCapacity = data.CrateCapacity
+               CrateCapacity = data.CrateCapacity,
+               AuditInfo = AuditMapper.ToDomain(data.AuditInfo)
            };
         }
         public static VehicleResponse ToResponse(Vehicle vehicle)
@@ -37,7 +39,8 @@ namespace BusinessLogic.Común.Mappers
                 Brand = vehicle.Brand,
                 Model = vehicle.Model,
                 CrateCapacity = vehicle.CrateCapacity,
-                Costs = vehicle.VehicleCosts.Select(VehicleCostMapper.ToResponse).ToList()
+                Costs = vehicle.VehicleCosts.Select(VehicleCostMapper.ToResponse).ToList(),
+                AuditInfo = AuditMapper.ToResponse(vehicle.AuditInfo)
             };
         }
     }

@@ -15,7 +15,7 @@ namespace BusinessLogic.Dominio
         public List<VehicleCost> VehicleCosts { get; private set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Vehicle(int id, string plate, string brand, string model, int crateCapacity, List<VehicleCost> costs)
+        public Vehicle(int id, string plate, string brand, string model, int crateCapacity, List<VehicleCost> costs,AuditInfo auditInfo)
         {
             Id = id;
             Plate = plate;
@@ -23,6 +23,7 @@ namespace BusinessLogic.Dominio
             Model = model;
             CrateCapacity = crateCapacity;
             VehicleCosts = costs;
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
             Validate();
         }
         public Vehicle(int id) {
@@ -69,6 +70,7 @@ namespace BusinessLogic.Dominio
             Brand = data.Brand ?? Brand;
             Model = data.Model ?? Model;
             CrateCapacity = data.CrateCapacity ?? CrateCapacity;
+            AuditInfo = data.AuditInfo ?? AuditInfo;
             Validate();
         }
         public class UpdatableData
@@ -77,6 +79,7 @@ namespace BusinessLogic.Dominio
             public string? Brand { get; set; }
             public string? Model { get; set; }
             public int? CrateCapacity { get; set; }
+            public AuditInfo? AuditInfo { get; set; } = null;
         }
 
     }

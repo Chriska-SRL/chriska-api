@@ -4,8 +4,8 @@ namespace BusinessLogic.DTOs.DTOsAudit
 {
     public class AuditInfoRequest
     {
-        public AuditLocation? Created { get; set; }
-        public AuditLocation? Updated { get; set; }
-        public AuditLocation? Deleted { get; set; }
+        public Audit Created { get; set; } = new Audit();
+        public Audit Updated { get; set; } = new Audit();
+        public Audit Deleted { get; set; } = new Audit();
     }
 }

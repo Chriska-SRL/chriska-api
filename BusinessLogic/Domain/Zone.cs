@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Común;
+﻿using Azure.Storage.Blobs.Models;
+using BusinessLogic.Común;
 
 namespace BusinessLogic.Dominio
 {
@@ -13,13 +14,16 @@ namespace BusinessLogic.Dominio
         public string? ImageUrl { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Zone(int id, string name, string description,List<Day> deliveryDays,List<Day> requestDays)
+        public Zone(int id, string name, string description,List<Day> deliveryDays,List<Day> requestDays, AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
             DeliveryDays = deliveryDays;
             RequestDays = requestDays;
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+
+            Validate();
         }
         public Zone(int id)
         {
@@ -46,12 +50,15 @@ namespace BusinessLogic.Dominio
         {
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;
+            AuditInfo = data.AuditInfo ?? AuditInfo;
+
             Validate();
         }
         public class UpdatableData
         {
             public string? Name { get; set; }
             public string? Description { get; set; }
+            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
     }
 }

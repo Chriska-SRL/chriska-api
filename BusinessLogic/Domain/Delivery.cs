@@ -52,6 +52,7 @@ namespace BusinessLogic.Dominio
             public string DriverName { get; set; }
             public string Observation { get; set; }
             public Vehicle Vehicle { get; set; }
+            public AuditInfo AuditInfo { get; set; }
         }
     }
 }

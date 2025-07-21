@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOs.DTOsCreditNote
+namespace BusinessLogic.DTOs.DTOsSupplier
 {
-    public class DeleteCreditNoteRequest
+    public class DeleteSupplierRequest : DeleteRequest
     {
-        public int Id { get; set; }
     }
 }

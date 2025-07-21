@@ -1,4 +1,6 @@
-﻿namespace BusinessLogic.Dominio
+﻿using BusinessLogic.Común;
+
+namespace BusinessLogic.Dominio
 {
     public abstract class Request
     {
@@ -7,9 +9,7 @@
         public DateTime DeliveryDate { get; set; }
         public string Status { get; set; }
         public string Observation { get; set; }
-        public User User { get; set; }
-        public Client Client { get; set; }
-
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         public abstract void Validate();
 
    

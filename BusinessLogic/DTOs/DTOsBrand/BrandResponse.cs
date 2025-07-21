@@ -1,7 +1,10 @@
 ﻿
+using BusinessLogic.Común;
+using BusinessLogic.DTOs.DTOsAudit;
+
 namespace BusinessLogic.DTOs.DTOsBrand
 {
-    public class BrandResponse
+    public class BrandResponse:AuditableResponse
     {
         public int Id { get; set; }
         public string  Name { get; set; }

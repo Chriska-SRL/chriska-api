@@ -10,7 +10,10 @@ namespace BusinessLogic.Común.Mappers
             return new Zone(
                 id:0,
                 name:request.Name,
-                description: request.Description
+                description: request.Description,
+                deliveryDays: new List<Day>(),
+                requestDays: new List<Day>(),
+                auditInfo: AuditMapper.ToDomain(request.AuditInfo)
             );
         }
         public static Zone.UpdatableData ToUpdatableData(UpdateZoneRequest request)
@@ -18,7 +21,8 @@ namespace BusinessLogic.Común.Mappers
             return new Zone.UpdatableData
             {
                 Name = request.Name,
-                Description = request.Description
+                Description = request.Description,
+                AuditInfo = AuditMapper.ToDomain(request.AuditInfo)
             };
         }
         public static ZoneResponse ToResponse(Zone zone)
@@ -28,7 +32,8 @@ namespace BusinessLogic.Común.Mappers
                 Id = zone.Id,
                 Name = zone.Name,
                 Description = zone.Description,
-                ImageUrl = zone.ImageUrl // ← AGREGAR ESTA LÍNEA
+                ImageUrl = zone.ImageUrl,
+                AuditInfo = AuditMapper.ToResponse(zone.AuditInfo)
             };
         }
     }

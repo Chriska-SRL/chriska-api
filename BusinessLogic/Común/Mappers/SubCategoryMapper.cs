@@ -11,7 +11,8 @@ namespace BusinessLogic.Común.Mappers
                 id: 0,
                 name: dto.Name,
                 description: dto.Description,
-                category: new Category(dto.CategoryId)
+                category: new Category(dto.CategoryId),
+                auditInfo: AuditMapper.ToDomain(dto.AuditInfo)
             );
         }
 
@@ -20,7 +21,8 @@ namespace BusinessLogic.Común.Mappers
             return new SubCategory.UpdatableData
             {
                 Name = dto.Name,
-                Description = dto.Description
+                Description = dto.Description,
+                AuditInfo = AuditMapper.ToDomain(dto.AuditInfo),
             };
         }
 
@@ -36,7 +38,8 @@ namespace BusinessLogic.Común.Mappers
                     Id = domain.Category.Id,
                     Name = domain.Category.Name,
                     Description = domain.Category.Description
-                }
+                },
+                AuditInfo = AuditMapper.ToResponse(domain.AuditInfo)
             };
         }
     }

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsOrder
 {
-    public class DeleteOrderRequest
+    public class DeleteOrderRequest: DeleteRequest
     {
-        public int Id { get; set; }
     }
 }

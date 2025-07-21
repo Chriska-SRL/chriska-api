@@ -11,13 +11,14 @@ namespace BusinessLogic.Dominio
         public List<Shelve> Shelves { get; set; } = new List<Shelve>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Warehouse(int id, string name, string description, string address, List<Shelve> shelves)
+        public Warehouse(int id, string name, string description, string address, List<Shelve> shelves,AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
             Address = address;
             Shelves = shelves ?? throw new ArgumentNullException(nameof(shelves));
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
 
             Validate();
         }
@@ -60,6 +61,7 @@ namespace BusinessLogic.Dominio
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;
             Address = data.Address ?? Address;
+            AuditInfo = data.AuditInfo ?? AuditInfo;
 
             Validate();
         }
@@ -69,6 +71,7 @@ namespace BusinessLogic.Dominio
             public string? Name { get; set; }
             public string? Description { get; set; }
             public string? Address { get; set; }
+            public AuditInfo? AuditInfo { get; set; } = null;
         }
 
         public override string ToString()

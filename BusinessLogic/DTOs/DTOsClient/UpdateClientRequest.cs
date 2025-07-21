@@ -3,7 +3,7 @@ using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsClient
 {
-    public class UpdateClientRequest
+    public class UpdateClientRequest : AuditableRequest
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -19,6 +19,5 @@ namespace BusinessLogic.DTOs.DTOsClient
         public string Observations { get; set; }
         public int ZoneId { get; set; }
         public string Qualification { get; set; } 
-        public AuditInfoRequest AuditInfo { get; set; }
     }
 }

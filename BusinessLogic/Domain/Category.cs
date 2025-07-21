@@ -58,6 +58,7 @@ namespace BusinessLogic.Dominio
 
             Name = data.Name;
             Description = data.Description;
+            AuditInfo = data.AuditInfo ?? new AuditInfo();
 
             Validate();
         }
@@ -66,6 +67,7 @@ namespace BusinessLogic.Dominio
         {
             public string Name { get; set; } = string.Empty;
             public string Description { get; set; } = string.Empty;
+            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
 
         public override string ToString()

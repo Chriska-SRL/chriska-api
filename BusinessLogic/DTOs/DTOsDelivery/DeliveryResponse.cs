@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsVehicle;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOs.DTOsDelivery
 {
-    public class DeliveryResponse
+    public class DeliveryResponse : AuditableResponse
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }

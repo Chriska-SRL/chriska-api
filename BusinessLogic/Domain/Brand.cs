@@ -10,13 +10,12 @@ namespace BusinessLogic.Domain
         public string Description { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Brand(int id, string name, string description, AuditInfo auditInfo)
+        public Brand(int id, string name, string description,AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
-            AuditInfo = auditInfo; 
-
+            AuditInfo ??= new AuditInfo();
             Validate();
         }
 
@@ -49,6 +48,7 @@ namespace BusinessLogic.Domain
 
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;
+            AuditInfo = data.AuditInfo ?? AuditInfo;
 
             Validate();
         }
@@ -57,6 +57,7 @@ namespace BusinessLogic.Domain
         {
             public string? Name { get; set; } = string.Empty;
             public string? Description { get; set; } = string.Empty;
+            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
 
     }

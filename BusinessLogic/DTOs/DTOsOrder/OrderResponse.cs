@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsDelivery;
 using BusinessLogic.DTOs.DTOsOrderItem;
 using BusinessLogic.DTOs.DTOsOrderRequest;
@@ -20,10 +21,10 @@ namespace BusinessLogic.DTOs.DTOsOrder
         public int Crates { get; set; }
         public string Status { get; set; }
         public DeliveryResponse Delivery { get; set; }
-        public SaleResponse Sale { get; set; }
         public UserResponse PreparedBy { get; set; }
         public UserResponse DeliveredBy { get; set; }
         public OrderRequestResponse OrderRequest { get; set; }
-        
+        public AuditInfoResponse AuditInfo { get; set; }
+
     }
 }

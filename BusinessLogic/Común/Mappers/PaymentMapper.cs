@@ -1,55 +1,44 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsPayment;
-using BusinessLogic.DTOs.DTOsSupplier;
+using BusinessLogic.Mappers;
 
-namespace BusinessLogic.Común.Mappers
+namespace Repository.Mappers
 {
     public static class PaymentMapper
     {
-        public static Payment ToDomain (AddPaymentRequest addPaymentRequest)
+        public static Payment FromAddRequest(AddPaymentRequest dto)
         {
-            return new Payment
-            (
-                id:0,
-                date: addPaymentRequest.Date,
-                amount: addPaymentRequest.Amount,
-                paymentMethod: addPaymentRequest.PaymentMethod,
-                note: addPaymentRequest.Note,
-                supplier: new Supplier(addPaymentRequest.SupplierId)
+            return new Payment(
+                id: 0,
+                date: dto.Date,
+                amount: dto.Amount,
+                note: dto.Note,
+                auditInfo: AuditMapper.ToDomain(dto.AuditInfo)
+
             );
         }
-        public static Payment.UpdatableData ToUpdatableData(UpdatePaymentRequest updatablePaymentRequest)
+
+        public static Payment.UpdatableData FromUpdateRequest(UpdatePaymentRequest dto)
         {
             return new Payment.UpdatableData
             {
-                Date = updatablePaymentRequest.Date,
-                Amount = updatablePaymentRequest.Amount,
-                PaymentMethod = updatablePaymentRequest.PaymentMethod,
-                Note = updatablePaymentRequest.Note
-            };           
+
+                Date = dto.Date,
+                Amount = dto.Amount,
+                Note = dto.Note,
+                AuditInfo = AuditMapper.ToDomain(dto.AuditInfo)
+
+            };
         }
-        public static PaymentResponse ToResponse(Payment domain)
+
+        public static PaymentResponse ToResponse(Payment entity)
         {
             return new PaymentResponse
             {
-                Date = domain.Date,
-                Amount = domain.Amount,
-                PaymentMethod = domain.PaymentMethod,
-                Note = domain.Note,
-                Supplier = new SupplierResponse
-                {
-                    Id = domain.Supplier.Id,
-                    Name = domain.Supplier.Name,
-                    RUT = domain.Supplier.RUT,
-                    RazonSocial = domain.Supplier.RazonSocial,
-                    Address = domain.Supplier.Address,
-                    MapsAddress = domain.Supplier.MapsAddress,
-                    Phone = domain.Supplier.Phone,
-                    ContactName = domain.Supplier.ContactName,
-                    Email = domain.Supplier.Email,
-                    BankAccount = domain.Supplier.BankAccount,
-                    Observations = domain.Supplier.Observations
-                }
+                Date = entity.Date,
+                Amount = entity.Amount,
+                Note = entity.Note,
+                AuditInfo = AuditMapper.ToResponse(entity.AuditInfo)
             };
         }
     }

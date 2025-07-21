@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsAudit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace BusinessLogic.DTOs.DTOsPayment
         public decimal Amount { get; set; }
         public string PaymentMethod { get; set; }
         public string Note { get; set; }
-        public int SupplierId { get; set; }
+        public AuditInfoRequest AuditInfo { get; set; } = new AuditInfoRequest();
     }
 }

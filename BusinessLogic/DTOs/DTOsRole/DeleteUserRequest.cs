@@ -1,11 +1,10 @@
 ﻿
 using BusinessLogic.Común;
+using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsRole
 {
-    public class DeleteUserRequest
+    public class DeleteUserRequest : DeleteRequest
     {
-        public int Id { get; set; }
-        public AuditInfo AuditInfo { get; set; }
     }
 }
