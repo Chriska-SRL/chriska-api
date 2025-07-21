@@ -7,7 +7,7 @@ namespace BusinessLogic.Domain
     public class Discount : IEntity<Discount.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
-        public string Discription { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public DateTime ExpirationDate { get; set; }
         public int ProductQuantity { get; set; }
         public int Percentage { get; set; }
@@ -18,7 +18,7 @@ namespace BusinessLogic.Domain
         public Discount(int id, string discription, DateTime expirationDate, int productQuantity, int percentage, Product product, DiscountStatus status)
         {
             Id = id;
-            Discription = discription;
+            Description = discription;
             ExpirationDate = expirationDate;
             ProductQuantity = productQuantity;
             Percentage = percentage;
@@ -27,8 +27,8 @@ namespace BusinessLogic.Domain
         }
         public void Validate()
         {
-            if (string.IsNullOrWhiteSpace(Discription))
-                throw new ArgumentNullException(nameof(Discription), "La descripción es obligatoria.");
+            if (string.IsNullOrWhiteSpace(Description))
+                throw new ArgumentNullException(nameof(Description), "La descripción es obligatoria.");
             if (ExpirationDate < DateTime.Now)
                 throw new ArgumentOutOfRangeException(nameof(ExpirationDate), "La fecha de expiración no puede ser en el pasado.");
             if (ProductQuantity <= 0)
@@ -43,7 +43,7 @@ namespace BusinessLogic.Domain
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "Los datos de actualización no pueden ser nulos.");
-            Discription = data.Discription ?? Discription;
+            Description = data.Description ?? Description;
             ExpirationDate = data.ExpirationDate ?? ExpirationDate;
             ProductQuantity = data.ProductQuantity ?? ProductQuantity;
             Percentage = data.Percentage ?? Percentage;
@@ -53,7 +53,7 @@ namespace BusinessLogic.Domain
         }
         public class UpdatableData
         {
-            public string? Discription { get; set; } = string.Empty;
+            public string? Description { get; set; } = string.Empty;
             public DateTime? ExpirationDate { get; set; }
             public int? ProductQuantity { get; set; }
             public int? Percentage { get; set; }

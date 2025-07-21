@@ -15,7 +15,7 @@ namespace BusinessLogic.Domain
             Id = id;
             Name = name;
             Description = description;
-            AuditInfo = auditInfo; ;
+            AuditInfo = auditInfo; 
 
             Validate();
         }

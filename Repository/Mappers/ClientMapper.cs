@@ -2,30 +2,39 @@
 using BusinessLogic.Dominio;
 using Microsoft.Data.SqlClient;
 
-
 namespace Repository.Mappers
 {
     public static class ClientMapper
     {
         public static Client FromReader(SqlDataReader reader)
         {
-            string bankStr = reader.GetString(reader.GetOrdinal("Bank")).Trim();
+            var bankName = reader.GetString(reader.GetOrdinal("Bank")).Trim();
+            var accountName = reader.GetString(reader.GetOrdinal("AccountName")).Trim();
+            var accountNumber = reader.GetString(reader.GetOrdinal("AccountNumber")).Trim();
 
-            Bank bank = bankStr switch
+            Enum.TryParse(bankName, ignoreCase: true, out Bank bankEnum);
+
+            var bankAccount = new BankAccount(
+                id: 0,
+                accountName: accountName,
+                accountNumber: accountNumber,
+                bank: bankEnum
+            );
+
+            var zone = new Zone(
+                id: reader.GetInt32(reader.GetOrdinal("ZoneId"))
+            );
+
+            zone.Name = reader.GetString(reader.GetOrdinal("ZoneName"));
+            zone.Description = reader.GetString(reader.GetOrdinal("ZoneDescription"));
+
+            if (!reader.IsDBNull(reader.GetOrdinal("ZoneBlobName")))
             {
-                "BROU" => Bank.BROU,
-                "BBVA" => Bank.BBVA,
-                "Santander" => Bank.Santander,
-                "Itaú" => Bank.Itau,
-                "Scotiabank" => Bank.Scotiabank,
-                "HSBC" => Bank.HSBC,
-                "Heritage" => Bank.Heritage,
-                "Bandes" => Bank.Bandes,
-                "Andbank" => Bank.Andbank,
-                _ => Bank.Otros // Por si viene algo no esperado
-            };
+                var blobName = reader.GetString(reader.GetOrdinal("ZoneBlobName"));
+                zone.ImageUrl = $"https://chriska.blob.core.windows.net/images/{blobName}";
+            }
 
-            return new Client(
+            var client = new Client(
                 id: reader.GetInt32(reader.GetOrdinal("Id")),
                 name: reader.GetString(reader.GetOrdinal("Name")),
                 rut: reader.GetString(reader.GetOrdinal("RUT")),
@@ -37,17 +46,13 @@ namespace Repository.Mappers
                 contactName: reader.GetString(reader.GetOrdinal("ContactName")),
                 email: reader.GetString(reader.GetOrdinal("Email")),
                 observations: reader.GetString(reader.GetOrdinal("Observations")),
-                bank: bank,
-                bankAccount: reader.GetString(reader.GetOrdinal("BankAccount")),
+                bankAccounts: new List<BankAccount> { bankAccount },
                 loanedCrates: reader.GetInt32(reader.GetOrdinal("LoanedCrates")),
-                zone: new Zone(
-                    id: reader.GetInt32(reader.GetOrdinal("ZoneId")),
-                    name: reader.GetString(reader.GetOrdinal("ZoneName")),
-                    description: reader.GetString(reader.GetOrdinal("ZoneDescription"))
-                )
+                qualification: reader.GetString(reader.GetOrdinal("Qualification")),
+                zone: zone
             );
+
+            return client;
         }
-
-
     }
 }

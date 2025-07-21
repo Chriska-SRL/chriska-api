@@ -103,7 +103,7 @@ namespace BusinessLogic
         public List<SubCategoryResponse> GetAllSubCategories() => Categories.GetAllSubCategories();
 
         // Clients
-        public ClientResponse AddClient(AddClientRequest request) => Clients.AddClient(request);
+        public ClientResponse AddClient(AddClientRequest request) => Clients.AddClientAsync(request);
         public ClientResponse UpdateClient(UpdateClientRequest request) => Clients.UpdateClient(request);
         public ClientResponse DeleteClient(int id) => Clients.DeleteClient(id);
         public List<ClientResponse> GetAllClients() => Clients.GetAllClients();
