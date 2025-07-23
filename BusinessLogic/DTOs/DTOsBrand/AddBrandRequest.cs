@@ -11,5 +11,8 @@ namespace BusinessLogic.DTOs.DTOsBrand
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public AuditInfo AuditInfo { get; set; }
     }
+
+    
 }
