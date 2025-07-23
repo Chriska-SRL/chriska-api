@@ -1,4 +1,5 @@
-﻿using BusinessLogic;
+﻿using API.Utils;
+using BusinessLogic;
 using BusinessLogic.Dominio;
 using BusinessLogic.Repository;
 using BusinessLogic.Services;
@@ -117,6 +118,8 @@ namespace API
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<TokenUtils>();
 
             var connectionString = builder.Configuration.GetConnectionString("Database");
             builder.Services.AddSingleton(connectionString);
@@ -190,7 +193,7 @@ namespace API
             app.UseSwagger();
             app.UseSwaggerUI();
             // }
-
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseCors("PermitirFrontend");
             app.UseAuthentication();
             app.UseAuthorization();

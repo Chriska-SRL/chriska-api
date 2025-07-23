@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using API.Utils;
 using BusinessLogic;
-using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.Común;
 using BusinessLogic.Dominio;
 using BusinessLogic.DTOs;
-using API.Utils; // Importa la utilidad para formatear errores
+using BusinessLogic.DTOs.DTOsBrand;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -15,110 +15,57 @@ namespace API.Controllers
     public class BrandsController : ControllerBase
     {
         private readonly Facade _facade;
+        private readonly TokenUtils _tokenUtils;
 
-        public BrandsController(Facade facade)
+        public BrandsController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_BRANDS))]
         public async Task<ActionResult<BrandResponse>> AddBrandAsync([FromBody] AddBrandRequest request)
         {
-            try
-            {
-                var result = await _facade.AddBrandAsync(request);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ErrorUtils.FormatError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Unexpected error while adding the brand." });
-            }
+            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            var result = await _facade.AddBrandAsync(request);
+            return CreatedAtAction(nameof(GetBrandByIdAsync), new { id = result.Id }, result); // 201 Created con Location
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_BRANDS))]
         public async Task<ActionResult<BrandResponse>> UpdateBrandAsync(int id, [FromBody] UpdateBrandRequest request)
         {
-            try
-            {
-                request.Id = id; // Asigna el id de la ruta al DTO
-                var result = await _facade.UpdateBrandAsync(request);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ErrorUtils.FormatError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Unexpected error while updating the brand." });
-            }
+            request.Id = id;
+            request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());
+            var result = await _facade.UpdateBrandAsync(request);
+            return Ok(result); // 200 OK
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_BRANDS))]
-        public async Task<ActionResult<BrandResponse>> DeleteBrandAsync([FromBody] DeleteRequest request)
+        public async Task<IActionResult> DeleteBrandAsync(int id)
         {
-            try
-            {
-                var result = await _facade.DeleteBrandAsync(request);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ErrorUtils.FormatError(ex));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { error = ex.Message });
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Unexpected error while deleting the brand." });
-            }
+            var request = new DeleteRequest(id);
+            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            await _facade.DeleteBrandAsync(request);
+            return NoContent(); // 204 No Content
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_BRANDS))]
         public async Task<ActionResult<BrandResponse>> GetBrandByIdAsync(int id)
         {
-            try
-            {
-                var result = await _facade.GetBrandByIdAsync(id);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ErrorUtils.FormatError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Unexpected error while retrieving the brand with id {id}." });
-            }
+            var result = await _facade.GetBrandByIdAsync(id);
+            return Ok(result); // 200 OK
         }
 
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_BRANDS))]
         public async Task<ActionResult<List<BrandResponse>>> GetAllBrandsAsync([FromQuery] QueryOptions options)
         {
-            try
-            {
-                var result = await _facade.GetAllBrandsAsync(options);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ErrorUtils.FormatError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Unexpected error while retrieving the brands." });
-            }
+            var result = await _facade.GetAllBrandsAsync(options);
+            return Ok(result); // 200 OK
         }
     }
 }
