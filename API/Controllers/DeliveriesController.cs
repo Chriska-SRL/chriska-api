@@ -1,76 +1,65 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using API.Utils;
 using BusinessLogic;
-using BusinessLogic.DTOs.DTOsDelivery;
+using BusinessLogic.Común;
 using BusinessLogic.Dominio;
+using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsDelivery;
 using BusinessLogic.DTOs.DTOsVehicle;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class DeliveriesController : ControllerBase
     {
         private readonly Facade _facade;
+        private readonly TokenUtils _tokenUtils;
 
-        public DeliveriesController(Facade facade)
+        public DeliveriesController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost]
-        public IActionResult AddDelivery([FromBody] AddDeliveryRequest request)
+        [Authorize(Policy = nameof(Permission.CREATE_DELIVERIES))]
+        public async Task<IActionResult> AddDeliveryAsync([FromBody] AddDeliveryRequest request)
         {
-            try
-            {
-                _facade.AddDelivery(request);
-                return Ok(new { message = "Entrega agregada correctamente" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            await _facade.AddDeliveryAsync(request);
+            return NoContent();
         }
 
-        [HttpPut]
-        public IActionResult UpdateDelivery([FromBody] UpdateDeliveryRequest request)
+        [HttpPut("{id}")]
+        [Authorize(Policy = nameof(Permission.EDIT_DELIVERIES))]
+        public async Task<IActionResult> UpdateDeliveryAsync(int id, [FromBody] UpdateDeliveryRequest request)
         {
-            try
-            {
-                _facade.UpdateDelivery(request);
-                return Ok(new { message = "Entrega actualizada correctamente" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            request.Id = id;
+            request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());
+            await _facade.UpdateDeliveryAsync(request);
+            return NoContent();
         }
 
-        [HttpDelete]
-        public IActionResult DeleteDelivery([FromBody] DeleteDeliveryRequest request)
+        [HttpDelete("{id}")]
+        [Authorize(Policy = nameof(Permission.DELETE_DELIVERIES))]
+        public async Task<IActionResult> DeleteDeliveryAsync(int id)
         {
-            try
-            {
-                _facade.DeleteDelivery(request);
-                return Ok(new { message = "Entrega eliminada correctamente" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            var request = new DeleteRequest(id);
+            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            await _facade.DeleteDeliveryAsync(request);
+            return NoContent();
         }
 
         [HttpPost("vehicles")]
-        public IActionResult AddVehicle([FromBody] AddVehicleRequest vehicle)
+        [Authorize(Policy = nameof(Permission.CREATE_DELIVERIES))]
+        public async Task<IActionResult> AddVehicleAsync([FromBody] AddVehicleRequest request)
         {
-            try
-            {
-                _facade.AddVehicle(vehicle);
-                return Ok(new { message = "Vehículo agregado correctamente" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            await _facade.AddVehicleAsync(request);
+            return NoContent();
         }
     }
 }
