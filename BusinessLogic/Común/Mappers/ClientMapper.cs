@@ -1,53 +1,51 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsClient;
-using BusinessLogic.Mappers;
 
 namespace BusinessLogic.Común.Mappers
 {
     public static class ClientMapper
     {
-        public static Client ToDomain(AddClientRequest addClientRequest)
+        public static Client ToDomain(AddClientRequest request)
         {
             return new Client(
                 id: 0,
-                name: addClientRequest.Name,
-                rut: addClientRequest.RUT,
-                razonSocial: addClientRequest.RazonSocial,
-                address: addClientRequest.Address,
-                mapsAddress: addClientRequest.MapsAddress,
-                schedule: addClientRequest.Schedule,
-                phone: addClientRequest.Phone,
-                contactName: addClientRequest.ContactName,
-                email: addClientRequest.Email,
-                observations: addClientRequest.Observations,
-                bankAccounts: new List<BankAccount>(), 
+                name: request.Name,
+                rut: request.RUT,
+                razonSocial: request.RazonSocial,
+                address: request.Address,
+                mapsAddress: request.MapsAddress,
+                schedule: request.Schedule,
+                phone: request.Phone,
+                contactName: request.ContactName,
+                email: request.Email,
+                observations: request.Observations,
+                bankAccounts: new List<BankAccount>(),
                 loanedCrates: 0,
-                qualification: addClientRequest.Qualification,
-                zone: new Zone(addClientRequest.ZoneId)
-            )
-            {
-                AuditInfo = AuditMapper.ToDomain(addClientRequest.AuditInfo)
-            };
+                qualification: request.Qualification,
+                zone: new Zone(request.ZoneId),
+                auditInfo: AuditMapper.ToDomain(request.AuditInfo)
+            );
         }
 
-        public static Client.UpdatableData ToUpdatableData(UpdateClientRequest updateClientRequest)
+        public static Client.UpdatableData ToUpdatableData(UpdateClientRequest request)
         {
             return new Client.UpdatableData
             {
-                Name = updateClientRequest.Name,
-                RUT = updateClientRequest.RUT,
-                RazonSocial = updateClientRequest.RazonSocial,
-                Address = updateClientRequest.Address,
-                MapsAddress = updateClientRequest.MapsAddress,
-                Schedule = updateClientRequest.Schedule,
-                Phone = updateClientRequest.Phone,
-                ContactName = updateClientRequest.ContactName,
-                Email = updateClientRequest.Email,
-                Observations = updateClientRequest.Observations,
-                LoanedCrates = updateClientRequest.LoanedCrates,
-                Qualification = updateClientRequest.Qualification,
-                Zone = new Zone(updateClientRequest.ZoneId),
-                BankAccounts = new List<BankAccount>() 
+                Name = request.Name,
+                RUT = request.RUT,
+                RazonSocial = request.RazonSocial,
+                Address = request.Address,
+                MapsAddress = request.MapsAddress,
+                Schedule = request.Schedule,
+                Phone = request.Phone,
+                ContactName = request.ContactName,
+                Email = request.Email,
+                Observations = request.Observations,
+                LoanedCrates = request.LoanedCrates,
+                Qualification = request.Qualification,
+                Zone = new Zone(request.ZoneId),
+                BankAccounts = new List<BankAccount>(),
+                AuditInfo = AuditMapper.ToDomain(request.AuditInfo)
             };
         }
 

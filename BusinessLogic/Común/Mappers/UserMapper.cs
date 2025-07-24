@@ -16,7 +16,7 @@ namespace BusinessLogic.Común.Mappers
                 isEnabled: addUserRequest.IsEnabled,
                 needsPasswordChange: true,
                 role: new Role(addUserRequest.RoleId),
-                requests: new List<Request>()
+                auditInfo: AuditMapper.ToDomain(addUserRequest.AuditInfo)
             );
         }
         public static User.UpdatableData ToUpdatableData(UpdateUserRequest updateUserRequest)
@@ -25,8 +25,9 @@ namespace BusinessLogic.Común.Mappers
             {
                 Name = updateUserRequest.Name,
                 Username = updateUserRequest.Username,
-                isEnabled = updateUserRequest.IsEnabled,
+                IsEnabled = updateUserRequest.IsEnabled,
                 Role = new Role(updateUserRequest.RoleId),
+                AuditInfo = AuditMapper.ToDomain(updateUserRequest.AuditInfo),
             };
         }
 
@@ -36,9 +37,10 @@ namespace BusinessLogic.Común.Mappers
                 Id = user.Id,
                 Name = user.Name,
                 Username = user.Username,
-                needsPasswordChange = user.needsPasswordChange,
-                IsEnabled = user.isEnabled,
+                needsPasswordChange = user.NeedsPasswordChange,
+                IsEnabled = user.IsEnabled,
                 Role = RoleMapper.ToResponse(user.Role),
+                AuditInfo = AuditMapper.ToResponse(user.AuditInfo)
             };
         }
 

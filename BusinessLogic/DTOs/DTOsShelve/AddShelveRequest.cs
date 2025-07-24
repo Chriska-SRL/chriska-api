@@ -1,6 +1,8 @@
-﻿namespace BusinessLogic.DTOs.DTOsShelve
+﻿using BusinessLogic.DTOs.DTOsAudit;
+
+namespace BusinessLogic.DTOs.DTOsShelve
 {
-    public class AddShelveRequest
+    public class AddShelveRequest : AuditableRequest
     {
         public string Name { get; set; }
         public string Description { get; set; }

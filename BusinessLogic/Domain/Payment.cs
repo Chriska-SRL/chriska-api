@@ -8,14 +8,16 @@ namespace BusinessLogic.Dominio
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public string Note { get; set; }
+        public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Payment(int id, DateTime date, decimal amount, string paymentMethod, string note, Supplier supplier)
+        public Payment(int id, DateTime date, decimal amount, string note,AuditInfo auditInfo)
         {
             Id = id;
             Date = date;
             Amount = amount;
             Note = note;
+            AuditInfo = auditInfo ?? new AuditInfo();
         }
 
         public void Validate()
@@ -30,15 +32,15 @@ namespace BusinessLogic.Dominio
             Date = data.Date;
             Amount = data.Amount;
             Note = data.Note;
+            AuditInfo = data.AuditInfo ?? new AuditInfo();
             Validate();
         }
         public class UpdatableData
         {
             public DateTime Date { get; set; }
             public decimal Amount { get; set; }
-            public string PaymentMethod { get; set; }
             public string Note { get; set; }
-            public Supplier Supplier { get; set; }
+            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
     }
 }

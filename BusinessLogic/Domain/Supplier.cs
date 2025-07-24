@@ -16,12 +16,12 @@ namespace BusinessLogic.Dominio
         public string ContactName { get; set; }
         public string Email { get; set; }
         public string Observations { get; set; }
-        public List<BankAccount> BankAccounts { get; set; }
         public List<Product> Products { get; set; } = new List<Product>();
+        public List<BankAccount> BankAccounts { get; set; }
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, Bank bank, string bankAccount, string observations, List<BankAccount> bankAccounts)
+        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email,string observations, List<Product> products,List<Purchase> purchases, List<BankAccount> bankAccounts,AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
@@ -33,7 +33,10 @@ namespace BusinessLogic.Dominio
             ContactName = contactName;
             Email = email;
             Observations = observations;
-            BankAccounts = bankAccounts;
+            Purchases = purchases ?? new List<Purchase>();
+            Products = products ?? new List<Product>();
+            BankAccounts = bankAccounts ?? new List<BankAccount>();
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
         }
         public Supplier(int id)
         {
@@ -46,8 +49,10 @@ namespace BusinessLogic.Dominio
             Phone = "099000000";
             ContactName = "Contacto Temporal";
             Email = "email@temporal.com";
-            BankAccounts = new();
             Observations = "Sin observaciones";
+            Purchases = new List<Purchase>();
+            Products = new List<Product>();
+            BankAccounts = new List<BankAccount>();
         }
 
         public void Validate()
@@ -107,6 +112,7 @@ namespace BusinessLogic.Dominio
             ContactName = data.ContactName ?? ContactName;
             Email = data.Email ?? Email;
             Observations = data.Observations ?? Observations;
+            AuditInfo = data.AuditInfo ?? new AuditInfo();
             Validate();
         }
 
@@ -121,6 +127,7 @@ namespace BusinessLogic.Dominio
             public string? ContactName { get; set; }
             public string? Email { get; set; }
             public string? Observations { get; set; }
+            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
     }
 }

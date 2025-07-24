@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using BusinessLogic.DTOs.DTOsAudit;
 namespace BusinessLogic.DTOs.DTOsPurchase
 {
     public class UpdatePurchaseRequest
@@ -12,5 +7,6 @@ namespace BusinessLogic.DTOs.DTOsPurchase
         public DateTime Date { get; set; }
         public string Status { get; set; }
         public int SupplierId { get; set; }
+        public AuditInfoRequest AuditInfo { get; set; } = new AuditInfoRequest();
     }
 }

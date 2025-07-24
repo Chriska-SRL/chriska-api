@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsAudit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,10 @@ namespace BusinessLogic.DTOs.DTOsOrder
         public int Crates { get; set; }
         public string Status { get; set; }
         public int DeliveryId { get; set; }
-        public int SaleId { get; set; } 
         public int PreparedById { get; set; } 
         public int DeliveredById { get; set; } 
         public int OrderRequestId { get; set; }
+        public AuditInfoRequest AuditInfo { get; set; }
 
     }
 }

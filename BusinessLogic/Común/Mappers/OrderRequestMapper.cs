@@ -21,8 +21,7 @@ namespace BusinessLogic.Común.Mappers
                 status: orderRequest.Status,
                 observation: "",
                 user: new User(orderRequest.UserId),                 
-                client: new Client(orderRequest.ClientId),
-                requestsItems: new List<RequestItem>()
+                client: new Client(orderRequest.ClientId)
             );
         }
         public static OrderRequest.UpdatableData ToDomain(UpdateOrderRequest_Request updateOrderRequest)

@@ -6,43 +6,49 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class PurchaseMapper
     {
-        public static Purchase ToDomain(AddPurchaseRequest purchaseRequest)
+        public static Purchase ToDomain(AddPurchaseRequest dto)
         {
-            return new Purchase
-            (
+            return new Purchase(
                 id: 0,
-                date: purchaseRequest.Date,
-                status: purchaseRequest.Status,
-                supplier: new Supplier(purchaseRequest.SupplierId)
+                date: dto.Date,
+                referece: dto.Reference,
+                supplier: new Supplier(dto.SupplierId),
+                payments: new List<Payment>(),
+                auditInfo: AuditMapper.ToDomain(dto.AuditInfo)
             );
         }
-        public static Purchase.UpdatableData ToUpdatableData(UpdatePurchaseRequest purchaseRequest)
+
+        public static Purchase.UpdatableData ToUpdatableData(UpdatePurchaseRequest dto)
         {
             return new Purchase.UpdatableData
             {
-                Date = purchaseRequest.Date,
-                Status = purchaseRequest.Status
+                Date = dto.Date,
+                Status = dto.Status,
+                AuditInfo = AuditMapper.ToDomain(dto.AuditInfo)
             };
         }
-        public static PurchaseResponse ToResponse(Purchase purchase)
+
+        public static PurchaseResponse ToResponse(Purchase entity)
         {
             return new PurchaseResponse
             {
-                Date = purchase.Date,
-                Status = purchase.Status,
-                Supplier = new SupplierResponse {
-                    Id = purchase.Supplier.Id,
-                    Name = purchase.Supplier.Name,
-                    RUT = purchase.Supplier.RUT,
-                    RazonSocial = purchase.Supplier.RazonSocial,
-                    Address = purchase.Supplier.Address,
-                    MapsAddress = purchase.Supplier.MapsAddress,
-                    Phone = purchase.Supplier.Phone,
-                    ContactName = purchase.Supplier.ContactName,
-                    Email = purchase.Supplier.Email,
-                    BankAccount = purchase.Supplier.BankAccount,
-                    Observations = purchase.Supplier.Observations
-                }
+                Id = entity.Id,
+                Date = entity.Date,
+                Reference = entity.Reference,
+                Supplier = new SupplierResponse
+                {
+                    Id = entity.Supplier.Id,
+                    Name = entity.Supplier.Name,
+                    RUT = entity.Supplier.RUT,
+                    RazonSocial = entity.Supplier.RazonSocial,
+                    Address = entity.Supplier.Address,
+                    MapsAddress = entity.Supplier.MapsAddress,
+                    Phone = entity.Supplier.Phone,
+                    ContactName = entity.Supplier.ContactName,
+                    Email = entity.Supplier.Email,
+                    Observations = entity.Supplier.Observations
+                },
+                AuditInfo = AuditMapper.ToResponse(entity.AuditInfo)
             };
         }
     }

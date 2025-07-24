@@ -1,6 +1,8 @@
-﻿namespace BusinessLogic.DTOs.DTOsRole
+﻿using BusinessLogic.DTOs.DTOsAudit;
+
+namespace BusinessLogic.DTOs.DTOsRole
 {
-    public class AddRoleRequest
+    public class AddRoleRequest : AuditableRequest
     {
         public string Name { get; set; }
         public string Description { get; set; }

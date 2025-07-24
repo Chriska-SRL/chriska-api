@@ -22,8 +22,8 @@ public class UserRepository : Repository<User, User.UpdatableData>, IUserReposit
                 cmd.Parameters.AddWithValue("@Name", user.Name);
                 cmd.Parameters.AddWithValue("@Username", user.Username);
                 cmd.Parameters.AddWithValue("@Password", user.Password);
-                cmd.Parameters.AddWithValue("@IsEnabled", user.isEnabled ? "T" : "F");
-                cmd.Parameters.AddWithValue("@NeedsPasswordChange", user.needsPasswordChange ? "T" : "F");
+                cmd.Parameters.AddWithValue("@IsEnabled", user.IsEnabled ? "T" : "F");
+                cmd.Parameters.AddWithValue("@NeedsPasswordChange", user.NeedsPasswordChange ? "T" : "F");
                 cmd.Parameters.AddWithValue("@RoleId", user.Role.Id);
             },
             async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
@@ -45,8 +45,8 @@ public class UserRepository : Repository<User, User.UpdatableData>, IUserReposit
                 cmd.Parameters.AddWithValue("@Name", user.Name);
                 cmd.Parameters.AddWithValue("@Username", user.Username);
                 cmd.Parameters.AddWithValue("@Password", user.Password);
-                cmd.Parameters.AddWithValue("@IsEnabled", user.isEnabled ? "T" : "F");
-                cmd.Parameters.AddWithValue("@NeedsPasswordChange", user.needsPasswordChange ? "T" : "F");
+                cmd.Parameters.AddWithValue("@IsEnabled", user.IsEnabled ? "T" : "F");
+                cmd.Parameters.AddWithValue("@NeedsPasswordChange", user.NeedsPasswordChange ? "T" : "F");
                 cmd.Parameters.AddWithValue("@RoleId", user.Role.Id);
             }
         );

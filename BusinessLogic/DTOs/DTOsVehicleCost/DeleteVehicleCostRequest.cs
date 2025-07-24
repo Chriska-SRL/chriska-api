@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.DTOs.DTOsRequestItem
+namespace BusinessLogic.DTOs.DTOsVehicleCost
 {
-    public class DeleteRequestItem_Request
+    public class DeleteVehicleCostRequest : DeleteRequest
     {
-        public int Id { get; set; }
     }
 }

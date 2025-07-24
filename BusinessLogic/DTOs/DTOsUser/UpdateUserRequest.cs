@@ -1,6 +1,8 @@
-﻿namespace BusinessLogic.DTOs.DTOsUser
+﻿using BusinessLogic.DTOs.DTOsAudit;
+
+namespace BusinessLogic.DTOs.DTOsUser
 {
-    public class UpdateUserRequest
+    public class UpdateUserRequest : AuditableRequest
     {
         public int Id { get; set; }
         public string Name { get; set; }

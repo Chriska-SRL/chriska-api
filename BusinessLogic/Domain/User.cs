@@ -96,9 +96,10 @@ namespace BusinessLogic.Dominio
 
             Name = data.Name ?? Name;
             Username = data.Username ?? Username;
-            IsEnabled = data.isEnabled;
+            IsEnabled = data.IsEnabled;
             Role = data.Role ?? Role;
-            NeedsPasswordChange = data.needsPasswordChange;
+            NeedsPasswordChange = data.NeedsPasswordChange;
+            AuditInfo = data.AuditInfo ?? AuditInfo;
             Validate();
         }
 
@@ -106,13 +107,14 @@ namespace BusinessLogic.Dominio
         {
             public string Name { get; set; }
             public string Username { get; set; }
-            public Boolean isEnabled { get; set; }
-            public Boolean needsPasswordChange { get; set; }
+            public Boolean IsEnabled { get; set; }
+            public Boolean NeedsPasswordChange { get; set; }
             public Role Role { get; set; }
+            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
 
         public override string ToString() { 
-            return $"User(Id: {Id}, Name: {Name}, Username: {Username}, isEnabled: {isEnabled}, needsPasswordChange: {needsPasswordChange},  Role: {Role.ToString()})";
+            return $"User(Id: {Id}, Name: {Name}, Username: {Username}, isEnabled: {IsEnabled}, needsPasswordChange: {NeedsPasswordChange},  Role: {Role.ToString()})";
         }
     }
 }

@@ -12,7 +12,8 @@ namespace BusinessLogic.Común.Mappers
                 name: addWarehouseRequest.Name,
                 description: addWarehouseRequest.Description,
                 address: addWarehouseRequest.Address,
-                shelves: new List<Shelve>()
+                shelves: new List<Shelve>(),
+                auditInfo: AuditMapper.ToDomain(addWarehouseRequest.AuditInfo)
             );
         }
         public static Warehouse.UpdatableData ToUpdatableData(UpdateWarehouseRequest updateWarehouseRequest)
@@ -21,7 +22,8 @@ namespace BusinessLogic.Común.Mappers
             {
                 Name = updateWarehouseRequest.Name,
                 Description = updateWarehouseRequest.Description,
-                Address = updateWarehouseRequest.Address
+                Address = updateWarehouseRequest.Address,
+                AuditInfo = AuditMapper.ToDomain(updateWarehouseRequest.AuditInfo)
             };
         }
         public static WarehouseResponse ToResponse(Warehouse warehouse)
@@ -32,7 +34,8 @@ namespace BusinessLogic.Común.Mappers
                 Name = warehouse.Name,
                 Description = warehouse.Description,
                 Address = warehouse.Address,
-                Shelves = warehouse.Shelves.Select(ShelveMapper.ToResponse).ToList()
+                Shelves = warehouse.Shelves.Select(ShelveMapper.ToResponse).ToList(),
+                AuditInfo = AuditMapper.ToResponse(warehouse.AuditInfo)
             };
         }
     }

@@ -3,7 +3,7 @@ using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsProduct
 {
-    public class ProductAddRequest
+    public class ProductAddRequest : AuditableRequest
     {
         public required string Name { get; set; }
         public string? Barcode { get; set; }
@@ -17,6 +17,5 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public required string Observations { get; set; }
         public int SubCategoryId { get; set; }
         public int BrandId { get; set; }
-        public required AuditInfoRequest AuditInfo { get; set; }
     }
 }

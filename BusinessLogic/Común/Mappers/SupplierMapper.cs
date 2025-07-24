@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsSupplier;
+using System.Runtime;
 
 namespace BusinessLogic.Común.Mappers
 {
@@ -17,9 +18,11 @@ namespace BusinessLogic.Común.Mappers
                 phone: request.Phone,
                 contactName: request.ContactName,
                 email: request.Email,
-                bank: request.Bank,
-                bankAccount: request.BankAccount,
-                observations: request.Observation
+                observations: request.Observation,
+                products: new List<Product>(),
+                purchases: new List<Purchase>(),
+                bankAccounts: new List<BankAccount>(),
+                auditInfo: AuditMapper.ToDomain(request.AuditInfo)
                 );
         }
         public static Supplier.UpdatableData ToUpdatableData(UpdateSupplierRequest request)
@@ -34,9 +37,8 @@ namespace BusinessLogic.Común.Mappers
                 Phone = request.Phone,
                 ContactName = request.ContactName,
                 Email = request.Email,
-                Bank = request.Bank,
-                BankAccount = request.BankAccount,
-                Observations = request.Observations
+                Observations = request.Observations,
+                AuditInfo = AuditMapper.ToDomain(request.AuditInfo)
             };
         }
         public static SupplierResponse ToResponse(Supplier domain)
@@ -52,9 +54,9 @@ namespace BusinessLogic.Común.Mappers
                 Phone = domain.Phone,
                 ContactName = domain.ContactName,
                 Email = domain.Email,
-                Bank = domain.Bank,
-                BankAccount = domain.BankAccount,
-                Observations = domain.Observations
+                Observations = domain.Observations,
+                Products = domain.Products.Select(ProductMapper.ToResponse).ToList(),
+                AuditInfo = AuditMapper.ToResponse(domain.AuditInfo)
             };
         }
     }

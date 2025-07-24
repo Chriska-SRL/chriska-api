@@ -1,6 +1,8 @@
-﻿namespace BusinessLogic.DTOs.DTOsSubCategory
+﻿using BusinessLogic.DTOs.DTOsAudit;
+
+namespace BusinessLogic.DTOs.DTOsSubCategory
 {
-    public class UpdateSubCategoryRequest
+    public class UpdateSubCategoryRequest : AuditableRequest
     {
         public int Id { get; set; }
         public string Name { get; set; }

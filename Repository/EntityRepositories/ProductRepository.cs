@@ -39,9 +39,6 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Observation", product.Observation);
                     cmd.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
                     cmd.Parameters.AddWithValue("@BrandId", product.Brand.Id);
-                    cmd.Parameters.AddWithValue("@UpdatedAt", product.AuditInfo.UpdatedAt);
-                    cmd.Parameters.AddWithValue("@UpdatedBy", product.AuditInfo.UpdatedBy);
-                    cmd.Parameters.AddWithValue("@UpdatedLocation", (object?)product.AuditInfo.UpdatedLocation ?? DBNull.Value);
 
                 },
                 async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
@@ -80,9 +77,6 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Observation", product.Observation);
                     cmd.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
                     cmd.Parameters.AddWithValue("@BrandId", product.Brand.Id);
-                    cmd.Parameters.AddWithValue("@UpdatedAt", product.AuditInfo.UpdatedAt);
-                    cmd.Parameters.AddWithValue("@UpdatedBy", product.AuditInfo.UpdatedBy);
-                    cmd.Parameters.AddWithValue("@UpdatedLocation", (object?)product.AuditInfo.UpdatedLocation ?? DBNull.Value);
 
                 }
             );
@@ -106,9 +100,6 @@ namespace Repository.EntityRepositories
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Id", product.Id);
-                    cmd.Parameters.AddWithValue("@DeletedAt", product.AuditInfo.DeletedAt);
-                    cmd.Parameters.AddWithValue("@DeletedBy", product.AuditInfo.DeletedBy);
-                    cmd.Parameters.AddWithValue("@DeletedLocation", (object?)product.AuditInfo.DeletedLocation ?? DBNull.Value);
 
                 }
             );

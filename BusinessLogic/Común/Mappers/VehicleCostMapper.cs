@@ -7,7 +7,7 @@ namespace BusinessLogic.Común.Mappers
     {
         public static VehicleCost ToDomain(AddVehicleCostRequest dto)
         {
-            return new VehicleCost(0, dto.VehicleId, dto.Type, dto.Description, dto.Amount, dto.Date);
+            return new VehicleCost(0, dto.VehicleId, dto.Type, dto.Description, dto.Amount, dto.Date,AuditMapper.ToDomain(dto.AuditInfo));
         }
         public static VehicleCost.UpdatableData ToUpdatableData(UpdateVehicleCostRequest dto)
         {
@@ -16,7 +16,8 @@ namespace BusinessLogic.Común.Mappers
                 Type = dto.Type,
                 Description = dto.Description,
                 Amount = dto.Amount,
-                Date = dto.Date
+                Date = dto.Date,
+                AuditInfo = AuditMapper.ToDomain(dto.AuditInfo)
             };
         }
         public static VehicleCostResponse ToResponse(VehicleCost domain)
@@ -28,7 +29,8 @@ namespace BusinessLogic.Común.Mappers
                 Date = domain.Date,
                 Type = domain.Type,
                 Description = domain.Description,
-                Amount = domain.Amount
+                Amount = domain.Amount,
+                AuditInfo = AuditMapper.ToResponse(domain.AuditInfo)
             };
         }
     }

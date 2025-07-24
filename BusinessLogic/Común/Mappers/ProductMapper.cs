@@ -4,7 +4,6 @@ using BusinessLogic.DTOs.DTOsSubCategory;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsDiscount;
-using BusinessLogic.Común.Audits;
 using BusinessLogic.Domain;
 
 namespace BusinessLogic.Común.Mappers
@@ -27,7 +26,7 @@ namespace BusinessLogic.Común.Mappers
                 observations: dto.Observations,
                 subCategory: subCategory,
                 brand: new Brand(dto.BrandId),
-                suppliers: new List<Supplier>(), // TODO: mapear si vienen en el DTO
+                suppliers: new List<Supplier>(), 
                 auditInfo: AuditMapper.ToDomain(dto.AuditInfo)
             );
         }
@@ -47,7 +46,8 @@ namespace BusinessLogic.Común.Mappers
                 SubCategory = subCategory,
                 Brand = new Brand(dto.BrandId),
                 Stock = dto.Stock,
-                AviableStock = dto.AvailableStock
+                AviableStock = dto.AvailableStock,
+                AuditInfo = AuditMapper.ToDomain(dto.AuditInfo),
             };
         }
 

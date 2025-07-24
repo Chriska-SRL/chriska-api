@@ -1,13 +1,13 @@
 ﻿using BusinessLogic.Común.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BusinessLogic.Dominio;
+using BusinessLogic.DTOs.DTOsAudit;
+using BusinessLogic.DTOs.DTOsBankAccount;
+using BusinessLogic.DTOs.DTOsProduct;
+
 
 namespace BusinessLogic.DTOs.DTOsSupplier
 {
-    public class SupplierResponse
+    public class SupplierResponse : AuditableResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -18,8 +18,7 @@ namespace BusinessLogic.DTOs.DTOsSupplier
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
-        public Bank Bank { get; set; }
-        public string BankAccount { get; set; }
         public string Observations { get; set; }
+        public List<ProductResponse> Products { get; set; } = new List<ProductResponse>();
     }
 }

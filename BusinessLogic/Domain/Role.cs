@@ -67,6 +67,7 @@ namespace BusinessLogic.Dominio
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;
             Permissions = data.Permissions ?? Permissions;
+            AuditInfo = data.AuditInfo ?? AuditInfo;
             Validate();
         }
 
@@ -75,6 +76,7 @@ namespace BusinessLogic.Dominio
             public string? Name { get; set; } = string.Empty;
             public string? Description { get; set; } = string.Empty;
             public List<Permission>? Permissions { get; set; } = new List<Permission>();
+            public AuditInfo? AuditInfo { get; set; } = new AuditInfo();
         }
 
         public override string ToString()

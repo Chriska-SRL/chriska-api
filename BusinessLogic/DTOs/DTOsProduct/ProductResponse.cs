@@ -6,7 +6,7 @@ using BusinessLogic.DTOs.DTOsSubCategory;
 
 namespace BusinessLogic.DTOs.DTOsProduct
 {
-    public class ProductResponse
+    public class ProductResponse : AuditableResponse
     {
         public int Id { get; set; }
         public required string Name { get; set; }
@@ -23,6 +23,5 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public required SubCategoryResponse SubCategory { get; set; }
         public required BrandResponse Brand { get; set; }
         public List<DiscountResponse> Discounts { get; set; } = new();
-        public required AuditInfoResponse AuditInfo { get; set; }
     }
 }

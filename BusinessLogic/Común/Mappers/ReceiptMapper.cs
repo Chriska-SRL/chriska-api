@@ -53,7 +53,6 @@ namespace BusinessLogic.Común.Mappers
                     ContactName = receipt.Client.ContactName,
                     Email = receipt.Client.Email,
                     Observations = receipt.Client.Observations,
-                    BankAccount = receipt.Client.BankAccount,
                     LoanedCrates = receipt.Client.LoanedCrates
                 }
             };

@@ -12,7 +12,7 @@ namespace BusinessLogic.Dominio
         public Client Client { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Receipt(int id,DateTime date, decimal amount, string paymentMethod, string notes, Client client)
+        public Receipt(int id,DateTime date, decimal amount, string paymentMethod, string notes, Client client,AuditInfo auditInfo)
         {
             Id = id;
             Date = date;
@@ -20,6 +20,7 @@ namespace BusinessLogic.Dominio
             PaymentMethod = paymentMethod;
             Notes = notes;
             Client = client;
+            AuditInfo = auditInfo ?? new AuditInfo();
             Validate();
         }
 
@@ -47,6 +48,7 @@ namespace BusinessLogic.Dominio
             PaymentMethod = updatableData.PaymentMethod;
             Notes = updatableData.Notes;
             Client = updatableData.Client;
+            AuditInfo = updatableData.AuditInfo ?? new AuditInfo();
             Validate();
         }
         public class UpdatableData
@@ -56,6 +58,7 @@ namespace BusinessLogic.Dominio
             public string PaymentMethod { get; set; }
             public string Notes { get; set; }
             public Client Client{ get; set; }
+            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
     }
 }

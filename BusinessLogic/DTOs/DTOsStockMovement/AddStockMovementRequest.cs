@@ -1,8 +1,9 @@
 ﻿using BusinessLogic.Común.Enums;
+using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsStockMovement
 {
-    public class AddStockMovementRequest
+    public class AddStockMovementRequest : AuditableRequest
     {
         public DateTime Date { get; set; }
         public int Quantity { get; set; }

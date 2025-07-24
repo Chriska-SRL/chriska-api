@@ -1,42 +1,42 @@
 ﻿using BusinessLogic.Domain;
+using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsBrand;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BusinessLogic.Mappers;
+using BusinessLogic.Común.Audits;
 
 namespace BusinessLogic.Común.Mappers
 {
     public static class BrandMapper
     {
-        public static Brand ToDomain(AddBrandRequest brandRequest)
+        public static Brand ToDomain(AddBrandRequest request)
         {
-            return new Brand
-            (
+            return new Brand(
                 id: 0,
-                name: brandRequest.Name,
-                description: brandRequest.Description
+                name: request.Name,
+                description: request.Description,
+                auditInfo: AuditMapper.ToDomain(request.AuditInfo)
             );
         }
-        public static Brand.UpdatableData ToUpdatableData(UpdateBrandRequest brandRequest)
+
+        public static Brand.UpdatableData ToUpdatableData(UpdateBrandRequest request)
         {
             return new Brand.UpdatableData
             {
-                Name = brandRequest.Name,
-                Description = brandRequest.Description
+                Name = request.Name,
+                Description = request.Description,
+                AuditInfo = AuditMapper.ToDomain(request.AuditInfo)
             };
         }
+
         public static BrandResponse ToResponse(Brand brand)
         {
             return new BrandResponse
             {
                 Id = brand.Id,
                 Name = brand.Name,
-                Description = brand.Description
+                Description = brand.Description,
+                AuditInfo = AuditMapper.ToResponse(brand.AuditInfo)
             };
         }
-
-
     }
 }

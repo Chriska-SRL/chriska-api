@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsOrder;
+using BusinessLogic.Mappers;
 
 namespace BusinessLogic.Común.Mappers
 {
@@ -14,14 +15,15 @@ namespace BusinessLogic.Común.Mappers
                 crates: addOrderRequest.Crates,
                 status: addOrderRequest.Status,
                 delivery: new Delivery(addOrderRequest.DeliveryId),
-                sale: new Sale(addOrderRequest.SaleId),
                 preparedBy: new User(addOrderRequest.PreparedById),
                 deliveredBy: new User(addOrderRequest.DeliveredById),
-                orderRequest: new OrderRequest(addOrderRequest.OrderRequestId),
-                orderItems: new List<OrderItem>()
-            );
-
+                orderRequest: new OrderRequest(addOrderRequest.OrderRequestId)
+            )
+            {
+                AuditInfo = AuditMapper.ToDomain(addOrderRequest.AuditInfo)
+            };
         }
+
         public static Order.UpdatableData ToUpdatableData(UpdateOrderRequest updatableOrderRequest)
         {
             return new Order.UpdatableData
@@ -31,12 +33,13 @@ namespace BusinessLogic.Común.Mappers
                 Crates = updatableOrderRequest.Crates,
                 Status = updatableOrderRequest.Status,
                 Delivery = new Delivery(updatableOrderRequest.DeliveryId),
-                Sale = new Sale(updatableOrderRequest.SaleId),
                 PreparedBy = new User(updatableOrderRequest.PreparedById),
                 DeliveredBy = new User(id: updatableOrderRequest.DeliveredById),
-                OrderRequest = new OrderRequest(updatableOrderRequest.OrderRequestId)
+                OrderRequest = new OrderRequest(updatableOrderRequest.OrderRequestId),
+                AuditInfo = AuditMapper.ToDomain(updatableOrderRequest.AuditInfo)
             };
         }
+
         public static OrderResponse ToResponse(Order order)
         {
             return new OrderResponse
@@ -47,10 +50,10 @@ namespace BusinessLogic.Común.Mappers
                 Crates = order.Crates,
                 Status = order.Status,
                 Delivery = DeliveryMapper.ToResponse(order.Delivery),
-                Sale = SaleMapper.ToResponse(order.Sale),
                 PreparedBy = UserMapper.ToResponse(order.PreparedBy),
                 DeliveredBy = UserMapper.ToResponse(order.DeliveredBy),
                 OrderRequest = OrderRequestMapper.ToResponse(order.OrderRequest),
+                AuditInfo = AuditMapper.ToResponse(order.AuditInfo)
             };
         }
     }
