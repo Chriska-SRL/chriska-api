@@ -42,7 +42,7 @@ namespace Repository.EntityRepositories
 
             return new Client(newId, client.Name, client.RUT, client.RazonSocial, client.Address, client.MapsAddress,
                               client.Schedule, client.Phone, client.ContactName, client.Email, client.Observations,
-                              client.BankAccounts, client.LoanedCrates, client.Qualification, client.Zone);
+                              client.BankAccounts, client.LoanedCrates, client.Qualification, client.Zone, client.AuditInfo);
         }
 
         #endregion

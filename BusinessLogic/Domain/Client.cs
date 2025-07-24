@@ -26,6 +26,7 @@ namespace BusinessLogic.Dominio
         public List<ClientDocument> Documents { get; set; } = new();
         public AuditInfo AuditInfo { get; set; } = new();
 
+        public Client() { }
         public Client(int id, string name, string rut, string razonSocial, string address, string mapsAddress,
                       string schedule, string phone, string contactName, string email, string observations,
                       List<BankAccount> bankAccounts, int loanedCrates, string qualification, Zone zone,AuditInfo auditInfo)
