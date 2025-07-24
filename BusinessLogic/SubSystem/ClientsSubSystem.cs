@@ -3,6 +3,7 @@ using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsReceipt;
 using BusinessLogic.Común.Mappers;
 using BusinessLogic.Dominio;
+using BusinessLogic.Común;
 
 namespace BusinessLogic.SubSystem
 {
@@ -23,8 +24,8 @@ namespace BusinessLogic.SubSystem
 
         public async Task<ClientResponse> AddClientAsync(AddClientRequest request)
         {
-            Zone zone = await _zoneRepository.GetByIdAsync(request.ZoneId)
-                          ?? throw new ArgumentException("Zona no encontrada.", nameof(request.ZoneId));
+            var zone = await _zoneRepository.GetByIdAsync(request.ZoneId)
+                        ?? throw new ArgumentException("Zona no encontrada.", nameof(request.ZoneId));
 
             if (await _clientRepository.GetByRUTAsync(request.RUT) != null)
                 throw new ArgumentException("Ya existe un cliente con el mismo RUT.", nameof(request.RUT));
@@ -32,21 +33,21 @@ namespace BusinessLogic.SubSystem
             if (await _clientRepository.GetByNameAsync(request.Name) != null)
                 throw new ArgumentException("Ya existe un cliente con el mismo nombre.", nameof(request.Name));
 
-            Client newclient = ClientMapper.ToDomain(request);
-            newclient.Zone = zone;
-            newclient.Validate();
+            var newClient = ClientMapper.ToDomain(request);
+            newClient.Zone = zone;
+            newClient.Validate();
 
-            Client added = await _clientRepository.AddAsync(newclient);
+            var added = await _clientRepository.AddAsync(newClient);
             return ClientMapper.ToResponse(added);
         }
 
         public async Task<ClientResponse> UpdateClientAsync(UpdateClientRequest request)
         {
-            Zone zone = await _zoneRepository.GetByIdAsync(request.ZoneId)
-                          ?? throw new ArgumentException("Zona no encontrada.", nameof(request.ZoneId));
+            var zone = await _zoneRepository.GetByIdAsync(request.ZoneId)
+                        ?? throw new ArgumentException("Zona no encontrada.", nameof(request.ZoneId));
 
-            Client existing = await _clientRepository.GetByIdAsync(request.Id)
-                               ?? throw new InvalidOperationException("Cliente no encontrado.");
+            var existing = await _clientRepository.GetByIdAsync(request.Id)
+                           ?? throw new InvalidOperationException("Cliente no encontrado.");
 
             if (existing.RUT != request.RUT && await _clientRepository.GetByRUTAsync(request.RUT) != null)
                 throw new ArgumentException("Ya existe un cliente con el mismo RUT.", nameof(request.RUT));
@@ -54,22 +55,25 @@ namespace BusinessLogic.SubSystem
             if (existing.Name != request.Name && await _clientRepository.GetByNameAsync(request.Name) != null)
                 throw new ArgumentException("Ya existe un cliente con el mismo nombre.", nameof(request.Name));
 
-            Client.UpdatableData updatedData = ClientMapper.ToUpdatableData(request);
+            var updatedData = ClientMapper.ToUpdatableData(request);
             updatedData.Zone = zone;
             existing.Update(updatedData);
 
-            Client updated = await _clientRepository.UpdateAsync(existing);
+            var updated = await _clientRepository.UpdateAsync(existing);
             return ClientMapper.ToResponse(updated);
         }
 
-        public async Task<ClientResponse> DeleteClientAsync(int id)
+        public async Task<ClientResponse> DeleteClientAsync(DeleteClientRequest request)
         {
-            Client deleted = await _clientRepository.DeleteAsync(id)
-                               ?? throw new InvalidOperationException("Cliente no encontrado.");
+            var client = await _clientRepository.GetByIdAsync(request.Id)
+                          ?? throw new InvalidOperationException("Cliente no encontrado.");
 
-            return ClientMapper.ToResponse(deleted);
+            var auditInfo = AuditMapper.ToDomain(request.AuditInfo);
+            client.SetDeletedAudit(auditInfo);
+
+            await _clientRepository.DeleteAsync(client);
+            return ClientMapper.ToResponse(client);
         }
-
         public async Task<ClientResponse> GetClientByIdAsync(int id)
         {
             Client client = await _clientRepository.GetByIdAsync(id)
@@ -78,9 +82,9 @@ namespace BusinessLogic.SubSystem
             return ClientMapper.ToResponse(client);
         }
 
-        public async Task<List<ClientResponse>> GetAllClientsAsync()
+        public async Task<List<ClientResponse>> GetAllClientsAsync(QueryOptions options)
         {
-            var clients = await _clientRepository.GetAllAsync();
+            var clients = await _clientRepository.GetAllAsync(options);
             return clients.Select(ClientMapper.ToResponse).ToList();
         }
 
@@ -115,13 +119,18 @@ namespace BusinessLogic.SubSystem
             return ReceiptMapper.ToResponse(updated);
         }
 
-        public async Task<ReceiptResponse> DeleteReceiptAsync(int id)
+        public async Task<ReceiptResponse> DeleteReceiptAsync(DeleteReceiptRequest request)
         {
-            Receipt deleted = await _receiptRepository.DeleteAsync(id)
-                               ?? throw new InvalidOperationException("Recibo no encontrado.");
+            var receipt = await _receiptRepository.GetByIdAsync(request.Id)
+                            ?? throw new InvalidOperationException("Recibo no encontrado.");
 
-            return ReceiptMapper.ToResponse(deleted);
+            var auditInfo = AuditMapper.ToDomain(request.AuditInfo);
+            receipt.SetDeletedAudit(auditInfo);
+
+            await _receiptRepository.DeleteAsync(receipt);
+            return ReceiptMapper.ToResponse(receipt);
         }
+
 
         public async Task<ReceiptResponse> GetReceiptByIdAsync(int id)
         {
@@ -131,9 +140,9 @@ namespace BusinessLogic.SubSystem
             return ReceiptMapper.ToResponse(receipt);
         }
 
-        public async Task<List<ReceiptResponse>> GetAllReceiptsAsync()
+        public async Task<List<ReceiptResponse>> GetAllReceiptsAsync(QueryOptions options)
         {
-            var receipts = await _receiptRepository.GetAllAsync();
+            var receipts = await _receiptRepository.GetAllAsync(options);
             return receipts.Select(ReceiptMapper.ToResponse).ToList();
         }
     }

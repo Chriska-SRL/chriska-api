@@ -3,6 +3,7 @@ using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsUser;
 using BusinessLogic.Común.Mappers;
 using BusinessLogic.Común;
+using BusinessLogic.DTOs;
 
 namespace BusinessLogic.SubSystem
 {
@@ -17,9 +18,9 @@ namespace BusinessLogic.SubSystem
             _roleRepository = roleRepository;
         }
 
-        public UserResponse AddUser(AddUserRequest request)
+        public async Task<UserResponse> AddUserAsync(AddUserRequest request)
         {
-            var role = _roleRepository.GetById(request.RoleId)
+            var role = await _roleRepository.GetByIdAsync(request.RoleId)
                        ?? throw new ArgumentException("Rol no encontrado.", nameof(request.RoleId));
 
             var newUser = UserMapper.ToDomain(request);
@@ -28,74 +29,77 @@ namespace BusinessLogic.SubSystem
             newUser.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
             newUser.Validate();
 
-            if (_userRepository.GetByUsername(newUser.Username) != null) 
-                        throw new ArgumentException("Ya existe un usuario con ese username.", nameof(newUser.Username));
+            if (await _userRepository.GetByUsernameAsync(newUser.Username) != null)
+                throw new ArgumentException("Ya existe un usuario con ese username.", nameof(newUser.Username));
 
-            var added = _userRepository.Add(newUser);
+            var added = await _userRepository.AddAsync(newUser);
             return UserMapper.ToResponse(added);
         }
 
-        public string ResetPassword(int userId, string? newPassword = null)
+
+        public async Task<string> ResetPasswordAsync(int userId, string? newPassword = null)
         {
-            var user = _userRepository.GetById(userId)
+            var user = await _userRepository.GetByIdAsync(userId)
                        ?? throw new InvalidOperationException("Usuario no encontrado.");
 
             if (string.IsNullOrEmpty(newPassword))
             {
                 newPassword = PasswordGenerator.Generate();
-                user.needsPasswordChange = true;
+                user.NeedsPasswordChange = true;
             }
-            else { user.needsPasswordChange = false; }
+            else
+            {
+                user.NeedsPasswordChange = false;
+            }
             User.ValidatePassword(newPassword);
             user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
-            _userRepository.Update(user);
+
+            await _userRepository.UpdateAsync(user);
 
             return newPassword;
         }
-
-        public UserResponse UpdateUser(UpdateUserRequest request)
+        public async Task<UserResponse> UpdateUserAsync(UpdateUserRequest request)
         {
-            var existingUser = _userRepository.GetById(request.Id)
+            var existingUser = await _userRepository.GetByIdAsync(request.Id)
                                 ?? throw new ArgumentException("Usuario no encontrado.", nameof(request.Id));
 
-            var role = _roleRepository.GetById(request.RoleId)
+            var role = await _roleRepository.GetByIdAsync(request.RoleId)
                        ?? throw new ArgumentException("Rol no encontrado.", nameof(request.RoleId));
 
-            if (existingUser.Username != request.Username && _userRepository.GetByUsername(request.Username) != null)
+            if (existingUser.Username != request.Username && await _userRepository.GetByUsernameAsync(request.Username) != null)
                 throw new ArgumentException("Ya existe un usuario con ese username.", nameof(request.Username));
 
             var updatedData = UserMapper.ToUpdatableData(request);
             updatedData.Role = role;
             existingUser.Update(updatedData);
 
-            var updated = _userRepository.Update(existingUser);
+            var updated = await _userRepository.UpdateAsync(existingUser);
             return UserMapper.ToResponse(updated);
         }
-
-        public UserResponse DeleteUser(int id)
+        public async Task<UserResponse> DeleteUserAsync(DeleteRequest request)
         {
-            var deleted = _userRepository.Delete(id)
-                          ?? throw new ArgumentException("Usuario no encontrado.", nameof(id));
+            var user = await _userRepository.GetByIdAsync(request.Id)
+                        ?? throw new InvalidOperationException("Usuario no encontrado.");
 
-            //TODO: Implementar control de integridad referencial:
-            //cuando se trabaje con entidades que tengan relación con esta.
+            var auditInfo = AuditMapper.ToDomain(request.AuditInfo);
+            user.SetDeletedAudit(auditInfo);
 
-            return UserMapper.ToResponse(deleted);
+            await _userRepository.DeleteAsync(user);
+            return UserMapper.ToResponse(user);
         }
 
-        public UserResponse GetUserById(int id)
+        public async Task<UserResponse> GetUserByIdAsync(int id)
         {
-            var user = _userRepository.GetById(id)
+            var user = await _userRepository.GetByIdAsync(id)
                        ?? throw new ArgumentException("Usuario no encontrado.", nameof(id));
 
             return UserMapper.ToResponse(user);
         }
 
-        public List<UserResponse> GetAllUsers()
+        public async Task<List<UserResponse>> GetAllUsersAsync(QueryOptions options)
         {
-            return _userRepository.GetAll()
-                                  .Select(UserMapper.ToResponse)
-                                  .ToList();
+            var users = await _userRepository.GetAllAsync(options);
+            return users.Select(UserMapper.ToResponse).ToList();
         }
     }
 }

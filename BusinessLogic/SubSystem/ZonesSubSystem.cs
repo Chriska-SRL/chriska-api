@@ -2,6 +2,8 @@
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsZone;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.DTOs;
+using BusinessLogic.Común;
 
 namespace BusinessLogic.SubSystem
 {
@@ -14,46 +16,51 @@ namespace BusinessLogic.SubSystem
             _zoneRepository = zoneRepository;
         }
 
-        public ZoneResponse AddZone(AddZoneRequest request)
+        public async Task<ZoneResponse> AddZoneAsync(AddZoneRequest request)
         {
-            Zone newZone = ZoneMapper.ToDomain(request);
+            var newZone = ZoneMapper.ToDomain(request);
             newZone.Validate();
 
-            Zone added = _zoneRepository.Add(newZone);
+            var added = await _zoneRepository.AddAsync(newZone);
             return ZoneMapper.ToResponse(added);
         }
 
-        public ZoneResponse UpdateZone(UpdateZoneRequest request)
-        {
-            Zone existing = _zoneRepository.GetById(request.Id)
-                                         ?? throw new ArgumentException("Zona no encontrada.");
 
-            Zone.UpdatableData updatedData = ZoneMapper.ToUpdatableData(request);
+        public async Task<ZoneResponse> UpdateZoneAsync(UpdateZoneRequest request)
+        {
+            var existing = await _zoneRepository.GetByIdAsync(request.Id)
+                ?? throw new ArgumentException("Zona no encontrada.", nameof(request.Id));
+
+            var updatedData = ZoneMapper.ToUpdatableData(request);
             existing.Update(updatedData);
 
-            Zone updated = _zoneRepository.Update(existing);
+            var updated = await _zoneRepository.UpdateAsync(existing);
             return ZoneMapper.ToResponse(updated);
         }
 
-        public ZoneResponse DeleteZone(int id)
-        {
-            Zone deleted = _zoneRepository.Delete(id)
-                            ?? throw new InvalidOperationException("Zona no encontrada.");
 
-            return ZoneMapper.ToResponse(deleted);
+        public async Task<ZoneResponse> DeleteZoneAsync(DeleteRequest request)
+        {
+            var zone = await _zoneRepository.GetByIdAsync(request.Id)
+                ?? throw new InvalidOperationException("Zona no encontrada.");
+
+            var auditInfo = AuditMapper.ToDomain(request.AuditInfo);
+            zone.SetDeletedAudit(auditInfo);
+
+            await _zoneRepository.DeleteAsync(zone);
+            return ZoneMapper.ToResponse(zone);
         }
-
-        public ZoneResponse GetZoneById(int id)
+        public async Task<ZoneResponse> GetZoneByIdAsync(int id)
         {
-            Zone zone = _zoneRepository.GetById(id)
-                         ?? throw new InvalidOperationException("Zona no encontrada.");
+            var zone = await _zoneRepository.GetByIdAsync(id)
+                ?? throw new InvalidOperationException("Zona no encontrada.");
 
             return ZoneMapper.ToResponse(zone);
         }
-         
-        public List<ZoneResponse> GetAllZones()
+
+        public async Task<List<ZoneResponse>> GetAllZonesAsync(QueryOptions options)
         {
-            List<Zone> zones = _zoneRepository.GetAll();
+            var zones = await _zoneRepository.GetAllAsync(options);
             return zones.Select(ZoneMapper.ToResponse).ToList();
         }
     }

@@ -2,7 +2,7 @@
 
 namespace BusinessLogic.DTOs
 {
-    public class DeleteRequest:AuditInfoRequest
+    public class DeleteRequest:AuditableRequest
     {
         public int Id { get; set; }
 

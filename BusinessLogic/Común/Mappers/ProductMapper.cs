@@ -10,7 +10,7 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class ProductMapper
     {
-        public static Product FromAddRequest(ProductAddRequest dto, SubCategory subCategory)
+        public static Product FromAddRequest(AddProductRequest dto, SubCategory subCategory)
         {
             return new Product(
                 id: 0,
@@ -31,7 +31,7 @@ namespace BusinessLogic.Común.Mappers
             );
         }
 
-        public static Product.UpdatableData FromUpdateRequest(ProductUpdateRequest dto, SubCategory subCategory)
+        public static Product.UpdatableData FromUpdateRequest(UpdateProductRequest dto, SubCategory subCategory)
         {
             return new Product.UpdatableData
             {

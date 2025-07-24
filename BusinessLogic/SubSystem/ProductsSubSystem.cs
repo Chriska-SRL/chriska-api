@@ -21,92 +21,98 @@ namespace BusinessLogic.SubSystem
             _brandRepository = brandRepository;
         }
 
-        public ProductResponse AddProduct(AddProductRequest request)
+        public async Task<ProductResponse> AddProduct(AddProductRequest request)
         {
-            var subCategory = _subCategoryRepository.GetById(request.SubCategoryId)
+            var subCategory = await _subCategoryRepository.GetByIdAsync(request.SubCategoryId)
                               ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(request.SubCategoryId));
-            var brand = _brandRepository.GetById(request.BrandId)
-                              ?? throw new ArgumentException("Marca no encontrada.", nameof(request.BrandId));
 
-            if ( _productRepository.GetByBarcode(request.Barcode) != null) 
-                            throw new ArgumentException("Ya existe un producto con el mismo código de barras.", nameof(request.Barcode));
+            var brand = await _brandRepository.GetByIdAsync(request.BrandId)
+                        ?? throw new ArgumentException("Marca no encontrada.", nameof(request.BrandId));
 
-            if(_productRepository.GetByName(request.Name) != null) 
-                            throw new ArgumentException("Ya existe un producto con el mismo nombre.", nameof(request.Name));
+            if (await _productRepository.GetByBarcodeAsync(request.Barcode) != null)
+                throw new ArgumentException("Ya existe un producto con el mismo código de barras.", nameof(request.Barcode));
 
-            var newProduct = ProductMapper.ToDomain(request, subCategory);
+            if (await _productRepository.GetByNameAsync(request.Name) != null)
+                throw new ArgumentException("Ya existe un producto con el mismo nombre.", nameof(request.Name));
+
+            var newProduct = ProductMapper.FromAddRequest(request, subCategory);
             newProduct.Brand = brand;
             newProduct.Validate();
 
-            var added = _productRepository.Add(newProduct);
+            var added = await _productRepository.AddAsync(newProduct);
             added.SetInternalCode();
+
             return ProductMapper.ToResponse(added);
         }
 
-        public ProductResponse UpdateProduct(UpdateProductRequest request)
+        public async Task<ProductResponse> UpdateProduct(UpdateProductRequest request)
         {
-            var existing = _productRepository.GetById(request.Id)
+            var existing = await _productRepository.GetByIdAsync(request.Id)
                            ?? throw new ArgumentException("Producto no encontrado.", nameof(request.Id));
 
-            var subCategory = _subCategoryRepository.GetById(request.SubCategoryId)
-                              ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(request.SubCategoryId));
+            var subCategory = await _subCategoryRepository.GetByIdAsync(request.SubCategoryId)
+                                ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(request.SubCategoryId));
 
-            var brand = _brandRepository.GetById(request.BrandId)
-                           ?? throw new ArgumentException("Marca no encontrada.", nameof(request.BrandId));
+            var brand = await _brandRepository.GetByIdAsync(request.BrandId)
+                         ?? throw new ArgumentException("Marca no encontrada.", nameof(request.BrandId));
 
-            if (existing.Barcode != request.Barcode && _productRepository.GetByBarcode(request.Barcode) != null)
+            if (existing.Barcode != request.Barcode && await _productRepository.GetByBarcodeAsync(request.Barcode) != null)
                 throw new ArgumentException("Ya existe un producto con el mismo código de barras.", nameof(request.Barcode));
 
-            if (existing.Name != request.Name &&  _productRepository.GetByName(request.Name) != null)
+            if (existing.Name != request.Name && await _productRepository.GetByNameAsync(request.Name) != null)
                 throw new ArgumentException("Ya existe un producto con el mismo nombre.", nameof(request.Name));
 
-            Product.UpdatableData data = ProductMapper.ToUpdatableData(request, subCategory);
+            var data = ProductMapper.FromUpdateRequest(request, subCategory);
             data.Brand = brand;
+
             existing.Update(data);
 
-            Product updated = _productRepository.Update(existing);
+            var updated = await _productRepository.UpdateAsync(existing);
             updated.SetInternalCode();
+
             return ProductMapper.ToResponse(updated);
         }
 
-        public ProductResponse DeleteProduct(int id)
+        public async Task<ProductResponse> DeleteProduct(DeleteProductRequest request)
         {
-            var deleted = _productRepository.GetById(id)
-                          ?? throw new ArgumentException("Producto no encontrado.", nameof(id));
+            var deleted = await _productRepository.GetByIdAsync(request.Id)
+                          ?? throw new ArgumentException("Producto no encontrado.", nameof(request.Id));
 
+            var auditInfo = AuditMapper.ToDomain(request.AuditInfo);
+            deleted.SetDeletedAudit(auditInfo);
 
-            //TODO: Implementar control de integridad referencial:
-            //cuado se trabaje con entidades que tengan relacion con esta.
-            deleted = _productRepository.Delete(id);
+            await _productRepository.DeleteAsync(deleted);
             deleted.SetInternalCode();
+
             return ProductMapper.ToResponse(deleted);
         }
-
-        public ProductResponse GetProductById(int id)
+        public async Task<ProductResponse> GetProductByIdAsync(int id)
         {
-            var product = _productRepository.GetById(id)
+            var product = await _productRepository.GetByIdAsync(id)
                           ?? throw new ArgumentException("Producto no encontrado.", nameof(id));
+
             product.SetInternalCode();
             return ProductMapper.ToResponse(product);
         }
 
-        public List<ProductResponse> GetAllProducts()
+        public async Task<List<ProductResponse>> GetAllProductsAsync(QueryOptions options)
         {
-            return _productRepository.GetAll()
-                                     .Select(p =>
-                                     {
-                                         p.SetInternalCode();
-                                         return ProductMapper.ToResponse(p);
-                                     })
-                                     .ToList();
+            var products = await _productRepository.GetAllAsync(options);
+            return products.Select(p =>
+            {
+                p.SetInternalCode();
+                return ProductMapper.ToResponse(p);
+            }).ToList();
         }
+
 
         public async Task<BrandResponse> AddBrandAsync(AddBrandRequest request)
         {
+            if (await _brandRepository.GetByNameAsync(request.Name) != null)
+                throw new ArgumentException("Ya existe una marca con el mismo nombre.", nameof(request.Name));
+
             var newBrand = BrandMapper.ToDomain(request);
             newBrand.Validate();
-
-            //chequear si hay nuevo igual.
 
             var added = await _brandRepository.AddAsync(newBrand);
             return BrandMapper.ToResponse(added);
@@ -117,20 +123,26 @@ namespace BusinessLogic.SubSystem
             var existing = await _brandRepository.GetByIdAsync(request.Id)
                             ?? throw new ArgumentException("Marca no encontrada.", nameof(request.Id));
 
-            Brand.UpdatableData data = BrandMapper.ToUpdatableData(request);
+            if (existing.Name != request.Name && await _brandRepository.GetByNameAsync(request.Name) != null)
+                throw new ArgumentException("Ya existe una marca con el mismo nombre.", nameof(request.Name));
+
+            var data = BrandMapper.ToUpdatableData(request);
             existing.Update(data);
 
             var updated = await _brandRepository.UpdateAsync(existing);
             return BrandMapper.ToResponse(updated);
         }
 
-        public async Task<BrandResponse> DeleteBrandAsync(int id)
+          public async Task<BrandResponse> DeleteBrandAsync(DeleteBrandRequest request)
         {
-            var brand = await _brandRepository.GetByIdAsync(id)
-                         ?? throw new ArgumentException("Marca no encontrada.", nameof(id));
+            var brand = await _brandRepository.GetByIdAsync(request.Id)
+                         ?? throw new ArgumentException("Marca no encontrada.", nameof(request.Id));
 
-            var deleted = await _brandRepository.DeleteAsync(brand);
-            return BrandMapper.ToResponse(deleted);
+            var auditInfo = AuditMapper.ToDomain(request.AuditInfo);
+            brand.SetDeletedAudit(auditInfo);
+
+            await _brandRepository.DeleteAsync(brand);
+            return BrandMapper.ToResponse(brand);
         }
 
         public async Task<BrandResponse> GetBrandByIdAsync(int id)

@@ -2,6 +2,7 @@
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsSupplier;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.Común;
 
 namespace BusinessLogic.SubSystem
 {
@@ -14,59 +15,64 @@ namespace BusinessLogic.SubSystem
             _supplierRepository = supplierRepository;
         }
 
-        public SupplierResponse AddSupplier(AddSupplierRequest request)
+        public async Task<SupplierResponse> AddSupplierAsync(AddSupplierRequest request)
         {
-            if (_supplierRepository.GetByName(request.Name) != null)
+            if (await _supplierRepository.GetByNameAsync(request.Name) != null)
                 throw new ArgumentException("Ya existe un proveedor con el mismo nombre.", nameof(request.Name));
-            if (_supplierRepository.GetByRUT(request.RUT) != null)          
-                throw new ArgumentException("Ya existe un proveedor con el mismo RUT.", nameof(request.RUT));                    
+
+            if (await _supplierRepository.GetByRUTAsync(request.RUT) != null)
+                throw new ArgumentException("Ya existe un proveedor con el mismo RUT.", nameof(request.RUT));
 
             Supplier newSupplier = SupplierMapper.ToDomain(request);
             newSupplier.Validate();
 
-            Supplier added = _supplierRepository.Add(newSupplier);
+            Supplier added = await _supplierRepository.AddAsync(newSupplier);
             return SupplierMapper.ToResponse(added);
         }
 
-        public SupplierResponse UpdateSupplier(UpdateSupplierRequest request)
+        public async Task<SupplierResponse> UpdateSupplierAsync(UpdateSupplierRequest request)
         {
-            var existing = _supplierRepository.GetById(request.Id)
+            var existing = await _supplierRepository.GetByIdAsync(request.Id)
                             ?? throw new ArgumentException("Proveedor no encontrado.", nameof(request.Id));
 
-            if (existing.RUT != request.RUT && _supplierRepository.GetByRUT(request.RUT) != null)
+            if (existing.RUT != request.RUT && await _supplierRepository.GetByRUTAsync(request.RUT) != null)
                 throw new ArgumentException("Ya existe un proveedor con el mismo RUT.", nameof(request.RUT));
 
-            if (existing.Name != request.Name && _supplierRepository.GetByName(request.Name) != null)
+            if (existing.Name != request.Name && await _supplierRepository.GetByNameAsync(request.Name) != null)
                 throw new ArgumentException("Ya existe un proveedor con el mismo nombre.", nameof(request.Name));
 
             Supplier.UpdatableData data = SupplierMapper.ToUpdatableData(request);
             existing.Update(data);
 
-            Supplier updated = _supplierRepository.Update(existing);
+            Supplier updated = await _supplierRepository.UpdateAsync(existing);
             return SupplierMapper.ToResponse(updated);
         }
 
-        public SupplierResponse DeleteSupplier(int id)
+        public async Task<SupplierResponse> DeleteSupplierAsync(DeleteSupplierRequest request)
         {
-            Supplier deleted = _supplierRepository.Delete(id)
-                                ?? throw new InvalidOperationException("Proveedor no encontrado.");
+            var supplier = await _supplierRepository.GetByIdAsync(request.Id)
+                           ?? throw new InvalidOperationException("Proveedor no encontrado.");
 
-            return SupplierMapper.ToResponse(deleted);
+            var auditInfo = AuditMapper.ToDomain(request.AuditInfo);
+            supplier.SetDeletedAudit(auditInfo);
+
+            await _supplierRepository.DeleteAsync(supplier);
+            return SupplierMapper.ToResponse(supplier);
         }
-
-        public SupplierResponse GetSupplierById(int id)
+        public async Task<SupplierResponse> GetSupplierByIdAsync(int id)
         {
-            Supplier supplier = _supplierRepository.GetById(id)
-                               ?? throw new InvalidOperationException("Proveedor no encontrado.");
+            var supplier = await _supplierRepository.GetByIdAsync(id)
+                           ?? throw new InvalidOperationException("Proveedor no encontrado.");
 
             return SupplierMapper.ToResponse(supplier);
         }
 
-        public List<SupplierResponse> GetAllSupplierResponse()
+        public async Task<List<SupplierResponse>> GetAllSuppliersAsync(QueryOptions options)
         {
-            if (_supplierRepository.GetAll().Count == 0)
+            var suppliers = await _supplierRepository.GetAllAsync(options);
+            if (suppliers.Count == 0)
                 throw new InvalidOperationException("No hay proveedores registrados.");
-            List<Supplier> suppliers = _supplierRepository.GetAll();
+
             return suppliers.Select(SupplierMapper.ToResponse).ToList();
         }
     }

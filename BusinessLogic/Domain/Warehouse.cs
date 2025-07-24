@@ -78,5 +78,14 @@ namespace BusinessLogic.Dominio
         {
             return $"Warehouse(Id: {Id}, Name: {Name}, Description: {Description}, Address: {Address})";
         }
+
+        public void SetDeletedAudit(AuditInfo auditInfo)
+        {
+            if (auditInfo == null)
+                throw new ArgumentNullException(nameof(auditInfo), "La información de auditoría no puede ser nula.");
+            AuditInfo.DeletedAt = auditInfo.DeletedAt;
+            AuditInfo.DeletedBy = auditInfo.DeletedBy;
+            AuditInfo.DeletedLocation = auditInfo.DeletedLocation;
+        }
     }
 }

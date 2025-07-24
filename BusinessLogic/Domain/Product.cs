@@ -164,5 +164,15 @@ namespace BusinessLogic.Dominio
         {
             return $"Product(Id: {Id}, Name: {Name}, InternalCode: {InternalCode}, Price: {Price}, Stock: {Stock}, UnitType: {UnitType}, Temperature: {TemperatureCondition}, SubCategory: {SubCategory?.ToString()})";
         }
+
+        public void SetDeletedAudit(AuditInfo auditInfo)
+        {
+            if (auditInfo == null)
+                throw new ArgumentNullException(nameof(auditInfo), "La información de auditoría no puede ser nula.");
+            AuditInfo.DeletedAt = auditInfo.DeletedAt;
+            AuditInfo.DeletedBy = auditInfo.DeletedBy;
+            AuditInfo.DeletedLocation = auditInfo.DeletedLocation;
+        }
+
     }
 }

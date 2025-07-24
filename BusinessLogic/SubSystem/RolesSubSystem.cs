@@ -3,6 +3,7 @@ using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsRole;
 using BusinessLogic.Común.Mappers;
 using System.Xml.Linq;
+using BusinessLogic.Común;
 
 namespace BusinessLogic.SubSystem
 {
@@ -15,63 +16,59 @@ namespace BusinessLogic.SubSystem
             _roleRepository = roleRepository;
         }
 
-        public RoleResponse AddRole(AddRoleRequest request)
+        public async Task<RoleResponse> AddRoleAsync(AddRoleRequest request)
         {
             var newRole = RoleMapper.ToDomain(request);
             newRole.Validate();
 
-            Role existing = _roleRepository.GetByName(newRole.Name);
+            var existing = await _roleRepository.GetByNameAsync(newRole.Name);
             if (existing != null)
                 throw new ArgumentException("Ya existe un rol con ese nombre.", nameof(newRole.Name));
 
-            var added = _roleRepository.Add(newRole);
+            var added = await _roleRepository.AddAsync(newRole);
             return RoleMapper.ToResponse(added);
         }
 
-
-        public RoleResponse UpdateRole(UpdateRoleRequest request)
+        public async Task<RoleResponse> UpdateRoleAsync(UpdateRoleRequest request)
         {
-            var existingRole = _roleRepository.GetById(request.Id)
-                                 ?? throw new ArgumentException("No se encontro el rol seleccionado.", nameof(request.Id));
+            var existingRole = await _roleRepository.GetByIdAsync(request.Id)
+                                 ?? throw new ArgumentException("No se encontró el rol seleccionado.", nameof(request.Id));
 
-
-            Role existing = _roleRepository.GetByName(request.Name);
+            var existing = await _roleRepository.GetByNameAsync(request.Name);
             if (existingRole.Name != request.Name && existing != null)
                 throw new ArgumentException("Ya existe un rol con ese nombre.", nameof(request.Name));
 
             var updatedData = RoleMapper.ToUpdatableData(request);
             existingRole.Update(updatedData);
 
-            var updated = _roleRepository.Update(existingRole);
+            var updated = await _roleRepository.UpdateAsync(existingRole);
             return RoleMapper.ToResponse(updated);
         }
-
-        public RoleResponse DeleteRole(int id)
+        public async Task<RoleResponse> DeleteRoleAsync(DeleteRoleRequest request)
         {
-            Role deleted = _roleRepository.GetByIdWithUsers(id)
-                          ?? throw new ArgumentException("No se encontro el rol seleccionado.", nameof(id));
+            var deleted = await _roleRepository.GetByIdWithUsersAsync(request.Id)
+                          ?? throw new ArgumentException("No se encontró el rol seleccionado.", nameof(request.Id));
 
             if (deleted.Users.Any())
                 throw new InvalidOperationException("No se puede eliminar el rol porque tiene usuarios asociados.");
 
-            _roleRepository.Delete(id);
+            await _roleRepository.DeleteAsync(deleted);
 
             return RoleMapper.ToResponse(deleted);
         }
 
-        public RoleResponse GetRoleById(int id)
+        public async Task<RoleResponse> GetRoleByIdAsync(int id)
         {
-            var role = _roleRepository.GetById(id)
-                       ?? throw new ArgumentException("No se encontro el rol seleccionado.", nameof(id));
+            var role = await _roleRepository.GetByIdAsync(id)
+                       ?? throw new ArgumentException("No se encontró el rol seleccionado.", nameof(id));
 
             return RoleMapper.ToResponse(role);
         }
 
-        public List<RoleResponse> GetAllRoles()
+        public async Task<List<RoleResponse>> GetAllRolesAsync(QueryOptions options)
         {
-            return _roleRepository.GetAll()
-                                  .Select(RoleMapper.ToResponse)
-                                  .ToList();
+            var roles = await _roleRepository.GetAllAsync(options);
+            return roles.Select(RoleMapper.ToResponse).ToList();
         }
     }
 }

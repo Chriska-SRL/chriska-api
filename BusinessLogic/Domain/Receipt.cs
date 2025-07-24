@@ -51,6 +51,17 @@ namespace BusinessLogic.Dominio
             AuditInfo = updatableData.AuditInfo ?? new AuditInfo();
             Validate();
         }
+
+        public void SetDeletedAudit(AuditInfo auditInfo)
+        {
+            if (auditInfo == null)
+                throw new ArgumentNullException(nameof(auditInfo), "La información de auditoría no puede ser nula.");
+            AuditInfo.DeletedAt = auditInfo.DeletedAt;
+            AuditInfo.DeletedBy = auditInfo.DeletedBy;
+            AuditInfo.DeletedLocation = auditInfo.DeletedLocation;
+        }
+
+
         public class UpdatableData
         {
             public DateTime Date { get; set; }

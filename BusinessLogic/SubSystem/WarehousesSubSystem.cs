@@ -3,6 +3,8 @@ using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsWarehouse;
 using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.Común;
+using BusinessLogic.DTOs;
 
 namespace BusinessLogic.SubSystem
 {
@@ -19,113 +21,114 @@ namespace BusinessLogic.SubSystem
 
         // Almacenes
 
-        public WarehouseResponse AddWarehouse(AddWarehouseRequest request)
+        public async Task<WarehouseResponse> AddWarehouseAsync(AddWarehouseRequest request)
         {
-            if (_warehouseRepository.GetByName(request.Name) != null)
+            if (await _warehouseRepository.GetByNameAsync(request.Name) is not null)
                 throw new ArgumentException("Ya existe un almacén con el mismo nombre.", nameof(request.Name));
 
-            Warehouse newWarehouse = WarehouseMapper.ToDomain(request);
+            var newWarehouse = WarehouseMapper.ToDomain(request);
             newWarehouse.Validate();
 
-            Warehouse added = _warehouseRepository.Add(newWarehouse);
+            var added = await _warehouseRepository.AddAsync(newWarehouse);
             return WarehouseMapper.ToResponse(added);
         }
 
-        public WarehouseResponse UpdateWarehouse(UpdateWarehouseRequest request)
+        public async Task<WarehouseResponse> UpdateWarehouseAsync(UpdateWarehouseRequest request)
         {
-            Warehouse existing = _warehouseRepository.GetById(request.Id)
+            var existing = await _warehouseRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("Almacén no encontrado.", nameof(request.Id));
 
             if (existing.Name != request.Name &&
-                _warehouseRepository.GetByName(request.Name) != null)
+                await _warehouseRepository.GetByNameAsync(request.Name) is not null)
                 throw new ArgumentException("Ya existe un almacén con el mismo nombre.", nameof(request.Name));
 
-            Warehouse.UpdatableData updatedData = WarehouseMapper.ToUpdatableData(request);
+            var updatedData = WarehouseMapper.ToUpdatableData(request);
             existing.Update(updatedData);
 
-            Warehouse updated = _warehouseRepository.Update(existing);
+            var updated = await _warehouseRepository.UpdateAsync(existing);
             return WarehouseMapper.ToResponse(updated);
         }
 
-        public WarehouseResponse DeleteWarehouse(int id)
+        public async Task<WarehouseResponse> DeleteWarehouseAsync(DeleteRequest request)
         {
-            Warehouse existing = _warehouseRepository.GetById(id)
-                ?? throw new ArgumentException("Almacén no encontrado.", nameof(id));
+            var warehouse = await _warehouseRepository.GetByIdAsync(request.Id)
+                              ?? throw new InvalidOperationException("Depósito no encontrado.");
 
-            if (existing.Shelves.Any())
-                throw new InvalidOperationException("No se puede eliminar un almacén con estanterías asociadas.");
+            var auditInfo = AuditMapper.ToDomain(request.AuditInfo);
+            warehouse.SetDeletedAudit(auditInfo);
 
-            Warehouse deleted = _warehouseRepository.Delete(existing.Id)
-                ?? throw new InvalidOperationException("Error al eliminar el almacén.");
-
-            return WarehouseMapper.ToResponse(deleted);
+            await _warehouseRepository.DeleteAsync(warehouse);
+            return WarehouseMapper.ToResponse(warehouse);
         }
 
-        public WarehouseResponse GetWarehouseById(int id)
+        public async Task<WarehouseResponse> GetWarehouseByIdAsync(int id)
         {
-            Warehouse warehouse = _warehouseRepository.GetById(id)
+            var warehouse = await _warehouseRepository.GetByIdAsync(id)
                 ?? throw new ArgumentException("Almacén no encontrado.", nameof(id));
 
             return WarehouseMapper.ToResponse(warehouse);
         }
 
-        public List<WarehouseResponse> GetAllWarehouses()
+        public async Task<List<WarehouseResponse>> GetAllWarehousesAsync(QueryOptions options)
         {
-            List<Warehouse> warehouses = _warehouseRepository.GetAll();
+            var warehouses = await _warehouseRepository.GetAllAsync(options);
             return warehouses.Select(WarehouseMapper.ToResponse).ToList();
         }
 
         // Estanterías
 
-        public ShelveResponse AddShelve(AddShelveRequest request)
+        public async Task<ShelveResponse> AddShelveAsync(AddShelveRequest request)
         {
-            Warehouse warehouse = _warehouseRepository.GetById(request.WarehouseId)
+            var warehouse = await _warehouseRepository.GetByIdAsync(request.WarehouseId)
                 ?? throw new ArgumentException("Almacén no encontrado.", nameof(request.WarehouseId));
-            if (_shelveRepository.GetByName(request.Name) != null)
+
+            if (await _shelveRepository.GetByNameAsync(request.Name) is not null)
                 throw new ArgumentException("Ya existe una estantería con el mismo nombre.", nameof(request.Name));
 
-            Shelve newShelve = ShelveMapper.ToDomain(request);
+            var newShelve = ShelveMapper.ToDomain(request);
             newShelve.Validate();
 
-            Shelve added = _shelveRepository.Add(newShelve);
+            var added = await _shelveRepository.AddAsync(newShelve);
             return ShelveMapper.ToResponse(added);
         }
 
-        public ShelveResponse UpdateShelve(UpdateShelveRequest request)
+        public async Task<ShelveResponse> UpdateShelveAsync(UpdateShelveRequest request)
         {
-            Shelve existing = _shelveRepository.GetById(request.Id)
+            var existing = await _shelveRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("Estantería no encontrada.", nameof(request.Id));
 
-            if (existing.Name != request.Name && _shelveRepository.GetByName(request.Name) != null)
+            if (existing.Name != request.Name &&
+                await _shelveRepository.GetByNameAsync(request.Name) is not null)
                 throw new ArgumentException("Ya existe una estantería con el mismo nombre.", nameof(request.Name));
-            
 
-            Shelve.UpdatableData updatedData = ShelveMapper.ToUpdatableData(request);
+            var updatedData = ShelveMapper.ToUpdatableData(request);
             existing.Update(updatedData);
 
-            Shelve updated = _shelveRepository.Update(existing);
+            var updated = await _shelveRepository.UpdateAsync(existing);
             return ShelveMapper.ToResponse(updated);
         }
 
-        public ShelveResponse DeleteShelve(int id)
+        public async Task<ShelveResponse> DeleteShelveAsync(DeleteRequest request)
         {
-            Shelve deleted = _shelveRepository.Delete(id)
-                ?? throw new ArgumentException("Estantería no encontrada.", nameof(id));
+            var shelve = await _shelveRepository.GetByIdAsync(request.Id)
+                ?? throw new InvalidOperationException("Estantería no encontrada.");
 
-            return ShelveMapper.ToResponse(deleted);
+            var auditInfo = AuditMapper.ToDomain(request.AuditInfo);
+            shelve.SetDeletedAudit(auditInfo);
+
+            await _shelveRepository.DeleteAsync(shelve);
+            return ShelveMapper.ToResponse(shelve);
         }
-
-        public ShelveResponse GetShelveById(int id)
+        public async Task<ShelveResponse> GetShelveByIdAsync(int id)
         {
-            Shelve shelve = _shelveRepository.GetById(id)
+            var shelve = await _shelveRepository.GetByIdAsync(id)
                 ?? throw new ArgumentException("Estantería no encontrada.", nameof(id));
 
             return ShelveMapper.ToResponse(shelve);
         }
-
-        public List<ShelveResponse> GetAllShelves()
+        public async Task<List<ShelveResponse>> GetAllShelvesAsync(QueryOptions options)
         {
-            List<Shelve> shelves = _shelveRepository.GetAll();
+            var shelves = await _shelveRepository.GetAllAsync(options);
             return shelves.Select(ShelveMapper.ToResponse).ToList();
         }
     }

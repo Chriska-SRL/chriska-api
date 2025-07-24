@@ -4,7 +4,7 @@ using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsRole
 {
-    public class DeleteUserRequest : DeleteRequest
+    public class DeleteRoleRequest : DeleteRequest
     {
     }
 }

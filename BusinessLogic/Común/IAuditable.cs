@@ -3,5 +3,6 @@
     public interface IAuditable
     {
         AuditInfo AuditInfo { get; set; }
+        void SetDeletedAudit(AuditInfo auditInfo);
     }
 }

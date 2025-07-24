@@ -3,7 +3,7 @@ using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsProduct
 {
-    public class ProductUpdateRequest : AuditableRequest
+    public class UpdateProductRequest : AuditableRequest
     {
         public int Id { get; set; }
         public required string Name { get; set; }

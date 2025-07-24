@@ -2,6 +2,8 @@
 using BusinessLogic.DTOs.DTOsVehicle;
 using BusinessLogic.Común.Mappers;
 using BusinessLogic.DTOs.DTOsCost;
+using BusinessLogic.DTOs;
+using BusinessLogic.Común;
 
 namespace BusinessLogic.SubSystem
 {
@@ -16,125 +18,127 @@ namespace BusinessLogic.SubSystem
             _costRepository = costRepository;
         }
 
-        public VehicleResponse AddVehicle(AddVehicleRequest request)
+        public async Task<VehicleResponse> AddVehicleAsync(AddVehicleRequest request)
         {
             var newVehicle = VehicleMapper.ToDomain(request);
             newVehicle.Validate();
 
-            var existing = _vehicleRepository.GetByPlate(newVehicle.Plate);
+            var existing = await _vehicleRepository.GetByPlateAsync(newVehicle.Plate);
             if (existing != null)
                 throw new ArgumentException("Ya existe un vehículo con esa matrícula.", nameof(newVehicle.Plate));
 
-            var added = _vehicleRepository.Add(newVehicle);
+            var added = await _vehicleRepository.AddAsync(newVehicle);
             return VehicleMapper.ToResponse(added);
         }
 
-        public VehicleResponse UpdateVehicle(UpdateVehicleRequest request)
+        public async Task<VehicleResponse> UpdateVehicleAsync(UpdateVehicleRequest request)
         {
-            var existingVehicle = _vehicleRepository.GetById(request.Id)
+            var existingVehicle = await _vehicleRepository.GetByIdAsync(request.Id)
                                      ?? throw new ArgumentException("No se encontró el vehículo seleccionado.", nameof(request.Id));
 
-            var other = _vehicleRepository.GetByPlate(request.Plate);
+            var other = await _vehicleRepository.GetByPlateAsync(request.Plate);
             if (existingVehicle.Plate != request.Plate && other != null)
                 throw new ArgumentException("Ya existe un vehículo con esa matrícula.", nameof(request.Plate));
 
             var updatedData = VehicleMapper.ToUpdatableData(request);
             existingVehicle.Update(updatedData);
 
-            var updated = _vehicleRepository.Update(existingVehicle);
+            var updated = await _vehicleRepository.UpdateAsync(existingVehicle);
             return VehicleMapper.ToResponse(updated);
         }
-
-        public VehicleResponse DeleteVehicle(int id)
+        public async Task<VehicleResponse> DeleteVehicleAsync(DeleteRequest request)
         {
-            var vehicle = _vehicleRepository.GetById(id)
-                          ?? throw new ArgumentException("No se encontró el vehículo seleccionado.", nameof(id));
+            var vehicle = await _vehicleRepository.GetByIdAsync(request.Id)
+                           ?? throw new ArgumentException("No se encontró el vehículo seleccionado.", nameof(request.Id));
 
-            var costs = _costRepository.GetAllForVehicle(id);
+            var costs = await _costRepository.GetAllForVehicleAsync(request.Id);
             if (costs.Any())
                 throw new InvalidOperationException("No se puede eliminar el vehículo porque tiene costos asociados.");
 
-            _vehicleRepository.Delete(id);
+            var auditInfo = AuditMapper.ToDomain(request.AuditInfo);
+            vehicle.SetDeletedAudit(auditInfo);
+
+            await _vehicleRepository.DeleteAsync(vehicle);
             return VehicleMapper.ToResponse(vehicle);
         }
 
-        public VehicleResponse GetVehicleById(int id)
+        public async Task<VehicleResponse> GetVehicleByIdAsync(int id)
         {
-            var vehicle = _vehicleRepository.GetById(id)
+            var vehicle = await _vehicleRepository.GetByIdAsync(id)
                           ?? throw new ArgumentException("No se encontró el vehículo seleccionado.", nameof(id));
 
             return VehicleMapper.ToResponse(vehicle);
         }
 
-        public VehicleResponse GetVehicleByPlate(string plate)
+        public async Task<VehicleResponse> GetVehicleByPlateAsync(string plate)
         {
-            var vehicle = _vehicleRepository.GetByPlate(plate)
+            var vehicle = await _vehicleRepository.GetByPlateAsync(plate)
                           ?? throw new ArgumentException("No se encontró el vehículo especificado.", nameof(plate));
 
             return VehicleMapper.ToResponse(vehicle);
         }
 
-        public List<VehicleResponse> GetAllVehicles()
+        public async Task<List<VehicleResponse>> GetAllVehiclesAsync(QueryOptions options)
         {
-            return _vehicleRepository.GetAll()
-                                     .Select(VehicleMapper.ToResponse)
-                                     .ToList();
+            var vehicles = await _vehicleRepository.GetAllAsync(options);
+            return vehicles.Select(VehicleMapper.ToResponse).ToList();
         }
 
 
         //Costs
-        public VehicleCostResponse AddVehicleCost(AddVehicleCostRequest request)
+        public async Task<VehicleCostResponse> AddVehicleCostAsync(AddVehicleCostRequest request)
         {
-            _ = _vehicleRepository.GetById(request.VehicleId)
+            _ = await _vehicleRepository.GetByIdAsync(request.VehicleId)
                 ?? throw new ArgumentException("No se encontró el vehículo especificado.", nameof(request.VehicleId));
 
             var newCost = VehicleCostMapper.ToDomain(request);
             newCost.Validate();
 
-            var added = _costRepository.Add(newCost);
+            var added = await _costRepository.AddAsync(newCost);
             return VehicleCostMapper.ToResponse(added);
         }
 
-        public VehicleCostResponse UpdateVehicleCost(UpdateVehicleCostRequest request)
+        public async Task<VehicleCostResponse> UpdateVehicleCostAsync(UpdateVehicleCostRequest request)
         {
-            var existing = _costRepository.GetById(request.Id)
+            var existing = await _costRepository.GetByIdAsync(request.Id)
                            ?? throw new ArgumentException("No se encontró el costo especificado.", nameof(request.Id));
 
             var updatedData = VehicleCostMapper.ToUpdatableData(request);
             existing.Update(updatedData);
 
-            var updated = _costRepository.Update(existing);
+            var updated = await _costRepository.UpdateAsync(existing);
             return VehicleCostMapper.ToResponse(updated);
         }
 
-        public VehicleCostResponse DeleteVehicleCost(int costId)
+        public async Task<VehicleCostResponse> DeleteVehicleCostAsync(DeleteRequest request)
         {
-            var deleted = _costRepository.Delete(costId)
-                           ?? throw new ArgumentException("No se encontró el costo especificado.", nameof(costId));
+            var vehicleCost = await _costRepository.GetByIdAsync(request.Id)
+                                ?? throw new InvalidOperationException("Costo de vehículo no encontrado.");
 
-            return VehicleCostMapper.ToResponse(deleted);
+            var auditInfo = AuditMapper.ToDomain(request.AuditInfo);
+            vehicleCost.SetDeletedAudit(auditInfo);
+
+            await _costRepository.DeleteAsync(vehicleCost);
+            return VehicleCostMapper.ToResponse(vehicleCost);
+        }
+        public async Task<List<VehicleCostResponse>> GetVehicleCostsAsync(int vehicleId)
+        {
+            var costs = await _costRepository.GetAllForVehicleAsync(vehicleId);
+            return costs.Select(VehicleCostMapper.ToResponse).ToList();
         }
 
-        public List<VehicleCostResponse> GetVehicleCosts(int vehicleId)
+        public async Task<List<VehicleCostResponse>> GetCostsByDateRangeAsync(int vehicleId, DateTime from, DateTime to)
         {
-            return _costRepository.GetAllForVehicle(vehicleId)
-                                  .Select(VehicleCostMapper.ToResponse)
-                                  .ToList();
+            var costs = await _costRepository.GetCostsForVehicleInDateRangeAsync(vehicleId, from, to);
+            return costs.Select(VehicleCostMapper.ToResponse).ToList();
         }
 
-        public List<VehicleCostResponse> GetCostsByDateRange(int vehicleId, DateTime from, DateTime to)
+        public async Task<VehicleCostResponse> GetVehicleCostByIdAsync(int id)
         {
-            return _costRepository.GetCostsForVehicleInDateRange(vehicleId, from, to)
-                                  .Select(VehicleCostMapper.ToResponse)
-                                  .ToList();
-        }
-        public VehicleCostResponse GetVehicleCostById(int id)
-        {
-            var cost = _costRepository.GetById(id)
+            var cost = await _costRepository.GetByIdAsync(id)
                        ?? throw new ArgumentException("No se encontró el costo especificado.", nameof(id));
 
             return VehicleCostMapper.ToResponse(cost);
         }
-
     }
 }

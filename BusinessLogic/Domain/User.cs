@@ -116,5 +116,14 @@ namespace BusinessLogic.Dominio
         public override string ToString() { 
             return $"User(Id: {Id}, Name: {Name}, Username: {Username}, isEnabled: {IsEnabled}, needsPasswordChange: {NeedsPasswordChange},  Role: {Role.ToString()})";
         }
+
+        public void SetDeletedAudit(AuditInfo auditInfo)
+        {
+            if (auditInfo == null)
+                throw new ArgumentNullException(nameof(auditInfo), "La información de auditoría no puede ser nula.");
+            AuditInfo.DeletedAt = auditInfo.DeletedAt;
+            AuditInfo.DeletedBy = auditInfo.DeletedBy;
+            AuditInfo.DeletedLocation = auditInfo.DeletedLocation;
+        }
     }
 }
