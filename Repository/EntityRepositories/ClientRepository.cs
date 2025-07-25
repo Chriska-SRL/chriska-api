@@ -2,7 +2,6 @@
 using BusinessLogic.Repository;
 using Repository.Logging;
 using BusinessLogic.Común;
-using Microsoft.Data.SqlClient;
 using Repository.Mappers;
 
 namespace Repository.EntityRepositories
@@ -110,20 +109,44 @@ namespace Repository.EntityRepositories
 
         public async Task<List<Client>> GetAllAsync(QueryOptions options)
         {
+            var clientDict = new Dictionary<int, Client>();
+
             return await ExecuteReadAsync(
-                baseQuery: "SELECT * FROM Clients",
+                baseQuery: @"SELECT 
+                        c.*, 
+                        z.Id AS ZoneId, z.Name AS ZoneName,
+                        b.Id AS BankAccountId, b.BankName, b.AccountName, b.AccountNumber,
+                        b.CreatedAt, b.CreatedBy, b.CreatedLocation,
+                        b.UpdatedAt, b.UpdatedBy, b.UpdatedLocation,
+                        b.DeletedAt, b.DeletedBy, b.DeletedLocation
+                     FROM Clients c
+                     INNER JOIN Zones z ON c.ZoneId = z.Id
+                     LEFT JOIN ClientBankAccounts b ON c.Id = b.ClientId AND b.IsDeleted = 0
+                     WHERE c.IsDeleted = 0",
                 map: reader =>
                 {
-                    var clients = new List<Client>();
                     while (reader.Read())
                     {
-                        clients.Add(ClientMapper.FromReader(reader));
+                        int clientId = reader.GetInt32(reader.GetOrdinal("Id"));
+                        if (!clientDict.TryGetValue(clientId, out var client))
+                        {
+                            client = ClientMapper.FromReader(reader);
+                            client.BankAccounts = new List<BankAccount>();
+                            clientDict.Add(clientId, client);
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("BankAccountId")))
+                        {
+                            client.BankAccounts.Add(BankAccountMapper.FromReaderWithClientJoin(reader));
+                        }
                     }
-                    return clients;
+
+                    return clientDict.Values.ToList();
                 },
                 options: options
             );
         }
+
 
         #endregion
 
@@ -131,13 +154,37 @@ namespace Repository.EntityRepositories
 
         public async Task<Client?> GetByIdAsync(int id)
         {
-            return await ExecuteReadAsync(
-                baseQuery: "SELECT * FROM Clients WHERE Id = @Id",
+            Client? client = null;
+
+            await ExecuteReadAsync(
+                baseQuery: @"SELECT 
+                        c.*, 
+                        z.Id AS ZoneId, z.Name AS ZoneName,
+                        b.Id AS BankAccountId, b.BankName, b.AccountName, b.AccountNumber,
+                        b.CreatedAt, b.CreatedBy, b.CreatedLocation,
+                        b.UpdatedAt, b.UpdatedBy, b.UpdatedLocation,
+                        b.DeletedAt, b.DeletedBy, b.DeletedLocation
+                     FROM Clients c
+                     INNER JOIN Zones z ON c.ZoneId = z.Id
+                     LEFT JOIN ClientBankAccounts b ON c.Id = b.ClientId AND b.IsDeleted = 0
+                     WHERE c.Id = @Id AND c.IsDeleted = 0",
                 map: reader =>
                 {
-                    if (reader.Read())
-                        return ClientMapper.FromReader(reader);
-                    return null;
+                    while (reader.Read())
+                    {
+                        if (client == null)
+                        {
+                            client = ClientMapper.FromReader(reader);
+                            client.BankAccounts = new List<BankAccount>();
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("BankAccountId")))
+                        {
+                            client.BankAccounts.Add(BankAccountMapper.FromReaderWithClientJoin(reader));
+                        }
+                    }
+
+                    return client;
                 },
                 options: new QueryOptions(),
                 configureCommand: cmd =>
@@ -145,7 +192,10 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Id", id);
                 }
             );
+
+            return client;
         }
+
 
         #endregion
     }
