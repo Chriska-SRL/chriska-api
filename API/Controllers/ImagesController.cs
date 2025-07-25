@@ -1,7 +1,5 @@
 ﻿using API.Utils;
 using BusinessLogic;
-using BusinessLogic.Común;
-using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,18 +25,7 @@ namespace API.Controllers
         public async Task<IActionResult> UploadImageAsync(string entityType, int entityId, IFormFile file)
         {
             var result = await _facade.UploadImageAsync(entityType, entityId, file, _tokenUtils.GetUserId());
-            return CreatedAtAction(nameof(GetImageAsync), new { entityType, entityId }, result);
-        }
-
-        [HttpGet("{entityType}/{entityId}")]
-        [Authorize(Policy = "ManageImages")]
-        public async Task<IActionResult> GetImageAsync(string entityType, int entityId)
-        {
-            var result = await _facade.GetImageAsync(entityType, entityId);
-            if (result == null)
-                return NotFound(new { error = "Imagen no encontrada." });
-
-            return Ok(result);
+            return CreatedAtAction(nameof(UploadImageAsync), new { entityType, entityId }, result);
         }
 
         [HttpDelete("{entityType}/{entityId}")]

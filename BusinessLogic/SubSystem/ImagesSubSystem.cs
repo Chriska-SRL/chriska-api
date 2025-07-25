@@ -1,11 +1,11 @@
 ﻿using BusinessLogic.Común.Mappers;
 using BusinessLogic.Domain;
-using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.Repository;
 using BusinessLogic.Services;
 using Microsoft.AspNetCore.Http;
-
+using System;
+using System.IO;
 
 namespace BusinessLogic.SubSystem
 {
@@ -33,8 +33,9 @@ namespace BusinessLogic.SubSystem
             var existingImage = _imageRepository.GetByEntityTypeAndId(entityType, entityId);
             if (existingImage != null)
             {
+                // Eliminar la imagen físicamente
                 _azureBlobService.DeleteBlob(existingImage.BlobName);
-                _imageRepository.Delete(existingImage.Id);
+                _imageRepository.Delete(existingImage.Id); // Eliminar de la base de datos
             }
 
             // Crear nueva imagen
@@ -68,8 +69,10 @@ namespace BusinessLogic.SubSystem
             var image = _imageRepository.GetByEntityTypeAndId(entityType, entityId);
             if (image == null) return false;
 
+            // Eliminar la imagen físicamente
             _azureBlobService.DeleteBlob(image.BlobName);
-            _imageRepository.Delete(image.Id);
+            _imageRepository.Delete(image.Id); // Eliminar de la base de datos
+
             return true;
         }
 
