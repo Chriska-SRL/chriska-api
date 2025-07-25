@@ -2,7 +2,7 @@
 
 namespace BusinessLogic.Repository
 {
-    public interface IShelveRepository:IRepository<Shelve>
+    public interface IBankAccountRepository : IRepository<BankAccount>
     {
     }
 }

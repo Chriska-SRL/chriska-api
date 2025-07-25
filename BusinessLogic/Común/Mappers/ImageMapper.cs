@@ -1,6 +1,6 @@
 ﻿// BusinessLogic/Común/Mappers/ImageMapper.cs
 using BusinessLogic.Domain;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsImage;
 
 namespace BusinessLogic.Común.Mappers

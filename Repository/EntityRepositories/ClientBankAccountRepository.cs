@@ -1,6 +1,5 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Domain;
-using BusinessLogic.Dominio;
 using BusinessLogic.Repository;
 using Repository.Logging;
 using Repository.Mappers;
@@ -20,14 +19,14 @@ namespace Repository.EntityRepositories
                 AuditAction.Insert,
                 configureCommand: cmd =>
                 {
-                    cmd.Parameters.AddWithValue("@BankName", (object?)entity.BankName ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@BankName", (object?)entity.Bank.ToString() ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@AccountName", entity.AccountName);
                     cmd.Parameters.AddWithValue("@AccountNumber", entity.AccountNumber);
                 },
                 async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
             );
 
-            return new BankAccount(newId, entity.BankName, entity.AccountName, entity.AccountNumber, entity.AuditInfo);
+            return new BankAccount(newId, entity.AccountName, entity.AccountNumber, entity.Bank, entity.AuditInfo);
         }
 
         public async Task<BankAccount> UpdateAsync(BankAccount entity)
@@ -39,7 +38,7 @@ namespace Repository.EntityRepositories
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Id", entity.Id);
-                    cmd.Parameters.AddWithValue("@BankName", (object?)entity.BankName ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@BankName", (object?)entity.Bank.ToString() ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@AccountName", entity.AccountName);
                     cmd.Parameters.AddWithValue("@AccountNumber", entity.AccountNumber);
                 }

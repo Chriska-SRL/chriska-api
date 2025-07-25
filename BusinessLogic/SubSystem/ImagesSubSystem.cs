@@ -1,6 +1,6 @@
 ﻿using BusinessLogic.Común.Mappers;
 using BusinessLogic.Domain;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.Repository;
 using BusinessLogic.Services;

@@ -1,5 +1,5 @@
 ﻿using BusinessLogic.Común.Mappers;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsRole;
 
 namespace BusinessLogic.Común.Mappers

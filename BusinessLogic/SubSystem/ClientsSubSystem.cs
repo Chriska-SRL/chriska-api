@@ -2,7 +2,7 @@
 using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsReceipt;
 using BusinessLogic.Común.Mappers;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 
 namespace BusinessLogic.SubSystem
 {

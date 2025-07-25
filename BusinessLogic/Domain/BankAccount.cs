@@ -1,7 +1,7 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public class BankAccount : IEntity<BankAccount.UpdatableData>, IAuditable
     {
@@ -11,12 +11,13 @@ namespace BusinessLogic.Dominio
         public Bank Bank { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public BankAccount(int id, string accountName, string accountNumber, Bank bank)
+        public BankAccount(int id, string accountName, string accountNumber, Bank bank, AuditInfo auditInfo)
         {
             Id = id;
             AccountName = accountName;
             AccountNumber = accountNumber;
             Bank = bank;
+            AuditInfo = auditInfo;
         }
 
         public void Validate()

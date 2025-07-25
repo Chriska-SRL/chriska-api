@@ -1,5 +1,5 @@
 ﻿using BusinessLogic.Común;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 using Repository.Logging;
 using Repository.Utils;

@@ -1,5 +1,5 @@
 ﻿using BusinessLogic;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsAuth;
 using BusinessLogic.DTOs.DTOsUser;
 using Microsoft.AspNetCore.Mvc;

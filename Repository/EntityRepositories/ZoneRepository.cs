@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using BusinessLogic.Común;
 using Microsoft.Data.SqlClient;

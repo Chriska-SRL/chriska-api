@@ -2,7 +2,7 @@
 using BusinessLogic.Común.Enums;
 using System.Text.RegularExpressions;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public class Supplier:IEntity<Supplier.UpdatableData>, IAuditable,IBankUser
     {

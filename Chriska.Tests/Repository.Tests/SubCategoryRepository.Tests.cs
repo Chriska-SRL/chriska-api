@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Repository.EntityRepositories;
 using Microsoft.Extensions.Logging.Abstractions;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using Chriska.Tests.Repository.Tests;
 using BusinessLogic.Repository;
 

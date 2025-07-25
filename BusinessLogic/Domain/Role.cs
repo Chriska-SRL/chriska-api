@@ -1,7 +1,7 @@
 ﻿using BusinessLogic.Común;
 using System.Xml.Linq;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public class Role : IEntity<Role.UpdatableData>, IAuditable
     {

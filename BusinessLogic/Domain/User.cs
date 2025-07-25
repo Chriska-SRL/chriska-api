@@ -3,7 +3,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public class User:IEntity<User.UpdatableData>, IAuditable
     {

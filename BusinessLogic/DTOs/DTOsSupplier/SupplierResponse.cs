@@ -1,5 +1,5 @@
 ﻿using BusinessLogic.Común.Enums;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsBankAccount;
 using BusinessLogic.DTOs.DTOsProduct;

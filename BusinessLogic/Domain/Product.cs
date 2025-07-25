@@ -2,7 +2,7 @@
 using BusinessLogic.Común.Enums;
 using BusinessLogic.Domain;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public class Product : IEntity<Product.UpdatableData>, IAuditable
     {

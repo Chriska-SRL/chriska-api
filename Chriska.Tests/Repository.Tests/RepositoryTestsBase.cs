@@ -1,5 +1,5 @@
 ﻿using BusinessLogic.Repository;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using NUnit.Framework;
 using Repository.EntityRepositories;
 using Microsoft.Extensions.Configuration;

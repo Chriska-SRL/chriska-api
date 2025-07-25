@@ -1,5 +1,5 @@
 ﻿using BusinessLogic.Común;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 
 namespace BusinessLogic.Domain
 {

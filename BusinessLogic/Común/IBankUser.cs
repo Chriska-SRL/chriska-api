@@ -1,5 +1,5 @@
 ﻿
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public interface IBankUser
     {

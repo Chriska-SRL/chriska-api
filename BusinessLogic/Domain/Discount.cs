@@ -1,6 +1,6 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 
 namespace BusinessLogic.Domain
 {

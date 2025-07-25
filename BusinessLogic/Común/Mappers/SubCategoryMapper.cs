@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsSubCategory;
 
 namespace BusinessLogic.Común.Mappers

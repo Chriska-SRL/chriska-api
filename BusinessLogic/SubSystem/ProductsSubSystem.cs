@@ -1,7 +1,7 @@
 ﻿using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.Repository;
 using BusinessLogic.Común.Mappers;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.Común;

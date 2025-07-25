@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsCost;
 
 namespace BusinessLogic.Común.Mappers

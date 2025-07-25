@@ -2,7 +2,7 @@
 using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsOrderItem;
 using BusinessLogic.Común.Mappers;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 
 namespace BusinessLogic.SubSystem
 {

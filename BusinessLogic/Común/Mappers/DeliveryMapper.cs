@@ -1,6 +1,6 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Común.Audits;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsDelivery;
 using BusinessLogic.Mappers;

@@ -1,6 +1,6 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public class VehicleCost:IEntity<VehicleCost.UpdatableData>, IAuditable
     {

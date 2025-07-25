@@ -2,7 +2,7 @@
 using BusinessLogic.Domain;
 using System.Text.RegularExpressions;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public class Purchase:IEntity<Purchase.UpdatableData>, IAuditable
     {

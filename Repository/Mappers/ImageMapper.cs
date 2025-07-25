@@ -1,6 +1,6 @@
 ﻿// Repository/Mappers/ImageMapper.cs (no BusinessLogic/Común/Mappers)
 using BusinessLogic.Domain;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;

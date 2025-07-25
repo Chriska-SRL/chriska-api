@@ -1,6 +1,6 @@
 ﻿using BusinessLogic.Común;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public class Receipt : IEntity<Receipt.UpdatableData>, IAuditable
     {

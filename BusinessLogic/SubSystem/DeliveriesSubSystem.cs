@@ -2,7 +2,7 @@
 using BusinessLogic.DTOs.DTOsDelivery;
 using BusinessLogic.Común.Mappers;
 using BusinessLogic.DTOs.DTOsVehicle;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 
 namespace BusinessLogic.SubSystem
 {

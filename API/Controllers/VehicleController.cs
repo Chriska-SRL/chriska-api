@@ -1,7 +1,7 @@
 ﻿using API.Utils;
 using BusinessLogic;
 using BusinessLogic.Común;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsVehicle;
 using Microsoft.AspNetCore.Authorization;

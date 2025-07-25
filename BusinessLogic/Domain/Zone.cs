@@ -1,7 +1,7 @@
 ﻿using Azure.Storage.Blobs.Models;
 using BusinessLogic.Común;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public class Zone : IEntity<Zone.UpdatableData>, IAuditable
     {

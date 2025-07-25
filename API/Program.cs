@@ -1,6 +1,6 @@
 ﻿using API.Utils;
 using BusinessLogic;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using BusinessLogic.Services;
 using BusinessLogic.SubSystem;

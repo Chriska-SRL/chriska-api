@@ -1,7 +1,7 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public class StockMovement : IEntity<StockMovement.UpdatableData>, IAuditable
     {

@@ -3,7 +3,7 @@ using BusinessLogic.Común.Enums;
 using BusinessLogic.DTOs.DTOsCost;
 using System.Text.RegularExpressions;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
     public class Vehicle : IEntity<Vehicle.UpdatableData>, IAuditable
     {

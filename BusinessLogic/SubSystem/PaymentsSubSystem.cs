@@ -1,7 +1,7 @@
 ﻿using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsPayment;
 using BusinessLogic.Común.Mappers;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 
 namespace BusinessLogic.SubSystem
 {
