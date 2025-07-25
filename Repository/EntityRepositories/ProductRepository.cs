@@ -3,7 +3,6 @@ using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using Repository.Mappers;
 using Repository.Logging;
-using BusinessLogic.Domain;
 
 namespace Repository.EntityRepositories
 {
