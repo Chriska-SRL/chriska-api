@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Común.Mappers;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Común.Mappers;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.Repository;
@@ -30,22 +31,22 @@ namespace BusinessLogic.SubSystem
                 throw new ArgumentException("Archivo de imagen no válido.", nameof(file));
 
             // Eliminar imagen existente si hay una
-            var existingImage = _imageRepository.GetByEntityTypeAndId(entityType, entityId);
+            var existingImage = _imageRepository.GetByEntityTypeAndIdAsync(entityType, entityId).Result;
             if (existingImage != null)
             {
                 // Eliminar la imagen físicamente
                 _azureBlobService.DeleteBlob(existingImage.BlobName);
-                _imageRepository.Delete(existingImage.Id); // Eliminar de la base de datos
+                _imageRepository.DeleteAsync(existingImage.Id); // Eliminar de la base de datos
             }
 
             // Crear nueva imagen
             var blobName = $"{entityType}/{entityId}/{Guid.NewGuid()}.{GetFileExtension(file.FileName)}";
             var imageUrl = _azureBlobService.UploadBlob(blobName, file);
 
-            var newImage = new Image(0, entityType, entityId, file.FileName, blobName, file.ContentType, file.Length, DateTime.UtcNow);
+            var newImage = new Image(0, entityType, entityId, file.FileName, blobName, file.ContentType, file.Length, DateTime.UtcNow, new AuditInfo());
             newImage.Validate();
 
-            var added = _imageRepository.Add(newImage);
+            var added = _imageRepository.AddAsync(newImage).Result; // Guardamos la nueva imagen en el repositorio
             return ImageMapper.ToResponse(added, imageUrl);
         }
 
@@ -54,7 +55,7 @@ namespace BusinessLogic.SubSystem
             if (!IsValidEntityType(entityType))
                 throw new ArgumentException("Tipo de entidad no válido.", nameof(entityType));
 
-            var image = _imageRepository.GetByEntityTypeAndId(entityType, entityId);
+            var image = _imageRepository.GetByEntityTypeAndIdAsync(entityType, entityId).Result;
             if (image == null) return null;
 
             var imageUrl = _azureBlobService.GetBlobUrl(image.BlobName);
@@ -66,12 +67,12 @@ namespace BusinessLogic.SubSystem
             if (!IsValidEntityType(entityType))
                 throw new ArgumentException("Tipo de entidad no válido.", nameof(entityType));
 
-            var image = _imageRepository.GetByEntityTypeAndId(entityType, entityId);
+            var image = _imageRepository.GetByEntityTypeAndIdAsync(entityType, entityId).Result;
             if (image == null) return false;
 
             // Eliminar la imagen físicamente
             _azureBlobService.DeleteBlob(image.BlobName);
-            _imageRepository.Delete(image.Id); // Eliminar de la base de datos
+            _imageRepository.DeleteAsync(image.Id); // Eliminar de la base de datos
 
             return true;
         }

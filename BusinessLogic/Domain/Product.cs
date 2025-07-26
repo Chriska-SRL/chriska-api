@@ -16,11 +16,11 @@ namespace BusinessLogic.Domain
         public TemperatureCondition TemperatureCondition { get; set; }
         public int Stock { get; set; }
         public int AviableStock { get; set; }
-        public string Image { get; set; }
+        public string Image { get; set; } //url de la imagen
         public string Observation { get; set; }
         public SubCategory SubCategory { get; set; }
         public Brand Brand { get; set; }
-        public List<Discount> Discounts { get; set; } = new List<Discount>();
+        //public List<Discount> Discounts { get; set; } = new List<Discount>();
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
         public AuditInfo AuditInfo { get; set ; }
 
