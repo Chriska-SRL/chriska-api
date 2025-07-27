@@ -27,7 +27,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.CREATE_VEHICLES))]
         public async Task<ActionResult<VehicleResponse>> AddVehicleAsync([FromBody] AddVehicleRequest request)
         {
-            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddVehicleAsync(request);
             return CreatedAtAction(nameof(GetVehicleByIdAsync), new { id = result.Id }, result);
         }
@@ -37,7 +37,7 @@ namespace API.Controllers
         public async Task<ActionResult<VehicleResponse>> UpdateVehicleAsync(int id, [FromBody] UpdateVehicleRequest request)
         {
             request.Id = id;
-            request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.UpdateVehicleAsync(request);
             return Ok(result);
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteVehicleAsync(int id)
         {
             var request = new DeleteRequest(id);
-            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             await _facade.DeleteVehicleAsync(request);
             return NoContent();
         }

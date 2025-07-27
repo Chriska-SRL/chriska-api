@@ -80,7 +80,7 @@ namespace API.Controllers
         [HttpPost("GetValidToken")]
         public IActionResult GetValidToken([FromBody] TokenRequest request)
         {
-            const string Pass = "12345678";
+            const string Pass = "string";
             try
             {
                 if (request.Pass != Pass)
@@ -88,10 +88,10 @@ namespace API.Controllers
 
                 var claims = new List<Claim>
                 {
-                    new Claim("userId", "0"),
-                    new Claim("username", "accesototal"),
-                    new Claim("name", "Acceso Total"),
-                    new Claim("role", "Acceso Total")
+                    new Claim("userId", "1"),
+                    new Claim("username", "admin"),
+                    new Claim("name", "Admin"),
+                    new Claim("role", "Administrador")
                 };
 
                 foreach (Permission perm in Enum.GetValues(typeof(Permission)))
@@ -124,7 +124,7 @@ namespace API.Controllers
             {
                 return StatusCode(500, new { error = ex.Message });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(500, new { error = "Error inesperado al generar token" });
             }

@@ -1,10 +1,11 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
 namespace BusinessLogic.Domain
 {
     public class VehicleCost:IEntity<VehicleCost.UpdatableData>, IAuditable
     {
-        public int Id { get; set; }
+        public int Id { get; set; }= 0;
         public int VehicleId { get; private set; }
         public VehicleCostType Type { get; private set; } = VehicleCostType.Other; 
         public string Description { get; private set; }
@@ -23,19 +24,16 @@ namespace BusinessLogic.Domain
             AuditInfo = auditInfo;
             Validate();
         }
-
-        public VehicleCost(int id, int vehicleId)
+        public VehicleCost(int vehicleId, VehicleCostType type, string description, decimal amount, DateTime date)
         {
-            // Constructor temporal utilizado únicamente para instanciar por Id.
-            // No debe usarse para lógica de negocio que requiera datos válidos.
-            Id = id;
             VehicleId = vehicleId;
-            Type = VehicleCostType.Other;
-            Description = "Descripción Temporal";
-            Amount = 0;
-            Date = DateTime.Today;
-            // No se llama a Validate() porque no se pretende usar la instancia completa
+            Type = type;
+            Description = description;
+            Amount = amount;
+            Date = date;
+            Validate();
         }
+
         public void Validate()
         {
             if (!Enum.IsDefined(typeof(VehicleCostType), Type))
@@ -60,17 +58,16 @@ namespace BusinessLogic.Domain
             Description = data.Description ?? Description;
             Amount = data.Amount ?? Amount;
             Date = data.Date ?? Date;
-            AuditInfo = data.AuditInfo ?? AuditInfo;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
 
             Validate();
         }
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public VehicleCostType? Type { get; set; }
             public string? Description { get; set; }
             public decimal? Amount { get; set; }
             public DateTime? Date { get; set; }
-            public AuditInfo? AuditInfo { get; set; } = null;
         }
     }
 }

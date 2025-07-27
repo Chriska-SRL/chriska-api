@@ -5,41 +5,43 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class SubCategoryMapper
     {
-        public static SubCategory ToDomain(AddSubCategoryRequest dto)
+        public static SubCategory ToDomain(AddSubCategoryRequest request)
         {
-            return new SubCategory(
-                id: 0,
-                name: dto.Name,
-                description: dto.Description,
-                category: new Category(dto.CategoryId),
-                auditInfo: AuditMapper.ToDomain(dto.AuditInfo)
+            var subCategory = new SubCategory(
+                name: request.Name,
+                description: request.Description,
+                category: new Category(request.CategoryId)
             );
+
+            subCategory.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return subCategory;
         }
 
-        public static SubCategory.UpdatableData ToUpdatableData(UpdateSubCategoryRequest dto)
+        public static SubCategory.UpdatableData ToUpdatableData(UpdateSubCategoryRequest request)
         {
             return new SubCategory.UpdatableData
             {
-                Name = dto.Name,
-                Description = dto.Description,
-                AuditInfo = AuditMapper.ToDomain(dto.AuditInfo),
+                Name = request.Name,
+                Description = request.Description,
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
 
-        public static SubCategoryResponse ToResponse(SubCategory domain)
+        public static SubCategoryResponse ToResponse(SubCategory subCategory)
         {
             return new SubCategoryResponse
             {
-                Id = domain.Id,
-                Name = domain.Name,
-                Description = domain.Description,
+                Id = subCategory.Id,
+                Name = subCategory.Name,
+                Description = subCategory.Description,
                 Category = new DTOs.DTOsCategory.CategoryResponse
                 {
-                    Id = domain.Category.Id,
-                    Name = domain.Category.Name,
-                    Description = domain.Category.Description
+                    Id = subCategory.Category.Id,
+                    Name = subCategory.Category.Name,
+                    Description = subCategory.Category.Description
                 },
-                AuditInfo = AuditMapper.ToResponse(domain.AuditInfo)
+                AuditInfo = AuditMapper.ToResponse(subCategory.AuditInfo)
             };
         }
     }

@@ -27,7 +27,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.CREATE_CLIENTS))]
         public async Task<ActionResult<ClientResponse>> AddClientAsync([FromBody] AddClientRequest request)
         {
-            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddClientAsync(request);
             return CreatedAtAction(nameof(GetClientByIdAsync), new { id = result.Id }, result);
         }
@@ -37,7 +37,7 @@ namespace API.Controllers
         public async Task<ActionResult<ClientResponse>> UpdateClientAsync(int id, [FromBody] UpdateClientRequest request)
         {
             request.Id = id;
-            request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.UpdateClientAsync(request);
             return Ok(result);
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteClientAsync(int id)
         {
             var request = new DeleteRequest(id);
-            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             await _facade.DeleteClientAsync(request);
             return NoContent();
         }

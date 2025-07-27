@@ -27,7 +27,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.CREATE_PRODUCTS))]
         public async Task<ActionResult<ProductResponse>> AddProductAsync([FromBody] ProductAddRequest request)
         {
-            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddProductAsync(request);
             return CreatedAtAction(nameof(GetProductByIdAsync), new { id = result.Id }, result);
         }
@@ -37,7 +37,7 @@ namespace API.Controllers
         public async Task<ActionResult<ProductResponse>> UpdateProductAsync(int id, [FromBody] ProductUpdateRequest request)
         {
             request.Id = id;
-            request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.UpdateProductAsync(request);
             return Ok(result);
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteProductAsync(int id)
         {
             var request = new DeleteRequest(id);
-            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             await _facade.DeleteProductAsync(request);
             return NoContent();
         }

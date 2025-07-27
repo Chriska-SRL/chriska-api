@@ -27,7 +27,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.CREATE_BRANDS))]
         public async Task<ActionResult<BrandResponse>> AddBrandAsync([FromBody] AddBrandRequest request)
         {
-            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddBrandAsync(request);
             return CreatedAtAction(nameof(GetBrandByIdAsync), new { id = result.Id }, result); // 201 Created con Location
         }
@@ -37,7 +37,7 @@ namespace API.Controllers
         public async Task<ActionResult<BrandResponse>> UpdateBrandAsync(int id, [FromBody] UpdateBrandRequest request)
         {
             request.Id = id;
-            request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.UpdateBrandAsync(request);
             return Ok(result); // 200 OK
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteBrandAsync(int id)
         {
             var request = new DeleteRequest(id);
-            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             await _facade.DeleteBrandAsync(request);
             return NoContent(); // 204 No Content
         }

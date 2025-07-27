@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using System.Data;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -7,7 +8,7 @@ namespace BusinessLogic.Domain
 {
     public class User:IEntity<User.UpdatableData>, IAuditable
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
@@ -16,7 +17,6 @@ namespace BusinessLogic.Domain
         public Role Role { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public User() { }
         public User(int id, string name, string username, string password, Boolean isEnabled, Boolean needsPasswordChange, Role role, AuditInfo auditInfo)
         {
             Id = id;
@@ -30,9 +30,8 @@ namespace BusinessLogic.Domain
 
             Validate();
         }
-        public User(int id, string name, string username, string password, Boolean isEnabled, Boolean needsPasswordChange, Role role,List<Request> requests)
+        public User(string name, string username, string password, Boolean isEnabled, Boolean needsPasswordChange, Role role)
         {
-            Id = id;
             Name = name;
             Username = username;
             Password = password;
@@ -99,18 +98,17 @@ namespace BusinessLogic.Domain
             IsEnabled = data.IsEnabled;
             Role = data.Role ?? Role;
             NeedsPasswordChange = data.NeedsPasswordChange;
-            AuditInfo = data.AuditInfo ?? AuditInfo;
+            AuditInfo.SetUpdated(data.UserId, data.Location);   
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public string Name { get; set; }
             public string Username { get; set; }
             public Boolean IsEnabled { get; set; }
             public Boolean NeedsPasswordChange { get; set; }
             public Role Role { get; set; }
-            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
 
         public override string ToString() { 

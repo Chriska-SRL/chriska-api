@@ -4,33 +4,6 @@ using BusinessLogic.DTOs.DTOsAudit;
 
 public static class AuditMapper
 {
-    public static AuditInfo ToDomain(AuditInfoRequest request)
-    {
-        var audit = new AuditInfo();
-
-        if (request.Created != null)
-        {
-            audit.CreatedAt = request.Created.Date ?? DateTime.UtcNow;
-            audit.CreatedLocation = request.Created.Location;
-            audit.CreatedBy = request.Created.UserId;
-        }
-
-        if (request.Updated != null)
-        {
-            audit.UpdatedAt = request.Updated.Date ?? DateTime.UtcNow;
-            audit.UpdatedLocation = request.Updated.Location;
-            audit.UpdatedBy = request.Updated.UserId;
-        }
-
-        if (request.Deleted != null)
-        {
-            audit.DeletedAt = request.Deleted.Date ?? DateTime.UtcNow;
-            audit.DeletedLocation = request.Deleted.Location;
-            audit.DeletedBy = request.Deleted.UserId;
-        }
-
-        return audit;
-    }
 
     public static AuditInfoResponse ToResponse(AuditInfo audit)
     {
@@ -43,7 +16,7 @@ public static class AuditMapper
                 By = new AuditUser
                 {
                     Id = audit.CreatedBy ?? 0,
-                    User = null
+                    User = "implementar nombre"
                 },
                 Location = audit.CreatedLocation
             },
@@ -54,7 +27,7 @@ public static class AuditMapper
                 By = new AuditUser
                 {
                     Id = audit.UpdatedBy ?? 0,
-                    User = null
+                    User = "implementar nombre"
                 },
                 Location = audit.UpdatedLocation
             } : null,
@@ -65,7 +38,7 @@ public static class AuditMapper
                 By = new AuditUser
                 {
                     Id = audit.DeletedBy ?? 0,
-                    User = null
+                    User = "implementar nombre"
                 },
                 Location = audit.DeletedLocation
             } : null

@@ -7,24 +7,26 @@ namespace BusinessLogic.Común.Mappers
     {
         public static Client ToDomain(AddClientRequest request)
         {
-            return new Client(
-                id: 0,
-                name: request.Name,
-                rut: request.RUT,
-                razonSocial: request.RazonSocial,
-                address: request.Address,
-                mapsAddress: request.MapsAddress,
-                schedule: request.Schedule,
-                phone: request.Phone,
+            Client client = new Client
+            (
+                request.Name,
+                request.RUT,
+                request.RazonSocial,
+                request.Address,
+                request.MapsAddress,
+                request.Schedule,
+                request.Phone,
                 contactName: request.ContactName,
-                email: request.Email,
-                observations: request.Observations,
-                bankAccounts: new List<BankAccount>(),
+                request.Email,
+                request.Observations,
+                new List<BankAccount>(),
                 loanedCrates: 0,
-                qualification: request.Qualification,
-                zone: new Zone(request.ZoneId),
-                auditInfo: AuditMapper.ToDomain(request.AuditInfo)
+                request.Qualification,
+                new Zone(request.ZoneId)
             );
+            client.AuditInfo.SetCreated(request.getUserId(), request.Location);
+
+            return client;
         }
 
         public static Client.UpdatableData ToUpdatableData(UpdateClientRequest request)
@@ -45,7 +47,8 @@ namespace BusinessLogic.Común.Mappers
                 Qualification = request.Qualification,
                 Zone = new Zone(request.ZoneId),
                 BankAccounts = new List<BankAccount>(),
-                AuditInfo = AuditMapper.ToDomain(request.AuditInfo)
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
 

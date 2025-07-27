@@ -1,6 +1,5 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsSupplier;
-using System.Runtime;
 
 namespace BusinessLogic.Común.Mappers
 {
@@ -8,8 +7,7 @@ namespace BusinessLogic.Común.Mappers
     {
         public static Supplier ToDomain(AddSupplierRequest request)
         {
-            return new Supplier(
-                id: 0,
+            var supplier = new Supplier(
                 name: request.Name,
                 rut: request.RUT,
                 razonSocial: request.BusinessName,
@@ -19,10 +17,13 @@ namespace BusinessLogic.Común.Mappers
                 contactName: request.ContactName,
                 email: request.Email,
                 observations: request.Observation,
-                bankAccounts: new List<BankAccount>(),
-                auditInfo: AuditMapper.ToDomain(request.AuditInfo)
-                );
+                bankAccounts: new List<BankAccount>()
+            );
+
+            supplier.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return supplier;
         }
+
         public static Supplier.UpdatableData ToUpdatableData(UpdateSupplierRequest request)
         {
             return new Supplier.UpdatableData
@@ -36,25 +37,27 @@ namespace BusinessLogic.Común.Mappers
                 ContactName = request.ContactName,
                 Email = request.Email,
                 Observations = request.Observations,
-                AuditInfo = AuditMapper.ToDomain(request.AuditInfo)
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
-        public static SupplierResponse ToResponse(Supplier domain)
+
+        public static SupplierResponse ToResponse(Supplier supplier)
         {
             return new SupplierResponse
             {
-                Id = domain.Id,
-                Name = domain.Name,
-                RUT = domain.RUT,
-                RazonSocial = domain.RazonSocial,
-                Address = domain.Address,
-                MapsAddress = domain.MapsAddress,
-                Phone = domain.Phone,
-                ContactName = domain.ContactName,
-                Email = domain.Email,
-                Observations = domain.Observations,
-                Products = domain.Products.Select(ProductMapper.ToResponse).ToList(),
-                AuditInfo = AuditMapper.ToResponse(domain.AuditInfo)
+                Id = supplier.Id,
+                Name = supplier.Name,
+                RUT = supplier.RUT,
+                RazonSocial = supplier.RazonSocial,
+                Address = supplier.Address,
+                MapsAddress = supplier.MapsAddress,
+                Phone = supplier.Phone,
+                ContactName = supplier.ContactName,
+                Email = supplier.Email,
+                Observations = supplier.Observations,
+                Products = supplier.Products.Select(ProductMapper.ToResponse).ToList(),
+                AuditInfo = AuditMapper.ToResponse(supplier.AuditInfo)
             };
         }
     }

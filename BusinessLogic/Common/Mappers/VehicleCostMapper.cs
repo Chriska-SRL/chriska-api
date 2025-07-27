@@ -5,32 +5,44 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class VehicleCostMapper
     {
-        public static VehicleCost ToDomain(AddVehicleCostRequest dto)
+        public static VehicleCost ToDomain(AddVehicleCostRequest request)
         {
-            return new VehicleCost(0, dto.VehicleId, dto.Type, dto.Description, dto.Amount, dto.Date,AuditMapper.ToDomain(dto.AuditInfo));
+            var cost = new VehicleCost(
+                vehicleId: request.VehicleId,
+                type: request.Type,
+                description: request.Description,
+                amount: request.Amount,
+                date: request.Date
+            );
+
+            cost.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return cost;
         }
-        public static VehicleCost.UpdatableData ToUpdatableData(UpdateVehicleCostRequest dto)
+
+        public static VehicleCost.UpdatableData ToUpdatableData(UpdateVehicleCostRequest request)
         {
             return new VehicleCost.UpdatableData
             {
-                Type = dto.Type,
-                Description = dto.Description,
-                Amount = dto.Amount,
-                Date = dto.Date,
-                AuditInfo = AuditMapper.ToDomain(dto.AuditInfo)
+                Type = request.Type,
+                Description = request.Description,
+                Amount = request.Amount,
+                Date = request.Date,
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
-        public static VehicleCostResponse ToResponse(VehicleCost domain)
+
+        public static VehicleCostResponse ToResponse(VehicleCost cost)
         {
             return new VehicleCostResponse
             {
-                VehicleId = domain.VehicleId,
-                Id = domain.Id,
-                Date = domain.Date,
-                Type = domain.Type,
-                Description = domain.Description,
-                Amount = domain.Amount,
-                AuditInfo = AuditMapper.ToResponse(domain.AuditInfo)
+                VehicleId = cost.VehicleId,
+                Id = cost.Id,
+                Date = cost.Date,
+                Type = cost.Type,
+                Description = cost.Description,
+                Amount = cost.Amount,
+                AuditInfo = AuditMapper.ToResponse(cost.AuditInfo)
             };
         }
     }

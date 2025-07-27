@@ -27,7 +27,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.CREATE_ROLES))]
         public async Task<ActionResult<RoleResponse>> AddRoleAsync([FromBody] AddRoleRequest request)
         {
-            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddRoleAsync(request);
             return CreatedAtAction(nameof(GetRoleByIdAsync), new { id = result.Id }, result);
         }
@@ -37,7 +37,7 @@ namespace API.Controllers
         public async Task<ActionResult<RoleResponse>> UpdateRoleAsync(int id, [FromBody] UpdateRoleRequest request)
         {
             request.Id = id;
-            request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.UpdateRoleAsync(request);
             return Ok(result);
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteRoleAsync(int id)
         {
             DeleteRequest request = new DeleteRequest(id);
-            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             await _facade.DeleteRoleAsync(request);
             return NoContent();
         }

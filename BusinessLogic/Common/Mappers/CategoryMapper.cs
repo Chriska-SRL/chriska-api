@@ -5,32 +5,38 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class CategoryMapper
     {
-        public static Category ToDomain(AddCategoryRequest dto)
+        public static Category ToDomain(AddCategoryRequest request)
         {
-            return new Category(
-                id: 0,
-                description: dto.Description,
-                name: dto.Name,
-                auditInfo: AuditMapper.ToDomain(dto.AuditInfo)
+            Category category = new Category
+            (
+                request.Name,
+                request.Description
             );
+            category.AuditInfo.SetCreated(request.getUserId(), request.Location);
+
+            return category;
         }
-        public static Category.UpdatableData ToUpdatableData(UpdateCategoryRequest dto)
+
+        public static Category.UpdatableData ToUpdatableData(UpdateCategoryRequest request)
         {
             return new Category.UpdatableData
             {
-                Description = dto.Description,
-                Name = dto.Name,
-                AuditInfo = AuditMapper.ToDomain(dto.AuditInfo)
+                Name = request.Name,
+                Description = request.Description,
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
-        public static CategoryResponse ToResponse(Category domain)
+
+        public static CategoryResponse ToResponse(Category category)
         {
-            return new CategoryResponse{
-                Id= domain.Id,
-                Description = domain.Description,
-                Name= domain.Name,
-                SubCategories = domain.SubCategories.Select(SubCategoryMapper.ToResponse).ToList(),
-                AuditInfo = AuditMapper.ToResponse(domain.AuditInfo)
+            return new CategoryResponse
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description,
+                SubCategories = category.SubCategories.Select(SubCategoryMapper.ToResponse).ToList(),
+                AuditInfo = AuditMapper.ToResponse(category.AuditInfo)
             };
         }
     }

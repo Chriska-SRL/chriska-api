@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
 using System.Text.RegularExpressions;
 
@@ -6,7 +7,7 @@ namespace BusinessLogic.Domain
 {
     public class Supplier:IEntity<Supplier.UpdatableData>, IAuditable,IBankUser
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
@@ -21,7 +22,20 @@ namespace BusinessLogic.Domain
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email,string observations, List<BankAccount> bankAccounts,AuditInfo auditInfo)
+        public Supplier(string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email,string observations, List<BankAccount> bankAccounts)
+        {
+            Name = name;
+            RUT = rut;
+            RazonSocial = razonSocial;
+            Address = address;
+            MapsAddress = mapsAddress;
+            Phone = phone;
+            ContactName = contactName;
+            Email = email;
+            Observations = observations;
+            BankAccounts = bankAccounts ?? new List<BankAccount>();
+        }
+        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, string observations, List<BankAccount> bankAccounts, AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
@@ -110,11 +124,11 @@ namespace BusinessLogic.Domain
             ContactName = data.ContactName ?? ContactName;
             Email = data.Email ?? Email;
             Observations = data.Observations ?? Observations;
-            AuditInfo = data.AuditInfo ?? new AuditInfo();
+            AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public string? Name { get; set; }
             public string? RUT { get; set; }
@@ -125,7 +139,6 @@ namespace BusinessLogic.Domain
             public string? ContactName { get; set; }
             public string? Email { get; set; }
             public string? Observations { get; set; }
-            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
     }
 }

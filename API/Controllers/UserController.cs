@@ -27,7 +27,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.CREATE_USERS))]
         public async Task<ActionResult<UserResponse>> AddUserAsync([FromBody] AddUserRequest request)
         {
-            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddUserAsync(request);
             return CreatedAtAction(nameof(GetUserByIdAsync), new { id = result.Id }, result);
         }
@@ -37,7 +37,7 @@ namespace API.Controllers
         public async Task<ActionResult<UserResponse>> UpdateUserAsync(int id, [FromBody] UpdateUserRequest request)
         {
             request.Id = id;
-            request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.UpdateUserAsync(request);
             return Ok(result);
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteUserAsync(int id)
         {
             var request = new DeleteRequest(id);
-            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             await _facade.DeleteUserAsync(request);
             return NoContent();
         }

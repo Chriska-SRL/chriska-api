@@ -5,27 +5,30 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class WarehouseMapper
     {
-        public static Warehouse ToDomain(AddWarehouseRequest addWarehouseRequest)
+        public static Warehouse ToDomain(AddWarehouseRequest request)
         {
-            return new Warehouse(
-                id: 0,
-                name: addWarehouseRequest.Name,
-                description: addWarehouseRequest.Description,
-                address: addWarehouseRequest.Address,
-                shelves: new List<Shelve>(),
-                auditInfo: AuditMapper.ToDomain(addWarehouseRequest.AuditInfo)
+            var warehouse = new Warehouse(
+                name: request.Name,
+                description: request.Description,
+                address: request.Address
             );
+
+            warehouse.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return warehouse;
         }
-        public static Warehouse.UpdatableData ToUpdatableData(UpdateWarehouseRequest updateWarehouseRequest)
+
+        public static Warehouse.UpdatableData ToUpdatableData(UpdateWarehouseRequest request)
         {
             return new Warehouse.UpdatableData
             {
-                Name = updateWarehouseRequest.Name,
-                Description = updateWarehouseRequest.Description,
-                Address = updateWarehouseRequest.Address,
-                AuditInfo = AuditMapper.ToDomain(updateWarehouseRequest.AuditInfo)
+                Name = request.Name,
+                Description = request.Description,
+                Address = request.Address,
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
+
         public static WarehouseResponse ToResponse(Warehouse warehouse)
         {
             return new WarehouseResponse
@@ -40,4 +43,3 @@ namespace BusinessLogic.Común.Mappers
         }
     }
 }
-    

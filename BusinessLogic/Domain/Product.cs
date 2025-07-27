@@ -1,12 +1,14 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
 using BusinessLogic.Domain;
+using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.Domain
 {
     public class Product : IEntity<Product.UpdatableData>, IAuditable
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string? Barcode { get; set; }
         public string InternalCode { get; set; } = string.Empty;
@@ -24,6 +26,23 @@ namespace BusinessLogic.Domain
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
         public AuditInfo AuditInfo { get; set ; }
 
+        public Product( string? barcode, string name, decimal price, string image, int stock, int aviableStock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
+        {
+            Barcode = barcode;
+            Name = name;
+            Price = price;
+            Image = image;
+            Stock = stock;
+            AviableStock = aviableStock;
+            Description = description;
+            UnitType = unitType;
+            TemperatureCondition = temperatureCondition;
+            Observation = observations;
+            SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
+            Brand = brand ?? throw new ArgumentNullException(nameof(brand));
+            Suppliers = suppliers ?? throw new ArgumentNullException(nameof(suppliers));
+            Validate();
+        }
         public Product(int id, string? barcode, string name, decimal price, string image, int stock, int aviableStock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand,List<Supplier> suppliers, AuditInfo auditInfo)
         {
             Id = id;
@@ -126,13 +145,13 @@ namespace BusinessLogic.Domain
             Brand = data.Brand ?? Brand;
             AviableStock = data.AviableStock ?? AviableStock;
             Stock = data.Stock ?? Stock;
-            AuditInfo = data.AuditInfo ?? AuditInfo;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
 
             SetInternalCode();
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public string? Name { get; set; } = string.Empty;
             public string? Barcode { get; set; } = string.Empty;
@@ -146,7 +165,6 @@ namespace BusinessLogic.Domain
             public Brand? Brand { get; set; } = null!;
             public int? Stock { get; set; }
             public int? AviableStock { get; set; }
-            public AuditInfo? AuditInfo { get; set; } = null!;
         }
 
         public void SetInternalCode()

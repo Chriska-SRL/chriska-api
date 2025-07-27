@@ -1,30 +1,31 @@
-﻿using BusinessLogic.Común.Mappers;
-using BusinessLogic.Domain;
+﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsRole;
 
 namespace BusinessLogic.Común.Mappers
 {
     public static class RoleMapper
     {
-        public static Role ToDomain(AddRoleRequest dto)
+        public static Role ToDomain(AddRoleRequest request)
         {
-            return new Role(
-                id: 0,
-                name: dto.Name,
-                description: dto.Description,
-                permissions: dto.Permissions.Select(p => (Permission)p).ToList(),
-                auditInfo: AuditMapper.ToDomain(dto.AuditInfo)
+            var role = new Role(
+                name: request.Name,
+                description: request.Description,
+                permissions: request.Permissions.Select(p => (Permission)p).ToList()
             );
+
+            role.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return role;
         }
 
-        public static Role.UpdatableData ToUpdatableData(UpdateRoleRequest dto)
+        public static Role.UpdatableData ToUpdatableData(UpdateRoleRequest request)
         {
             return new Role.UpdatableData
             {
-                Name = dto.Name,
-                Description = dto.Description,
-                Permissions = dto.Permissions.Select(p => (Permission)p).ToList(),
-                AuditInfo = AuditMapper.ToDomain(dto.AuditInfo)
+                Name = request.Name,
+                Description = request.Description,
+                Permissions = request.Permissions.Select(p => (Permission)p).ToList(),
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
 

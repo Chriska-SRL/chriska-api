@@ -27,7 +27,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.CREATE_ZONES))]
         public async Task<ActionResult<ZoneResponse>> AddZoneAsync([FromBody] AddZoneRequest request)
         {
-            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddZoneAsync(request);
             return CreatedAtAction(nameof(GetZoneByIdAsync), new { id = result.Id }, result); // 201 Created
         }
@@ -37,7 +37,7 @@ namespace API.Controllers
         public async Task<ActionResult<ZoneResponse>> UpdateZoneAsync(int id, [FromBody] UpdateZoneRequest request)
         {
             request.Id = id;
-            request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.UpdateZoneAsync(request);
             return Ok(result); // 200 OK
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteZoneAsync(int id)
         {
             var request = new DeleteRequest(id);
-            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             await _facade.DeleteZoneAsync(request);
             return NoContent(); // 204 No Content
         }

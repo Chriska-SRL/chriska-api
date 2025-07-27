@@ -16,7 +16,7 @@ namespace BusinessLogic.Services
         {
             var connectionString = configuration.GetConnectionString("AzureStorage");
             _containerName = configuration["AzureStorage:ContainerName"] ?? "images";
-            _blobServiceClient = new BlobServiceClient(connectionString);
+            _blobServiceClient = null;//new BlobServiceClient(connectionString);
             _logger = logger;
         }
 

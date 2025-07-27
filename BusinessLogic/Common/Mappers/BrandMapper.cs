@@ -7,12 +7,14 @@ namespace BusinessLogic.Común.Mappers
     {
         public static Brand ToDomain(AddBrandRequest request)
         {
-            return new Brand(
-                id: 0,
-                name: request.Name,
-                description: request.Description,
-                auditInfo: AuditMapper.ToDomain(request.AuditInfo)
+            Brand brand = new Brand
+            (
+                request.Name,
+                request.Description
             );
+            brand.AuditInfo.SetCreated(request.getUserId(),request.Location);
+
+            return brand;
         }
 
         public static Brand.UpdatableData ToUpdatableData(UpdateBrandRequest request)
@@ -21,7 +23,8 @@ namespace BusinessLogic.Común.Mappers
             {
                 Name = request.Name,
                 Description = request.Description,
-                AuditInfo = AuditMapper.ToDomain(request.AuditInfo)
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
 

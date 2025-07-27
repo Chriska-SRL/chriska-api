@@ -30,14 +30,16 @@ namespace Repository.Mappers
             var category = new Category(
                 id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
                 name: reader.GetString(reader.GetOrdinal("CategoryName")),
-                description: reader.GetString(reader.GetOrdinal("CategoryDescription"))
+                description: reader.GetString(reader.GetOrdinal("CategoryDescription")),
+                auditInfo: null
             );
 
             var subCategory = new SubCategory(
                 id: reader.GetInt32(reader.GetOrdinal("SubCategoryId")),
                 name: reader.GetString(reader.GetOrdinal("SubCategoryName")),
                 description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
-                category: category
+                category: category,
+                auditInfo: null
             );
             var brand = new Brand(
                 id: reader.GetInt32(reader.GetOrdinal("BrandId")),
@@ -87,7 +89,8 @@ namespace Repository.Mappers
                 id: reader.GetInt32(reader.GetOrdinal("RoleId")),
                 name: reader.GetString(reader.GetOrdinal("RoleName")),
                 description: reader.GetString(reader.GetOrdinal("RoleDescription")),
-                permissions: new List<Permission>() // permisos no incluidos
+                permissions: new List<Permission>(),
+                auditInfo: null
             );
 
             var user = new User(
@@ -98,7 +101,7 @@ namespace Repository.Mappers
                 needsPasswordChange: reader.GetString(reader.GetOrdinal("NeedsPasswordChange")).Trim() == "T",
                 password: reader.GetString(reader.GetOrdinal("Password")),
                 role: role,
-                requests: new List<Request>() // solicitudes no incluidas
+                auditInfo: null
             );
 
             var stockMovement = new StockMovement(

@@ -23,7 +23,8 @@ namespace Repository.Mappers
                 id: reader.GetInt32(reader.GetOrdinal("Id")),
                 name: reader.GetString(reader.GetOrdinal("Name")),
                 description: reader.GetString(reader.GetOrdinal("Description")),
-                permissions: permissions
+                permissions: permissions,
+                auditInfo: AuditInfoMapper.FromReader(reader)
             );
         }
     }

@@ -5,34 +5,35 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class StockMovementMapper
     {
-        public static StockMovement ToDomain(AddStockMovementRequest dto)
+        public static StockMovement ToDomain(AddStockMovementRequest request)
         {
-            return new StockMovement(
-                id: 0,
-                date: dto.Date,
-                quantity: dto.Quantity,
-                type: dto.Type,
-                reason: dto.Reason,
-                shelve: new Shelve(dto.ShelveId),
-                user: new User(dto.UserId),
-                product: new Product(dto.ProductId),
-                auditInfo: AuditMapper.ToDomain(dto.AuditInfo)
+            var movement = new StockMovement(
+                date: request.Date,
+                quantity: request.Quantity,
+                type: request.Type,
+                reason: request.Reason,
+                shelve: new Shelve(request.ShelveId),
+                user: new User(request.UserId),
+                product: new Product(request.ProductId)
             );
+
+            movement.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return movement;
         }
 
-        public static StockMovementResponse ToResponse(StockMovement domain)
+        public static StockMovementResponse ToResponse(StockMovement movement)
         {
             return new StockMovementResponse
             {
-                Id = domain.Id,
-                Date = domain.Date,
-                Quantity = domain.Quantity,
-                Type = domain.Type,
-                Reason = domain.Reason,
-                Shelve = ShelveMapper.ToResponse(domain.Shelve),
-                User = UserMapper.ToResponse(domain.User),
-                Product = ProductMapper.ToResponse(domain.Product),
-                AuditInfo = AuditMapper.ToResponse(domain.AuditInfo)
+                Id = movement.Id,
+                Date = movement.Date,
+                Quantity = movement.Quantity,
+                Type = movement.Type,
+                Reason = movement.Reason,
+                Shelve = ShelveMapper.ToResponse(movement.Shelve),
+                User = UserMapper.ToResponse(movement.User),
+                Product = ProductMapper.ToResponse(movement.Product),
+                AuditInfo = AuditMapper.ToResponse(movement.AuditInfo)
             };
         }
     }

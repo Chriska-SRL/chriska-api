@@ -10,7 +10,8 @@ namespace Repository.Mappers
             var category = new Category(
                 id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
                 name: reader.GetString(reader.GetOrdinal("CategoryName")),
-                description: reader.GetString(reader.GetOrdinal("CategoryDescription"))
+                description: reader.GetString(reader.GetOrdinal("CategoryDescription")),
+                auditInfo: null
             );
 
             return new SubCategory(

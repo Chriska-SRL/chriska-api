@@ -8,44 +8,46 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class ProductMapper
     {
-        public static Product FromAddRequest(ProductAddRequest dto, SubCategory subCategory)
+        public static Product ToDomain(ProductAddRequest request, SubCategory subCategory)
         {
-            return new Product(
-                id: 0,
-                barcode: dto.Barcode,
-                name: dto.Name,
-                price: dto.Price,
-                image: dto.Image,
-                stock: dto.Stock,
-                aviableStock: dto.AvailableStock,
-                description: dto.Description,
-                unitType: dto.UnitType,
-                temperatureCondition: dto.TemperatureCondition,
-                observations: dto.Observations,
+            Product product = new Product(
+                barcode: request.Barcode,
+                name: request.Name,
+                price: request.Price,
+                image: request.Image,
+                stock: request.Stock,
+                aviableStock: request.AvailableStock,
+                description: request.Description,
+                unitType: request.UnitType,
+                temperatureCondition: request.TemperatureCondition,
+                observations: request.Observations,
                 subCategory: subCategory,
-                brand: new Brand(dto.BrandId),
-                suppliers: new List<Supplier>(), 
-                auditInfo: AuditMapper.ToDomain(dto.AuditInfo)
+                brand: new Brand(request.BrandId),
+                suppliers: new List<Supplier>()
             );
+
+            product.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return product;
         }
 
-        public static Product.UpdatableData FromUpdateRequest(ProductUpdateRequest dto, SubCategory subCategory)
+        public static Product.UpdatableData ToUpdatableData(ProductUpdateRequest request, SubCategory subCategory)
         {
             return new Product.UpdatableData
             {
-                Name = dto.Name,
-                Barcode = dto.Barcode,
-                Price = dto.Price,
-                Image = dto.Image,
-                Description = dto.Description,
-                UnitType = dto.UnitType,
-                TemperatureCondition = dto.TemperatureCondition,
-                Observation = dto.Observations,
+                Name = request.Name,
+                Barcode = request.Barcode,
+                Price = request.Price,
+                Image = request.Image,
+                Description = request.Description,
+                UnitType = request.UnitType,
+                TemperatureCondition = request.TemperatureCondition,
+                Observation = request.Observations,
                 SubCategory = subCategory,
-                Brand = new Brand(dto.BrandId),
-                Stock = dto.Stock,
-                AviableStock = dto.AvailableStock,
-                AuditInfo = AuditMapper.ToDomain(dto.AuditInfo),
+                Brand = new Brand(request.BrandId),
+                Stock = request.Stock,
+                AviableStock = request.AvailableStock,
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
 

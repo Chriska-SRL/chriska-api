@@ -7,6 +7,7 @@ using BusinessLogic.SubSystem;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Repository.EntityRepositories;
+using Repository.Logging;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -155,10 +156,13 @@ namespace API
             builder.Services.AddScoped<WarehousesSubSystem>();
             builder.Services.AddScoped<ZonesSubSystem>();
             builder.Services.AddScoped<VehicleSubSystem>();
+            builder.Services.AddScoped<BrandSubSystem>();
 
+
+            builder.Services.AddScoped<AuditLogger>();
             builder.Services.AddScoped<Facade>();
 
-            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+            //var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 
             builder.Services.AddCors(options =>
             {

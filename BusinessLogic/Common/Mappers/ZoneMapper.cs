@@ -7,24 +7,30 @@ namespace BusinessLogic.Común.Mappers
     {
         public static Zone ToDomain(AddZoneRequest request)
         {
-            return new Zone(
-                id:0,
-                name:request.Name,
+            var zone = new Zone(
+                name: request.Name,
                 description: request.Description,
                 deliveryDays: new List<Day>(),
-                requestDays: new List<Day>(),
-                auditInfo: AuditMapper.ToDomain(request.AuditInfo)
+                requestDays: new List<Day>()
             );
+
+            zone.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return zone;
         }
+
         public static Zone.UpdatableData ToUpdatableData(UpdateZoneRequest request)
         {
             return new Zone.UpdatableData
             {
                 Name = request.Name,
                 Description = request.Description,
-                AuditInfo = AuditMapper.ToDomain(request.AuditInfo)
+                DeliveryDays = request.DeliveryDays.Select(d => (Day)d).ToList(),
+                RequestDays = request.RequestDays.Select(d => (Day)d).ToList(),
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
+
         public static ZoneResponse ToResponse(Zone zone)
         {
             return new ZoneResponse

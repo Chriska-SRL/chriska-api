@@ -1,39 +1,42 @@
 ﻿using BusinessLogic.Domain;
-using BusinessLogic.DTOs.DTOsRole;
 using BusinessLogic.DTOs.DTOsUser;
 
 namespace BusinessLogic.Común.Mappers
 {
     public static class UserMapper
     {
-        public static User ToDomain(AddUserRequest addUserRequest)
+        public static User ToDomain(AddUserRequest request)
         {
-            return new User(
-                id: 0,
-                name: addUserRequest.Name,
-                username: addUserRequest.Username,
+            var user = new User(
+                name: request.Name,
+                username: request.Username,
                 password: "Temporal.12345",
-                isEnabled: addUserRequest.IsEnabled,
+                isEnabled: request.IsEnabled,
                 needsPasswordChange: true,
-                role: new Role(addUserRequest.RoleId),
-                auditInfo: AuditMapper.ToDomain(addUserRequest.AuditInfo)
+                role: new Role(request.RoleId)
             );
+
+            user.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return user;
         }
-        public static User.UpdatableData ToUpdatableData(UpdateUserRequest updateUserRequest)
+
+        public static User.UpdatableData ToUpdatableData(UpdateUserRequest request)
         {
             return new User.UpdatableData
             {
-                Name = updateUserRequest.Name,
-                Username = updateUserRequest.Username,
-                IsEnabled = updateUserRequest.IsEnabled,
-                Role = new Role(updateUserRequest.RoleId),
-                AuditInfo = AuditMapper.ToDomain(updateUserRequest.AuditInfo),
+                Name = request.Name,
+                Username = request.Username,
+                IsEnabled = request.IsEnabled,
+                Role = new Role(request.RoleId),
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
 
         public static UserResponse ToResponse(User user)
         {
-            return new UserResponse {
+            return new UserResponse
+            {
                 Id = user.Id,
                 Name = user.Name,
                 Username = user.Username,
@@ -43,6 +46,5 @@ namespace BusinessLogic.Común.Mappers
                 AuditInfo = AuditMapper.ToResponse(user.AuditInfo)
             };
         }
-
     }
 }

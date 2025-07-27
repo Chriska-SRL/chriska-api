@@ -13,7 +13,8 @@ namespace Repository.Mappers
             var category = new Category(
                 id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
                 name: reader.GetString(reader.GetOrdinal("CategoryName")),
-                description: reader.GetString(reader.GetOrdinal("CategoryDescription"))
+                description: reader.GetString(reader.GetOrdinal("CategoryDescription")),
+                auditInfo:null
             );
 
             // Cargar la subcategoría
@@ -21,7 +22,8 @@ namespace Repository.Mappers
                 id: reader.GetInt32(reader.GetOrdinal("SubCategoryId")),
                 name: reader.GetString(reader.GetOrdinal("SubCategoryName")),
                 description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
-                category: category
+                category: category,
+                auditInfo: null
             );
 
             // Cargar la marca
@@ -29,7 +31,7 @@ namespace Repository.Mappers
                 id: reader.GetInt32(reader.GetOrdinal("BrandId")),
                 name: reader.GetString(reader.GetOrdinal("BrandName")),
                 description: reader.GetString(reader.GetOrdinal("BrandDescription")),
-                auditInfo: new AuditInfo()
+                auditInfo: null
             );
 
             // Mapeo del tipo de unidad (UnitType)

@@ -16,6 +16,18 @@ namespace BusinessLogic.Domain
         public StockMovementType StockMovementType { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
+        public StockMovement(DateTime date, int quantity, StockMovementType type, string reason, Shelve shelve, User user, Product product)
+        {
+            Date = date;
+            Quantity = quantity;
+            Type = type;
+            Reason = reason;
+            Shelve = shelve ?? throw new ArgumentNullException(nameof(shelve));
+            User = user ?? throw new ArgumentNullException(nameof(user));
+            Product = product ?? throw new ArgumentNullException(nameof(product));
+
+            Validate();
+        }
         public StockMovement(int id, DateTime date, int quantity, StockMovementType type, string reason, Shelve shelve, User user, Product product,AuditInfo auditInfo)
         {
             Id = id;
@@ -26,6 +38,7 @@ namespace BusinessLogic.Domain
             Shelve = shelve ?? throw new ArgumentNullException(nameof(shelve));
             User = user ?? throw new ArgumentNullException(nameof(user));
             Product = product ?? throw new ArgumentNullException(nameof(product));
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
 
             Validate();
         }

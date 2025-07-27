@@ -33,7 +33,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteImageAsync(string entityType, int entityId)
         {
             var request = new DeleteRequest(entityId);
-            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
 
             bool deleted = await _facade.DeleteImageAsync(entityType, entityId);
             if (!deleted)

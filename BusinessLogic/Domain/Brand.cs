@@ -1,24 +1,28 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using BusinessLogic.Domain;
 
 namespace BusinessLogic.Domain
 {
     public class Brand : IEntity<Brand.UpdatableData>, IAuditable
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string Description { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        Brand()
+        public Brand(string name, string description)
         {
+            Name = name;
+            Description = description;
+            Validate();
         }
-        public Brand(int id, string name, string description,AuditInfo auditInfo)
+        public Brand(int id, string name, string description, AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
-            AuditInfo ??= new AuditInfo();
+            AuditInfo = auditInfo;
             Validate();
         }
 
@@ -51,16 +55,16 @@ namespace BusinessLogic.Domain
 
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;
-            AuditInfo = data.AuditInfo ?? AuditInfo;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
 
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public string? Name { get; set; } = string.Empty;
             public string? Description { get; set; } = string.Empty;
-            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+           
         }
 
     }

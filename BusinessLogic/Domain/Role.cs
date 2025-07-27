@@ -1,18 +1,26 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using System.Xml.Linq;
 
 namespace BusinessLogic.Domain
 {
     public class Role : IEntity<Role.UpdatableData>, IAuditable
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string Description { get; set; } = string.Empty;
         public List<Permission> Permissions { get; set; } = new List<Permission>();
         public List<User> Users { get; set; } = new List<User>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Role() { }
+        public Role(string name, string description, List<Permission> permissions)
+        {
+            Name = name;
+            Description = description;
+            Permissions = permissions ?? throw new ArgumentNullException(nameof(permissions));
+
+            Validate();
+        }
         public Role(int id, string name, string description, List<Permission> permissions, AuditInfo auditInfo)
         {
             Id = id;
@@ -23,15 +31,7 @@ namespace BusinessLogic.Domain
 
             Validate();
         }
-        public Role(int id, string name, string description, List<Permission> permissions)
-        {
-            Id = id;
-            Name = name;
-            Description = description;
-            Permissions = permissions ?? throw new ArgumentNullException(nameof(permissions));
-
-            Validate();
-        }
+       
         public Role(int id)
         {
             Id = id;
@@ -67,16 +67,15 @@ namespace BusinessLogic.Domain
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;
             Permissions = data.Permissions ?? Permissions;
-            AuditInfo = data.AuditInfo ?? AuditInfo;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public string? Name { get; set; } = string.Empty;
             public string? Description { get; set; } = string.Empty;
             public List<Permission>? Permissions { get; set; } = new List<Permission>();
-            public AuditInfo? AuditInfo { get; set; } = new AuditInfo();
         }
 
         public override string ToString()

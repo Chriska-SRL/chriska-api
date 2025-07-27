@@ -18,7 +18,7 @@ namespace Repository.EntityRepositories
         public async Task<Role> AddAsync(Role role)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-                "INSERT INTO Roles (Name, Description) OUTPUT INSERTED.Id VALUES (@Name, @Description)",
+                "INSERT INTO dbo.Roles (Name, Description) OUTPUT INSERTED.Id VALUES (@Name, @Description)",
                 role,
                 AuditAction.Insert,
                 configureCommand: cmd =>
@@ -44,7 +44,7 @@ namespace Repository.EntityRepositories
         public async Task<Role> UpdateAsync(Role role)
         {
             int rows = await ExecuteWriteWithAuditAsync(
-                "UPDATE Roles SET Name = @Name, Description = @Description WHERE Id = @Id",
+                "UPDATE dbo.Roles SET Name = @Name, Description = @Description WHERE Id = @Id",
                 role,
                 AuditAction.Update,
                 configureCommand: cmd =>
@@ -73,7 +73,7 @@ namespace Repository.EntityRepositories
                 throw new ArgumentNullException(nameof(role), "El rol no puede ser nulo.");
 
             int rows = await ExecuteWriteWithAuditAsync(
-                "UPDATE Roles SET IsDeleted = 1 WHERE Id = @Id",
+                "UPDATE dbo.Roles SET IsDeleted = 1 WHERE Id = @Id",
                 role,
                 AuditAction.Delete,
                 configureCommand: cmd =>
@@ -98,8 +98,8 @@ namespace Repository.EntityRepositories
                 baseQuery: @"
                     SELECT r.*, 
                            STRING_AGG(rp.PermissionId, ',') AS Permissions
-                    FROM Roles r
-                    LEFT JOIN Roles_Permissions rp ON r.Id = rp.RoleId
+                    FROM dbo.Roles r
+                    LEFT JOIN dbo.Roles_Permissions rp ON r.Id = rp.RoleId
                     GROUP BY r.Id, r.Name, r.Description, r.CreatedAt, r.CreatedBy, r.CreatedLocation,
                              r.UpdatedAt, r.UpdatedBy, r.UpdatedLocation,
                              r.DeletedAt, r.DeletedBy, r.DeletedLocation, r.IsDeleted",
@@ -126,8 +126,8 @@ namespace Repository.EntityRepositories
                 baseQuery: @"
                     SELECT r.*, 
                            STRING_AGG(rp.PermissionId, ',') AS Permissions
-                    FROM Roles r
-                    LEFT JOIN Roles_Permissions rp ON r.Id = rp.RoleId
+                    FROM dbo.Roles r
+                    LEFT JOIN dbo.Roles_Permissions rp ON r.Id = rp.RoleId
                     WHERE r.Id = @Id
                     GROUP BY r.Id, r.Name, r.Description, r.CreatedAt, r.CreatedBy, r.CreatedLocation,
                              r.UpdatedAt, r.UpdatedBy, r.UpdatedLocation,
@@ -156,7 +156,7 @@ namespace Repository.EntityRepositories
             await connection.OpenAsync();
 
             // Elimina permisos actuales
-            using var deleteCmd = new SqlCommand("DELETE FROM Roles_Permissions WHERE RoleId = @RoleId", connection);
+            using var deleteCmd = new SqlCommand("DELETE FROM dbo.Roles_Permissions WHERE RoleId = @RoleId", connection);
             deleteCmd.Parameters.AddWithValue("@RoleId", roleId);
             await deleteCmd.ExecuteNonQueryAsync();
 
@@ -171,7 +171,7 @@ namespace Repository.EntityRepositories
             foreach (var permission in permissions)
             {
                 var paramName = $"@PermissionId{index}";
-                sb.AppendLine($"INSERT INTO Roles_Permissions (RoleId, PermissionId) VALUES (@RoleId, {paramName});");
+                sb.AppendLine($"INSERT INTO dbo.Roles_Permissions (RoleId, PermissionId) VALUES (@RoleId, {paramName});");
                 parameters.Add(new SqlParameter(paramName, (int)permission));
                 index++;
             }
@@ -183,14 +183,95 @@ namespace Repository.EntityRepositories
             await insertCmd.ExecuteNonQueryAsync();
         }
 
-        public Task<Role?> GetByIdWithUsersAsync(int id)
+        public async Task<Role?> GetByIdWithUsersAsync(int id)
         {
-            throw new NotImplementedException();
+            var roleDictionary = new Dictionary<int, Role>();
+
+            string query = @"
+            SELECT 
+                r.Id,
+                r.Name,
+                r.Description,
+                rp.PermissionId,
+
+                u.Id AS UserId,
+                u.Name AS UserName,
+                u.Username AS UserUsername,
+                u.IsEnabled AS UserIsEnabled,
+                u.NeedsPasswordChange AS UserNeedsPasswordChange,
+                u.RoleId AS UserRoleId
+            FROM dbo.Roles r
+            LEFT JOIN dbo.Roles_Permissions rp ON r.Id = rp.RoleId
+            LEFT JOIN dbo.Users u ON u.RoleId = r.Id
+            WHERE r.Id = @Id AND r.IsDeleted = 0 AND (u.Id IS NULL OR u.IsDeleted = 0)
+            ";
+
+            return await ExecuteReadAsync(
+                baseQuery: query,
+                map: reader =>
+                {
+                    while (reader.Read())
+                    {
+                        int roleId = reader.GetInt32(reader.GetOrdinal("Id"));
+
+                        if (!roleDictionary.TryGetValue(roleId, out var role))
+                        {
+                            role = RoleMapper.FromReader(reader);
+                            role.Permissions = new List<Permission>();
+                            role.Users = new List<User>();
+                            roleDictionary[roleId] = role;
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("PermissionId")))
+                        {
+                            var permissionId = reader.GetInt32(reader.GetOrdinal("PermissionId"));
+                            if (!role.Permissions.Contains((Permission)permissionId))
+                                role.Permissions.Add((Permission)permissionId);
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("UserId"))) // Asume que UserMapper espera esto
+                        {
+                            var user = UserMapper.FromReaderForRole(reader);
+                            if (!role.Users.Any(u => u.Id == user.Id))
+                                role.Users.Add(user);
+                        }
+                    }
+
+                    return roleDictionary.Values.FirstOrDefault();
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                }
+            );
         }
 
-        public Task<Role> GetByNameAsync(string name)
+
+        public async Task<Role?> GetByNameAsync(string name)
         {
-            throw new NotImplementedException();
+            return await ExecuteReadAsync(
+                baseQuery: @"
+            SELECT r.*, 
+                   STRING_AGG(rp.PermissionId, ',') AS Permissions
+            FROM Roles r
+            LEFT JOIN Roles_Permissions rp ON r.Id = rp.RoleId
+            WHERE r.Name = @Name
+            GROUP BY r.Id, r.Name, r.Description, r.CreatedAt, r.CreatedBy, r.CreatedLocation,
+                     r.UpdatedAt, r.UpdatedBy, r.UpdatedLocation,
+                     r.DeletedAt, r.DeletedBy, r.DeletedLocation, r.IsDeleted",
+                map: reader =>
+                {
+                    if (reader.Read())
+                        return RoleMapper.FromReader(reader);
+                    return null;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Name", name);
+                }
+            );
         }
         #endregion
     }

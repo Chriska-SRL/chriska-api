@@ -5,27 +5,31 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class ShelveMapper
     {
-        public static Shelve ToDomain(AddShelveRequest addShelveRequest)
+        public static Shelve ToDomain(AddShelveRequest request)
         {
-            return new Shelve(
-                id: 0,
-                name: addShelveRequest.Name,
-                description: addShelveRequest.Description,
-                warehouse: new Warehouse(addShelveRequest.WarehouseId),
-                stockMovements: new List<StockMovement>(),
-                auditInfo: AuditMapper.ToDomain(addShelveRequest.AuditInfo)
-                );
+            var shelve = new Shelve(
+                name: request.Name,
+                description: request.Description,
+                warehouse: new Warehouse(request.WarehouseId),
+                stockMovements: new List<StockMovement>()
+            );
+
+            shelve.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return shelve;
         }
-        public static Shelve.UpdatableData ToUpdatableData(UpdateShelveRequest shelve)
+
+        public static Shelve.UpdatableData ToUpdatableData(UpdateShelveRequest request)
         {
             return new Shelve.UpdatableData
             {
-                Name = shelve.Name,
-                Description = shelve.Description,
-                Warehouse = new Warehouse(shelve.WarehouseId),
-                AuditInfo = AuditMapper.ToDomain(shelve.AuditInfo)
+                Name = request.Name,
+                Description = request.Description,
+                Warehouse = new Warehouse(request.WarehouseId),
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
+
         public static ShelveResponse ToResponse(Shelve shelve)
         {
             return new ShelveResponse
@@ -39,15 +43,5 @@ namespace BusinessLogic.Común.Mappers
                 AuditInfo = AuditMapper.ToResponse(shelve.AuditInfo)
             };
         }
-
-        //public static ProductStockResponse ToResponse(ProductStock productStock)
-        //{
-        //    return new ProductStockResponse
-        //    {
-        //        Quantity = productStock.Quantity,
-        //        Product = ProductMapper.ToResponse(productStock.Product)
-        //    };
-        //}
-
     }
 }

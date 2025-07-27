@@ -1,35 +1,36 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsVehicle;
 
-
 namespace BusinessLogic.Común.Mappers
 {
     public static class VehicleMapper
     {
-        
-        public static Vehicle ToDomain(AddVehicleRequest data)
+        public static Vehicle ToDomain(AddVehicleRequest request)
         {
-            return new Vehicle(
-                id: 0,
-                plate: data.Plate,
-                brand: data.Brand,
-                model: data.Model,
-                crateCapacity: data.CrateCapacity,
-                costs: new List<VehicleCost>(),
-                auditInfo: AuditMapper.ToDomain(data.AuditInfo)
+            var vehicle = new Vehicle(
+                plate: request.Plate,
+                brand: request.Brand,
+                model: request.Model,
+                crateCapacity: request.CrateCapacity
             );
+
+            vehicle.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            return vehicle;
         }
-        public static Vehicle.UpdatableData ToUpdatableData(UpdateVehicleRequest data)
+
+        public static Vehicle.UpdatableData ToUpdatableData(UpdateVehicleRequest request)
         {
-           return new Vehicle.UpdatableData
-           {
-               Plate = data.Plate,
-               Brand = data.Brand,
-               Model = data.Model,
-               CrateCapacity = data.CrateCapacity,
-               AuditInfo = AuditMapper.ToDomain(data.AuditInfo)
-           };
+            return new Vehicle.UpdatableData
+            {
+                Plate = request.Plate,
+                Brand = request.Brand,
+                Model = request.Model,
+                CrateCapacity = request.CrateCapacity,
+                UserId = request.getUserId(),
+                Location = request.Location
+            };
         }
+
         public static VehicleResponse ToResponse(Vehicle vehicle)
         {
             return new VehicleResponse

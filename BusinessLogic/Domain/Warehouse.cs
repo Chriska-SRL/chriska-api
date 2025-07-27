@@ -1,10 +1,11 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 
 namespace BusinessLogic.Domain
 {
     public class Warehouse : IEntity<Warehouse.UpdatableData>, IAuditable
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
@@ -19,6 +20,15 @@ namespace BusinessLogic.Domain
             Address = address;
             Shelves = shelves ?? throw new ArgumentNullException(nameof(shelves));
             AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+
+            Validate();
+        }
+
+        public Warehouse(string name, string description, string address)
+        {
+            Name = name;
+            Description = description;
+            Address = address;
 
             Validate();
         }
@@ -61,17 +71,16 @@ namespace BusinessLogic.Domain
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;
             Address = data.Address ?? Address;
-            AuditInfo = data.AuditInfo ?? AuditInfo;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
 
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public string? Name { get; set; }
             public string? Description { get; set; }
             public string? Address { get; set; }
-            public AuditInfo? AuditInfo { get; set; } = null;
         }
 
         public override string ToString()

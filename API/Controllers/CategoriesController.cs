@@ -28,7 +28,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.CREATE_CATEGORIES))]
         public async Task<ActionResult<CategoryResponse>> AddCategoryAsync([FromBody] AddCategoryRequest request)
         {
-            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddCategoryAsync(request);
             return CreatedAtAction(nameof(GetCategoryByIdAsync), new { id = result.Id }, result);
         }
@@ -38,7 +38,7 @@ namespace API.Controllers
         public async Task<ActionResult<CategoryResponse>> UpdateCategoryAsync(int id, [FromBody] UpdateCategoryRequest request)
         {
             request.Id = id;
-            request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.UpdateCategoryAsync(request);
             return Ok(result);
         }
@@ -48,7 +48,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteCategoryAsync(int id)
         {
             var request = new DeleteRequest(id);
-            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             await _facade.DeleteCategoryAsync(request);
             return NoContent();
         }
@@ -75,7 +75,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.CREATE_CATEGORIES))]
         public async Task<ActionResult<SubCategoryResponse>> AddSubCategoryAsync([FromBody] AddSubCategoryRequest request)
         {
-            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddSubCategoryAsync(request);
             return CreatedAtAction(nameof(GetSubCategoryByIdAsync), new { id = result.Id }, result);
         }
@@ -85,7 +85,7 @@ namespace API.Controllers
         public async Task<ActionResult<SubCategoryResponse>> UpdateSubCategoryAsync(int id, [FromBody] UpdateSubCategoryRequest request)
         {
             request.Id = id;
-            request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.UpdateSubCategoryAsync(request);
             return Ok(result);
         }
@@ -95,7 +95,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteSubCategoryAsync(int id)
         {
             var request = new DeleteRequest(id);
-            request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             await _facade.DeleteSubCategoryAsync(request);
             return NoContent();
         }

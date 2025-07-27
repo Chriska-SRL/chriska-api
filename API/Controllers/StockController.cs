@@ -27,7 +27,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.CREATE_STOCK_MOVEMENTS))]
         public async Task<ActionResult<StockMovementResponse>> AddStockMovementAsync([FromBody] AddStockMovementRequest request)
         {
-            request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddStockMovementAsync(request);
             return CreatedAtAction(nameof(GetStockMovementByIdAsync), new { id = result.Id }, result);
         }

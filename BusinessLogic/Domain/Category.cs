@@ -1,19 +1,19 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 
 namespace BusinessLogic.Domain
 {
     public class Category : IEntity<Category.UpdatableData>, IAuditable
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; } 
         public string Description { get; set; } 
         public List<SubCategory> SubCategories { get; set; } = new List<SubCategory>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         
         
-        public Category(int id, string name, string description)
+        public Category(string name, string description)
         {
-            Id = id;
             Name = name;
             Description = description;
 
@@ -58,16 +58,16 @@ namespace BusinessLogic.Domain
 
             Name = data.Name;
             Description = data.Description;
-            AuditInfo = data.AuditInfo ?? new AuditInfo();
+            AuditInfo.SetUpdated(data.UserId, data.Location);
 
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData: AuditData
         {
             public string Name { get; set; } = string.Empty;
             public string Description { get; set; } = string.Empty;
-            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+
         }
 
         public override string ToString()

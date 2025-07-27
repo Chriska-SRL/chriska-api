@@ -1,11 +1,12 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Domain
 {
     public class Client : IEntity<Client.UpdatableData>, IAuditable, IBankUser
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
@@ -25,7 +26,26 @@ namespace BusinessLogic.Domain
         public List<ClientDocument> Documents { get; set; } = new();
         public AuditInfo AuditInfo { get; set; } = new();
 
-        public Client() { }
+        public Client(string name, string rut, string razonSocial, string address, string mapsAddress,
+                      string schedule, string phone, string contactName, string email, string observations,
+                      List<BankAccount> bankAccounts, int loanedCrates, string qualification, Zone zone)
+        {
+            Name = name;
+            RUT = rut;
+            RazonSocial = razonSocial;
+            Address = address;
+            MapsAddress = mapsAddress;
+            Schedule = schedule;
+            Phone = phone;
+            ContactName = contactName;
+            Email = email;
+            Observations = observations;
+            BankAccounts = bankAccounts;
+            LoanedCrates = loanedCrates;
+            Qualification = qualification;
+            Zone = zone;
+            Validate();
+        }
         public Client(int id, string name, string rut, string razonSocial, string address, string mapsAddress,
                       string schedule, string phone, string contactName, string email, string observations,
                       List<BankAccount> bankAccounts, int loanedCrates, string qualification, Zone zone,AuditInfo auditInfo)
@@ -128,11 +148,11 @@ namespace BusinessLogic.Domain
             Qualification = data.Qualification ?? Qualification;
             Zone = data.Zone ?? Zone;
             BankAccounts = data.BankAccounts ?? BankAccounts;
-            AuditInfo = data.AuditInfo ?? AuditInfo;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData: AuditData
         {
             public string? Name;
             public string? RUT;
@@ -148,7 +168,6 @@ namespace BusinessLogic.Domain
             public string? Qualification;
             public Zone? Zone;
             public List<BankAccount>? BankAccounts;
-            public AuditInfo? AuditInfo;
         }
     }
 }
