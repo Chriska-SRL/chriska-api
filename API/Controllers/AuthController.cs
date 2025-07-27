@@ -23,23 +23,23 @@ namespace API.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             try
             {
-                UserResponse? user = _facade.Authenticate(request.Username, request.Password);
+                UserResponse? user = await _facade.AuthenticateAsync(request.Username, request.Password);
 
                 if (user == null)
                     return Unauthorized(new { error = "Credenciales inválidas" });
 
                 var claims = new List<Claim>
-        {
-            new Claim("userId", user.Id.ToString()),
-            new Claim("username", user.Username),
-            new Claim("name", user.Name),
-            new Claim("role", user.Role.Name),
-            new Claim("needsPasswordChange", user.needsPasswordChange.ToString()),
-        };
+                {
+                    new Claim("userId", user.Id.ToString()),
+                    new Claim("username", user.Username),
+                    new Claim("name", user.Name),
+                    new Claim("role", user.Role.Name),
+                    new Claim("needsPasswordChange", user.needsPasswordChange.ToString())
+                };
 
                 foreach (int perm in user.Role.Permissions)
                     claims.Add(new Claim("permission", perm.ToString()));
@@ -52,8 +52,7 @@ namespace API.Controllers
                     key, Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256
                 );
 
-                var expirationHours = int.Parse(_config["Jwt:ExpirationHours"]);
-                var expires = DateTime.UtcNow.AddHours(expirationHours);
+                var expires = DateTime.UtcNow.AddHours(int.Parse(_config["Jwt:ExpirationHours"]));
 
                 var token = new JwtSecurityToken(
                     issuer: _config["Jwt:Issuer"],
@@ -81,10 +80,9 @@ namespace API.Controllers
         [HttpPost("GetValidToken")]
         public IActionResult GetValidToken([FromBody] TokenRequest request)
         {
-            string Pass = "12345678";
+            const string Pass = "12345678";
             try
             {
-
                 if (request.Pass != Pass)
                     return Unauthorized(new { error = "Credenciales inválidas" });
 
@@ -107,8 +105,7 @@ namespace API.Controllers
                     key, Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256
                 );
 
-                var expirationHours = int.Parse(_config["Jwt:ExpirationHours"]);
-                var expires = DateTime.UtcNow.AddHours(expirationHours);
+                var expires = DateTime.UtcNow.AddHours(int.Parse(_config["Jwt:ExpirationHours"]));
 
                 var token = new JwtSecurityToken(
                     issuer: _config["Jwt:Issuer"],
@@ -129,12 +126,13 @@ namespace API.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, new { error = "Error inesperado al intentar iniciar sesión" });
+                return StatusCode(500, new { error = "Error inesperado al generar token" });
             }
         }
+
         public class TokenRequest
         {
-            public string Pass { get; set; }
+            public string Pass { get; set; } = null!;
         }
     }
 }

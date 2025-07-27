@@ -1,4 +1,5 @@
-﻿using BusinessLogic.DTOs.DTOsAudit;
+﻿using BusinessLogic.Común;
+using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsBrand
 {
@@ -6,7 +7,7 @@ namespace BusinessLogic.DTOs.DTOsBrand
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public AuditInfo AuditInfo { get; set; }
+        public AuditInfoRequest AuditInfo { get; set; }
     }
 
     

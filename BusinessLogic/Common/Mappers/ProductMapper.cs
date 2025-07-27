@@ -3,8 +3,6 @@ using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsSubCategory;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsBrand;
-using BusinessLogic.DTOs.DTOsDiscount;
-using BusinessLogic.Domain;
 
 namespace BusinessLogic.Común.Mappers
 {
@@ -85,13 +83,6 @@ namespace BusinessLogic.Común.Mappers
                     Name = product.Brand.Name,
                     Description = product.Brand.Description
                 },
-                Discounts = product.Discounts.Select(d => new DiscountResponse
-                {
-                    Description = d.Description,
-                    ExpirationDate = d.ExpirationDate,
-                    Percentage = d.Percentage,
-                    ProductQuantity = d.ProductQuantity
-                }).ToList(),
                 AuditInfo = AuditMapper.ToResponse(product.AuditInfo)
             };
         }

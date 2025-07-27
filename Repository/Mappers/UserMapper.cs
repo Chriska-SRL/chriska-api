@@ -20,8 +20,8 @@ public static class UserMapper
             Name = reader.GetString(reader.GetOrdinal("Name")),
             Username = reader.GetString(reader.GetOrdinal("Username")),
             Password = reader.GetString(reader.GetOrdinal("Password")),
-            isEnabled = reader.GetString(reader.GetOrdinal("IsEnabled")) == "T",
-            needsPasswordChange = reader.GetString(reader.GetOrdinal("NeedsPasswordChange")) == "T",
+            IsEnabled = reader.GetString(reader.GetOrdinal("IsEnabled")) == "T",
+            NeedsPasswordChange = reader.GetString(reader.GetOrdinal("NeedsPasswordChange")) == "T",
             Role = role,
             AuditInfo = AuditInfoMapper.FromReader(reader)
         };

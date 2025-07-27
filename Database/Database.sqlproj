@@ -98,8 +98,6 @@
     <Build Include="Tables\Orders\Relations\Invoices_Products.sql" />
     <Build Include="Tables\Products\Brands.sql" />
     <Build Include="Tables\Clients\ClientBankAccounts.sql" />
-    <Build Include="Tables\Products\ProductImages.sql" />
-    <Build Include="Tables\Clients\ZoneImages.sql" />
     <Build Include="Tables\Suppliers\SupplierBankAccounts.sql" />
   </ItemGroup>
   <ItemGroup>

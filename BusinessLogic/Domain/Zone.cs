@@ -14,6 +14,7 @@ namespace BusinessLogic.Domain
         public string? ImageUrl { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
+        Zone() { }
         public Zone(int id, string name, string description,List<Day> deliveryDays,List<Day> requestDays, AuditInfo auditInfo)
         {
             Id = id;

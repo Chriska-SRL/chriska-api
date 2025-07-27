@@ -182,6 +182,16 @@ namespace Repository.EntityRepositories
 
             await insertCmd.ExecuteNonQueryAsync();
         }
+
+        public Task<Role?> GetByIdWithUsersAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Role> GetByNameAsync(string name)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

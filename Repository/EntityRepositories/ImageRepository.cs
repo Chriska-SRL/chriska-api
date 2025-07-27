@@ -1,10 +1,11 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Domain;
+using BusinessLogic.Repository;
 using Repository.Logging;
 
 namespace Repository.EntityRepositories
 {
-    public class ImageRepository : Repository<Image, Image.UpdatableData>
+    public class ImageRepository : Repository<Image, Image.UpdatableData>, IImageRepository
     {
         public ImageRepository(string connectionString, AuditLogger auditLogger)
             : base(connectionString, auditLogger) { }

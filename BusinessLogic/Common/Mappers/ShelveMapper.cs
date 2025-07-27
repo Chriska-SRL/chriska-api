@@ -13,7 +13,6 @@ namespace BusinessLogic.Común.Mappers
                 description: addShelveRequest.Description,
                 warehouse: new Warehouse(addShelveRequest.WarehouseId),
                 stockMovements: new List<StockMovement>(),
-                product: new List<Product>(),
                 auditInfo: AuditMapper.ToDomain(addShelveRequest.AuditInfo)
                 );
         }

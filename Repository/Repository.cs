@@ -8,7 +8,7 @@ namespace Repository
 {
     public abstract class Repository<T, TData> where T : IEntity<TData>, IAuditable
     {
-        private readonly string _connectionString;
+        public readonly string _connectionString;
         private readonly AuditLogger _auditLogger;
 
         protected Repository(string connectionString, AuditLogger auditLogger)

@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Común.Enums;
 using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
@@ -27,7 +28,8 @@ namespace Repository.Mappers
             var brand = new Brand(
                 id: reader.GetInt32(reader.GetOrdinal("BrandId")),
                 name: reader.GetString(reader.GetOrdinal("BrandName")),
-                description: reader.GetString(reader.GetOrdinal("BrandDescription"))
+                description: reader.GetString(reader.GetOrdinal("BrandDescription")),
+                auditInfo: new AuditInfo()
             );
 
             // Mapeo del tipo de unidad (UnitType)
@@ -62,7 +64,7 @@ namespace Repository.Mappers
             string? imageUrl = null;
             if (!string.IsNullOrEmpty(imageBlobName))
             {
-                imageUrl = _azureBlobService.GetBlobUrl(imageBlobName);  // Suponiendo que `_azureBlobService.GetBlobUrl()` devuelve la URL completa
+                imageUrl = imageBlobName;
             }
 
             // Crear y devolver el producto
@@ -80,7 +82,8 @@ namespace Repository.Mappers
                 observations: reader.GetString(reader.GetOrdinal("Observations")),
                 subCategory: subCategory,
                 brand: brand,
-                suppliers: new List<Supplier>() // Puedes agregar la lógica para cargar los proveedores si es necesario
+                suppliers: new List<Supplier>(),
+                auditInfo: new AuditInfo()
             );
         }
     }

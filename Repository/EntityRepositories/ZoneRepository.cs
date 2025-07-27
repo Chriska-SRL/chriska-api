@@ -40,7 +40,7 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
                 await InsertDaysAsync(zoneId, entity.DeliveryDays, "Entrega", connection, transaction);
                 await InsertDaysAsync(zoneId, entity.RequestDays, "Pedido", connection, transaction);
 
-                return new Zone(zoneId, entity.Name, entity.Description, entity.DeliveryDays, entity.RequestDays);
+                return new Zone(zoneId, entity.Name, entity.Description, entity.DeliveryDays, entity.RequestDays, entity.AuditInfo);
             }
         );
     }
@@ -140,7 +140,6 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al obtener zona por ID");
             throw new Exception("Ocurrió un error al obtener la zona.");
         }
     }
@@ -175,7 +174,6 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al obtener todas las zonas");
             throw new Exception("Ocurrió un error al obtener las zonas.");
         }
     }

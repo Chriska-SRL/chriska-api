@@ -24,7 +24,7 @@ namespace API.Controllers
         [Authorize(Policy = "ManageImages")]
         public async Task<IActionResult> UploadImageAsync(string entityType, int entityId, IFormFile file)
         {
-            var result = await _facade.UploadImageAsync(entityType, entityId, file, _tokenUtils.GetUserId());
+            var result = await _facade.UploadImageAsync(entityType, entityId, file);
             return CreatedAtAction(nameof(UploadImageAsync), new { entityType, entityId }, result);
         }
 
@@ -35,7 +35,7 @@ namespace API.Controllers
             var request = new DeleteRequest(entityId);
             request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
 
-            bool deleted = await _facade.DeleteImageAsync(entityType, request);
+            bool deleted = await _facade.DeleteImageAsync(entityType, entityId);
             if (!deleted)
                 return NotFound(new { error = "Imagen no encontrada." });
 

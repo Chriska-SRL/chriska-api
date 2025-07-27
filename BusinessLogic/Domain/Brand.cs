@@ -10,6 +10,9 @@ namespace BusinessLogic.Domain
         public string Description { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
+        Brand()
+        {
+        }
         public Brand(int id, string name, string description,AuditInfo auditInfo)
         {
             Id = id;

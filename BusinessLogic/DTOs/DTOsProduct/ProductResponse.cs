@@ -1,7 +1,6 @@
 ﻿using BusinessLogic.Común.Enums;
 using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsBrand;
-using BusinessLogic.DTOs.DTOsDiscount;
 using BusinessLogic.DTOs.DTOsSubCategory;
 
 namespace BusinessLogic.DTOs.DTOsProduct
@@ -22,6 +21,5 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public required string Observations { get; set; }
         public required SubCategoryResponse SubCategory { get; set; }
         public required BrandResponse Brand { get; set; }
-        public List<DiscountResponse> Discounts { get; set; } = new();
     }
 }

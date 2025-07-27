@@ -12,14 +12,13 @@ namespace BusinessLogic.Domain
         public List<Product> Products { get; set; } = new List<Product>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Shelve(int id,string name, string description, Warehouse warehouse,List<Product> product, List<StockMovement> stockMovements,AuditInfo auditInfo)
+        public Shelve(int id,string name, string description, Warehouse warehouse, List<StockMovement> stockMovements,AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
             Warehouse = warehouse ?? throw new ArgumentNullException(nameof(warehouse));
             StockMovements = stockMovements ?? throw new ArgumentNullException(nameof(stockMovements));
-            Products = product ?? throw new ArgumentNullException(nameof(product));
             AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
 
             Validate();

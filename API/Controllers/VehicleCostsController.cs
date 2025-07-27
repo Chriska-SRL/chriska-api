@@ -68,12 +68,5 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("vehicle/{vehicleId}/rango")]
-        [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
-        public async Task<ActionResult<List<VehicleCostResponse>>> GetCostsInRangeAsync(int vehicleId, [FromQuery] DateTime from, [FromQuery] DateTime to)
-        {
-            var result = await _facade.GetVehicleCostsByDateRangeAsync(vehicleId, from, to);
-            return Ok(result);
-        }
     }
 }

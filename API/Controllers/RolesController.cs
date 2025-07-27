@@ -46,7 +46,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.DELETE_ROLES))]
         public async Task<IActionResult> DeleteRoleAsync(int id)
         {
-            var request = new DeleteRequest(id);
+            DeleteRequest request = new DeleteRequest(id);
             request.AuditInfo.Deleted.SetAudit(_tokenUtils.GetUserId());
             await _facade.DeleteRoleAsync(request);
             return NoContent();

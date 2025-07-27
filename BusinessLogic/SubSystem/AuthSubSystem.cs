@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Común.Mappers;
 using BusinessLogic.DTOs.DTOsUser;
 using BusinessLogic.Repository;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.SubSystem
 {
@@ -10,14 +11,14 @@ namespace BusinessLogic.SubSystem
 
         public AuthSubSystem(IUserRepository userRepository)
         {
-            _userRepository = userRepository;;
+            _userRepository = userRepository;
         }
 
-        public UserResponse? Authenticate(string username, string password)
+        public async Task<UserResponse?> AuthenticateAsync(string username, string password)
         {
-            var user = _userRepository.GetByUsername(username);
+            var user = await _userRepository.GetByUsernameAsync(username);
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password) || !user.isEnabled)
+            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password) || !user.IsEnabled)
                 return null;
 
             return UserMapper.ToResponse(user);

@@ -6,10 +6,9 @@ namespace BusinessLogic.Repository
 {
     public interface IImageRepository
     {
-        Task<Image> AddAsync(Image entity);
-        Task<Image?> DeleteAsync(int id);
-        Task<Image?> GetByIdAsync(int id);
+        Task<Image> AddAsync(Image image);
+        Task<Image> UpdateAsync(Image image);
+        Task<bool> DeleteAsync(int imageId);
         Task<Image?> GetByEntityTypeAndIdAsync(string entityType, int entityId);
-        Task<List<Image>> GetAllAsync();
     }
 }

@@ -19,8 +19,6 @@ namespace BusinessLogic.Común.Mappers
                 contactName: request.ContactName,
                 email: request.Email,
                 observations: request.Observation,
-                products: new List<Product>(),
-                purchases: new List<Purchase>(),
                 bankAccounts: new List<BankAccount>(),
                 auditInfo: AuditMapper.ToDomain(request.AuditInfo)
                 );

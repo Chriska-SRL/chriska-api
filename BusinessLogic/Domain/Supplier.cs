@@ -21,7 +21,7 @@ namespace BusinessLogic.Domain
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email,string observations, List<Product> products,List<Purchase> purchases, List<BankAccount> bankAccounts,AuditInfo auditInfo)
+        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email,string observations, List<BankAccount> bankAccounts,AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
@@ -33,8 +33,6 @@ namespace BusinessLogic.Domain
             ContactName = contactName;
             Email = email;
             Observations = observations;
-            Purchases = purchases ?? new List<Purchase>();
-            Products = products ?? new List<Product>();
             BankAccounts = bankAccounts ?? new List<BankAccount>();
             AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
         }

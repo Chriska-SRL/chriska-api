@@ -1,11 +1,12 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Domain;
+using BusinessLogic.Repository;
 using Repository.Logging;
 using Repository.Mappers;
 
 namespace Repository.EntityRepositories
 {
-    public class ProductRepository : Repository<Product, Product.UpdatableData>
+    public class ProductRepository : Repository<Product, Product.UpdatableData>, IProductRepository
     {
         public ProductRepository(string connectionString, AuditLogger auditLogger)
             : base(connectionString, auditLogger) { }

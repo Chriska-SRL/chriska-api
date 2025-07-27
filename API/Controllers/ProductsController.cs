@@ -25,7 +25,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_PRODUCTS))]
-        public async Task<ActionResult<ProductResponse>> AddProductAsync([FromBody] AddProductRequest request)
+        public async Task<ActionResult<ProductResponse>> AddProductAsync([FromBody] ProductAddRequest request)
         {
             request.AuditInfo.Created.SetAudit(_tokenUtils.GetUserId());
             var result = await _facade.AddProductAsync(request);
@@ -34,7 +34,7 @@ namespace API.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_PRODUCTS))]
-        public async Task<ActionResult<ProductResponse>> UpdateProductAsync(int id, [FromBody] UpdateProductRequest request)
+        public async Task<ActionResult<ProductResponse>> UpdateProductAsync(int id, [FromBody] ProductUpdateRequest request)
         {
             request.Id = id;
             request.AuditInfo.Updated.SetAudit(_tokenUtils.GetUserId());

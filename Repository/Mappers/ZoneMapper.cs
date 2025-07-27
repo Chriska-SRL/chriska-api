@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Domain;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,8 @@ namespace Repository.Mappers
                 name: reader.GetString(reader.GetOrdinal("Name")),
                 description: reader.GetString(reader.GetOrdinal("Description")),
                 deliveryDays: new List<Day>(),
-                requestDays: new List<Day>()
+                requestDays: new List<Day>(),
+                auditInfo: new AuditInfo()
             );
 
             if (!reader.IsDBNull(reader.GetOrdinal("BlobName")))
