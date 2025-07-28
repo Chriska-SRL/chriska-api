@@ -3,6 +3,7 @@ using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsRole;
 using BusinessLogic.Común.Mappers;
 using BusinessLogic.Común;
+using BusinessLogic.DTOs;
 
 namespace BusinessLogic.SubSystem
 {
@@ -44,14 +45,15 @@ namespace BusinessLogic.SubSystem
             return RoleMapper.ToResponse(updated);
         }
 
-        public async Task<RoleResponse> DeleteRoleAsync(int id)
+        public async Task<RoleResponse> DeleteRoleAsync(DeleteRequest request)
         {
-            Role role = await _roleRepository.GetByIdWithUsersAsync(id)
-                ?? throw new ArgumentException("No se encontró el rol seleccionado.", nameof(id));
+            Role role = await _roleRepository.GetByIdWithUsersAsync(request.Id)
+                ?? throw new ArgumentException("No se encontró el rol seleccionado.", nameof(request.Id));
 
             if (role.Users.Any())
                 throw new InvalidOperationException("No se puede eliminar el rol porque tiene usuarios asociados.");
 
+            role.MarkAsDeleted(request.getUserId(),request.Location);
             await _roleRepository.DeleteAsync(role);
             return RoleMapper.ToResponse(role);
         }

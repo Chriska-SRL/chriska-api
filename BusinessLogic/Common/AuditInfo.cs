@@ -16,7 +16,7 @@ namespace BusinessLogic.Común
 
         public DateTime? DeletedAt { get; set; }
         public int? DeletedBy { get; set; }
-        public Location DeletedLocation { get; set; }
+        public Location? DeletedLocation { get; set; }
 
         public AuditInfo() { }
 

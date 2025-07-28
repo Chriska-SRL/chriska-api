@@ -22,11 +22,11 @@ namespace BusinessLogic.Domain
             Id = id;
             Name = name;
             Username = username;
-            Password = password;
+            Password = password ?? "temporal";
             IsEnabled = isEnabled;
             NeedsPasswordChange = needsPasswordChange;
-            Role = role ?? throw new ArgumentNullException(nameof(role));
-            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+            Role = role ?? new Role(9999);
+            AuditInfo = auditInfo ?? new AuditInfo();
 
             Validate();
         }

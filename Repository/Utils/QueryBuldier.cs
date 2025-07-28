@@ -7,14 +7,27 @@ namespace Repository.Utils
         public string Sql { get; private set; }
         public List<SqlParameter> Parameters { get; } = new();
 
+        private HashSet<string>? _allowedFilterColumns;
+
         public QueryBuilder(string baseQuery)
         {
             Sql = baseQuery.Trim();
         }
 
-        public QueryBuilder AddIsDeletedFilter()
+        public QueryBuilder WithAllowedFilters(IEnumerable<string> columns)
         {
-            InsertWhereCondition("IsDeleted = 0");
+            _allowedFilterColumns = columns
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .Select(c => c.Trim().ToLowerInvariant())
+                .ToHashSet();
+
+            return this;
+        }
+
+        public QueryBuilder AddIsDeletedFilter(string? tableAlias = null)
+        {
+            var column = string.IsNullOrWhiteSpace(tableAlias) ? "IsDeleted" : $"{tableAlias}.IsDeleted";
+            InsertWhereCondition($"{column} = 0");
             return this;
         }
 
@@ -26,15 +39,35 @@ namespace Repository.Utils
             {
                 if (string.IsNullOrWhiteSpace(value)) continue;
 
-                var paramName = $"@{key}";
-                string condition = key.EndsWith("From", StringComparison.OrdinalIgnoreCase)
-                    ? $"{key[..^4]} >= {paramName}"
-                    : key.EndsWith("To", StringComparison.OrdinalIgnoreCase)
-                    ? $"{key[..^2]} <= {paramName}"
-                    : $"{key} LIKE {paramName}";
+                var rawKey = key.Trim();
+                var baseKey =
+                    rawKey.EndsWith("From", StringComparison.OrdinalIgnoreCase) ? rawKey[..^4] :
+                    rawKey.EndsWith("To", StringComparison.OrdinalIgnoreCase) ? rawKey[..^2] :
+                    rawKey;
+
+                if (_allowedFilterColumns != null &&
+                    !_allowedFilterColumns.Contains(baseKey.ToLowerInvariant()))
+                {
+                    // Filtro no permitido → se ignora
+                    continue;
+                }
+
+                var paramName = $"@p{Parameters.Count}";
+
+                string condition =
+                    rawKey.EndsWith("From", StringComparison.OrdinalIgnoreCase) ? $"{baseKey} >= {paramName}" :
+                    rawKey.EndsWith("To", StringComparison.OrdinalIgnoreCase) ? $"{baseKey} <= {paramName}" :
+                    $"{baseKey} LIKE {paramName}";
 
                 InsertWhereCondition(condition);
-                Parameters.Add(new SqlParameter(paramName, $"%{value}%"));
+
+                var paramValue =
+                    rawKey.EndsWith("From", StringComparison.OrdinalIgnoreCase) ||
+                    rawKey.EndsWith("To", StringComparison.OrdinalIgnoreCase)
+                        ? value
+                        : $"%{value}%";
+
+                Parameters.Add(new SqlParameter(paramName, paramValue));
             }
 
             return this;
@@ -44,17 +77,13 @@ namespace Repository.Utils
         {
             if (!string.IsNullOrWhiteSpace(sortBy))
             {
-                var safeSortDir = sortDirection?.ToUpperInvariant() == "DESC" ? "DESC" : "ASC";
+                // validación opcional
+                if (_allowedFilterColumns != null &&
+                    !_allowedFilterColumns.Contains(sortBy.Trim().ToLowerInvariant()))
+                    return this;
 
-                // Inserta ORDER BY solo después de GROUP BY (si existe)
-                if (ContainsClause("GROUP BY"))
-                {
-                    Sql += $" ORDER BY {sortBy} {safeSortDir}";
-                }
-                else
-                {
-                    Sql += $" ORDER BY {sortBy} {safeSortDir}";
-                }
+                var safeSortDir = sortDirection?.ToUpperInvariant() == "DESC" ? "DESC" : "ASC";
+                Sql += $" ORDER BY {sortBy} {safeSortDir}";
             }
 
             return this;
@@ -64,7 +93,7 @@ namespace Repository.Utils
         {
             if (!Sql.Contains("ORDER BY", StringComparison.OrdinalIgnoreCase))
             {
-                // Evita OFFSET sin ORDER BY (no permitido en SQL Server)
+                // Evita OFFSET sin ORDER BY
                 Sql += " ORDER BY (SELECT NULL)";
             }
 
@@ -75,21 +104,57 @@ namespace Repository.Utils
             return this;
         }
 
+        public QueryBuilder AddAuditColumns(string? tableAlias)
+        {
+            if (string.IsNullOrWhiteSpace(tableAlias)) return this;
+
+            var auditCols = new[]
+            {
+                "CreatedAt", "CreatedBy", "CreatedLocation",
+                "UpdatedAt", "UpdatedBy", "UpdatedLocation",
+                "DeletedAt", "DeletedBy", "DeletedLocation"
+            };
+
+            var fromIndex = Sql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase);
+            if (fromIndex == -1) return this;
+
+            var selectClause = Sql.Substring(0, fromIndex).Trim();
+            var restOfQuery = Sql.Substring(fromIndex);
+
+            if (!selectClause.StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
+                return this;
+
+            if (selectClause.Contains("(", StringComparison.OrdinalIgnoreCase) &&
+                !selectClause.Contains(","))
+                return this;
+
+            foreach (var col in auditCols)
+            {
+                var fullCol = $"{tableAlias}.{col}";
+                if (!selectClause.Contains(fullCol, StringComparison.OrdinalIgnoreCase))
+                    selectClause += $", {fullCol}";
+            }
+
+            Sql = $"{selectClause} {restOfQuery}";
+            return this;
+        }
+
         #region Helpers
 
         private void InsertWhereCondition(string condition)
         {
             var groupByIndex = IndexOfClause("GROUP BY");
             var orderByIndex = IndexOfClause("ORDER BY");
-            var insertPos = groupByIndex >= 0 ? groupByIndex : orderByIndex >= 0 ? orderByIndex : Sql.Length;
+            var insertPos = groupByIndex >= 0 ? groupByIndex :
+                            orderByIndex >= 0 ? orderByIndex : Sql.Length;
 
             if (Sql.Contains("WHERE", StringComparison.OrdinalIgnoreCase))
             {
-                Sql = Sql.Insert(insertPos, $" AND {condition}");
+                Sql = Sql.Insert(insertPos, $" AND {condition} ");
             }
             else
             {
-                Sql = Sql.Insert(insertPos, $" WHERE {condition}");
+                Sql = Sql.Insert(insertPos, $" WHERE {condition} ");
             }
         }
 

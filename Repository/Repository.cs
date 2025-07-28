@@ -23,10 +23,12 @@ namespace Repository
         #region Read
 
         protected async Task<TResult> ExecuteReadAsync<TResult>(
-            string baseQuery,
-            Func<SqlDataReader, TResult> map,
-            QueryOptions options,
-            Action<SqlCommand>? configureCommand = null)
+    string baseQuery,
+    Func<SqlDataReader, TResult> map,
+    QueryOptions options,
+    string? tableAlias = null,
+    Action<SqlCommand>? configureCommand = null,
+    IEnumerable<string>? allowedFilterColumns = null)
         {
             try
             {
@@ -34,7 +36,9 @@ namespace Repository
                 await connection.OpenAsync();
 
                 var queryBuilder = new QueryBuilder(baseQuery)
-                    .AddIsDeletedFilter()
+                    .AddAuditColumns(tableAlias)
+                    .AddIsDeletedFilter(tableAlias)
+                    .WithAllowedFilters(allowedFilterColumns ?? Array.Empty<string>())
                     .ApplyFilters(options.Filters)
                     .ApplySorting(options.SortBy, options.SortDirection)
                     .ApplyPagination(options.Page, options.PageSize);
@@ -45,6 +49,11 @@ namespace Repository
                 configureCommand?.Invoke(command);
 
                 await using var reader = await command.ExecuteReaderAsync();
+
+                Console.WriteLine(command.CommandText);
+                foreach (SqlParameter p in command.Parameters)
+                    Console.WriteLine($"{p.ParameterName} = {p.Value}");
+
                 return map(reader);
             }
             catch (SqlException ex)
@@ -56,6 +65,7 @@ namespace Repository
                 throw;
             }
         }
+
 
         #endregion
 

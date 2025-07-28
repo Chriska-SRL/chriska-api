@@ -9,13 +9,15 @@ namespace Repository.Mappers
         {
             var permissions = new List<Permission>();
 
-            if (!reader.IsDBNull(reader.GetOrdinal("Permissions")))
+            if (ColumnExists(reader, "Permissions"))
             {
-                var rawPermissions = reader.GetString(reader.GetOrdinal("Permissions"));
-                foreach (var idStr in rawPermissions.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                var permissionsCsv = reader["Permissions"] as string;
+                if (!string.IsNullOrEmpty(permissionsCsv))
                 {
-                    if (int.TryParse(idStr, out int id) && Enum.IsDefined(typeof(Permission), id))
-                        permissions.Add((Permission)id);
+                    permissions = permissionsCsv
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(id => Enum.Parse<Permission>(id))
+                        .ToList();
                 }
             }
 
@@ -27,5 +29,17 @@ namespace Repository.Mappers
                 auditInfo: AuditInfoMapper.FromReader(reader)
             );
         }
+
+        private static bool ColumnExists(SqlDataReader reader, string columnName)
+        {
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                if (reader.GetName(i).Equals(columnName, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
+
+
     }
 }

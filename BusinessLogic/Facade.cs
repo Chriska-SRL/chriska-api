@@ -73,7 +73,7 @@ namespace BusinessLogic
         // --- Roles ---
         public async Task<RoleResponse> AddRoleAsync(AddRoleRequest request) => await Roles.AddRoleAsync(request);
         public async Task<RoleResponse> UpdateRoleAsync(UpdateRoleRequest request) => await Roles.UpdateRoleAsync(request);
-        public async Task<RoleResponse> DeleteRoleAsync(DeleteRequest request) => await Roles.DeleteRoleAsync(request.Id);
+        public async Task<RoleResponse> DeleteRoleAsync(DeleteRequest request) => await Roles.DeleteRoleAsync(request);
         public async Task<RoleResponse> GetRoleByIdAsync(int id) => await Roles.GetRoleByIdAsync(id);
         public async Task<List<RoleResponse>> GetAllRolesAsync(QueryOptions options) => await Roles.GetAllRolesAsync(options);
 

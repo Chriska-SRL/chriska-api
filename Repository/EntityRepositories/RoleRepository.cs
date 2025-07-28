@@ -94,6 +94,8 @@ namespace Repository.EntityRepositories
 
         public async Task<List<Role>> GetAllAsync(QueryOptions options)
         {
+            var allowedFilters = new[] { "Name", "Description" }; // columnas reales de dbo.Roles
+
             return await ExecuteReadAsync(
                 baseQuery: @"
                     SELECT r.*, 
@@ -112,7 +114,8 @@ namespace Repository.EntityRepositories
                     }
                     return roles;
                 },
-                options: options
+                options: options,
+                allowedFilterColumns: allowedFilters
             );
         }
 
@@ -203,7 +206,7 @@ namespace Repository.EntityRepositories
             FROM dbo.Roles r
             LEFT JOIN dbo.Roles_Permissions rp ON r.Id = rp.RoleId
             LEFT JOIN dbo.Users u ON u.RoleId = r.Id
-            WHERE r.Id = @Id AND r.IsDeleted = 0 AND (u.Id IS NULL OR u.IsDeleted = 0)
+            WHERE r.Id = @Id AND (u.Id IS NULL OR u.IsDeleted = 0)
             ";
 
             return await ExecuteReadAsync(
@@ -240,6 +243,7 @@ namespace Repository.EntityRepositories
                     return roleDictionary.Values.FirstOrDefault();
                 },
                 options: new QueryOptions(),
+                tableAlias: "r",
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Id", id);

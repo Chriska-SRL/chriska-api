@@ -20,7 +20,7 @@ public static class UserMapper
             id: reader.GetInt32(reader.GetOrdinal("Id")),
             name: reader.GetString(reader.GetOrdinal("Name")),
             username: reader.GetString(reader.GetOrdinal("Username")),
-            password: reader.GetString(reader.GetOrdinal("Password")),
+            password: null,
             isEnabled: reader.GetString(reader.GetOrdinal("IsEnabled")) == "T",
             needsPasswordChange: reader.GetString(reader.GetOrdinal("NeedsPasswordChange")) == "T",
             role: role,
@@ -50,12 +50,12 @@ public static class UserMapper
     public static User FromReaderForRole(DbDataReader reader)
     {
         return new User(
-            id: reader.GetInt32(reader.GetOrdinal("Id")),
-            name: reader.GetString(reader.GetOrdinal("Name")),
-            username: reader.GetString(reader.GetOrdinal("Username")),
-            password: reader.GetString(reader.GetOrdinal("Password")),
-            isEnabled: reader.GetString(reader.GetOrdinal("IsEnabled")) == "T",
-            needsPasswordChange: reader.GetString(reader.GetOrdinal("NeedsPasswordChange")) == "T",
+            id: reader.GetInt32(reader.GetOrdinal("UserId")),
+            name: reader.GetString(reader.GetOrdinal("UserName")),
+            username: reader.GetString(reader.GetOrdinal("UserUsername")),
+            password: null,
+            isEnabled: reader.GetString(reader.GetOrdinal("UserIsEnabled")) == "T",
+            needsPasswordChange: reader.GetString(reader.GetOrdinal("UserNeedsPasswordChange")) == "T",
             role: null,
             auditInfo: null
         );

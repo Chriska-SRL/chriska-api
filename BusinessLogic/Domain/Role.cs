@@ -55,6 +55,12 @@ namespace BusinessLogic.Domain
                 throw new ArgumentOutOfRangeException(nameof(Description), "La descripción del rol no puede superar los 255 caracteres.");
         }
 
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            AuditInfo.SetDeleted(userId, location);
+            Validate();
+        }
+
 
         public void Update(UpdatableData data)
         {
