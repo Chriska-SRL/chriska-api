@@ -1,6 +1,7 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Común.Enums;
 using BusinessLogic.Domain;
-using BusinessLogic.Dominio;
+using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
@@ -29,19 +30,22 @@ namespace Repository.Mappers
             var category = new Category(
                 id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
                 name: reader.GetString(reader.GetOrdinal("CategoryName")),
-                description: reader.GetString(reader.GetOrdinal("CategoryDescription"))
+                description: reader.GetString(reader.GetOrdinal("CategoryDescription")),
+                auditInfo: null
             );
 
             var subCategory = new SubCategory(
                 id: reader.GetInt32(reader.GetOrdinal("SubCategoryId")),
                 name: reader.GetString(reader.GetOrdinal("SubCategoryName")),
                 description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
-                category: category
+                category: category,
+                auditInfo: null
             );
             var brand = new Brand(
                 id: reader.GetInt32(reader.GetOrdinal("BrandId")),
                 name: reader.GetString(reader.GetOrdinal("BrandName")),
-                description: reader.GetString(reader.GetOrdinal("BrandDescription"))
+                description: reader.GetString(reader.GetOrdinal("BrandDescription")),
+                auditInfo: new AuditInfo()
             );
 
             var product = new Product(
@@ -53,11 +57,13 @@ namespace Repository.Mappers
                 description: reader.GetString(reader.GetOrdinal("ProductDescription")),
                 temperatureCondition: tempCondition,
                 stock: reader.GetInt32(reader.GetOrdinal("ProductStock")),
+                aviableStock: reader.GetInt32(reader.GetOrdinal("ProductAviableStock")),
                 image: reader.GetString(reader.GetOrdinal("Image")),
                 observations: reader.GetString(reader.GetOrdinal("Observations")),
                 subCategory: subCategory,
                 brand:brand,
-                suppliers: new List<Supplier>() // proveedores no incluidos
+                suppliers: new List<Supplier>(),
+                auditInfo: new AuditInfo()
             );
 
             var warehouse = new Warehouse(
@@ -65,7 +71,8 @@ namespace Repository.Mappers
                 name: reader.GetString(reader.GetOrdinal("WarehouseName")),
                 description: reader.GetString(reader.GetOrdinal("WarehouseDescription")),
                 address: reader.GetString(reader.GetOrdinal("Address")),
-                shelves: new List<Shelve>() // estanterías no incluidas
+                shelves: new List<Shelve>(), 
+                auditInfo: new AuditInfo()
             );
 
             var shelve = new Shelve(
@@ -73,8 +80,8 @@ namespace Repository.Mappers
                 name: reader.GetString(reader.GetOrdinal("ShelveName")),
                 description: reader.GetString(reader.GetOrdinal("ShelveDescription")),
                 warehouse: warehouse,
-                productStocks: new List<ProductStock>(), // stocks no incluidos
-                stockMovements: new List<StockMovement>() // movimientos de stock no incluidos
+                stockMovements: new List<StockMovement>(), 
+                auditInfo: new AuditInfo()
 
             );
 
@@ -82,7 +89,8 @@ namespace Repository.Mappers
                 id: reader.GetInt32(reader.GetOrdinal("RoleId")),
                 name: reader.GetString(reader.GetOrdinal("RoleName")),
                 description: reader.GetString(reader.GetOrdinal("RoleDescription")),
-                permissions: new List<Permission>() // permisos no incluidos
+                permissions: new List<Permission>(),
+                auditInfo: null
             );
 
             var user = new User(
@@ -93,7 +101,7 @@ namespace Repository.Mappers
                 needsPasswordChange: reader.GetString(reader.GetOrdinal("NeedsPasswordChange")).Trim() == "T",
                 password: reader.GetString(reader.GetOrdinal("Password")),
                 role: role,
-                requests: new List<Request>() // solicitudes no incluidas
+                auditInfo: null
             );
 
             var stockMovement = new StockMovement(
@@ -104,7 +112,8 @@ namespace Repository.Mappers
                 reason: reader.GetString(reader.GetOrdinal("Reason")),
                 shelve: shelve,
                 user: user,
-                product: product
+                product: product,
+                auditInfo: new AuditInfo()
             );
 
             return stockMovement;

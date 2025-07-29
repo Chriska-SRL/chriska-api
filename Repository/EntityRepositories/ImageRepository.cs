@@ -1,146 +1,126 @@
-﻿using BusinessLogic.Domain;
-using BusinessLogic.Dominio;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Domain;
 using BusinessLogic.Repository;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging;
-using Repository.Mappers;
+using Repository.Logging;
 
 namespace Repository.EntityRepositories
 {
-    public class ImageRepository : Repository<Image>, IImageRepository
+    public class ImageRepository : Repository<Image, Image.UpdatableData>, IImageRepository
     {
-        public ImageRepository(string connectionString, ILogger<Image> logger) : base(connectionString, logger)
+        public ImageRepository(string connectionString, AuditLogger auditLogger)
+            : base(connectionString, auditLogger) { }
+
+        #region Add
+
+        public async Task<Image> AddAsync(Image image)
         {
-        }
-
-        public Image Add(Image entity)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using var command = new SqlCommand(@"
-                    INSERT INTO Images (EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate) 
-                    OUTPUT INSERTED.Id 
-                    VALUES (@EntityType, @EntityId, @FileName, @BlobName, @ContentType, @Size, @UploadDate)", connection);
-
-                command.Parameters.AddWithValue("@EntityType", entity.EntityType);
-                command.Parameters.AddWithValue("@EntityId", entity.EntityId);
-                command.Parameters.AddWithValue("@FileName", entity.FileName);
-                command.Parameters.AddWithValue("@BlobName", entity.BlobName);
-                command.Parameters.AddWithValue("@ContentType", entity.ContentType);
-                command.Parameters.AddWithValue("@Size", entity.Size);
-                command.Parameters.AddWithValue("@UploadDate", entity.UploadDate);
-
-                int insertedId = (int)command.ExecuteScalar();
-                return new Image(insertedId, entity.EntityType, entity.EntityId, entity.FileName,
-                               entity.BlobName, entity.ContentType, entity.Size, entity.UploadDate);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al insertar imagen.");
-                throw new ApplicationException("Error al insertar imagen.", ex);
-            }
-        }
-
-        public Image? GetByEntityTypeAndId(string entityType, int entityId)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using var command = new SqlCommand(@"
-                    SELECT Id, EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate 
-                    FROM Images 
-                    WHERE EntityType = @EntityType AND EntityId = @EntityId", connection);
-
-                command.Parameters.AddWithValue("@EntityType", entityType);
-                command.Parameters.AddWithValue("@EntityId", entityId);
-
-                using var reader = command.ExecuteReader();
-                return reader.Read() ? ImageMapper.FromReader(reader) : null;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al obtener imagen por entidad.");
-                throw new ApplicationException("Error al obtener imagen.", ex);
-            }
-        }
-
-        public Image? Delete(int id)
-        {
-            try
-            {
-                Image? existing = GetById(id);
-                if (existing == null) return null;
-
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using var command = new SqlCommand("DELETE FROM Images WHERE Id = @Id", connection);
-                command.Parameters.AddWithValue("@Id", id);
-
-                command.ExecuteNonQuery();
-                return existing;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al eliminar imagen.");
-                throw new ApplicationException("Error al eliminar imagen.", ex);
-            }
-        }
-
-        public Image? GetById(int id)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using var command = new SqlCommand(@"
-                    SELECT Id, EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate 
-                    FROM Images 
-                    WHERE Id = @Id", connection);
-
-                command.Parameters.AddWithValue("@Id", id);
-
-                using var reader = command.ExecuteReader();
-                return reader.Read() ? ImageMapper.FromReader(reader) : null;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al obtener imagen por ID.");
-                throw new ApplicationException("Error al obtener imagen.", ex);
-            }
-        }
-
-        public List<Image> GetAll()
-        {
-            var images = new List<Image>();
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using var command = new SqlCommand(@"
-                    SELECT Id, EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate 
-                    FROM Images 
-                    ORDER BY UploadDate DESC", connection);
-
-                using var reader = command.ExecuteReader();
-                while (reader.Read())
+            int newId = await ExecuteWriteWithAuditAsync(
+                "INSERT INTO Images (EntityType, EntityId, FileName, BlobName, ContentType, Size, UploadDate) " +
+                "OUTPUT INSERTED.Id VALUES (@EntityType, @EntityId, @FileName, @BlobName, @ContentType, @Size, @UploadDate)",
+                image,
+                AuditAction.Insert,
+                configureCommand: cmd =>
                 {
-                    images.Add(ImageMapper.FromReader(reader));
-                }
-                return images;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al obtener todas las imágenes.");
-                throw new ApplicationException("Error al obtener todas las imágenes.", ex);
-            }
+                    cmd.Parameters.AddWithValue("@EntityType", image.EntityType);
+                    cmd.Parameters.AddWithValue("@EntityId", image.EntityId);
+                    cmd.Parameters.AddWithValue("@FileName", image.FileName);
+                    cmd.Parameters.AddWithValue("@BlobName", image.BlobName);
+                    cmd.Parameters.AddWithValue("@ContentType", image.ContentType);
+                    cmd.Parameters.AddWithValue("@Size", image.Size);
+                    cmd.Parameters.AddWithValue("@UploadDate", image.UploadDate);
+                },
+                async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
+            );
+
+            if (newId == 0)
+                throw new InvalidOperationException("No se pudo obtener el Id insertado.");
+
+            return new Image(newId, image.EntityType, image.EntityId, image.FileName, image.BlobName, image.ContentType, image.Size, image.UploadDate, image.AuditInfo);
         }
+
+        #endregion
+
+        #region Update
+
+        public async Task<Image> UpdateAsync(Image image)
+        {
+            int rows = await ExecuteWriteWithAuditAsync(
+                "UPDATE Images SET EntityType = @EntityType, EntityId = @EntityId, FileName = @FileName, BlobName = @BlobName, ContentType = @ContentType, Size = @Size, UploadDate = @UploadDate " +
+                "WHERE Id = @Id",
+                image,
+                AuditAction.Update,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", image.Id);
+                    cmd.Parameters.AddWithValue("@EntityType", image.EntityType);
+                    cmd.Parameters.AddWithValue("@EntityId", image.EntityId);
+                    cmd.Parameters.AddWithValue("@FileName", image.FileName);
+                    cmd.Parameters.AddWithValue("@BlobName", image.BlobName);
+                    cmd.Parameters.AddWithValue("@ContentType", image.ContentType);
+                    cmd.Parameters.AddWithValue("@Size", image.Size);
+                    cmd.Parameters.AddWithValue("@UploadDate", image.UploadDate);
+                }
+            );
+
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo actualizar la imagen con Id {image.Id}");
+
+            return image;
+        }
+
+        #endregion
+
+        #region Delete
+
+        public async Task<bool> DeleteAsync(int imageId)
+        {
+            // Eliminar la imagen físicamente de la base de datos
+            int rows = await ExecuteWriteWithAuditAsync(
+                "DELETE FROM Images WHERE Id = @Id",
+                null,
+                AuditAction.Delete,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", imageId);
+                }
+            );
+
+            return rows > 0;
+        }
+
+        #endregion
+
+        #region GetByEntityTypeAndId
+
+        public async Task<Image?> GetByEntityTypeAndIdAsync(string entityType, int entityId)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: "SELECT * FROM Images WHERE EntityType = @EntityType AND EntityId = @EntityId",
+                map: reader =>
+                {
+                    if (reader.Read())
+                        return new Image(
+                            reader.GetInt32(reader.GetOrdinal("Id")),
+                            reader.GetString(reader.GetOrdinal("EntityType")),
+                            reader.GetInt32(reader.GetOrdinal("EntityId")),
+                            reader.GetString(reader.GetOrdinal("FileName")),
+                            reader.GetString(reader.GetOrdinal("BlobName")),
+                            reader.GetString(reader.GetOrdinal("ContentType")),
+                            reader.GetInt64(reader.GetOrdinal("Size")),
+                            reader.GetDateTime(reader.GetOrdinal("UploadDate")),
+                            new AuditInfo() // Asumir que AuditInfo es adecuado o hacerlo más avanzado si es necesario
+                        );
+                    return null;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@EntityType", entityType);
+                    cmd.Parameters.AddWithValue("@EntityId", entityId);
+                }
+            );
+        }
+
+        #endregion
     }
 }

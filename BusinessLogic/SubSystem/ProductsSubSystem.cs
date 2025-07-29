@@ -1,9 +1,9 @@
-﻿using BusinessLogic.DTOs.DTOsProduct;
-using BusinessLogic.Repository;
+﻿using BusinessLogic.Común;
 using BusinessLogic.Común.Mappers;
-using BusinessLogic.Dominio;
 using BusinessLogic.Domain;
-using BusinessLogic.DTOs.DTOsBrand;
+using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsProduct;
+using BusinessLogic.Repository;
 
 namespace BusinessLogic.SubSystem
 {
@@ -11,138 +11,36 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IProductRepository _productRepository;
         private readonly ISubCategoryRepository _subCategoryRepository;
-        private readonly IBrandRepository _brandRepository;
 
-        public ProductsSubSystem(IProductRepository productRepository, ISubCategoryRepository subCategoryRepository, IBrandRepository brandRepository)
+        public ProductsSubSystem(IProductRepository productRepository, ISubCategoryRepository subCategoryRepository)
         {
             _productRepository = productRepository;
             _subCategoryRepository = subCategoryRepository;
-            _brandRepository = brandRepository;
         }
 
-        public ProductResponse AddProduct(AddProductRequest request)
+        public async Task<ProductResponse> AddProductAsync(ProductAddRequest request)
         {
-            var subCategory = _subCategoryRepository.GetById(request.SubCategoryId)
-                              ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(request.SubCategoryId));
-            var brand = _brandRepository.GetById(request.BrandId)
-                              ?? throw new ArgumentException("Marca no encontrada.", nameof(request.BrandId));
-
-            if ( _productRepository.GetByBarcode(request.Barcode) != null) 
-                            throw new ArgumentException("Ya existe un producto con el mismo código de barras.", nameof(request.Barcode));
-
-            if(_productRepository.GetByName(request.Name) != null) 
-                            throw new ArgumentException("Ya existe un producto con el mismo nombre.", nameof(request.Name));
-
-            var newProduct = ProductMapper.ToDomain(request, subCategory);
-            newProduct.Brand = brand;
-            newProduct.Validate();
-
-            var added = _productRepository.Add(newProduct);
-            added.SetInternalCode();
-            return ProductMapper.ToResponse(added);
+            throw new NotImplementedException();
         }
 
-        public ProductResponse UpdateProduct(UpdateProductRequest request)
+        public async Task<ProductResponse> UpdateProductAsync(ProductUpdateRequest request)
         {
-            var existing = _productRepository.GetById(request.Id)
-                           ?? throw new ArgumentException("Producto no encontrado.", nameof(request.Id));
-
-            var subCategory = _subCategoryRepository.GetById(request.SubCategoryId)
-                              ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(request.SubCategoryId));
-
-            var brand = _brandRepository.GetById(request.BrandId)
-                           ?? throw new ArgumentException("Marca no encontrada.", nameof(request.BrandId));
-
-            if (existing.Barcode != request.Barcode && _productRepository.GetByBarcode(request.Barcode) != null)
-                throw new ArgumentException("Ya existe un producto con el mismo código de barras.", nameof(request.Barcode));
-
-            if (existing.Name != request.Name &&  _productRepository.GetByName(request.Name) != null)
-                throw new ArgumentException("Ya existe un producto con el mismo nombre.", nameof(request.Name));
-
-            Product.UpdatableData data = ProductMapper.ToUpdatableData(request, subCategory);
-            data.Brand = brand;
-            existing.Update(data);
-
-            Product updated = _productRepository.Update(existing);
-            updated.SetInternalCode();
-            return ProductMapper.ToResponse(updated);
+            throw new NotImplementedException();
         }
 
-        public ProductResponse DeleteProduct(int id)
+        public async Task DeleteProductAsync(DeleteRequest request)
         {
-            var deleted = _productRepository.GetById(id)
-                          ?? throw new ArgumentException("Producto no encontrado.", nameof(id));
-
-
-            //TODO: Implementar control de integridad referencial:
-            //cuado se trabaje con entidades que tengan relacion con esta.
-            deleted = _productRepository.Delete(id);
-            deleted.SetInternalCode();
-            return ProductMapper.ToResponse(deleted);
+            throw new NotImplementedException();
         }
 
-        public ProductResponse GetProductById(int id)
+        public async Task<ProductResponse> GetProductByIdAsync(int id)
         {
-            var product = _productRepository.GetById(id)
-                          ?? throw new ArgumentException("Producto no encontrado.", nameof(id));
-            product.SetInternalCode();
-            return ProductMapper.ToResponse(product);
+            throw new NotImplementedException();
         }
 
-        public List<ProductResponse> GetAllProducts()
+        public async Task<List<ProductResponse>> GetAllProductsAsync(QueryOptions options)
         {
-            return _productRepository.GetAll()
-                                     .Select(p =>
-                                     {
-                                         p.SetInternalCode();
-                                         return ProductMapper.ToResponse(p);
-                                     })
-                                     .ToList();
-        }
-
-        public BrandResponse AddBrand(AddBrandRequest request)
-        {
-            var newBrand = BrandMapper.ToDomain(request);
-            newBrand.Validate();
-
-            var added = _brandRepository.Add(newBrand);
-            return BrandMapper.ToResponse(added);
-        }
-
-        public BrandResponse UpdateBrand(UpdateBrandRequest request)
-        {
-            var existing = _brandRepository.GetById(request.Id)
-                           ?? throw new ArgumentException("Marca no encontrada.", nameof(request.Id));
-
-            Brand.UpdatableData data = BrandMapper.ToUpdatableData(request);
-            existing.Update(data);
-
-            var updated = _brandRepository.Update(existing);
-            return BrandMapper.ToResponse(updated);
-        }
-
-        public BrandResponse DeleteBrand(int id)
-        {
-            var brand = _brandRepository.GetById(id)
-                        ?? throw new ArgumentException("Marca no encontrada.", nameof(id));
-
-            var deleted = _brandRepository.Delete(id);
-            return BrandMapper.ToResponse(deleted);
-        }
-
-        public BrandResponse GetBrandById(int id)
-        {
-            var brand = _brandRepository.GetById(id)
-                        ?? throw new ArgumentException("Marca no encontrada.", nameof(id));
-
-            return BrandMapper.ToResponse(brand);
-        }
-
-        public List<BrandResponse> GetAllBrands()
-        {
-            return _brandRepository.GetAll()
-                                   .Select(BrandMapper.ToResponse)
-                                   .ToList();
+            throw new NotImplementedException();
         }
     }
 }

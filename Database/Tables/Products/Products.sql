@@ -1,6 +1,9 @@
 ﻿CREATE TABLE [dbo].[Products]
 (
-	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    -- Clave primaria de la entidad
+    [Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+
+    -- Campos de la entidad
     [Name] NVARCHAR(50) NOT NULL UNIQUE,
     [BarCode] NCHAR(13) NULL,
     [UnitType] NCHAR(10) NOT NULL,
@@ -8,15 +11,32 @@
     [Description] NVARCHAR(255) NOT NULL, 
     [TemperatureCondition] NVARCHAR(10) NOT NULL, 
     [Stock] INT NOT NULL, 
-    [Image] NVARCHAR(255) NOT NULL, 
+    [AvailableStock] INT NOT NULL, 
     [Observations] NVARCHAR(255) NOT NULL, 
     [SubCategoryId] INT NOT NULL, 
     [BrandId] INT NOT NULL, 
+
+    -- Campos de auditoría
+    [CreatedAt] DATETIME2 NOT NULL,
+    [CreatedBy] INT NOT NULL,
+    [CreatedLocation] NVARCHAR(50) NULL, -- Coordenadas GPS: "lat,long"
+    [UpdatedAt] DATETIME2 NULL,
+    [UpdatedBy] INT NULL,
+    [UpdatedLocation] NVARCHAR(50) NULL, -- Coordenadas GPS: "lat,long"
+    [DeletedAt] DATETIME2 NULL,
+    [DeletedBy] INT NULL,
+    [DeletedLocation] NVARCHAR(50) NULL, -- Coordenadas GPS: "lat,long"
+
+    -- Soft delete flag
+    [IsDeleted] BIT NOT NULL DEFAULT 0,
+
+    -- Restricciones
     CONSTRAINT [FK_Products_SubCategories] FOREIGN KEY ([SubCategoryId]) REFERENCES [SubCategories]([Id]),
-    CONSTRAINT [CHK_Product_UnitType] CHECK (UnitType IN ('Kilo', 'Unit')),
-    CONSTRAINT [CHK_Product_TempCondition] CHECK (TemperatureCondition IN ('Cold', 'Frozen', 'Ambient')),
-    CONSTRAINT [CHK_Product_Price] CHECK (Price > 0),
-    CONSTRAINT [CHK_Product_Stock] CHECK (Stock >= 0),
-    CONSTRAINT [CHK_Product_BarcodeFormat] CHECK ([BarCode] IS NULL OR [BarCode] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'), 
-    CONSTRAINT [FK_Products_Brands] FOREIGN KEY ([BrandId]) REFERENCES [Brands]([Id]) 
+    CONSTRAINT [FK_Products_Brands] FOREIGN KEY ([BrandId]) REFERENCES [Brands]([Id]),
+    CONSTRAINT [FK_Products_CreatedBy] FOREIGN KEY ([CreatedBy]) REFERENCES [Users]([Id]),
+    CONSTRAINT [FK_Products_UpdatedBy] FOREIGN KEY ([UpdatedBy]) REFERENCES [Users]([Id]),
+    CONSTRAINT [FK_Products_DeletedBy] FOREIGN KEY ([DeletedBy]) REFERENCES [Users]([Id]),
+    CONSTRAINT [CHK_Product_Price] CHECK ([Price] > 0),
+    CONSTRAINT [CHK_Product_Stock] CHECK ([Stock] >= 0),
+    CONSTRAINT [CHK_Product_BarcodeFormat] CHECK ([BarCode] IS NULL OR [BarCode] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
 )

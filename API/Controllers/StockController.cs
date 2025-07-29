@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using API.Utils;
 using BusinessLogic;
-using BusinessLogic.DTOs.DTOsStockMovement;
-using BusinessLogic.Dominio;
 using BusinessLogic.Común;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsStockMovement;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -13,104 +15,53 @@ namespace API.Controllers
     public class StockController : ControllerBase
     {
         private readonly Facade _facade;
+        private readonly TokenUtils _tokenUtils;
 
-        public StockController(Facade facade)
+        public StockController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_STOCK_MOVEMENTS))]
-        public IActionResult AddStockMovement([FromBody] AddStockMovementRequest request)
+        public async Task<ActionResult<StockMovementResponse>> AddStockMovementAsync([FromBody] AddStockMovementRequest request)
         {
-            try
-            {
-                return Ok(_facade.AddStockMovement(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { error = ex.Message });
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar registrar el movimiento de stock." });
-            }
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.AddStockMovementAsync(request);
+            return CreatedAtAction(nameof(GetStockMovementByIdAsync), new { id = result.Id }, result);
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_STOCK_MOVEMENTS))]
-        public ActionResult<StockMovementResponse> GetStockMovementById(int id)
+        public async Task<ActionResult<StockMovementResponse>> GetStockMovementByIdAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.GetStockMovementById(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener el movimiento de stock con id {id}." });
-            }
+            var result = await _facade.GetStockMovementByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_STOCK_MOVEMENTS))]
-        public ActionResult<List<StockMovementResponse>> GetAllStockMovements(DateTime from, DateTime to)
+        public async Task<ActionResult<List<StockMovementResponse>>> GetAllStockMovementsAsync([FromQuery] DateTime from, [FromQuery] DateTime to)
         {
-            try
-            {
-                return Ok(_facade.GetAllStockMovements(from, to));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los movimientos de stock." });
-            }
+            var result = await _facade.GetAllStockMovementsAsync(from, to);
+            return Ok(result);
         }
 
         [HttpGet("shelve/{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_STOCK_MOVEMENTS))]
-        public ActionResult<List<StockMovementResponse>> GetAllStockMovementsByShelve(int id, DateTime from, DateTime to)
+        public async Task<ActionResult<List<StockMovementResponse>>> GetAllStockMovementsByShelveAsync(int id, [FromQuery] DateTime from, [FromQuery] DateTime to)
         {
-            try
-            {
-                return Ok(_facade.GetAllStockMovementsByShelve(id, from, to));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los movimientos de stock." });
-            }
+            var result = await _facade.GetAllStockMovementsByShelveAsync(id, from, to);
+            return Ok(result);
         }
 
         [HttpGet("warehouse/{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_STOCK_MOVEMENTS))]
-        public ActionResult<List<StockMovementResponse>> GetAllStockMovementsByWarehouse(int id, DateTime from, DateTime to)
+        public async Task<ActionResult<List<StockMovementResponse>>> GetAllStockMovementsByWarehouseAsync(int id, [FromQuery] DateTime from, [FromQuery] DateTime to)
         {
-            try
-            {
-                return Ok(_facade.GetAllStockMovementsByWarehouse(id, from, to));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los movimientos de stock." });
-            }
+            var result = await _facade.GetAllStockMovementsByWarehouseAsync(id, from, to);
+            return Ok(result);
         }
     }
 }

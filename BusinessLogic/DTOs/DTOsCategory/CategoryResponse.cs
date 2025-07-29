@@ -1,8 +1,9 @@
-﻿using BusinessLogic.DTOs.DTOsSubCategory;
+﻿using BusinessLogic.DTOs.DTOsAudit;
+using BusinessLogic.DTOs.DTOsSubCategory;
 
 namespace BusinessLogic.DTOs.DTOsCategory
 {
-    public class CategoryResponse
+    public class CategoryResponse:AuditableResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }

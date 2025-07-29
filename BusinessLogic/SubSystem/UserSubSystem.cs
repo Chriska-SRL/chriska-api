@@ -1,8 +1,9 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.Repository;
-using BusinessLogic.DTOs.DTOsUser;
+﻿using BusinessLogic.Común;
 using BusinessLogic.Común.Mappers;
-using BusinessLogic.Común;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsUser;
+using BusinessLogic.Repository;
 
 namespace BusinessLogic.SubSystem
 {
@@ -17,85 +18,34 @@ namespace BusinessLogic.SubSystem
             _roleRepository = roleRepository;
         }
 
-        public UserResponse AddUser(AddUserRequest request)
+        public async Task<UserResponse> AddUserAsync(AddUserRequest request)
         {
-            var role = _roleRepository.GetById(request.RoleId)
-                       ?? throw new ArgumentException("Rol no encontrado.", nameof(request.RoleId));
-
-            var newUser = UserMapper.ToDomain(request);
-            newUser.Role = role;
-            User.ValidatePassword(request.Password);
-            newUser.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
-            newUser.Validate();
-
-            if (_userRepository.GetByUsername(newUser.Username) != null) 
-                        throw new ArgumentException("Ya existe un usuario con ese username.", nameof(newUser.Username));
-
-            var added = _userRepository.Add(newUser);
-            return UserMapper.ToResponse(added);
+            throw new NotImplementedException();
         }
 
-        public string ResetPassword(int userId, string? newPassword = null)
+        public async Task<string> ResetPasswordAsync(int userId, string? newPassword = null)
         {
-            var user = _userRepository.GetById(userId)
-                       ?? throw new InvalidOperationException("Usuario no encontrado.");
-
-            if (string.IsNullOrEmpty(newPassword))
-            {
-                newPassword = PasswordGenerator.Generate();
-                user.needsPasswordChange = true;
-            }
-            else { user.needsPasswordChange = false; }
-            User.ValidatePassword(newPassword);
-            user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
-            _userRepository.Update(user);
-
-            return newPassword;
+            throw new NotImplementedException();
         }
 
-        public UserResponse UpdateUser(UpdateUserRequest request)
+        public async Task<UserResponse> UpdateUserAsync(UpdateUserRequest request)
         {
-            var existingUser = _userRepository.GetById(request.Id)
-                                ?? throw new ArgumentException("Usuario no encontrado.", nameof(request.Id));
-
-            var role = _roleRepository.GetById(request.RoleId)
-                       ?? throw new ArgumentException("Rol no encontrado.", nameof(request.RoleId));
-
-            if (existingUser.Username != request.Username && _userRepository.GetByUsername(request.Username) != null)
-                throw new ArgumentException("Ya existe un usuario con ese username.", nameof(request.Username));
-
-            var updatedData = UserMapper.ToUpdatableData(request);
-            updatedData.Role = role;
-            existingUser.Update(updatedData);
-
-            var updated = _userRepository.Update(existingUser);
-            return UserMapper.ToResponse(updated);
+            throw new NotImplementedException();
         }
 
-        public UserResponse DeleteUser(int id)
+        public async Task DeleteUserAsync(DeleteRequest request)
         {
-            var deleted = _userRepository.Delete(id)
-                          ?? throw new ArgumentException("Usuario no encontrado.", nameof(id));
-
-            //TODO: Implementar control de integridad referencial:
-            //cuando se trabaje con entidades que tengan relación con esta.
-
-            return UserMapper.ToResponse(deleted);
+            throw new NotImplementedException();
         }
 
-        public UserResponse GetUserById(int id)
+        public async Task<UserResponse> GetUserByIdAsync(int id)
         {
-            var user = _userRepository.GetById(id)
-                       ?? throw new ArgumentException("Usuario no encontrado.", nameof(id));
-
-            return UserMapper.ToResponse(user);
+            throw new NotImplementedException();
         }
 
-        public List<UserResponse> GetAllUsers()
+        public async Task<List<UserResponse>> GetAllUsersAsync(QueryOptions options)
         {
-            return _userRepository.GetAll()
-                                  .Select(UserMapper.ToResponse)
-                                  .ToList();
+            throw new NotImplementedException();
         }
     }
 }

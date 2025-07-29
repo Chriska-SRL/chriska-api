@@ -1,314 +1,282 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Domain;
 using BusinessLogic.Repository;
+using Repository.Logging;
 using Repository.Mappers;
+using BusinessLogic.Común;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging;
+using System.Text;
 
 namespace Repository.EntityRepositories
 {
-    public class RoleRepository : Repository<RoleRepository>, IRoleRepository
+    public class RoleRepository : Repository<Role, Role.UpdatableData>, IRoleRepository
     {
-        public RoleRepository(string connectionString, ILogger<RoleRepository> logger) : base(connectionString, logger)
+        public RoleRepository(string connectionString, AuditLogger auditLogger)
+            : base(connectionString, auditLogger) { }
+
+        #region Add
+
+        public async Task<Role> AddAsync(Role role)
         {
+            int newId = await ExecuteWriteWithAuditAsync(
+                "INSERT INTO dbo.Roles (Name, Description) OUTPUT INSERTED.Id VALUES (@Name, @Description)",
+                role,
+                AuditAction.Insert,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Name", role.Name);
+                    cmd.Parameters.AddWithValue("@Description", role.Description);
+                },
+                async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
+            );
+
+            if (newId == 0)
+                throw new InvalidOperationException("No se pudo obtener el Id insertado.");
+
+            await SavePermissionsAsync(newId, role.Permissions);
+
+            return new Role(newId, role.Name, role.Description, role.Permissions, role.AuditInfo);
         }
 
-        public Role Add(Role role)
+        #endregion
+
+        #region Update
+
+        public async Task<Role> UpdateAsync(Role role)
         {
-            try
-            {
-                using var connection = CreateConnection();
-                using var command = new SqlCommand(@"INSERT INTO Roles (Name, Description) OUTPUT INSERTED.Id VALUES (@Name, @Description)", connection);
+            int rows = await ExecuteWriteWithAuditAsync(
+                "UPDATE dbo.Roles SET Name = @Name, Description = @Description WHERE Id = @Id",
+                role,
+                AuditAction.Update,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", role.Id);
+                    cmd.Parameters.AddWithValue("@Name", role.Name);
+                    cmd.Parameters.AddWithValue("@Description", role.Description);
+                }
+            );
 
-                command.Parameters.AddWithValue("@Name", role.Name);
-                command.Parameters.AddWithValue("@Description", role.Description);
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo actualizar el rol con Id {role.Id}");
 
-                connection.Open();
-                int roleId = (int)command.ExecuteScalar();
+            await SavePermissionsAsync(role.Id, role.Permissions);
 
-                InsertPermissions(connection, roleId, role.Permissions);
-
-                return new Role(roleId, role.Name, role.Description, role.Permissions);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
+            return role;
         }
 
-        public Role? Delete(int id)
+        #endregion
+
+        #region Delete
+
+        public async Task<Role> DeleteAsync(Role role)
         {
-            try
-            {
-                _logger.LogInformation($"Intentando eliminar el rol con ID {id}.");
-                using var connection = CreateConnection();
-                connection.Open();
+            if (role == null)
+                throw new ArgumentNullException(nameof(role), "El rol no puede ser nulo.");
 
-                var role = GetRoleWithoutPermissions(id, connection);
-                if (role == null)
+            int rows = await ExecuteWriteWithAuditAsync(
+                "UPDATE dbo.Roles SET IsDeleted = 1 WHERE Id = @Id",
+                role,
+                AuditAction.Delete,
+                configureCommand: cmd =>
                 {
-                    _logger.LogWarning($"No se encontró el rol con ID {id} para eliminar.");
-                    return null;
+                    cmd.Parameters.AddWithValue("@Id", role.Id);
                 }
+            );
 
-                role.Permissions = GetPermissionsForRole(role.Id, connection);
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo eliminar el rol con Id {role.Id}");
 
-                using (var deletePermissions = new SqlCommand("DELETE FROM Roles_Permissions WHERE RoleId = @Id", connection))
-                {
-                    deletePermissions.Parameters.AddWithValue("@Id", id);
-                    deletePermissions.ExecuteNonQuery();
-                }
-
-                using (var deleteRole = new SqlCommand("DELETE FROM Roles WHERE Id = @Id", connection))
-                {
-                    deleteRole.Parameters.AddWithValue("@Id", id);
-                    int deleted = deleteRole.ExecuteNonQuery();
-                    if (deleted == 0)
-                        throw new InvalidOperationException($"El rol con ID {id} no fue eliminado.");
-                }
-
-                _logger.LogInformation($"Rol con ID {id} eliminado correctamente.");
-                return role;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
+            return role;
         }
 
+        #endregion
 
-        public List<Role> GetAll()
+        #region GetAll
+
+        public async Task<List<Role>> GetAllAsync(QueryOptions options)
         {
-            try
-            {
-                var roles = new List<Role>();
+            var allowedFilters = new[] { "Name", "Description" }; // columnas reales de dbo.Roles
 
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using (var command = new SqlCommand("SELECT Id, Name, Description FROM Roles", connection))
-                using (var reader = command.ExecuteReader())
+            return await ExecuteReadAsync(
+                baseQuery: @"
+                    SELECT r.*, 
+                           STRING_AGG(rp.PermissionId, ',') AS Permissions
+                    FROM dbo.Roles r
+                    LEFT JOIN dbo.Roles_Permissions rp ON r.Id = rp.RoleId
+                    GROUP BY r.Id, r.Name, r.Description, r.CreatedAt, r.CreatedBy, r.CreatedLocation,
+                             r.UpdatedAt, r.UpdatedBy, r.UpdatedLocation,
+                             r.DeletedAt, r.DeletedBy, r.DeletedLocation, r.IsDeleted",
+                map: reader =>
                 {
+                    var roles = new List<Role>();
                     while (reader.Read())
                     {
                         roles.Add(RoleMapper.FromReader(reader));
                     }
-                }
+                    return roles;
+                },
+                options: options,
+                allowedFilterColumns: allowedFilters
+            );
+        }
 
-                foreach (var role in roles)
+        #endregion
+
+        #region GetById
+
+        public async Task<Role?> GetByIdAsync(int id)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: @"
+                    SELECT r.*, 
+                           STRING_AGG(rp.PermissionId, ',') AS Permissions
+                    FROM dbo.Roles r
+                    LEFT JOIN dbo.Roles_Permissions rp ON r.Id = rp.RoleId
+                    WHERE r.Id = @Id
+                    GROUP BY r.Id, r.Name, r.Description, r.CreatedAt, r.CreatedBy, r.CreatedLocation,
+                             r.UpdatedAt, r.UpdatedBy, r.UpdatedLocation,
+                             r.DeletedAt, r.DeletedBy, r.DeletedLocation, r.IsDeleted",
+                map: reader =>
                 {
-                    role.Permissions = GetPermissionsForRole(role.Id, connection);
-                }
-
-                return roles;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-
-        public Role? GetById(int id)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                var role = GetRoleWithoutPermissions(id, connection);
-                if (role == null) return null;
-
-                role.Permissions = GetPermissionsForRole(role.Id, connection);
-                return role;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-
-        public Role? GetByName(string name)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                var role = GetRoleWithoutPermissions(name, connection);
-                if (role == null) return null;
-
-                role.Permissions = GetPermissionsForRole(role.Id, connection);
-                return role;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-
-        public Role Update(Role role)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                int rowsAffected;
-                using (var updateCommand = new SqlCommand("UPDATE Roles SET Name = @Name, Description = @Description WHERE Id = @Id", connection))
+                    if (reader.Read())
+                        return RoleMapper.FromReader(reader);
+                    return null;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
                 {
-                    updateCommand.Parameters.AddWithValue("@Name", role.Name);
-                    updateCommand.Parameters.AddWithValue("@Description", role.Description);
-                    updateCommand.Parameters.AddWithValue("@Id", role.Id);
-                    rowsAffected = updateCommand.ExecuteNonQuery();
+                    cmd.Parameters.AddWithValue("@Id", id);
                 }
-
-                if (rowsAffected == 0)
-                    throw new InvalidOperationException($"No se encontró el rol con ID {role.Id} para actualizar.");
-
-                using (var deletePermissions = new SqlCommand("DELETE FROM Roles_Permissions WHERE RoleId = @RoleId", connection))
-                {
-                    deletePermissions.Parameters.AddWithValue("@RoleId", role.Id);
-                    deletePermissions.ExecuteNonQuery();
-                }
-
-                InsertPermissions(connection, role.Id, role.Permissions);
-                return role;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
+            );
         }
 
-        private Role? GetRoleWithoutPermissions(int id, SqlConnection connection)
-        {
-            using var command = new SqlCommand("SELECT Id, Name, Description FROM Roles WHERE Id = @Id", connection);
-            command.Parameters.AddWithValue("@Id", id);
-            using var reader = command.ExecuteReader();
-            return reader.Read() ? RoleMapper.FromReader(reader) : null;
-        }
+        #endregion
 
-        private Role? GetRoleWithoutPermissions(string name, SqlConnection connection)
-        {
-            using var command = new SqlCommand("SELECT Id, Name, Description FROM Roles WHERE Name = @Name", connection);
-            command.Parameters.AddWithValue("@Name", name);
-            using var reader = command.ExecuteReader();
-            return reader.Read() ? RoleMapper.FromReader(reader) : null;
-        }
+        #region Private Helpers
 
-        private List<Permission> GetPermissionsForRole(int roleId, SqlConnection connection)
+        private async Task SavePermissionsAsync(int roleId, List<Permission> permissions)
         {
-            var permissions = new List<Permission>();
-            using var command = new SqlCommand("SELECT PermissionId FROM Roles_Permissions WHERE RoleId = @RoleId", connection);
-            command.Parameters.AddWithValue("@RoleId", roleId);
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                int permissionId = reader.GetInt32(reader.GetOrdinal("PermissionId"));
-                if (Enum.IsDefined(typeof(Permission), permissionId))
-                {
-                    permissions.Add((Permission)permissionId);
-                }
-                else
-                {
-                    throw new InvalidOperationException($"PermissionId inválido encontrado en la base de datos: {permissionId}");
-                }
-            }
-            return permissions;
-        }
+            await using var connection = CreateConnection();
+            await connection.OpenAsync();
 
-        private void InsertPermissions(SqlConnection connection, int roleId, List<Permission> permissions)
-        {
-            if (permissions == null)
-                throw new ArgumentNullException(nameof(permissions), "Los permisos no pueden ser nulos.");
+            // Elimina permisos actuales
+            using var deleteCmd = new SqlCommand("DELETE FROM dbo.Roles_Permissions WHERE RoleId = @RoleId", connection);
+            deleteCmd.Parameters.AddWithValue("@RoleId", roleId);
+            await deleteCmd.ExecuteNonQueryAsync();
+
+            if (permissions.Count == 0)
+                return; // No hay permisos para insertar
+
+            // Construye un solo comando SQL para el batch insert
+            var sb = new StringBuilder();
+            var parameters = new List<SqlParameter>();
+            int index = 0;
 
             foreach (var permission in permissions)
             {
-                if (!Enum.IsDefined(typeof(Permission), (int)permission))
-                    throw new InvalidOperationException($"Permiso inválido: {(int)permission}");
-
-                using var command = new SqlCommand("INSERT INTO Roles_Permissions (RoleId, PermissionId) VALUES (@RoleId, @PermissionId)", connection);
-                command.Parameters.AddWithValue("@RoleId", roleId);
-                command.Parameters.AddWithValue("@PermissionId", (int)permission);
-                command.ExecuteNonQuery();
+                var paramName = $"@PermissionId{index}";
+                sb.AppendLine($"INSERT INTO dbo.Roles_Permissions (RoleId, PermissionId) VALUES (@RoleId, {paramName});");
+                parameters.Add(new SqlParameter(paramName, (int)permission));
+                index++;
             }
+
+            using var insertCmd = new SqlCommand(sb.ToString(), connection);
+            insertCmd.Parameters.AddWithValue("@RoleId", roleId);
+            insertCmd.Parameters.AddRange(parameters.ToArray());
+
+            await insertCmd.ExecuteNonQueryAsync();
         }
 
-        public Role? GetByIdWithUsers(int id)
+        public async Task<Role?> GetByIdWithUsersAsync(int id)
         {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
+            var roleDictionary = new Dictionary<int, Role>();
 
-                var role = GetRoleWithoutPermissions(id, connection);
-                if (role == null)
-                    return null;
+            string query = @"
+            SELECT 
+                r.Id,
+                r.Name,
+                r.Description,
+                rp.PermissionId,
 
-                role.Permissions = GetPermissionsForRole(role.Id, connection);
+                u.Id AS UserId,
+                u.Name AS UserName,
+                u.Username AS UserUsername,
+                u.IsEnabled AS UserIsEnabled,
+                u.NeedsPasswordChange AS UserNeedsPasswordChange,
+                u.RoleId AS UserRoleId
+            FROM dbo.Roles r
+            LEFT JOIN dbo.Roles_Permissions rp ON r.Id = rp.RoleId
+            LEFT JOIN dbo.Users u ON u.RoleId = r.Id
+            WHERE r.Id = @Id AND (u.Id IS NULL OR u.IsDeleted = 0)
+            ";
 
-                using var command = new SqlCommand(@"
-                SELECT Id, Name, Username, Password, IsEnabled, needsPasswordChange, RoleId
-                FROM Users 
-                WHERE RoleId = @RoleId", connection);
-                command.Parameters.AddWithValue("@RoleId", id);
-
-                using var reader = command.ExecuteReader();
-                while (reader.Read())
+            return await ExecuteReadAsync(
+                baseQuery: query,
+                map: reader =>
                 {
-                    var user = UserMapper.FromReader(reader);
-                    user.Role = role;
-                    role.Users.Add(user);
-                }
+                    while (reader.Read())
+                    {
+                        int roleId = reader.GetInt32(reader.GetOrdinal("Id"));
 
-                return role;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
+                        if (!roleDictionary.TryGetValue(roleId, out var role))
+                        {
+                            role = RoleMapper.FromReader(reader);
+                            role.Permissions = new List<Permission>();
+                            role.Users = new List<User>();
+                            roleDictionary[roleId] = role;
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("PermissionId")))
+                        {
+                            var permissionId = reader.GetInt32(reader.GetOrdinal("PermissionId"));
+                            if (!role.Permissions.Contains((Permission)permissionId))
+                                role.Permissions.Add((Permission)permissionId);
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("UserId"))) // Asume que UserMapper espera esto
+                        {
+                            var user = UserMapper.FromReaderForRole(reader);
+                            if (!role.Users.Any(u => u.Id == user.Id))
+                                role.Users.Add(user);
+                        }
+                    }
+
+                    return roleDictionary.Values.FirstOrDefault();
+                },
+                options: new QueryOptions(),
+                tableAlias: "r",
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                }
+            );
         }
 
+
+        public async Task<Role?> GetByNameAsync(string name)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: @"
+            SELECT r.*, 
+                   STRING_AGG(rp.PermissionId, ',') AS Permissions
+            FROM Roles r
+            LEFT JOIN Roles_Permissions rp ON r.Id = rp.RoleId
+            WHERE r.Name = @Name
+            GROUP BY r.Id, r.Name, r.Description, r.CreatedAt, r.CreatedBy, r.CreatedLocation,
+                     r.UpdatedAt, r.UpdatedBy, r.UpdatedLocation,
+                     r.DeletedAt, r.DeletedBy, r.DeletedLocation, r.IsDeleted",
+                map: reader =>
+                {
+                    if (reader.Read())
+                        return RoleMapper.FromReader(reader);
+                    return null;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Name", name);
+                }
+            );
+        }
+        #endregion
     }
 }

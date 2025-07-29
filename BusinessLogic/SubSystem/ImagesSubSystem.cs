@@ -1,11 +1,11 @@
-﻿using BusinessLogic.Común.Mappers;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Común.Mappers;
 using BusinessLogic.Domain;
-using BusinessLogic.Dominio;
 using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.Repository;
 using BusinessLogic.Services;
 using Microsoft.AspNetCore.Http;
-
+using System.IO;
 
 namespace BusinessLogic.SubSystem
 {
@@ -20,56 +20,65 @@ namespace BusinessLogic.SubSystem
             _azureBlobService = azureBlobService;
         }
 
-        public ImageResponse UploadImage(string entityType, int entityId, IFormFile file)
+        public async Task<ImageResponse> UploadImageAsync(string entityType, int entityId, IFormFile file)
         {
-            // Validaciones
             if (!IsValidEntityType(entityType))
                 throw new ArgumentException("Tipo de entidad no válido.", nameof(entityType));
 
             if (!IsValidImageFile(file))
                 throw new ArgumentException("Archivo de imagen no válido.", nameof(file));
 
-            // Eliminar imagen existente si hay una
-            var existingImage = _imageRepository.GetByEntityTypeAndId(entityType, entityId);
+            var existingImage = await _imageRepository.GetByEntityTypeAndIdAsync(entityType, entityId);
             if (existingImage != null)
             {
-                _azureBlobService.DeleteBlob(existingImage.BlobName);
-                _imageRepository.Delete(existingImage.Id);
+                await _azureBlobService.DeleteBlobAsync(existingImage.BlobName);
+                await _imageRepository.DeleteAsync(existingImage.Id);
             }
 
-            // Crear nueva imagen
             var blobName = $"{entityType}/{entityId}/{Guid.NewGuid()}.{GetFileExtension(file.FileName)}";
-            var imageUrl = _azureBlobService.UploadBlob(blobName, file);
+            var imageUrl = await _azureBlobService.UploadBlobAsync(blobName, file);
 
-            var newImage = new Image(0, entityType, entityId, file.FileName, blobName, file.ContentType, file.Length, DateTime.UtcNow);
+            var newImage = new Image(
+                id: 0,
+                entityType: entityType,
+                entityId: entityId,
+                fileName: file.FileName,
+                blobName: blobName,
+                contentType: file.ContentType,
+                size: file.Length,
+                uploadDate: DateTime.UtcNow,
+                auditInfo: new AuditInfo()
+            );
+
             newImage.Validate();
 
-            var added = _imageRepository.Add(newImage);
+            var added = await _imageRepository.AddAsync(newImage);
             return ImageMapper.ToResponse(added, imageUrl);
         }
 
-        public ImageResponse? GetImage(string entityType, int entityId)
+        public async Task<ImageResponse?> GetImageAsync(string entityType, int entityId)
         {
             if (!IsValidEntityType(entityType))
                 throw new ArgumentException("Tipo de entidad no válido.", nameof(entityType));
 
-            var image = _imageRepository.GetByEntityTypeAndId(entityType, entityId);
+            var image = await _imageRepository.GetByEntityTypeAndIdAsync(entityType, entityId);
             if (image == null) return null;
 
-            var imageUrl = _azureBlobService.GetBlobUrl(image.BlobName);
+            var imageUrl = await _azureBlobService.GetBlobUrlAsync(image.BlobName);
             return ImageMapper.ToResponse(image, imageUrl);
         }
 
-        public bool DeleteImage(string entityType, int entityId)
+        public async Task<bool> DeleteImageAsync(string entityType, int entityId)
         {
             if (!IsValidEntityType(entityType))
                 throw new ArgumentException("Tipo de entidad no válido.", nameof(entityType));
 
-            var image = _imageRepository.GetByEntityTypeAndId(entityType, entityId);
+            var image = await _imageRepository.GetByEntityTypeAndIdAsync(entityType, entityId);
             if (image == null) return false;
 
-            _azureBlobService.DeleteBlob(image.BlobName);
-            _imageRepository.Delete(image.Id);
+            await _azureBlobService.DeleteBlobAsync(image.BlobName);
+            await _imageRepository.DeleteAsync(image.Id);
+
             return true;
         }
 

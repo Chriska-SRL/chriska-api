@@ -1,7 +1,9 @@
-﻿using BusinessLogic.Dominio;
-using BusinessLogic.Repository;
-using BusinessLogic.DTOs.DTOsZone;
+﻿using BusinessLogic.Común;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsZone;
+using BusinessLogic.Repository;
 
 namespace BusinessLogic.SubSystem
 {
@@ -14,47 +16,29 @@ namespace BusinessLogic.SubSystem
             _zoneRepository = zoneRepository;
         }
 
-        public ZoneResponse AddZone(AddZoneRequest request)
+        public async Task<ZoneResponse> AddZoneAsync(AddZoneRequest request)
         {
-            Zone newZone = ZoneMapper.ToDomain(request);
-            newZone.Validate();
-
-            Zone added = _zoneRepository.Add(newZone);
-            return ZoneMapper.ToResponse(added);
+            throw new NotImplementedException();
         }
 
-        public ZoneResponse UpdateZone(UpdateZoneRequest request)
+        public async Task<ZoneResponse> UpdateZoneAsync(UpdateZoneRequest request)
         {
-            Zone existing = _zoneRepository.GetById(request.Id)
-                                         ?? throw new ArgumentException("Zona no encontrada.");
-
-            Zone.UpdatableData updatedData = ZoneMapper.ToUpdatableData(request);
-            existing.Update(updatedData);
-
-            Zone updated = _zoneRepository.Update(existing);
-            return ZoneMapper.ToResponse(updated);
+            throw new NotImplementedException();
         }
 
-        public ZoneResponse DeleteZone(int id)
+        public async Task DeleteZoneAsync(DeleteRequest request)
         {
-            Zone deleted = _zoneRepository.Delete(id)
-                            ?? throw new InvalidOperationException("Zona no encontrada.");
-
-            return ZoneMapper.ToResponse(deleted);
+            throw new NotImplementedException();
         }
 
-        public ZoneResponse GetZoneById(int id)
+        public async Task<ZoneResponse> GetZoneByIdAsync(int id)
         {
-            Zone zone = _zoneRepository.GetById(id)
-                         ?? throw new InvalidOperationException("Zona no encontrada.");
-
-            return ZoneMapper.ToResponse(zone);
+            throw new NotImplementedException();
         }
-         
-        public List<ZoneResponse> GetAllZones()
+
+        public async Task<List<ZoneResponse>> GetAllZonesAsync(QueryOptions options)
         {
-            List<Zone> zones = _zoneRepository.GetAll();
-            return zones.Select(ZoneMapper.ToResponse).ToList();
+            throw new NotImplementedException();
         }
     }
 }

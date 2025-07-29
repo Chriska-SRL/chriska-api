@@ -1,11 +1,13 @@
-﻿using BusinessLogic;
-using BusinessLogic.Dominio;
+﻿using API.Utils;
+using BusinessLogic;
+using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using BusinessLogic.Services;
 using BusinessLogic.SubSystem;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Repository.EntityRepositories;
+using Repository.Logging;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -117,6 +119,8 @@ namespace API
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<TokenUtils>();
 
             var connectionString = builder.Configuration.GetConnectionString("Database");
             builder.Services.AddSingleton(connectionString);
@@ -126,25 +130,15 @@ namespace API
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IClientRepository, ClientRepository>();
-            builder.Services.AddScoped<IDeliveryRepository, DeliveryRepository>();
-            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-            builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
-            builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
-            builder.Services.AddScoped<IReturnRequestRepository, ReturnRequestRepository>();
             builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
             builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
             builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
             builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
             builder.Services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
-            builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
             builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
             builder.Services.AddScoped<IVehicleCostRepository, VehicleCostRepository>();
-            builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
-            builder.Services.AddScoped<IPurchaseItemRepository, PurchaseItemRepository>();
-            builder.Services.AddScoped<ICreditNoteRepository, CreditNoteRepository>();
             builder.Services.AddScoped<IShelveRepository, ShelveRepository>();
-            builder.Services.AddScoped<ISaleRepository, SaleRepository>();
             builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 
             builder.Services.AddScoped<IAzureBlobService, AzureBlobService>();
@@ -156,21 +150,19 @@ namespace API
             builder.Services.AddScoped<AuthSubSystem>();
             builder.Services.AddScoped<CategoriesSubSystem>();
             builder.Services.AddScoped<ClientsSubSystem>();
-            builder.Services.AddScoped<DeliveriesSubSystem>();
-            builder.Services.AddScoped<OrdersSubSystem>();
-            builder.Services.AddScoped<PaymentsSubSystem>();
             builder.Services.AddScoped<ProductsSubSystem>();
-            builder.Services.AddScoped<PurchasesSubSystem>();
-            builder.Services.AddScoped<ReturnsSubSystem>();
             builder.Services.AddScoped<StockSubSystem>();
             builder.Services.AddScoped<SuppliersSubSystem>();
             builder.Services.AddScoped<WarehousesSubSystem>();
             builder.Services.AddScoped<ZonesSubSystem>();
             builder.Services.AddScoped<VehicleSubSystem>();
+            builder.Services.AddScoped<BrandSubSystem>();
 
+
+            builder.Services.AddScoped<AuditLogger>();
             builder.Services.AddScoped<Facade>();
 
-            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+            //var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 
             builder.Services.AddCors(options =>
             {
@@ -190,7 +182,7 @@ namespace API
             app.UseSwagger();
             app.UseSwaggerUI();
             // }
-
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseCors("PermitirFrontend");
             app.UseAuthentication();
             app.UseAuthorization();

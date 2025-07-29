@@ -1,5 +1,4 @@
-﻿// BusinessLogic/Services/AzureBlobService.cs
-using Azure.Storage.Blobs;
+﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -17,18 +16,15 @@ namespace BusinessLogic.Services
         {
             var connectionString = configuration.GetConnectionString("AzureStorage");
             _containerName = configuration["AzureStorage:ContainerName"] ?? "images";
-            _blobServiceClient = new BlobServiceClient(connectionString);
+            _blobServiceClient = null;//new BlobServiceClient(connectionString);
             _logger = logger;
-
-            // Crear container si no existe
-            EnsureContainerExists();
         }
 
-        public string UploadBlob(string blobName, IFormFile file)
+        public async Task<string> UploadBlobAsync(string blobName, IFormFile file)
         {
             try
             {
-                var blobClient = GetBlobClient(blobName);
+                var blobClient = await GetBlobClientAsync(blobName);
 
                 var blobHttpHeaders = new BlobHttpHeaders
                 {
@@ -36,7 +32,7 @@ namespace BusinessLogic.Services
                 };
 
                 using var stream = file.OpenReadStream();
-                blobClient.Upload(stream, new BlobUploadOptions
+                await blobClient.UploadAsync(stream, new BlobUploadOptions
                 {
                     HttpHeaders = blobHttpHeaders
                 });
@@ -50,11 +46,11 @@ namespace BusinessLogic.Services
             }
         }
 
-        public string GetBlobUrl(string blobName)
+        public async Task<string> GetBlobUrlAsync(string blobName)
         {
             try
             {
-                var blobClient = GetBlobClient(blobName);
+                var blobClient = await GetBlobClientAsync(blobName);
                 return blobClient.Uri.ToString();
             }
             catch (Exception ex)
@@ -64,12 +60,12 @@ namespace BusinessLogic.Services
             }
         }
 
-        public bool DeleteBlob(string blobName)
+        public async Task<bool> DeleteBlobAsync(string blobName)
         {
             try
             {
-                var blobClient = GetBlobClient(blobName);
-                var response = blobClient.DeleteIfExists();
+                var blobClient = await GetBlobClientAsync(blobName);
+                var response = await blobClient.DeleteIfExistsAsync();
                 return response.Value;
             }
             catch (Exception ex)
@@ -79,24 +75,11 @@ namespace BusinessLogic.Services
             }
         }
 
-        private BlobClient GetBlobClient(string blobName)
+        private async Task<BlobClient> GetBlobClientAsync(string blobName)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+            await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
             return containerClient.GetBlobClient(blobName);
-        }
-
-        private void EnsureContainerExists()
-        {
-            try
-            {
-                var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
-                containerClient.CreateIfNotExists(PublicAccessType.Blob);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al crear container {ContainerName}", _containerName);
-                throw new ApplicationException($"Error al configurar el almacenamiento: {ex.Message}", ex);
-            }
         }
     }
 }

@@ -1,22 +1,35 @@
-﻿namespace BusinessLogic.Dominio
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
+
+namespace BusinessLogic.Domain
 {
-    public class Shelve : IEntity<Shelve.UpdatableData>
+    public class Shelve : IEntity<Shelve.UpdatableData>, IAuditable
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public Warehouse Warehouse { get; set; }
-        public List<ProductStock> Stocks { get; set; } = new List<ProductStock>();
         public List<StockMovement> StockMovements { get; set; } = new List<StockMovement>();
+        public List<Product> Products { get; set; } = new List<Product>();
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Shelve(int id,string name, string description, Warehouse warehouse, List<ProductStock> productStocks, List<StockMovement> stockMovements)
+        public Shelve(string name, string description, Warehouse warehouse, List<StockMovement> stockMovements)
+        {
+            Name = name;
+            Description = description;
+            Warehouse = warehouse ?? throw new ArgumentNullException(nameof(warehouse));
+            StockMovements = stockMovements ?? throw new ArgumentNullException(nameof(stockMovements));
+
+            Validate();
+        }
+        public Shelve(int id,string name, string description, Warehouse warehouse, List<StockMovement> stockMovements,AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
             Warehouse = warehouse ?? throw new ArgumentNullException(nameof(warehouse));
-            Stocks = productStocks ?? throw new ArgumentNullException(nameof(productStocks));
             StockMovements = stockMovements ?? throw new ArgumentNullException(nameof(stockMovements));
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
 
             Validate();
         }
@@ -30,7 +43,6 @@
             Name = "Nombre Temporal";
             Description = "Descripcion Temporal";
             Warehouse = new Warehouse(9999);
-            Stocks = new List<ProductStock>();
             StockMovements = new List<StockMovement>();
         }
 
@@ -60,11 +72,12 @@
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;
             Warehouse = data.Warehouse ?? Warehouse;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
 
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public string? Name { get; set; }
             public string? Description { get; set; }

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using API.Utils;
 using BusinessLogic;
-using BusinessLogic.DTOs.DTOsShelve;
-using BusinessLogic.Dominio;
 using BusinessLogic.Común;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsShelve;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -13,100 +15,57 @@ namespace API.Controllers
     public class ShelvesController : ControllerBase
     {
         private readonly Facade _facade;
+        private readonly TokenUtils _tokenUtils;
 
-        public ShelvesController(Facade facade)
+        public ShelvesController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_WAREHOUSES))]
-        public IActionResult AddShelve([FromBody] AddShelveRequest request)
+        public async Task<ActionResult<ShelveResponse>> AddShelveAsync([FromBody] AddShelveRequest request)
         {
-            try
-            {
-                return Ok(_facade.AddShelve(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar agregar la estantería." });
-            }
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.AddShelveAsync(request);
+            return CreatedAtAction(nameof(GetShelveByIdAsync), new { id = result.Id }, result);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_WAREHOUSES))]
-        public IActionResult UpdateShelve([FromBody] UpdateShelveRequest request)
+        public async Task<ActionResult<ShelveResponse>> UpdateShelveAsync(int id, [FromBody] UpdateShelveRequest request)
         {
-            try
-            {
-                return Ok(_facade.UpdateShelve(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar actualizar la estantería." });
-            }
+            request.Id = id;
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.UpdateShelveAsync(request);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_WAREHOUSES))]
-        public IActionResult DeleteShelve(int id)
+        public async Task<IActionResult> DeleteShelveAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.DeleteShelve(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { error = ex.Message });
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar la estantería." });
-            }
+            var request = new DeleteRequest(id);
+            request.setUserId(_tokenUtils.GetUserId());
+            await _facade.DeleteShelveAsync(request);
+            return NoContent();
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_WAREHOUSES))]
-        public ActionResult<ShelveResponse> GetShelveById(int id)
+        public async Task<ActionResult<ShelveResponse>> GetShelveByIdAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.GetShelveById(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener la estantería con id {id}." });
-            }
+            var result = await _facade.GetShelveByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_WAREHOUSES))]
-        public ActionResult<List<ShelveResponse>> GetAllShelves()
+        public async Task<ActionResult<List<ShelveResponse>>> GetAllShelvesAsync([FromQuery] QueryOptions options)
         {
-            try
-            {
-                return Ok(_facade.GetAllShelves());
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener las estanterías." });
-            }
+            var result = await _facade.GetAllShelvesAsync(options);
+            return Ok(result);
         }
     }
 }

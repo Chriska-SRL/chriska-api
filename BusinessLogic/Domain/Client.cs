@@ -1,11 +1,12 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using System.Text.RegularExpressions;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
-    public class Client:IEntity<Client.UpdatableData>
+    public class Client : IEntity<Client.UpdatableData>, IAuditable, IBankUser
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
@@ -16,14 +17,38 @@ namespace BusinessLogic.Dominio
         public string ContactName { get; set; }
         public string Email { get; set; }
         public string Observations { get; set; }
-        public Bank Bank { get; set; }
-        public string BankAccount { get; set; }
         public int LoanedCrates { get; set; }
+        public string Qualification { get; set; }
         public Zone Zone { get; set; }
-        public List<Request> Requests { get; set; } = new List<Request>();       
-        public List<Receipt> Receipts { get; set; } = new List<Receipt>();
+        public List<BankAccount> BankAccounts { get; set; } = new();
+        public List<Request> Requests { get; set; } = new();
+        public List<Receipt> Receipts { get; set; } = new();
+        public List<ClientDocument> Documents { get; set; } = new();
+        public AuditInfo AuditInfo { get; set; } = new();
 
-        public Client(int id,string name, string rut, string razonSocial, string address, string mapsAddress, string schedule, string phone, string contactName, string email, string observations,Bank bank ,string bankAccount, int loanedCrates, Zone zone)
+        public Client(string name, string rut, string razonSocial, string address, string mapsAddress,
+                      string schedule, string phone, string contactName, string email, string observations,
+                      List<BankAccount> bankAccounts, int loanedCrates, string qualification, Zone zone)
+        {
+            Name = name;
+            RUT = rut;
+            RazonSocial = razonSocial;
+            Address = address;
+            MapsAddress = mapsAddress;
+            Schedule = schedule;
+            Phone = phone;
+            ContactName = contactName;
+            Email = email;
+            Observations = observations;
+            BankAccounts = bankAccounts;
+            LoanedCrates = loanedCrates;
+            Qualification = qualification;
+            Zone = zone;
+            Validate();
+        }
+        public Client(int id, string name, string rut, string razonSocial, string address, string mapsAddress,
+                      string schedule, string phone, string contactName, string email, string observations,
+                      List<BankAccount> bankAccounts, int loanedCrates, string qualification, Zone zone,AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
@@ -36,11 +61,14 @@ namespace BusinessLogic.Dominio
             ContactName = contactName;
             Email = email;
             Observations = observations;
-            Bank = bank;
-            BankAccount = bankAccount;
+            BankAccounts = bankAccounts;
             LoanedCrates = loanedCrates;
+            Qualification = qualification;
             Zone = zone;
+            AuditInfo = auditInfo;
+            Validate();
         }
+
         public Client(int id)
         {
             Id = id;
@@ -54,89 +82,77 @@ namespace BusinessLogic.Dominio
             ContactName = "Contacto Temporal";
             Email = "email@temporal.com";
             Observations = "Sin observaciones";
-            Bank = Bank.Andbank;
-            BankAccount = "0000000000";
+            Qualification = "3/5";
+            BankAccounts = new List<BankAccount>();
             LoanedCrates = 0;
-            Zone = new Zone(0, "Zona Temporal", "Descripción Temporal");
+            Zone = new Zone(99999);
         }
-
 
         public void Validate()
         {
-            if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentNullException(nameof(Name), "El nombre es obligatorio.");
-            if (Name.Length > 50)
-                throw new ArgumentOutOfRangeException(nameof(Name), "El nombre no puede superar los 50 caracteres.");
+            if (string.IsNullOrWhiteSpace(Name) || Name.Length > 50)
+                throw new ArgumentException("El nombre es obligatorio y no puede superar los 50 caracteres.");
 
-            if (string.IsNullOrWhiteSpace(RUT))
-                throw new ArgumentNullException(nameof(RUT), "El RUT es obligatorio.");
-            if (RUT.Length != 12 || !RUT.All(char.IsDigit))
-                throw new ArgumentException("El RUT debe tener exactamente 12 dígitos numéricos.", nameof(RUT));
+            if (string.IsNullOrWhiteSpace(RUT) || RUT.Length != 12 || !RUT.All(char.IsDigit))
+                throw new ArgumentException("El RUT debe tener exactamente 12 dígitos numéricos.");
 
-            if (string.IsNullOrWhiteSpace(RazonSocial))
-                throw new ArgumentNullException(nameof(RazonSocial), "La razón social es obligatoria.");
-            if (RazonSocial.Length > 50)
-                throw new ArgumentOutOfRangeException(nameof(RazonSocial), "La razón social no puede superar los 50 caracteres.");
+            if (string.IsNullOrWhiteSpace(RazonSocial) || RazonSocial.Length > 50)
+                throw new ArgumentException("La razón social es obligatoria y no puede superar los 50 caracteres.");
 
-            if (string.IsNullOrWhiteSpace(Address))
-                throw new ArgumentNullException(nameof(Address), "La dirección es obligatoria.");
-            if (Address.Length > 50)
-                throw new ArgumentOutOfRangeException(nameof(Address), "La dirección no puede superar los 50 caracteres.");
+            if (string.IsNullOrWhiteSpace(Address) || Address.Length > 50)
+                throw new ArgumentException("La dirección es obligatoria y no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(MapsAddress))
-                throw new ArgumentNullException(nameof(MapsAddress), "La dirección de Maps es obligatoria.");
+                throw new ArgumentException("La dirección de Maps es obligatoria.");
 
             if (string.IsNullOrWhiteSpace(Schedule))
-                throw new ArgumentNullException(nameof(Schedule), "El horario es obligatorio.");
+                throw new ArgumentException("El horario es obligatorio.");
 
-            if (string.IsNullOrWhiteSpace(Phone))
-                throw new ArgumentNullException(nameof(Phone), "El teléfono es obligatorio.");
-            if (!Phone.All(char.IsDigit))
-                throw new ArgumentException("El teléfono debe contener solo dígitos.", nameof(Phone));
-            if (Phone.Length < 8 || Phone.Length > 9)
-                throw new ArgumentOutOfRangeException(nameof(Phone), "El teléfono debe tener entre 8 y 9 dígitos.");
+            if (string.IsNullOrWhiteSpace(Phone) || !Phone.All(char.IsDigit) || Phone.Length < 8 || Phone.Length > 9)
+                throw new ArgumentException("El teléfono debe contener entre 8 y 9 dígitos numéricos.");
+
             if (Phone.Length == 9 && !Phone.StartsWith("09"))
-                throw new ArgumentException("El teléfono celular debe comenzar con 09.", nameof(Phone));
+                throw new ArgumentException("El teléfono celular debe comenzar con 09.");
 
             if (string.IsNullOrWhiteSpace(ContactName))
-                throw new ArgumentNullException(nameof(ContactName), "El nombre del contacto es obligatorio.");
+                throw new ArgumentException("El nombre del contacto es obligatorio.");
 
-            if (string.IsNullOrWhiteSpace(Email))
-                throw new ArgumentNullException(nameof(Email), "El email es obligatorio.");
+            if (string.IsNullOrWhiteSpace(Email) || !Regex.IsMatch(Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                throw new ArgumentException("El email es obligatorio y debe tener un formato válido.");
 
-            var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            if (!Regex.IsMatch(Email, emailRegex))
-                throw new ArgumentException("El email tiene un formato inválido.", nameof(Email));
+            if (string.IsNullOrWhiteSpace(Qualification))
+                throw new ArgumentException("La calificación es obligatoria.");
 
-            if (string.IsNullOrWhiteSpace(BankAccount))
-                throw new ArgumentNullException(nameof(BankAccount), "La cuenta bancaria es obligatoria.");
-            if (!BankAccount.All(char.IsDigit))
-                throw new ArgumentException("La cuenta bancaria debe contener solo dígitos.", nameof(BankAccount));
-            if (BankAccount.Length < 10 || BankAccount.Length > 14)
-                throw new ArgumentOutOfRangeException(nameof(BankAccount), "La cuenta bancaria debe tener entre 10 y 14 dígitos.");
+            if (!Regex.IsMatch(Qualification, @"^[1-5]/5$"))
+                throw new ArgumentException("La calificación debe tener el formato n/5 (por ejemplo: 3/5).");
+
             if (LoanedCrates < 0)
                 throw new ArgumentOutOfRangeException(nameof(LoanedCrates), "La cantidad de cajones prestados no puede ser negativa.");
+
+     
         }
 
-        public void Update(UpdatableData updatableData)
+        public void Update(UpdatableData data)
         {
-            Name = updatableData.Name ?? Name;
-            RUT = updatableData.RUT ?? RUT;
-            RazonSocial = updatableData.RazonSocial ?? RazonSocial;
-            Address = updatableData.Address ?? Address;
-            MapsAddress = updatableData.MapsAddress ?? MapsAddress;
-            Schedule = updatableData.Schedule ?? Schedule;
-            Phone = updatableData.Phone ?? Phone;
-            ContactName = updatableData.ContactName ?? ContactName;
-            Email = updatableData.Email ?? Email;
-            Observations = updatableData.Observations ?? Observations;
-            Bank = updatableData.Bank ?? Bank;
-            BankAccount = updatableData.BankAccount ?? BankAccount;
-            LoanedCrates = updatableData.LoanedCrates ?? LoanedCrates;
-            Zone = updatableData.Zone ?? Zone;
+            Name = data.Name ?? Name;
+            RUT = data.RUT ?? RUT;
+            RazonSocial = data.RazonSocial ?? RazonSocial;
+            Address = data.Address ?? Address;
+            MapsAddress = data.MapsAddress ?? MapsAddress;
+            Schedule = data.Schedule ?? Schedule;
+            Phone = data.Phone ?? Phone;
+            ContactName = data.ContactName ?? ContactName;
+            Email = data.Email ?? Email;
+            Observations = data.Observations ?? Observations;
+            LoanedCrates = data.LoanedCrates ?? LoanedCrates;
+            Qualification = data.Qualification ?? Qualification;
+            Zone = data.Zone ?? Zone;
+            BankAccounts = data.BankAccounts ?? BankAccounts;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
         }
-        public class UpdatableData
+
+        public class UpdatableData: AuditData
         {
             public string? Name;
             public string? RUT;
@@ -148,11 +164,10 @@ namespace BusinessLogic.Dominio
             public string? ContactName;
             public string? Email;
             public string? Observations;
-            public Bank? Bank;
-            public string? BankAccount;
             public int? LoanedCrates;
+            public string? Qualification;
             public Zone? Zone;
+            public List<BankAccount>? BankAccounts;
         }
-
     }
 }

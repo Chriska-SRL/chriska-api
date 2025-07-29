@@ -1,8 +1,9 @@
-﻿using BusinessLogic.DTOs.DTOsCost;
+﻿using BusinessLogic.DTOs.DTOsAudit;
+using BusinessLogic.DTOs.DTOsCost;
 
 namespace BusinessLogic.DTOs.DTOsVehicle
 {
-    public class VehicleResponse
+    public class VehicleResponse : AuditableResponse
     {
         public int Id { get; set; }
         public string Plate { get; set; }

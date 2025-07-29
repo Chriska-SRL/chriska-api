@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Domain;
+using BusinessLogic.DTOs.DTOsAudit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.DTOs.DTOsZone
 {
-    public class AddZoneRequest
+    public class AddZoneRequest : AuditableRequest
     {
         public string Name { get; set; }
         public string Description { get; set; }

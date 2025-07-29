@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using API.Utils;
 using BusinessLogic;
-using BusinessLogic.DTOs.DTOsWarehouse;
-using BusinessLogic.Dominio;
 using BusinessLogic.Común;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsWarehouse;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -13,101 +15,57 @@ namespace API.Controllers
     public class WarehousesController : ControllerBase
     {
         private readonly Facade _facade;
+        private readonly TokenUtils _tokenUtils;
 
-        public WarehousesController(Facade facade)
+        public WarehousesController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_WAREHOUSES))]
-        public IActionResult AddWarehouse([FromBody] AddWarehouseRequest request)
+        public async Task<ActionResult<WarehouseResponse>> AddWarehouseAsync([FromBody] AddWarehouseRequest request)
         {
-            try
-            {
-                return Ok(_facade.AddWarehouse(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar agregar el deposito." });
-            }
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.AddWarehouseAsync(request);
+            return CreatedAtAction(nameof(GetWarehouseByIdAsync), new { id = result.Id }, result);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_WAREHOUSES))]
-        public IActionResult UpdateWarehouse([FromBody] UpdateWarehouseRequest request)
+        public async Task<ActionResult<WarehouseResponse>> UpdateWarehouseAsync(int id, [FromBody] UpdateWarehouseRequest request)
         {
-            try
-            {
-                return Ok(_facade.UpdateWarehouse(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar actualizar el deposito." });
-            }
+            request.Id = id;
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.UpdateWarehouseAsync(request);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_WAREHOUSES))]
-        public IActionResult DeleteWarehouse(int id)
+        public async Task<IActionResult> DeleteWarehouseAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.DeleteWarehouse(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { error = ex.Message });
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar el deposito." });
-            }
+            var request = new DeleteRequest(id);
+            request.setUserId(_tokenUtils.GetUserId());
+            await _facade.DeleteWarehouseAsync(request);
+            return NoContent();
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_WAREHOUSES))]
-        public ActionResult<WarehouseResponse> GetWarehouseById(int id)
+        public async Task<ActionResult<WarehouseResponse>> GetWarehouseByIdAsync(int id)
         {
-            try
-            {
-                return Ok(_facade.GetWarehouseById(id));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(Formatter.ArgumentError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = $"Ocurrió un error inesperado al intentar obtener el deposito con id {id}." });
-            }
+            var result = await _facade.GetWarehouseByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_WAREHOUSES))]
-        public ActionResult<List<WarehouseResponse>> GetAllWarehouses()
+        public async Task<ActionResult<List<WarehouseResponse>>> GetAllWarehousesAsync([FromQuery] QueryOptions options)
         {
-            try
-            {
-                return Ok(_facade.GetAllWarehouses());
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los depositos." });
-            }
+            var result = await _facade.GetAllWarehousesAsync(options);
+            return Ok(result);
         }
-
     }
 }

@@ -1,5 +1,8 @@
-﻿using BusinessLogic;
-using BusinessLogic.Dominio;
+﻿using API.Utils;
+using BusinessLogic;
+using BusinessLogic.Común;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsSupplier;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,109 +15,57 @@ namespace API.Controllers
     public class SuppliersController : ControllerBase
     {
         private readonly Facade _facade;
+        private readonly TokenUtils _tokenUtils;
 
-        public SuppliersController(Facade facade)
+        public SuppliersController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
+            _tokenUtils = tokenUtils;
         }
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_SUPPLIERS))]
-        public IActionResult AddSupplier([FromBody] AddSupplierRequest request)
+        public async Task<ActionResult<SupplierResponse>> AddSupplierAsync([FromBody] AddSupplierRequest request)
         {
-            try
-            {
-                var result = _facade.AddSupplier(request);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar agregar el proveedor." });
-            }
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.AddSupplierAsync(request);
+            return CreatedAtAction(nameof(GetSupplierByIdAsync), new { id = result.Id }, result);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_SUPPLIERS))]
-        public IActionResult UpdateSupplier([FromBody] UpdateSupplierRequest request)
+        public async Task<ActionResult<SupplierResponse>> UpdateSupplierAsync(int id, [FromBody] UpdateSupplierRequest request)
         {
-            try
-            {
-                return Ok(_facade.UpdateSupplier(request));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar editar al proveedor." });
-            }
+            request.Id = id;
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.UpdateSupplierAsync(request);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = nameof(Permission.DELETE_SUPPLIERS))]
-        public IActionResult DeleteSupplier(int id)
+        public async Task<IActionResult> DeleteSupplierAsync(int id)
         {
-            try
-            {
-                    return Ok(_facade.DeleteSupplier(id));         
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar eliminar al proveedor." });
-            }
+            var request = new DeleteRequest(id);
+            request.setUserId(_tokenUtils.GetUserId());
+            await _facade.DeleteSupplierAsync(request);
+            return NoContent();
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_SUPPLIERS))]
-        public ActionResult<SupplierResponse> GetSupplierById(int id)
+        public async Task<ActionResult<SupplierResponse>> GetSupplierByIdAsync(int id)
         {
-            try
-            {
-                var response = _facade.GetSupplierById(id);
-                return Ok(response);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener el proveedor." });
-            }
+            var result = await _facade.GetSupplierByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_SUPPLIERS))]
-        public ActionResult<List<SupplierResponse>> GetAllSuppliers()
+        public async Task<ActionResult<List<SupplierResponse>>> GetAllSuppliersAsync([FromQuery] QueryOptions options)
         {
-            try
-            {
-                var response = _facade.GetAllSuppliers();
-                return Ok(response);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(FormatearError(ex));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { error = "Ocurrió un error inesperado al intentar obtener los proveedores." });
-            }
-        }
-        private static object FormatearError(ArgumentException ex)
-        {
-            var mensaje = ex.Message.Split(" (Parameter")[0];
-            return new { campo = ex.ParamName, error = mensaje };
+            var result = await _facade.GetAllSuppliersAsync(options);
+            return Ok(result);
         }
     }
-
 }

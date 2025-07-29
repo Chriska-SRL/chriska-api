@@ -1,11 +1,13 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
+using BusinessLogic.Común.Enums;
 using System.Text.RegularExpressions;
 
-namespace BusinessLogic.Dominio
+namespace BusinessLogic.Domain
 {
-    public class Supplier:IEntity<Supplier.UpdatableData>
+    public class Supplier:IEntity<Supplier.UpdatableData>, IAuditable,IBankUser
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
@@ -14,15 +16,26 @@ namespace BusinessLogic.Dominio
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
-        public Bank Bank { get; set; }
-        public string BankAccount { get; set; }
         public string Observations { get; set; }
         public List<Product> Products { get; set; } = new List<Product>();
-        public List<Payment> Payments { get; set; } = new List<Payment>();
+        public List<BankAccount> BankAccounts { get; set; }
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
-        public List<Day> DaysToDeliver { get; set; } = new List<Day>();
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, Bank bank, string bankAccount, string observations)
+        public Supplier(string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email,string observations, List<BankAccount> bankAccounts)
+        {
+            Name = name;
+            RUT = rut;
+            RazonSocial = razonSocial;
+            Address = address;
+            MapsAddress = mapsAddress;
+            Phone = phone;
+            ContactName = contactName;
+            Email = email;
+            Observations = observations;
+            BankAccounts = bankAccounts ?? new List<BankAccount>();
+        }
+        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, string observations, List<BankAccount> bankAccounts, AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
@@ -33,9 +46,9 @@ namespace BusinessLogic.Dominio
             Phone = phone;
             ContactName = contactName;
             Email = email;
-            Bank = bank;
-            BankAccount = bankAccount;
             Observations = observations;
+            BankAccounts = bankAccounts ?? new List<BankAccount>();
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
         }
         public Supplier(int id)
         {
@@ -48,9 +61,10 @@ namespace BusinessLogic.Dominio
             Phone = "099000000";
             ContactName = "Contacto Temporal";
             Email = "email@temporal.com";
-            Bank = Bank.Andbank;
-            BankAccount = "0000000000";
             Observations = "Sin observaciones";
+            Purchases = new List<Purchase>();
+            Products = new List<Product>();
+            BankAccounts = new List<BankAccount>();
         }
 
         public void Validate()
@@ -96,14 +110,6 @@ namespace BusinessLogic.Dominio
             if (!Regex.IsMatch(Email, emailRegex))
                 throw new ArgumentException("El email tiene un formato inválido.", nameof(Email));
 
-            if (string.IsNullOrEmpty(BankAccount)) throw new Exception("La cuenta bancaria es obligatoria");
-            if (BankAccount.Length > 20)
-                throw new ArgumentOutOfRangeException(nameof(BankAccount), "La cuenta bancaria no puede superar los 20 caracteres.");
-            if (!BankAccount.All(char.IsDigit))
-                throw new ArgumentException("La cuenta bancaria debe contener solo dígitos.", nameof(BankAccount));
-            if (BankAccount.Length < 10 || BankAccount.Length > 14)
-                throw new ArgumentOutOfRangeException(nameof(BankAccount), "La cuenta bancaria debe tener entre 10 y 14 dígitos.");
-
             if (Observations.Length > 255)
                 throw new ArgumentOutOfRangeException(nameof(Observations), "Las observaciones no pueden superar los 255 caracteres.");
         }
@@ -117,13 +123,12 @@ namespace BusinessLogic.Dominio
             Phone = data.Phone ?? Phone;
             ContactName = data.ContactName ?? ContactName;
             Email = data.Email ?? Email;
-            Bank = data.Bank ?? Bank;
-            BankAccount = data.BankAccount ?? BankAccount;
             Observations = data.Observations ?? Observations;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
         }
 
-        public class UpdatableData
+        public class UpdatableData:AuditData
         {
             public string? Name { get; set; }
             public string? RUT { get; set; }
@@ -133,8 +138,6 @@ namespace BusinessLogic.Dominio
             public string? Phone { get; set; }
             public string? ContactName { get; set; }
             public string? Email { get; set; }
-            public Bank? Bank { get; set; }
-            public string? BankAccount { get; set; }
             public string? Observations { get; set; }
         }
     }

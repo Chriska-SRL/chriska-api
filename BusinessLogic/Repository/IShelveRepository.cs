@@ -1,9 +1,8 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Domain;
 
 namespace BusinessLogic.Repository
 {
     public interface IShelveRepository:IRepository<Shelve>
     {
-        Shelve? GetByName(string name);
     }
 }

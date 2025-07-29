@@ -1,6 +1,7 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Domain;
 using BusinessLogic.Común.Enums;
 using Microsoft.Data.SqlClient;
+using BusinessLogic.Común;
 
 namespace Repository.Mappers
 {
@@ -14,8 +15,9 @@ namespace Repository.Mappers
                 type: (VehicleCostType)reader.GetInt32(reader.GetOrdinal("Type")),
                 description: reader.GetString(reader.GetOrdinal("Description")),
                 amount: reader.GetDecimal(reader.GetOrdinal("Amount")),
-                date: reader.GetDateTime(reader.GetOrdinal("Date"))
-            );
+                date: reader.GetDateTime(reader.GetOrdinal("Date")),
+                auditInfo: new AuditInfo()
+                );
         }
     }
 

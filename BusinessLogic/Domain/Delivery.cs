@@ -1,6 +1,8 @@
-﻿namespace BusinessLogic.Dominio
+﻿using BusinessLogic.Común;
+
+namespace BusinessLogic.Domain
 {
-    public class Delivery:IEntity<Delivery.UpdatableData>
+    public class Delivery:IEntity<Delivery.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
@@ -8,6 +10,7 @@
         public string Observation { get; set; }
         public List<Order> Orders { get; set; } = new List<Order>();
         public Vehicle Vehicle { get; set; }
+        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Delivery(int id, DateTime date, string driverName, string observation, List<Order> orders, Vehicle vehicle)
         {
@@ -21,7 +24,7 @@
         public Delivery(int id)
         {
             Id = id;
-            //Date = date;
+          //Date = date;
           // DriverName = driverName;
           //  Observation = observation;
           //  Orders = orders;
@@ -49,6 +52,7 @@
             public string DriverName { get; set; }
             public string Observation { get; set; }
             public Vehicle Vehicle { get; set; }
+            public AuditInfo AuditInfo { get; set; }
         }
     }
 }

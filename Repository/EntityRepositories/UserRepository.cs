@@ -1,287 +1,149 @@
-﻿using BusinessLogic.Dominio;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Domain;
 using BusinessLogic.Repository;
-using Repository.Mappers;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging;
+using Repository;
+using Repository.Logging;
+using Repository.Mappers;
 
-namespace Repository.EntityRepositories
+public class UserRepository : Repository<User, User.UpdatableData>, IUserRepository
 {
-    public class UserRepository : Repository<UserRepository>, IUserRepository
+    public UserRepository(string connectionString, AuditLogger auditLogger)
+        : base(connectionString, auditLogger) { }
+
+    public async Task<User> AddAsync(User user)
     {
-        public UserRepository(string connectionString, ILogger<UserRepository> logger) : base(connectionString, logger) { }
-
-        public User Add(User user)
-        {
-            try
+        int newId = await ExecuteWriteWithAuditAsync(
+            "INSERT INTO Users (Name, Username, Password, IsEnabled, NeedsPasswordChange, RoleId) OUTPUT INSERTED.Id VALUES (@Name, @Username, @Password, @IsEnabled, @NeedsPasswordChange, @RoleId)",
+            user,
+            AuditAction.Insert,
+            cmd =>
             {
-                using var connection = CreateConnection();
-                using var command = new SqlCommand(@"
-                    INSERT INTO Users (Name, Username, Password, IsEnabled, needsPasswordChange, RoleId)
-                    OUTPUT INSERTED.Id 
-                    VALUES (@Name, @Username, @Password, @IsEnabled, @needsPasswordChange, @RoleId)", connection);
+                cmd.Parameters.AddWithValue("@Name", user.Name);
+                cmd.Parameters.AddWithValue("@Username", user.Username);
+                cmd.Parameters.AddWithValue("@Password", user.Password);
+                cmd.Parameters.AddWithValue("@IsEnabled", user.IsEnabled ? "T" : "F");
+                cmd.Parameters.AddWithValue("@NeedsPasswordChange", user.NeedsPasswordChange ? "T" : "F");
+                cmd.Parameters.AddWithValue("@RoleId", user.Role.Id);
+            },
+            async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
+        );
 
-                command.Parameters.AddWithValue("@Name", user.Name);
-                command.Parameters.AddWithValue("@Username", user.Username);
-                command.Parameters.AddWithValue("@Password", user.Password);
-                command.Parameters.AddWithValue("@IsEnabled", user.isEnabled ? 'T' : 'F');
-                command.Parameters.AddWithValue("@needsPasswordChange", user.needsPasswordChange ? 'T' : 'F');
-                command.Parameters.AddWithValue("@RoleId", user.Role.Id);
+        user.Id = newId;
+        return user;
+    }
 
-                connection.Open();
-                var result = command.ExecuteScalar();
-                if (result == null || result == DBNull.Value)
-                    throw new InvalidOperationException("No se pudo insertar el usuario.");
-
-                int userId = (int)result;
-
-                return new User(
-                    id: userId,
-                    name: user.Name,
-                    username: user.Username,
-                    password: user.Password,
-                    isEnabled: user.isEnabled,
-                    needsPasswordChange: user.needsPasswordChange,
-                    role: user.Role,
-                    requests: new List<Request>() 
-                );
-            }
-            catch (SqlException ex)
+    public async Task<User> UpdateAsync(User user)
+    {
+        int rows = await ExecuteWriteWithAuditAsync(
+            "UPDATE Users SET Name = @Name, Username = @Username, Password = @Password, IsEnabled = @IsEnabled, NeedsPasswordChange = @NeedsPasswordChange, RoleId = @RoleId WHERE Id = @Id",
+            user,
+            AuditAction.Update,
+            cmd =>
             {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
+                cmd.Parameters.AddWithValue("@Id", user.Id);
+                cmd.Parameters.AddWithValue("@Name", user.Name);
+                cmd.Parameters.AddWithValue("@Username", user.Username);
+                cmd.Parameters.AddWithValue("@Password", user.Password);
+                cmd.Parameters.AddWithValue("@IsEnabled", user.IsEnabled ? "T" : "F");
+                cmd.Parameters.AddWithValue("@NeedsPasswordChange", user.NeedsPasswordChange ? "T" : "F");
+                cmd.Parameters.AddWithValue("@RoleId", user.Role.Id);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
+        );
 
-        public User? Delete(int id)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
+        if (rows == 0)
+            throw new InvalidOperationException($"No se pudo actualizar el usuario con Id {user.Id}");
 
-                var user = GetUserWithoutRole(id, connection);
-                if (user == null) return null;
+        return user;
+    }
 
-                using var deleteCommand = new SqlCommand("DELETE FROM Users WHERE Id = @Id", connection);
-                deleteCommand.Parameters.AddWithValue("@Id", id);
-                deleteCommand.ExecuteNonQuery();
+    public async Task<User> DeleteAsync(User user)
+    {
+        int rows = await ExecuteWriteWithAuditAsync(
+            "UPDATE Users SET IsDeleted = 1 WHERE Id = @Id",
+            user,
+            AuditAction.Delete,
+            cmd => cmd.Parameters.AddWithValue("@Id", user.Id)
+        );
 
-                user.Role = GetRoleWithPermissions(user.Role.Id, connection);
-                return user;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
+        if (rows == 0)
+            throw new InvalidOperationException($"No se pudo eliminar el usuario con Id {user.Id}");
 
-        public List<User> GetAll()
-        {
-            try
+        return user;
+    }
+
+    public async Task<List<User>> GetAllAsync(QueryOptions options)
+    {
+        return await ExecuteReadAsync(
+            baseQuery: @"
+                SELECT u.*, 
+                       r.Id AS RoleId, r.Name AS RoleName, r.Description AS RoleDescription
+                FROM Users u
+                INNER JOIN Roles r ON u.RoleId = r.Id",
+            map: reader =>
             {
                 var users = new List<User>();
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using (var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, needsPasswordChange, RoleId FROM Users", connection))
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        users.Add(UserMapper.FromReader(reader));
-                    }
-                }
-
-                foreach (var user in users)
-                {
-                    user.Role = GetRoleWithPermissions(user.Role.Id, connection);
-                }
-
+                while (reader.Read())
+                    users.Add(UserMapper.FromReader(reader, includePermissions: false));
                 return users;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
+            },
+            options: options
+        );
+    }
 
-        public User? GetById(int id)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
+    public async Task<User?> GetByIdAsync(int id)
+    {
+        return await ExecuteReadAsync(
+            baseQuery: @"
+                SELECT u.*, 
+                       r.Id AS RoleId, r.Name AS RoleName, r.Description AS RoleDescription,
+                       STRING_AGG(rp.PermissionId, ',') AS Permissions
+                FROM Users u
+                INNER JOIN Roles r ON u.RoleId = r.Id
+                LEFT JOIN Roles_Permissions rp ON r.Id = rp.RoleId
+                WHERE u.Id = @Id
+                GROUP BY u.Id, u.Name, u.Username, u.Password, u.IsEnabled, u.NeedsPasswordChange, u.RoleId,
+                         r.Id, r.Name, r.Description,
+                         u.CreatedAt, u.CreatedBy, u.CreatedLocation,
+                         u.UpdatedAt, u.UpdatedBy, u.UpdatedLocation,
+                         u.DeletedAt, u.DeletedBy, u.DeletedLocation, u.IsDeleted",
+            map: reader => reader.Read() ? UserMapper.FromReader(reader, includePermissions: true) : null,
+            options: new QueryOptions(),
+            configureCommand: cmd => cmd.Parameters.AddWithValue("@Id", id)
+        );
+    }
 
-                var user = GetUserWithoutRole(id, connection);
-                if (user == null) return null;
+    public async Task<User?> GetByUsernameAsync(string username)
+    {
+        return await ExecuteReadAsync(
+            baseQuery: @"
+                SELECT u.*, 
+                       r.Id AS RoleId, r.Name AS RoleName, r.Description AS RoleDescription,
+                       STRING_AGG(rp.PermissionId, ',') AS Permissions
+                FROM Users u
+                INNER JOIN Roles r ON u.RoleId = r.Id
+                LEFT JOIN Roles_Permissions rp ON r.Id = rp.RoleId
+                WHERE u.Username = @Username
+                GROUP BY u.Id, u.Name, u.Username, u.Password, u.IsEnabled, u.NeedsPasswordChange, u.RoleId,
+                         r.Id, r.Name, r.Description,
+                         u.CreatedAt, u.CreatedBy, u.CreatedLocation,
+                         u.UpdatedAt, u.UpdatedBy, u.UpdatedLocation,
+                         u.DeletedAt, u.DeletedBy, u.DeletedLocation, u.IsDeleted",
+            map: reader => reader.Read() ? UserMapper.FromReader(reader, includePermissions: true) : null,
+            options: new QueryOptions(),
+            configureCommand: cmd => cmd.Parameters.AddWithValue("@Username", username)
+        );
+    }
 
-                user.Role = GetRoleWithPermissions(user.Role.Id, connection);
-                return user;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
+    public async Task<bool> ExistsByUsernameAsync(string username)
+    {
+        await using var connection = CreateConnection();
+        await connection.OpenAsync();
 
-        public User? GetByUsername(string username)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
+        using var cmd = new SqlCommand("SELECT 1 FROM Users WHERE Username = @Username AND IsDeleted = 0", connection);
+        cmd.Parameters.AddWithValue("@Username", username);
 
-                var user = GetUserWithoutRole(username, connection);
-                if (user == null) return null;
-
-                user.Role = GetRoleWithPermissions(user.Role.Id, connection);
-                return user;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-
-        public bool ExistsByUsername(string username)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                using var command = new SqlCommand("SELECT COUNT(1) FROM Users WHERE Username = @Username", connection);
-                command.Parameters.AddWithValue("@Username", username);
-
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-
-        public User Update(User user)
-        {
-            try
-            {
-                using var connection = CreateConnection();
-                connection.Open();
-
-                using var command = new SqlCommand(@"
-                    UPDATE Users 
-                    SET Name = @Name, Username = @Username, Password = @Password, IsEnabled = @IsEnabled, needsPasswordChange = @needsPasswordChange, RoleId = @RoleId 
-                    WHERE Id = @Id", connection);
-
-                command.Parameters.AddWithValue("@Id", user.Id);
-                command.Parameters.AddWithValue("@Name", user.Name);
-                command.Parameters.AddWithValue("@Username", user.Username);
-                command.Parameters.AddWithValue("@Password", user.Password);
-                command.Parameters.AddWithValue("@IsEnabled", user.isEnabled ? 'T' : 'F');
-                command.Parameters.AddWithValue("@needsPasswordChange", user.needsPasswordChange ? 'T' : 'F');
-                command.Parameters.AddWithValue("@RoleId", user.Role.Id);
-
-                int affected = command.ExecuteNonQuery();
-                if (affected == 0)
-                    throw new InvalidOperationException($"No se encontró el usuario con ID {user.Id} para actualizar.");
-
-                return user;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Error al acceder a la base de datos.");
-                throw new ApplicationException("Error al acceder a la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado.");
-                throw new ApplicationException("Ocurrió un error inesperado.", ex);
-            }
-        }
-
-        private User? GetUserWithoutRole(int id, SqlConnection connection)
-        {
-            using var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, needsPasswordChange, RoleId FROM Users WHERE Id = @Id", connection);
-            command.Parameters.AddWithValue("@Id", id);
-            using var reader = command.ExecuteReader();
-            return reader.Read() ? UserMapper.FromReader(reader) : null;
-        }
-
-        private User? GetUserWithoutRole(string username, SqlConnection connection)
-        {
-            using var command = new SqlCommand("SELECT Id, Name, Username, Password, IsEnabled, needsPasswordChange, RoleId FROM Users WHERE Username = @Username", connection);
-            command.Parameters.AddWithValue("@Username", username);
-            using var reader = command.ExecuteReader();
-            return reader.Read() ? UserMapper.FromReader(reader) : null;
-        }
-
-        private Role GetRoleWithPermissions(int roleId, SqlConnection connection)
-        {
-            Role? role = null;
-
-            using (var command = new SqlCommand("SELECT Id, Name, Description FROM Roles WHERE Id = @Id", connection))
-            {
-                command.Parameters.AddWithValue("@Id", roleId);
-                using var reader = command.ExecuteReader();
-                if (reader.Read())
-                {
-                    role = RoleMapper.FromReader(reader); 
-                }
-            }
-
-            if (role == null)
-                throw new InvalidOperationException($"Rol con ID {roleId} no encontrado.");
-
-            using (var permCommand = new SqlCommand("SELECT PermissionId FROM Roles_Permissions WHERE RoleId = @RoleId", connection))
-            {
-                permCommand.Parameters.AddWithValue("@RoleId", role.Id);
-                using var permReader = permCommand.ExecuteReader();
-                while (permReader.Read())
-                {
-                    int permId = permReader.GetInt32(permReader.GetOrdinal("PermissionId"));
-                    if (!Enum.IsDefined(typeof(Permission), permId))
-                        throw new InvalidOperationException($"Permiso inválido: {permId}");
-
-                    role.Permissions.Add((Permission)permId);
-                }
-            }
-
-            return role;
-        }
+        var result = await cmd.ExecuteScalarAsync();
+        return result != null;
     }
 }
