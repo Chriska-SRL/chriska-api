@@ -72,8 +72,8 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.EDIT_USERS))]
         public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordRequest request)
         {
-            await _facade.ResetPasswordAsync(request.UserId, request.NewPassword);
-            return Ok(new { message = "Contraseña restablecida correctamente" });
+            string passwordTemporal = await _facade.ResetPasswordAsync(request.UserId, request.NewPassword);
+            return Ok(new { message = "La contraseña nueva es: " + passwordTemporal });
         }
 
         [HttpPost("resetmypassword")]
