@@ -25,11 +25,11 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_USERS))]
-        public async Task<ActionResult<UserResponse>> AddUserAsync([FromBody] AddUserRequest request)
+        public async Task<ActionResult<object>> AddUserAsync([FromBody] AddUserRequest request)
         {
             request.setUserId(_tokenUtils.GetUserId());
-            var result = await _facade.AddUserAsync(request);
-            return CreatedAtAction(nameof(GetUserByIdAsync), new { id = result.Id }, result);
+            var (user, password) = await _facade.AddUserAsync(request);
+            return Created(string.Empty, new { User = user, Password = password });
         }
 
         [HttpPut("{id}")]

@@ -1,47 +1,45 @@
 ﻿using BusinessLogic.Common;
 using BusinessLogic.Común;
-using System.Data;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 namespace BusinessLogic.Domain
 {
-    public class User:IEntity<User.UpdatableData>, IAuditable
+    public class User : IEntity<User.UpdatableData>, IAuditable
     {
         public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public Boolean IsEnabled { get; set; }
-        public Boolean NeedsPasswordChange { get; set; }
+        public bool IsEnabled { get; set; }
+        public bool NeedsPasswordChange { get; set; }
         public Role Role { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public User(int id, string name, string username, string password, Boolean isEnabled, Boolean needsPasswordChange, Role role, AuditInfo auditInfo)
+        public User(int id, string name, string username, string password, bool isEnabled, bool needsPasswordChange, Role role, AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
             Username = username;
-            Password = password ?? "temporal";
-            IsEnabled = isEnabled;
-            NeedsPasswordChange = needsPasswordChange;
-            Role = role ?? new Role(9999);
-            AuditInfo = auditInfo ?? new AuditInfo();
-
-            Validate();
-        }
-        public User(string name, string username, string password, Boolean isEnabled, Boolean needsPasswordChange, Role role)
-        {
-            Name = name;
-            Username = username;
-            Password = password;
+            Password = password ?? throw new ArgumentNullException(nameof(password));
             IsEnabled = isEnabled;
             NeedsPasswordChange = needsPasswordChange;
             Role = role ?? throw new ArgumentNullException(nameof(role));
-
+            AuditInfo = auditInfo ?? new AuditInfo();
             Validate();
         }
-        public User(int id) 
+
+        public User(string name, string username, string password, bool isEnabled, bool needsPasswordChange, Role role)
+        {
+            Name = name;
+            Username = username;
+            Password = password ?? throw new ArgumentNullException(nameof(password));
+            IsEnabled = isEnabled;
+            NeedsPasswordChange = needsPasswordChange;
+            Role = role ?? throw new ArgumentNullException(nameof(role));
+            Validate();
+        }
+
+        public User(int id)
         {
             Id = id;
             Name = "Usuario Temporal";
@@ -69,20 +67,16 @@ namespace BusinessLogic.Domain
             if (string.IsNullOrWhiteSpace(Password))
                 throw new ArgumentNullException(nameof(Password), "La contraseña hash es obligatoria.");
 
-            if (Password.Length > 20 && Password.Length < 8)
-                throw new ArgumentOutOfRangeException(nameof(Password), "La contraseña hash no puede superar los 255 caracteres.");
+            if (Password.Length < 8 || Password.Length > 255)
+                throw new ArgumentOutOfRangeException(nameof(Password), "La contraseña hash debe tener entre 8 y 255 caracteres.");
 
             if (Role == null)
                 throw new ArgumentNullException(nameof(Role), "El rol es obligatorio.");
         }
-        public static void ValidatePassword(string password)
-        {
-            if (string.IsNullOrWhiteSpace(password))
-                throw new ArgumentNullException(nameof(Password), "La contraseña es obligatoria.");
 
-            var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,30}$");
-            if (!regex.IsMatch(password))
-                throw new ArgumentException("La contraseña debe tener entre 8 y 30 caracteres, incluyendo al menos una mayúscula, una minúscula, un número y un carácter especial.", nameof(Password));
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            AuditInfo.SetDeleted(userId, location);
         }
 
         public void Update(UpdatableData data)
@@ -96,23 +90,37 @@ namespace BusinessLogic.Domain
             Name = data.Name ?? Name;
             Username = data.Username ?? Username;
             IsEnabled = data.IsEnabled;
-            Role = data.Role ?? Role;
-            NeedsPasswordChange = data.NeedsPasswordChange;
-            AuditInfo.SetUpdated(data.UserId, data.Location);   
+            Role = data.Role;
+            AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
         }
 
-        public class UpdatableData:AuditData
+        public static void ValidatePassword(string password)
         {
-            public string Name { get; set; }
-            public string Username { get; set; }
-            public Boolean IsEnabled { get; set; }
-            public Boolean NeedsPasswordChange { get; set; }
-            public Role Role { get; set; }
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentNullException(nameof(Password), "La contraseña es obligatoria.");
+
+            var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,30}$");
+            if (!regex.IsMatch(password))
+                throw new ArgumentException("La contraseña debe tener entre 8 y 30 caracteres, incluyendo al menos una mayúscula, una minúscula, un número y un carácter especial.", nameof(Password));
         }
 
-        public override string ToString() { 
-            return $"User(Id: {Id}, Name: {Name}, Username: {Username}, isEnabled: {IsEnabled}, needsPasswordChange: {NeedsPasswordChange},  Role: {Role.ToString()})";
+        internal void SetPassword(string password)
+        {
+            Password = BCrypt.Net.BCrypt.HashPassword(password) ?? throw new ArgumentNullException(nameof(password), "La contraseña no puede ser nula.");
+        }
+
+        public class UpdatableData : AuditData
+        {
+            public string? Name { get; set; }
+            public string? Username { get; set; }
+            public bool IsEnabled { get; set; }
+            public Role Role { get; set; } 
+        }
+
+        public override string ToString()
+        {
+            return $"User(Id: {Id}, Name: {Name}, Username: {Username}, IsEnabled: {IsEnabled}, NeedsPasswordChange: {NeedsPasswordChange}, Role: {Role})";
         }
     }
 }
