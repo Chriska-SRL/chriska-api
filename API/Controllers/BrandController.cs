@@ -29,7 +29,7 @@ namespace API.Controllers
         {
             request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddBrandAsync(request);
-            return CreatedAtAction(nameof(GetBrandByIdAsync), new { id = result.Id }, result); // 201 Created con Location
+            return Created(String.Empty, result); // 201 Created con Location
         }
 
         [HttpPut("{id}")]
