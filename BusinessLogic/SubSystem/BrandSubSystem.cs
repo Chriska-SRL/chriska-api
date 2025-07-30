@@ -17,27 +17,55 @@ namespace BusinessLogic.SubSystem
 
         public async Task<BrandResponse> AddBrandAsync(AddBrandRequest request)
         {
-            throw new NotImplementedException();
+            var newBrand = BrandMapper.ToDomain(request);
+            newBrand.Validate();
+
+            var existing = await _brandRepository.GetByNameAsync(newBrand.Name);
+            if (existing != null)
+                throw new ArgumentException("Ya existe una marca con ese nombre.", nameof(newBrand.Name));
+
+            var added = await _brandRepository.AddAsync(newBrand);
+            return BrandMapper.ToResponse(added);
         }
 
         public async Task<BrandResponse> UpdateBrandAsync(UpdateBrandRequest request)
         {
-            throw new NotImplementedException();
+            var existingBrand = await _brandRepository.GetByIdAsync(request.Id)
+                ?? throw new ArgumentException("No se encontró la marca seleccionada.", nameof(request.Id));
+
+            var existing = await _brandRepository.GetByNameAsync(request.Name);
+            if (existingBrand.Name != request.Name && existing != null)
+                throw new ArgumentException("Ya existe una marca con ese nombre.", nameof(request.Name));
+
+            var updatedData = BrandMapper.ToUpdatableData(request);
+            existingBrand.Update(updatedData);
+
+            var updated = await _brandRepository.UpdateAsync(existingBrand);
+            return BrandMapper.ToResponse(updated);
         }
 
         public async Task<BrandResponse> DeleteBrandAsync(DeleteRequest request)
         {
-            throw new NotImplementedException();
+            var brand = await _brandRepository.GetByIdAsync(request.Id)
+                ?? throw new ArgumentException("No se encontró la marca seleccionada.", nameof(request.Id));
+
+            brand.MarkAsDeleted(request.getUserId(), request.Location);
+            await _brandRepository.DeleteAsync(brand);
+            return BrandMapper.ToResponse(brand);
         }
 
         public async Task<BrandResponse> GetBrandByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var brand = await _brandRepository.GetByIdAsync(id)
+                ?? throw new ArgumentException("No se encontró la marca seleccionada.", nameof(id));
+
+            return BrandMapper.ToResponse(brand);
         }
 
         public async Task<List<BrandResponse>> GetAllBrandsAsync(QueryOptions options)
         {
-            throw new NotImplementedException();
+            var brands = await _brandRepository.GetAllAsync(options);
+            return brands.Select(BrandMapper.ToResponse).ToList();
         }
     }
 }

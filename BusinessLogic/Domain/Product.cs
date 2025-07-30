@@ -182,5 +182,6 @@ namespace BusinessLogic.Domain
         {
             return $"Product(Id: {Id}, Name: {Name}, InternalCode: {InternalCode}, Price: {Price}, Stock: {Stock}, UnitType: {UnitType}, Temperature: {TemperatureCondition}, SubCategory: {SubCategory?.ToString()})";
         }
+
     }
 }
