@@ -96,7 +96,7 @@ namespace Repository.EntityRepositories
                 baseQuery: @"SELECT w.Id, w.Name, w.Description, w.Address, 
                                     s.Id AS ShelveId, s.Name AS ShelveName, s.Description AS ShelveDescription 
                              FROM Warehouses w
-                             LEFT JOIN Shelves s ON s.WarehouseId = w.Id",
+                             LEFT JOIN Shelves s ON s.WarehouseId = w.Id AND s.IsDeleted = 0",
                 map: reader =>
                 {
                     var warehouses = new Dictionary<int, Warehouse>();
@@ -134,14 +134,27 @@ namespace Repository.EntityRepositories
         public async Task<Warehouse?> GetByIdAsync(int id)
         {
             return await ExecuteReadAsync(
-                baseQuery: "SELECT * FROM dbo.Warehouses WHERE Id = @Id",
+                @"SELECT w.Id, w.Name, w.Description, w.Address, 
+                                    s.Id AS ShelveId, s.Name AS ShelveName, s.Description AS ShelveDescription 
+                             FROM Warehouses w
+                             LEFT JOIN Shelves s ON s.WarehouseId = w.Id AND s.IsDeleted = 0
+                             WHERE w.Id = @Id",
                 map: reader =>
                 {
-                    if (reader.Read())
-                        return WarehouseMapper.FromReader(reader);
-                    return null;
+                    Warehouse? warehouse = null;
+                    while (reader.Read())
+                    {
+                        if (warehouse == null)
+                            warehouse = WarehouseMapper.FromReader(reader);
+
+                        var shelve = ShelveMapper.FromReaderForWarehouses(reader);
+                        if (shelve != null)
+                            warehouse.Shelves.Add(shelve);
+                    }
+                    return warehouse;
                 },
                 options: new QueryOptions(),
+                tableAlias:"w",
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
@@ -152,14 +165,27 @@ namespace Repository.EntityRepositories
         public async Task<Warehouse?> GetByNameAsync(string name)
         {
             return await ExecuteReadAsync(
-                baseQuery: "SELECT * FROM dbo.Warehouses WHERE Name = @Name",
+                 @"SELECT w.Id, w.Name, w.Description, w.Address, 
+                                    s.Id AS ShelveId, s.Name AS ShelveName, s.Description AS ShelveDescription 
+                             FROM Warehouses w
+                             LEFT JOIN Shelves s ON s.WarehouseId = w.Id AND s.IsDeleted = 0
+                             WHERE w.Name = @Name",
                 map: reader =>
                 {
-                    if (reader.Read())
-                        return WarehouseMapper.FromReader(reader);
-                    return null;
+                    Warehouse? warehouse = null;
+                    while (reader.Read())
+                    {
+                        if (warehouse == null)
+                            warehouse = WarehouseMapper.FromReader(reader);
+
+                        var shelve = ShelveMapper.FromReaderForWarehouses(reader);
+                        if (shelve != null)
+                            warehouse.Shelves.Add(shelve);
+                    }
+                    return warehouse;
                 },
                 options: new QueryOptions(),
+                tableAlias: "w",
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Name", name);
