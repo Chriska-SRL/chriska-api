@@ -1,13 +1,31 @@
-﻿using BusinessLogic.Domain;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
 {
     public static class ShelveMapper
     {
-        public static Shelve FromReader(SqlDataReader reader, string prefix = "")
+        public static Shelve FromReader(SqlDataReader reader)
         {
-            throw new NotImplementedException("This method needs to be implemented based on the specific database schema and requirements.");
+            return new Shelve(
+                id: reader.GetInt32(reader.GetOrdinal("Id")),
+                name: reader.GetString(reader.GetOrdinal("Name")),
+                description: reader.GetString(reader.GetOrdinal("Description")),
+                warehouse: WarehouseMapper.FromReaderForShelves(reader),
+                auditInfo: AuditInfoMapper.FromReader(reader)
+            );
+        }
+
+        public static Shelve FromReaderForWarehouses(SqlDataReader reader)
+        {
+            return new Shelve(
+                id: reader.GetInt32(reader.GetOrdinal("ShelveId")),
+                name: reader.GetString(reader.GetOrdinal("ShelveName")),
+                description: reader.GetString(reader.GetOrdinal("ShelveDescription")),
+                warehouse: new Warehouse(0),
+                auditInfo: new AuditInfo()
+            );
         }
     }
 }

@@ -4,7 +4,7 @@ namespace BusinessLogic.Común
 {
     public class AuditInfo
     {
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public int? CreatedBy { get; set; }
         public Location CreatedLocation { get; set; }
 

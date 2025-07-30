@@ -11,7 +11,5 @@ namespace BusinessLogic.DTOs.DTOsShelve
         public string Name { get; set; }
         public string Description { get; set; }
         public WarehouseResponse Warehouse { get; set; }
-        public List<StockMovementResponse> Stocks { get; set; }
-        public List<ProductResponse> Products { get; set; }
     }
 }

@@ -10,8 +10,7 @@ namespace BusinessLogic.Común.Mappers
             var shelve = new Shelve(
                 name: request.Name,
                 description: request.Description,
-                warehouse: new Warehouse(request.WarehouseId),
-                stockMovements: new List<StockMovement>()
+                warehouse: new Warehouse(request.WarehouseId)
             );
 
             shelve.AuditInfo.SetCreated(request.getUserId(), request.Location);
@@ -38,8 +37,6 @@ namespace BusinessLogic.Común.Mappers
                 Name = shelve.Name,
                 Description = shelve.Description,
                 Warehouse = WarehouseMapper.ToResponse(shelve.Warehouse),
-                Stocks = shelve.StockMovements.Select(StockMovementMapper.ToResponse).ToList(),
-                Products = shelve.Products.Select(ProductMapper.ToResponse).ToList(),
                 AuditInfo = AuditMapper.ToResponse(shelve.AuditInfo)
             };
         }
