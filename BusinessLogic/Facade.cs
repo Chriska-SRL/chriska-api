@@ -127,12 +127,12 @@ namespace BusinessLogic
         public async Task<List<SupplierResponse>> GetAllSuppliersAsync(QueryOptions options) => await Suppliers.GetAllSuppliersAsync(options);
 
         // --- Users ---
-        public async Task<(UserResponse, string)> AddUserAsync(AddUserRequest request) => await Users.AddUserAsync(request);
+        public async Task<UserResponse> AddUserAsync(AddUserRequest request) => await Users.AddUserAsync(request);
         public async Task<UserResponse> UpdateUserAsync(UpdateUserRequest request) => await Users.UpdateUserAsync(request);
         public async Task DeleteUserAsync(DeleteRequest request) => await Users.DeleteUserAsync(request);
         public async Task<UserResponse> GetUserByIdAsync(int id) => await Users.GetUserByIdAsync(id);
         public async Task<List<UserResponse>> GetAllUsersAsync(QueryOptions options) => await Users.GetAllUsersAsync(options);
-        public async Task<string> ResetPasswordAsync(int userId, string? newPassword = null) => await Users.ResetPasswordAsync(userId, newPassword);
+        public async Task<string> ResetPasswordAsync(ResetPasswordRequest request) => await Users.ResetPasswordAsync(request);
 
         // --- Warehouses ---
         public async Task<WarehouseResponse> AddWarehouseAsync(AddWarehouseRequest request) => await Warehouses.AddWarehouseAsync(request);

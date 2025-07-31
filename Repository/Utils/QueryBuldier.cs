@@ -31,7 +31,7 @@ namespace Repository.Utils
             return this;
         }
 
-        public QueryBuilder ApplyFilters(Dictionary<string, string>? filters)
+        public QueryBuilder ApplyFilters(Dictionary<string, string>? filters, string? tableAlias)
         {
             if (filters == null) return this;
 
@@ -48,16 +48,16 @@ namespace Repository.Utils
                 if (_allowedFilterColumns != null &&
                     !_allowedFilterColumns.Contains(baseKey.ToLowerInvariant()))
                 {
-                    // Filtro no permitido → se ignora
-                    continue;
+                    continue; // Filtro no permitido
                 }
 
                 var paramName = $"@p{Parameters.Count}";
+                var columnSql = tableAlias is null ? baseKey : $"{tableAlias}.{baseKey}";
 
                 string condition =
-                    rawKey.EndsWith("From", StringComparison.OrdinalIgnoreCase) ? $"{baseKey} >= {paramName}" :
-                    rawKey.EndsWith("To", StringComparison.OrdinalIgnoreCase) ? $"{baseKey} <= {paramName}" :
-                    $"{baseKey} LIKE {paramName}";
+                    rawKey.EndsWith("From", StringComparison.OrdinalIgnoreCase) ? $"{columnSql} >= {paramName}" :
+                    rawKey.EndsWith("To", StringComparison.OrdinalIgnoreCase) ? $"{columnSql} <= {paramName}" :
+                    $"{columnSql} LIKE {paramName}";
 
                 InsertWhereCondition(condition);
 
@@ -72,6 +72,7 @@ namespace Repository.Utils
 
             return this;
         }
+
 
         public QueryBuilder ApplySorting(string? sortBy, string? sortDirection)
         {
