@@ -127,7 +127,7 @@ namespace BusinessLogic
         public async Task<List<SupplierResponse>> GetAllSuppliersAsync(QueryOptions options) => await Suppliers.GetAllSuppliersAsync(options);
 
         // --- Users ---
-        public async Task<UserResponse> AddUserAsync(AddUserRequest request) => await Users.AddUserAsync(request);
+        public async Task<(UserResponse, string)> AddUserAsync(AddUserRequest request) => await Users.AddUserAsync(request);
         public async Task<UserResponse> UpdateUserAsync(UpdateUserRequest request) => await Users.UpdateUserAsync(request);
         public async Task DeleteUserAsync(DeleteRequest request) => await Users.DeleteUserAsync(request);
         public async Task<UserResponse> GetUserByIdAsync(int id) => await Users.GetUserByIdAsync(id);

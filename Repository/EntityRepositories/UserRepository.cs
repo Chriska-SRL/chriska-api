@@ -74,6 +74,7 @@ public class UserRepository : Repository<User, User.UpdatableData>, IUserReposit
 
     public async Task<List<User>> GetAllAsync(QueryOptions options)
     {
+        var allowedFilters = new[] { "Name", "Username", "RoleName" };
         return await ExecuteReadAsync(
             baseQuery: @"
                 SELECT u.*, 
@@ -87,6 +88,7 @@ public class UserRepository : Repository<User, User.UpdatableData>, IUserReposit
                     users.Add(UserMapper.FromReader(reader, includePermissions: false));
                 return users;
             },
+            tableAlias: "u",
             options: options
         );
     }
@@ -95,55 +97,47 @@ public class UserRepository : Repository<User, User.UpdatableData>, IUserReposit
     {
         return await ExecuteReadAsync(
             baseQuery: @"
-                SELECT u.*, 
-                       r.Id AS RoleId, r.Name AS RoleName, r.Description AS RoleDescription,
-                       STRING_AGG(rp.PermissionId, ',') AS Permissions
-                FROM Users u
-                INNER JOIN Roles r ON u.RoleId = r.Id
-                LEFT JOIN Roles_Permissions rp ON r.Id = rp.RoleId
-                WHERE u.Id = @Id
-                GROUP BY u.Id, u.Name, u.Username, u.Password, u.IsEnabled, u.NeedsPasswordChange, u.RoleId,
-                         r.Id, r.Name, r.Description,
-                         u.CreatedAt, u.CreatedBy, u.CreatedLocation,
-                         u.UpdatedAt, u.UpdatedBy, u.UpdatedLocation,
-                         u.DeletedAt, u.DeletedBy, u.DeletedLocation, u.IsDeleted",
+            SELECT 
+                u.Id, u.Name, u.Username, u.Password, u.IsEnabled, u.NeedsPasswordChange,
+                r.Id AS RoleId, r.Name AS RoleName, r.Description AS RoleDescription,
+                perms.Permissions
+            FROM Users u
+            INNER JOIN Roles r ON u.RoleId = r.Id
+            OUTER APPLY (
+                SELECT STRING_AGG(CONVERT(varchar(50), rp.PermissionId), ',') AS Permissions
+                FROM Roles_Permissions rp
+                WHERE rp.RoleId = r.Id
+            ) AS perms
+            WHERE u.Id = @Id",
             map: reader => reader.Read() ? UserMapper.FromReader(reader, includePermissions: true) : null,
             options: new QueryOptions(),
+            tableAlias: "u",
             configureCommand: cmd => cmd.Parameters.AddWithValue("@Id", id)
         );
     }
 
+
     public async Task<User?> GetByUsernameAsync(string username)
     {
         return await ExecuteReadAsync(
-            baseQuery: @"
-                SELECT u.*, 
-                       r.Id AS RoleId, r.Name AS RoleName, r.Description AS RoleDescription,
-                       STRING_AGG(rp.PermissionId, ',') AS Permissions
+           baseQuery: @"
+                SELECT 
+                    u.Id, u.Name, u.Username, u.Password, u.IsEnabled, u.NeedsPasswordChange,
+                    r.Id AS RoleId, r.Name AS RoleName, r.Description AS RoleDescription,
+                    perms.Permissions
                 FROM Users u
                 INNER JOIN Roles r ON u.RoleId = r.Id
-                LEFT JOIN Roles_Permissions rp ON r.Id = rp.RoleId
-                WHERE u.Username = @Username
-                GROUP BY u.Id, u.Name, u.Username, u.Password, u.IsEnabled, u.NeedsPasswordChange, u.RoleId,
-                         r.Id, r.Name, r.Description,
-                         u.CreatedAt, u.CreatedBy, u.CreatedLocation,
-                         u.UpdatedAt, u.UpdatedBy, u.UpdatedLocation,
-                         u.DeletedAt, u.DeletedBy, u.DeletedLocation, u.IsDeleted",
+                OUTER APPLY (
+                    SELECT STRING_AGG(CONVERT(varchar(50), rp.PermissionId), ',') AS Permissions
+                    FROM Roles_Permissions rp
+                    WHERE rp.RoleId = r.Id
+                ) AS perms
+                WHERE u.Username = @Username",
             map: reader => reader.Read() ? UserMapper.FromReader(reader, includePermissions: true) : null,
             options: new QueryOptions(),
+            tableAlias: "u",
             configureCommand: cmd => cmd.Parameters.AddWithValue("@Username", username)
         );
     }
 
-    public async Task<bool> ExistsByUsernameAsync(string username)
-    {
-        await using var connection = CreateConnection();
-        await connection.OpenAsync();
-
-        using var cmd = new SqlCommand("SELECT 1 FROM Users WHERE Username = @Username AND IsDeleted = 0", connection);
-        cmd.Parameters.AddWithValue("@Username", username);
-
-        var result = await cmd.ExecuteScalarAsync();
-        return result != null;
-    }
 }
