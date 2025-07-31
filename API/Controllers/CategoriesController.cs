@@ -30,7 +30,7 @@ namespace API.Controllers
         {
             request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddCategoryAsync(request);
-            return CreatedAtAction(nameof(GetCategoryByIdAsync), new { id = result.Id }, result);
+            return Created(String.Empty, result); // 201 Created con Location
         }
 
         [HttpPut("{id}")]
