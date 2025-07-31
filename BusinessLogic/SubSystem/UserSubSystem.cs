@@ -1,8 +1,8 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Común.Mappers;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsUser;
-using BusinessLogic.Interface;
 using BusinessLogic.Repository;
 
 namespace BusinessLogic.SubSystem
@@ -18,7 +18,7 @@ namespace BusinessLogic.SubSystem
             _roleRepository = roleRepository;
         }
 
-        public async Task<(UserResponse, string Password)> AddUserAsync(AddUserRequest request)
+        public async Task<UserResponse> AddUserAsync(AddUserRequest request)
         {
             if (await _userRepository.GetByUsernameAsync(request.Username) != null)
                 throw new ArgumentException("Ya existe un usuario con ese nombre de usuario.", nameof(request.Username));
@@ -32,15 +32,16 @@ namespace BusinessLogic.SubSystem
             newUser.SetPassword(password);
 
             var added = await _userRepository.AddAsync(newUser);
-            return (UserMapper.ToResponse(added), Password: password);
+            added.Role = role;
+            return UserMapper.ToResponse(added);
         }
 
-        public async Task<string> ResetPasswordAsync(int userId, string? newPassword = null)
+        public async Task<string> ResetPasswordAsync(ResetPasswordRequest request)
         {
-            var user = await _userRepository.GetByIdAsync(userId)
-                ?? throw new ArgumentException("No se encontró el usuario seleccionado.", nameof(userId));
+            User user = await _userRepository.GetByIdAsync(request.UserId)
+                ?? throw new ArgumentException("No se encontró el usuario seleccionado.", nameof(request.UserId));
 
-            string password = newPassword;
+            string password = request.NewPassword;
             if (string.IsNullOrWhiteSpace(password))
             {
                 password = PasswordGenerator.Generate();
@@ -51,6 +52,7 @@ namespace BusinessLogic.SubSystem
             }
 
             user.SetPassword(password);
+            user.AuditInfo.SetUpdated(request.getUserId(), request.Location);
             await _userRepository.UpdateAsync(user);
             return password;
         }
@@ -64,15 +66,15 @@ namespace BusinessLogic.SubSystem
                 await _userRepository.GetByUsernameAsync(request.Username)!= null)
                 throw new ArgumentException("Ya existe un usuario con ese nombre de usuario.", nameof(request.Username));
 
-            if (existingUser.Role.Id != request.RoleId) { 
             var role = await _roleRepository.GetByIdAsync(request.RoleId)
                 ?? throw new ArgumentException("No se encontró el rol asociado.", nameof(request.RoleId));
-            }
+            
 
             var updatedData = UserMapper.ToUpdatableData(request);
             existingUser.Update(updatedData);
 
             var updated = await _userRepository.UpdateAsync(existingUser);
+            updated.Role = role;
             return UserMapper.ToResponse(updated);
         }
 

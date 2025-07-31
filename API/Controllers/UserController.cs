@@ -1,4 +1,5 @@
 ﻿using API.Utils;
+using Azure.Core;
 using BusinessLogic;
 using BusinessLogic.Común;
 using BusinessLogic.Domain;
@@ -28,8 +29,8 @@ namespace API.Controllers
         public async Task<ActionResult<object>> AddUserAsync([FromBody] AddUserRequest request)
         {
             request.setUserId(_tokenUtils.GetUserId());
-            var (user, password) = await _facade.AddUserAsync(request);
-            return Created(string.Empty, new { User = user, Password = password });
+            var user = await _facade.AddUserAsync(request);
+            return Created(string.Empty, user);
         }
 
         [HttpPut("{id}")]
@@ -72,7 +73,8 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.EDIT_USERS))]
         public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordRequest request)
         {
-            string passwordTemporal = await _facade.ResetPasswordAsync(request.UserId, request.NewPassword);
+            request.setUserId(_tokenUtils.GetUserId());
+            string passwordTemporal = await _facade.ResetPasswordAsync(request);
             return Ok(new { message = "La contraseña nueva es: " + passwordTemporal });
         }
 
@@ -82,9 +84,13 @@ namespace API.Controllers
             var user = await _facade.AuthenticateAsync(request.Username, request.OldPassword);
             if (user == null)
                 return Unauthorized(new { error = "Credenciales inválidas" });
+            
+            ResetPasswordRequest myRequest = new ResetPasswordRequest {UserId = user.Id, NewPassword = request.NewPassword};
+            myRequest.setUserId(_tokenUtils.GetUserId());
 
-            await _facade.ResetPasswordAsync(user.Id, request.NewPassword);
+            await _facade.ResetPasswordAsync(myRequest);
             return Ok(new { message = "Contraseña restablecida correctamente" });
         }
+
     }
 }

@@ -39,7 +39,7 @@ namespace Repository
                     .AddAuditColumns(tableAlias)
                     .AddIsDeletedFilter(tableAlias)
                     .WithAllowedFilters(allowedFilterColumns ?? Array.Empty<string>())
-                    .ApplyFilters(options.Filters)
+                    .ApplyFilters(options.Filters, tableAlias)
                     .ApplySorting(options.SortBy, options.SortDirection)
                     .ApplyPagination(options.Page, options.PageSize);
 

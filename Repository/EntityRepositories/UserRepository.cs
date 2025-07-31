@@ -89,7 +89,8 @@ public class UserRepository : Repository<User, User.UpdatableData>, IUserReposit
                 return users;
             },
             tableAlias: "u",
-            options: options
+            options: options,
+            allowedFilterColumns: allowedFilters
         );
     }
 
