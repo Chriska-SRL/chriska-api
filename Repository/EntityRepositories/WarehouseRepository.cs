@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using Repository.Logging;
+using Repository.Mappers;
 using BusinessLogic.Común;
 
 namespace Repository.EntityRepositories
@@ -10,29 +11,162 @@ namespace Repository.EntityRepositories
         public WarehouseRepository(string connectionString, AuditLogger auditLogger)
             : base(connectionString, auditLogger) { }
 
-        public Task<Warehouse> AddAsync(Warehouse entity)
+        #region Add
+
+        public async Task<Warehouse> AddAsync(Warehouse warehouse)
         {
-            throw new NotImplementedException();
+            int newId = await ExecuteWriteWithAuditAsync(
+                "INSERT INTO dbo.Warehouses (Name, Description, Address) OUTPUT INSERTED.Id VALUES (@Name, @Description, @Address)",
+                warehouse,
+                AuditAction.Insert,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Name", warehouse.Name);
+                    cmd.Parameters.AddWithValue("@Description", warehouse.Description);
+                    cmd.Parameters.AddWithValue("@Address", warehouse.Address);
+                },
+                async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
+            );
+
+            if (newId == 0)
+                throw new InvalidOperationException("No se pudo obtener el Id insertado.");
+
+            return new Warehouse(newId, warehouse.Name, warehouse.Description, warehouse.Address, new List<Shelve>(), warehouse.AuditInfo);
         }
 
-        public Task<Warehouse> DeleteAsync(Warehouse entity)
+        #endregion
+
+        #region Update
+
+        public async Task<Warehouse> UpdateAsync(Warehouse warehouse)
         {
-            throw new NotImplementedException();
+            int rows = await ExecuteWriteWithAuditAsync(
+                "UPDATE dbo.Warehouses SET Name = @Name, Description = @Description, Address = @Address WHERE Id = @Id",
+                warehouse,
+                AuditAction.Update,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", warehouse.Id);
+                    cmd.Parameters.AddWithValue("@Name", warehouse.Name);
+                    cmd.Parameters.AddWithValue("@Description", warehouse.Description);
+                    cmd.Parameters.AddWithValue("@Address", warehouse.Address);
+                }
+            );
+
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo actualizar el almacén con Id {warehouse.Id}");
+
+            return warehouse;
         }
 
-        public Task<List<Warehouse>> GetAllAsync(QueryOptions options)
+        #endregion
+
+        #region Delete
+
+        public async Task<Warehouse> DeleteAsync(Warehouse warehouse)
         {
-            throw new NotImplementedException();
+            if (warehouse == null)
+                throw new ArgumentNullException(nameof(warehouse), "El almacén no puede ser nulo.");
+
+            int rows = await ExecuteWriteWithAuditAsync(
+                "UPDATE dbo.Warehouses SET IsDeleted = 1 WHERE Id = @Id",
+                warehouse,
+                AuditAction.Delete,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", warehouse.Id);
+                }
+            );
+
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo eliminar el almacén con Id {warehouse.Id}");
+
+            return warehouse;
         }
 
-        public Task<Warehouse?> GetByIdAsync(int id)
+        #endregion
+
+        #region GetAll
+
+        public async Task<List<Warehouse>> GetAllAsync(QueryOptions options)
         {
-            throw new NotImplementedException();
+            var allowedFilters = new[] { "Name", "Description", "Address" };
+
+            return await ExecuteReadAsync(
+                baseQuery: @"SELECT w.Id, w.Name, w.Description, w.Address, 
+                                    s.Id AS ShelveId, s.Name AS ShelveName, s.Description AS ShelveDescription 
+                             FROM Warehouses w
+                             LEFT JOIN Shelves s ON s.WarehouseId = w.Id",
+                map: reader =>
+                {
+                    var warehouses = new Dictionary<int, Warehouse>();
+
+                    while (reader.Read())
+                    {
+                        var warehouseId = reader.GetInt32(reader.GetOrdinal("Id"));
+
+                        if (!warehouses.TryGetValue(warehouseId, out var warehouse))
+                        {
+                            warehouse = WarehouseMapper.FromReader(reader);
+                            warehouse.Shelves = new List<Shelve>();
+                            warehouses.Add(warehouseId, warehouse);
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("ShelveId")))
+                        {
+                            var shelve = ShelveMapper.FromReaderForWarehouses(reader);
+                            warehouse.Shelves.Add(shelve);
+                        }
+                    }
+
+                    return warehouses.Values.ToList();
+                },
+                options: options,
+                tableAlias: "w",
+                allowedFilterColumns: allowedFilters
+            );
         }
 
-        public Task<Warehouse> UpdateAsync(Warehouse entity)
+        #endregion
+
+        #region GetById
+
+        public async Task<Warehouse?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await ExecuteReadAsync(
+                baseQuery: "SELECT * FROM dbo.Warehouses WHERE Id = @Id",
+                map: reader =>
+                {
+                    if (reader.Read())
+                        return WarehouseMapper.FromReader(reader);
+                    return null;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                }
+            );
         }
+
+        public async Task<Warehouse?> GetByNameAsync(string name)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: "SELECT * FROM dbo.Warehouses WHERE Name = @Name",
+                map: reader =>
+                {
+                    if (reader.Read())
+                        return WarehouseMapper.FromReader(reader);
+                    return null;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Name", name);
+                }
+            );
+        }
+
+        #endregion
     }
 }

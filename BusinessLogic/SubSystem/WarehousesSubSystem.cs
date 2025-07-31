@@ -19,58 +19,120 @@ namespace BusinessLogic.SubSystem
             _shelveRepository = shelveRepository;
         }
 
-        // Almacenes
+        // Warehouses
 
         public async Task<WarehouseResponse> AddWarehouseAsync(AddWarehouseRequest request)
         {
-            throw new NotImplementedException();
+            var existing = await _warehouseRepository.GetByNameAsync(request.Name);
+            if (existing != null)
+                throw new ArgumentException("Ya existe un almacén con ese nombre.", nameof(request.Name));
+
+            var newWarehouse = WarehouseMapper.ToDomain(request);
+            newWarehouse.Validate();
+
+            var added = await _warehouseRepository.AddAsync(newWarehouse);
+            return WarehouseMapper.ToResponse(added);
         }
 
         public async Task<WarehouseResponse> UpdateWarehouseAsync(UpdateWarehouseRequest request)
         {
-            throw new NotImplementedException();
+            var existingWarehouse = await _warehouseRepository.GetByIdAsync(request.Id)
+                ?? throw new ArgumentException("No se encontró el almacén seleccionado.", nameof(request.Id));
+
+            var existing = await _warehouseRepository.GetByNameAsync(request.Name);
+            if (existingWarehouse.Name != request.Name && existing != null)
+                throw new ArgumentException("Ya existe un almacén con ese nombre.", nameof(request.Name));
+
+            var updatedData = WarehouseMapper.ToUpdatableData(request);
+            existingWarehouse.Update(updatedData);
+
+            var updated = await _warehouseRepository.UpdateAsync(existingWarehouse);
+            return WarehouseMapper.ToResponse(updated);
         }
 
         public async Task DeleteWarehouseAsync(DeleteRequest request)
         {
-            throw new NotImplementedException();
+            var warehouse = await _warehouseRepository.GetByIdAsync(request.Id)
+                ?? throw new ArgumentException("No se encontró el almacén seleccionado.", nameof(request.Id));
+
+            if (warehouse.Shelves.Any())
+                throw new InvalidOperationException("No se puede eliminar el almacén porque tiene estanterías asociadas.");
+
+            warehouse.MarkAsDeleted(request.getUserId(), request.Location);
+            await _warehouseRepository.DeleteAsync(warehouse);
         }
 
         public async Task<WarehouseResponse> GetWarehouseByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var warehouse = await _warehouseRepository.GetByIdAsync(id)
+                ?? throw new ArgumentException("No se encontró el almacén seleccionado.", nameof(id));
+
+            return WarehouseMapper.ToResponse(warehouse);
         }
 
         public async Task<List<WarehouseResponse>> GetAllWarehousesAsync(QueryOptions options)
         {
-            throw new NotImplementedException();
+            var warehouses = await _warehouseRepository.GetAllAsync(options);
+            return warehouses.Select(WarehouseMapper.ToResponse).ToList();
         }
 
-        // Estanterías
+        // Shelves
 
         public async Task<ShelveResponse> AddShelveAsync(AddShelveRequest request)
         {
-            throw new NotImplementedException();
+            var warehouse = await _warehouseRepository.GetByIdAsync(request.WarehouseId);
+            if ( warehouse == null)
+                throw new ArgumentException("El almacén seleccionado no existe.", nameof(request.WarehouseId));
+
+            if ( await _shelveRepository.GetByNameAsync(request.Name) != null)
+                throw new ArgumentException("Ya existe una estantería con ese nombre.", nameof(request.Name));
+
+            var newShelve = ShelveMapper.ToDomain(request);
+            newShelve.Validate();
+
+            var added = await _shelveRepository.AddAsync(newShelve);
+            added.Warehouse = warehouse;
+            return ShelveMapper.ToResponse(added);
         }
 
         public async Task<ShelveResponse> UpdateShelveAsync(UpdateShelveRequest request)
         {
-            throw new NotImplementedException();
+            var existingShelve = await _shelveRepository.GetByIdAsync(request.Id)
+                ?? throw new ArgumentException("No se encontró la estantería seleccionada.", nameof(request.Id));
+
+            var warehouse = await _warehouseRepository.GetByIdAsync(request.WarehouseId);
+            if (warehouse == null)
+                throw new ArgumentException("El almacén seleccionado no existe.", nameof(request.WarehouseId));
+
+            var updatedData = ShelveMapper.ToUpdatableData(request);
+            existingShelve.Update(updatedData);
+
+            var updated = await _shelveRepository.UpdateAsync(existingShelve);
+            updated.Warehouse = warehouse;
+            return ShelveMapper.ToResponse(updated);
         }
 
         public async Task DeleteShelveAsync(DeleteRequest request)
         {
-            throw new NotImplementedException();
+            var shelve = await _shelveRepository.GetByIdAsync(request.Id)
+                ?? throw new ArgumentException("No se encontró la estantería seleccionada.", nameof(request.Id));
+
+            shelve.MarkAsDeleted(request.getUserId(), request.Location);
+            await _shelveRepository.DeleteAsync(shelve);
         }
 
         public async Task<ShelveResponse> GetShelveByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var shelve = await _shelveRepository.GetByIdAsync(id)
+                ?? throw new ArgumentException("No se encontró la estantería seleccionada.", nameof(id));
+
+            return ShelveMapper.ToResponse(shelve);
         }
 
         public async Task<List<ShelveResponse>> GetAllShelvesAsync(QueryOptions options)
         {
-            throw new NotImplementedException();
+            var shelves = await _shelveRepository.GetAllAsync(options);
+            return shelves.Select(ShelveMapper.ToResponse).ToList();
         }
     }
 }

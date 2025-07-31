@@ -2,7 +2,8 @@
 
 namespace BusinessLogic.Repository
 {
-    public interface IShelveRepository:IRepository<Shelve>
+    public interface IShelveRepository : IRepository<Shelve>
     {
+        Task<Shelve> GetByNameAsync(string name);
     }
 }
