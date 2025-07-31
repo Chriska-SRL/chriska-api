@@ -74,7 +74,7 @@ public class UserRepository : Repository<User, User.UpdatableData>, IUserReposit
 
     public async Task<List<User>> GetAllAsync(QueryOptions options)
     {
-        var allowedFilters = new[] { "Name", "Username", "RoleName" };
+        var allowedFilters = new[] { "Name", "Username", "RoleId", "IsEnabled" };
         return await ExecuteReadAsync(
             baseQuery: @"
                 SELECT u.*, 
