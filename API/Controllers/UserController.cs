@@ -1,5 +1,4 @@
 ﻿using API.Utils;
-using Azure.Core;
 using BusinessLogic;
 using BusinessLogic.Común;
 using BusinessLogic.Domain;
@@ -75,7 +74,7 @@ namespace API.Controllers
         {
             request.setUserId(_tokenUtils.GetUserId());
             string passwordTemporal = await _facade.ResetPasswordAsync(request);
-            return Ok(new { message = "La contraseña nueva es: " + passwordTemporal });
+            return Ok(new { message = "Contraseña restablecida correctamente", password = passwordTemporal });
         }
 
         [HttpPost("resetmypassword")]
