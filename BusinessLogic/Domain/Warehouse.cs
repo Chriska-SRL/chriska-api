@@ -87,5 +87,10 @@ namespace BusinessLogic.Domain
         {
             return $"Warehouse(Id: {Id}, Name: {Name}, Description: {Description}, Address: {Address})";
         }
+
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -126,5 +126,26 @@ namespace Repository.EntityRepositories
         }
 
         #endregion
+
+        #region GetByName
+        public async Task<Category?> GetByNameAsync(string name)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: "SELECT * FROM Categories WHERE Name = @Name AND IsDeleted = 0",
+                map: reader =>
+                {
+                    if (reader.Read())
+                        return CategoryMapper.FromReader(reader);
+                    return null;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Name", name);
+                }
+            );
+        }
+
+        #endregion
     }
 }

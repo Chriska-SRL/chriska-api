@@ -77,5 +77,10 @@ namespace BusinessLogic.Domain
         {
             return $"SubCategory(Id: {Id}, Name: {Name}, Description: {Description}, Category: {Category})";
         }
+
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

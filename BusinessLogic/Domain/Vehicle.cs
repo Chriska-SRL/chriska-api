@@ -71,6 +71,12 @@ namespace BusinessLogic.Domain
             AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
         }
+
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            throw new NotImplementedException();
+        }
+
         public class UpdatableData:AuditData
         {
             public string? Plate { get; set; }
