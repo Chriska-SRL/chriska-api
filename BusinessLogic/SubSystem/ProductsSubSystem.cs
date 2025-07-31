@@ -1,6 +1,4 @@
 ﻿using BusinessLogic.Común;
-using BusinessLogic.Común.Mappers;
-using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.Repository;

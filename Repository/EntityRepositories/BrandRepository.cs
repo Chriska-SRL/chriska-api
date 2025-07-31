@@ -127,5 +127,26 @@ namespace Repository.EntityRepositories
         }
 
         #endregion
+
+        #region GetByName
+        public async Task<Brand?> GetByNameAsync(string name)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: "SELECT * FROM Brands WHERE Name = @Name",
+                map: reader =>
+                {
+                    if (reader.Read())
+                        return BrandMapper.FromReader(reader);
+                    return null;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Name", name);
+                }
+            );
+        }
+        #endregion
+
     }
 }
