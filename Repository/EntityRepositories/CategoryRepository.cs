@@ -88,6 +88,7 @@ namespace Repository.EntityRepositories
 
         public async Task<List<Category>> GetAllAsync(QueryOptions options)
         {
+            var allowedFilters = new[] { "Name" };
             return await ExecuteReadAsync(
                 baseQuery: "SELECT * FROM Categories",
                 map: reader =>
@@ -99,7 +100,8 @@ namespace Repository.EntityRepositories
                     }
                     return categories;
                 },
-                options: options
+                options: options,
+                allowedFilterColumns: allowedFilters
             );
         }
 
