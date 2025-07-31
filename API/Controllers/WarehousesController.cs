@@ -29,7 +29,7 @@ namespace API.Controllers
         {
             request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddWarehouseAsync(request);
-            return CreatedAtAction(nameof(GetWarehouseByIdAsync), new { id = result.Id }, result);
+            return Created(String.Empty, result);
         }
 
         [HttpPut("{id}")]

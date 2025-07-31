@@ -13,16 +13,26 @@ namespace BusinessLogic.Domain
         public List<Product> Products { get; set; } = new List<Product>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Shelve(string name, string description, Warehouse warehouse, List<StockMovement> stockMovements)
+        public Shelve(string name, string description, Warehouse warehouse)
         {
             Name = name;
             Description = description;
             Warehouse = warehouse ?? throw new ArgumentNullException(nameof(warehouse));
-            StockMovements = stockMovements ?? throw new ArgumentNullException(nameof(stockMovements));
 
             Validate();
         }
-        public Shelve(int id,string name, string description, Warehouse warehouse, List<StockMovement> stockMovements,AuditInfo auditInfo)
+        public Shelve(int id,string name, string description, Warehouse warehouse,AuditInfo auditInfo)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+            Warehouse = warehouse ?? throw new ArgumentNullException(nameof(warehouse));
+            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+
+            Validate();
+        }
+
+        public Shelve(int id, string name, string description, Warehouse warehouse, List<StockMovement> stockMovements, AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
@@ -91,7 +101,7 @@ namespace BusinessLogic.Domain
 
         public void MarkAsDeleted(int? userId, Location? location)
         {
-            throw new NotImplementedException();
+            AuditInfo.SetDeleted(userId, location);
         }
     }
 }

@@ -6,13 +6,25 @@ namespace Repository.Mappers
 {
     public static class WarehouseMapper
     {
-        public static Warehouse FromReader(SqlDataReader reader, string prefix = "")
+        public static Warehouse FromReader(SqlDataReader reader)
         {
             return new Warehouse(
-                id: reader.GetInt32(reader.GetOrdinal(prefix + "Id")),
-                name: reader.GetString(reader.GetOrdinal(prefix + "Name")),
-                description: reader.GetString(reader.GetOrdinal(prefix + "Description")),
-                address: reader.GetString(reader.GetOrdinal(prefix + "Address")),
+                id: reader.GetInt32(reader.GetOrdinal("Id")),
+                name: reader.GetString(reader.GetOrdinal("Name")),
+                description: reader.GetString(reader.GetOrdinal("Description")),
+                address: reader.GetString(reader.GetOrdinal("Address")),
+                shelves: new List<Shelve>(),
+                auditInfo: AuditInfoMapper.FromReader(reader)
+            );
+        }
+
+        public static Warehouse FromReaderForShelves(SqlDataReader reader)
+        {
+            return new Warehouse(
+                id: reader.GetInt32(reader.GetOrdinal("WarehouseId")),
+                name: reader.GetString(reader.GetOrdinal("WarehouseName")),
+                description: reader.GetString(reader.GetOrdinal("WarehouseDescription")),
+                address: reader.GetString(reader.GetOrdinal("WarehouseAddress")),
                 shelves: new List<Shelve>(),
                 auditInfo: new AuditInfo()
             );

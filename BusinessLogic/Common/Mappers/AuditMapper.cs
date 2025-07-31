@@ -10,7 +10,7 @@ public static class AuditMapper
 
         return new AuditInfoResponse
         {
-            Created = new AuditAction
+            Created = audit.CreatedAt.HasValue ? new AuditAction
             {
                 At = audit.CreatedAt, 
                 By = new AuditUser
@@ -19,7 +19,7 @@ public static class AuditMapper
                     User = "implementar nombre"
                 },
                 Location = audit.CreatedLocation
-            },
+            }: null,
 
             Updated = audit.UpdatedAt.HasValue ? new AuditAction
             {
