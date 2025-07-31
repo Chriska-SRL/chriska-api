@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
 
 namespace BusinessLogic.Domain
@@ -40,6 +41,11 @@ namespace BusinessLogic.Domain
             AccountName = data.AccountName ?? AccountName;
             AccountNumber = data.AccountNumber ?? AccountNumber;
             Bank = data.Bank ?? Bank;
+        }
+
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            throw new NotImplementedException();
         }
 
         public class UpdatableData

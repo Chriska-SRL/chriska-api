@@ -8,7 +8,6 @@ namespace BusinessLogic.Domain
         public int Id { get; set; } = 0;
         public string Name { get; set; } 
         public string Description { get; set; } 
-        public List<SubCategory> SubCategories { get; set; } = new List<SubCategory>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         
         
@@ -72,7 +71,13 @@ namespace BusinessLogic.Domain
 
         public override string ToString()
         {
-            return $"Category(Id: {Id}, Name: {Name}, Description: {Description}, SubCategories: {SubCategories.Count})";
+            return $"Category(Id: {Id}, Name: {Name}, Description: {Description})";
+        }
+
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            AuditInfo.SetDeleted(userId, location);
+            Validate();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 
 namespace BusinessLogic.Domain
 {
@@ -50,6 +51,12 @@ namespace BusinessLogic.Domain
             OrderRequest = data.OrderRequest;
             Validate();
         }
+
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            throw new NotImplementedException();
+        }
+
         public class UpdatableData
         {
             public DateTime Date { get; set; }

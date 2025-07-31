@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
 using BusinessLogic.Domain;
 
@@ -51,6 +52,12 @@ namespace BusinessLogic.Domain
             Status = data.Status ?? Status;
             Validate();
         }
+
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            throw new NotImplementedException();
+        }
+
         public class UpdatableData
         {
             public string? Description { get; set; } = string.Empty;

@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using BusinessLogic.Domain;
 using System.Text.RegularExpressions;
 
@@ -43,6 +44,12 @@ namespace BusinessLogic.Domain
             AuditInfo = data.AuditInfo ?? new AuditInfo();
             Validate();
         }
+
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            throw new NotImplementedException();
+        }
+
         public class UpdatableData
         {
             public DateTime? Date { get; set; }

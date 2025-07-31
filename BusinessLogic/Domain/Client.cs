@@ -152,6 +152,11 @@ namespace BusinessLogic.Domain
             Validate();
         }
 
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            throw new NotImplementedException();
+        }
+
         public class UpdatableData: AuditData
         {
             public string? Name;
