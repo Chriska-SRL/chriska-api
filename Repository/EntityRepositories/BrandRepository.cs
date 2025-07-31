@@ -89,6 +89,7 @@ namespace Repository.EntityRepositories
 
         public async Task<List<Brand>> GetAllAsync(QueryOptions options)
         {
+            var allowedFilters = new[] { "Name" };
             return await ExecuteReadAsync(
                 baseQuery: "SELECT * FROM Brands",
                 map: reader =>
@@ -100,7 +101,8 @@ namespace Repository.EntityRepositories
                     }
                     return brands;
                 },
-                options: options
+                options: options,
+                allowedFilterColumns: allowedFilters
             );
         }
 
