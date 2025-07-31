@@ -28,6 +28,7 @@ namespace BusinessLogic.Común.Mappers
                 Username = request.Username,
                 IsEnabled = request.IsEnabled,
                 Role = new Role(request.RoleId),
+
                 UserId = request.getUserId(),
                 Location = request.Location
             };

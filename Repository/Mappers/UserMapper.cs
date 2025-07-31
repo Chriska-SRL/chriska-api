@@ -1,7 +1,6 @@
 ﻿using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 using Repository.Mappers;
-using System.Data;
 using System.Data.Common;
 
 public static class UserMapper
@@ -13,14 +12,14 @@ public static class UserMapper
             name: reader.GetString(reader.GetOrdinal("RoleName")),
             description: reader.GetString(reader.GetOrdinal("RoleDescription")),
             permissions: includePermissions ? ParsePermissions(reader) : new List<Permission>(),
-            auditInfo:null
+            auditInfo: new BusinessLogic.Común.AuditInfo()
         );
 
         var user = new User(
             id: reader.GetInt32(reader.GetOrdinal("Id")),
             name: reader.GetString(reader.GetOrdinal("Name")),
             username: reader.GetString(reader.GetOrdinal("Username")),
-            password: null,
+            password: reader.GetString(reader.GetOrdinal("Password")),
             isEnabled: reader.GetString(reader.GetOrdinal("IsEnabled")) == "T",
             needsPasswordChange: reader.GetString(reader.GetOrdinal("NeedsPasswordChange")) == "T",
             role: role,
