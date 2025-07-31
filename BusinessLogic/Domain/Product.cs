@@ -177,7 +177,11 @@ namespace BusinessLogic.Domain
 
             InternalCode = $"{SubCategory.Id}{Id:D4}";
         }
-
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            AuditInfo.SetDeleted(userId, location);
+            Validate();
+        }
         public override string ToString()
         {
             return $"Product(Id: {Id}, Name: {Name}, InternalCode: {InternalCode}, Price: {Price}, Stock: {Stock}, UnitType: {UnitType}, Temperature: {TemperatureCondition}, SubCategory: {SubCategory?.ToString()})";

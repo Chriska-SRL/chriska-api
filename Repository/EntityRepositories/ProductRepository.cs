@@ -170,5 +170,42 @@ namespace Repository.EntityRepositories
         }
 
         #endregion
+
+        #region GetByBarcode
+
+        public async Task<Product?> GetByBarcodeAsync(string? barcode)
+        {
+            if (string.IsNullOrWhiteSpace(barcode))
+                return null;
+
+            return await ExecuteReadAsync(
+                baseQuery: @"
+            SELECT p.*, 
+                   sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, 
+                   b.Id AS BrandId, b.Name AS BrandName,
+                   img.FileName AS ImageFileName, img.BlobName AS ImageBlobName
+            FROM Products p
+            INNER JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+            INNER JOIN Brands b ON p.BrandId = b.Id
+            LEFT JOIN Images img ON img.EntityType = 'products' AND img.EntityId = p.Id
+            WHERE p.BarCode = @BarCode AND p.IsDeleted = 0",
+                map: reader =>
+                {
+                    if (reader.Read())
+                        return ProductMapper.FromReader(reader);
+                    return null;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@BarCode", barcode);
+                }
+            );
+        }
+
+        #endregion
+
+
+
     }
 }
