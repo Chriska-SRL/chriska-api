@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
 
 namespace BusinessLogic.Domain
@@ -98,6 +99,11 @@ namespace BusinessLogic.Domain
         public override string ToString()
         {
             return $"StockMovement(Id: {Id}, Date: {Date}, Quantity: {Quantity}, Type: {Type}, Reason: {Reason})";
+        }
+
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -88,5 +88,10 @@ namespace BusinessLogic.Domain
         {
             return $"Shelve(Id: {Id}, Name: {Name}, Description: {Description}, WarehouseId: {Warehouse?.Id})";
         }
+
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
