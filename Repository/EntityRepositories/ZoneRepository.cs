@@ -87,9 +87,9 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
     public async Task<Zone> DeleteAsync(Zone entity)
     {
         const string deleteQuery = @"
-        UPDATE Zones 
-        SET DeletedAt = @DeletedAt, DeletedBy = @DeletedBy, DeletedLocation = @DeletedLocation 
-        WHERE Id = @Id";
+    UPDATE Zones 
+    SET IsDeleted = 1 
+    WHERE Id = @Id";
 
         return await ExecuteWriteWithAuditAsync(
             deleteQuery,
@@ -130,12 +130,7 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
                 zone = ZoneMapper.FromReader(reader);
             }
 
-            if (zone != null)
-            {
-                zone.DeliveryDays = await GetDaysAsync(zone.Id, "Entrega", connection);
-                zone.RequestDays = await GetDaysAsync(zone.Id, "Pedido", connection);
-            }
-
+   
             return zone;
         }
         catch (Exception ex)
@@ -163,14 +158,7 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
                 if (zone != null)
                     zones.Add(zone);
             }
-            reader.Close();
-
-            foreach (var zone in zones)
-            {
-                zone.DeliveryDays = await GetDaysAsync(zone.Id, "Entrega", connection);
-                zone.RequestDays = await GetDaysAsync(zone.Id, "Pedido", connection);
-            }
-
+     
             return zones;
         }
         catch (Exception ex)
@@ -195,24 +183,5 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
         }
     }
 
-    private async Task<List<Day>> GetDaysAsync(int zoneId, string type, SqlConnection connection)
-    {
-        const string query = @"
-            SELECT Day FROM ZoneDays WHERE ZoneId = @ZoneId AND Type = @Type";
-
-        var days = new List<Day>();
-
-        using var command = new SqlCommand(query, connection);
-        command.Parameters.AddWithValue("@ZoneId", zoneId);
-        command.Parameters.AddWithValue("@Type", type);
-
-        using var reader = await command.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-        {
-            if (Enum.TryParse(reader.GetString(0), out Day day))
-                days.Add(day);
-        }
-
-        return days;
-    }
+ 
 }
