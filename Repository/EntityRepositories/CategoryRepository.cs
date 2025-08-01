@@ -133,7 +133,7 @@ namespace Repository.EntityRepositories
         public async Task<Category?> GetByNameAsync(string name)
         {
             return await ExecuteReadAsync(
-                baseQuery: "SELECT * FROM Categories WHERE Name = @Name AND IsDeleted = 0",
+                baseQuery: "SELECT * FROM Categories WHERE Name = @Name",
                 map: reader =>
                 {
                     if (reader.Read())

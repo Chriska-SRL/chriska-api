@@ -80,7 +80,8 @@ namespace BusinessLogic.Domain
 
         public void MarkAsDeleted(int? userId, Location? location)
         {
-            throw new NotImplementedException();
+            AuditInfo.SetDeleted(userId, location);
+            Validate();
         }
     }
 }

@@ -171,6 +171,41 @@ namespace Repository.EntityRepositories
 
         #endregion
 
+        #region GetBySubCategoryId
+
+        public async Task<List<Product>> GetBySubCategoryIdAsync(int subCategoryId)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: @"
+            SELECT p.*, 
+                   sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, 
+                   b.Id AS BrandId, b.Name AS BrandName,
+                   img.FileName AS ImageFileName, img.BlobName AS ImageBlobName
+            FROM Products p
+            INNER JOIN SubCategories sc ON p.SubCategoryId = sc.Id
+            INNER JOIN Brands b ON p.BrandId = b.Id
+            LEFT JOIN Images img ON img.EntityType = 'products' AND img.EntityId = p.Id
+            WHERE p.SubCategoryId = @SubCategoryId ",
+                map: reader =>
+                {
+                    var products = new List<Product>();
+                    while (reader.Read())
+                    {
+                        var product = ProductMapper.FromReader(reader);
+                        products.Add(product);
+                    }
+                    return products;
+                },
+                options: new QueryOptions(),
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@SubCategoryId", subCategoryId);
+                }
+            );
+        }
+
+        #endregion
+
 
     }
 }

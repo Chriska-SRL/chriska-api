@@ -90,6 +90,7 @@ namespace Repository.EntityRepositories
 
         public async Task<List<SubCategory>> GetAllAsync(QueryOptions options)
         {
+            var allowedFilterColumns = new[] { "Name", "Description", "CategoryId" };
             return await ExecuteReadAsync(
                 baseQuery: @"
                 SELECT sc.*, 
@@ -105,7 +106,10 @@ namespace Repository.EntityRepositories
                     }
                     return subCategories;
                 },
-                options: options
+                options: options,
+                tableAlias:"sc"
+                ,
+                allowedFilterColumns: allowedFilterColumns
             );
         }
 
@@ -130,6 +134,8 @@ namespace Repository.EntityRepositories
                     return null;
                 },
                 options: new QueryOptions(),
+                tableAlias:"sc"
+                ,
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
@@ -139,5 +145,35 @@ namespace Repository.EntityRepositories
 
 
         #endregion
+
+        #region GetByName
+
+        public async Task<SubCategory?> GetByNameAsync(string name)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: @"
+                     SELECT sc.*, 
+                            c.Id AS CategoryId, c.Name AS CategoryName, c.Description AS CategoryDescription
+                     FROM SubCategories sc
+                     INNER JOIN Categories c ON sc.CategoryId = c.Id
+                     WHERE sc.Name = @Name",
+                map: reader =>
+                {
+                    if (reader.Read())
+                        return SubCategoryMapper.FromReader(reader);
+                    return null;
+                },
+                options: new QueryOptions(),
+                tableAlias:"sc"
+                ,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Name", name);
+                }
+            );
+        }
+
+        #endregion
+
     }
 }
