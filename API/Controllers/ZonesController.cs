@@ -29,7 +29,7 @@ namespace API.Controllers
         {
             request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddZoneAsync(request);
-            return CreatedAtAction(nameof(GetZoneByIdAsync), new { id = result.Id }, result); // 201 Created
+            return Created(String.Empty, result);
         }
 
         [HttpPut("{id}")]

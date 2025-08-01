@@ -1,12 +1,6 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Repository.Mappers
 {
     public static class ZoneMapper
@@ -19,16 +13,14 @@ namespace Repository.Mappers
                 description: reader.GetString(reader.GetOrdinal("Description")),
                 deliveryDays: new List<Day>(),
                 requestDays: new List<Day>(),
-                auditInfo: new AuditInfo()
+                auditInfo: AuditInfoMapper.FromReader(reader)
             );
 
-            if (!reader.IsDBNull(reader.GetOrdinal("BlobName")))
+            if (!reader.IsDBNull(reader.GetOrdinal("ImageUrl")))
             {
-                var blobName = reader.GetString(reader.GetOrdinal("BlobName"));
-                zone.ImageUrl = $"https://chriska.blob.core.windows.net/images/{blobName}";
+                zone.ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl"));
             }
 
-            
             if (!reader.IsDBNull(reader.GetOrdinal("DeliveryDays")))
             {
                 var deliveryDaysStr = reader.GetString(reader.GetOrdinal("DeliveryDays"));
@@ -38,7 +30,6 @@ namespace Repository.Mappers
                     .ToList();
             }
 
-           
             if (!reader.IsDBNull(reader.GetOrdinal("RequestDays")))
             {
                 var requestDaysStr = reader.GetString(reader.GetOrdinal("RequestDays"));
@@ -50,6 +41,5 @@ namespace Repository.Mappers
 
             return zone;
         }
-
     }
 }

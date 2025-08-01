@@ -16,9 +16,9 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
     public async Task<Zone> AddAsync(Zone entity)
     {
         const string insertZoneQuery = @"
-        INSERT INTO Zones (Name, Description, ImageUrl, CreatedAt, CreatedBy, CreatedLocation)
-        OUTPUT INSERTED.Id
-        VALUES (@Name, @Description, @ImageUrl, @CreatedAt, @CreatedBy, @CreatedLocation)";
+            INSERT INTO Zones (Name, Description, ImageUrl)
+            OUTPUT INSERTED.Id
+            VALUES (@Name, @Description, @ImageUrl)";
 
         return await ExecuteWriteWithAuditAsync(
             insertZoneQuery,
@@ -163,6 +163,7 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
                 if (zone != null)
                     zones.Add(zone);
             }
+            reader.Close();
 
             foreach (var zone in zones)
             {
@@ -174,10 +175,10 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
         }
         catch (Exception ex)
         {
-            throw new Exception("Ocurrió un error al obtener las zonas.");
+            throw new Exception("Ocurrió un error al obtener las zonas: " + ex.Message, ex);
         }
     }
-
+    
     private async Task InsertDaysAsync(int zoneId, List<Day> days, string type, SqlConnection connection, SqlTransaction transaction)
     {
         const string insertDay = @"

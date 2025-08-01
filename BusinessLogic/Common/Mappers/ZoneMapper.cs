@@ -39,6 +39,7 @@ namespace BusinessLogic.Común.Mappers
                 Name = zone.Name,
                 Description = zone.Description,
                 ImageUrl = zone.ImageUrl,
+                
                 AuditInfo = AuditMapper.ToResponse(zone.AuditInfo)
             };
         }

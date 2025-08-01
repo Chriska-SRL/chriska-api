@@ -12,7 +12,7 @@ namespace BusinessLogic.Domain
         public List<Day> DeliveryDays { get; set; } = new List<Day>();
         public List<Day> RequestDays { get; set; } = new List<Day>();
         public List<Client> Clients { get; set; } = new List<Client>();
-        public Image? Image { get; set; }
+        public string? ImageUrl { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Zone(int id, string name, string description,List<Day> deliveryDays,List<Day> requestDays,AuditInfo auditInfo)
@@ -25,13 +25,12 @@ namespace BusinessLogic.Domain
             AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
             Validate();
         }
-        public Zone(string name, string description, List<Day> deliveryDays, List<Day> requestDays, Image? image)
+        public Zone(string name, string description, List<Day> deliveryDays, List<Day> requestDays)
         {
             Name = name;
             Description = description;
             DeliveryDays = deliveryDays;
             RequestDays = requestDays;
-            Image = image;
             Validate();
         }
         public Zone(int id)

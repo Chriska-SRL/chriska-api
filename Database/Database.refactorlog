@@ -112,4 +112,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="LoanedCrates" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="18f73b51-f6c0-4805-a33d-cc08bbd9f651" ChangeDateTime="08/01/2025 22:48:27">
+    <Property Name="ElementName" Value="[dbo].[Zones].[ImagenUrl]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Zones]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ImageUrl" />
+  </Operation>
 </Operations>
