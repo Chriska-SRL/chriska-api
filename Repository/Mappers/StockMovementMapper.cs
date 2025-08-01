@@ -31,6 +31,7 @@ namespace Repository.Mappers
                 id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
                 name: reader.GetString(reader.GetOrdinal("CategoryName")),
                 description: reader.GetString(reader.GetOrdinal("CategoryDescription")),
+                subCategories: new List<SubCategory>(),
                 auditInfo: null
             );
 
