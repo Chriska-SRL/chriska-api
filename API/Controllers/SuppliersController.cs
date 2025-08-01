@@ -29,7 +29,7 @@ namespace API.Controllers
         {
             request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddSupplierAsync(request);
-            return CreatedAtAction(nameof(GetSupplierByIdAsync), new { id = result.Id }, result);
+            return Created(String.Empty, result);
         }
 
         [HttpPut("{id}")]

@@ -1,24 +1,18 @@
-﻿using BusinessLogic.Common;
-using BusinessLogic.Común;
-using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Común.Enums;
 
 namespace BusinessLogic.Domain
 {
-    public class BankAccount : IEntity<BankAccount.UpdatableData>, IAuditable
+    public class BankAccount 
     {
-        public int Id { get; set; }
         public string AccountName { get; set; } = string.Empty;
         public string AccountNumber { get; set; } = string.Empty;
         public Bank Bank { get; set; }
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public BankAccount(int id, string accountName, string accountNumber, Bank bank, AuditInfo auditInfo)
+        public BankAccount(string accountName, string accountNumber, Bank bank)
         {
-            Id = id;
             AccountName = accountName;
             AccountNumber = accountNumber;
             Bank = bank;
-            AuditInfo = auditInfo;
         }
 
         public void Validate()
@@ -36,23 +30,5 @@ namespace BusinessLogic.Domain
                 throw new ArgumentOutOfRangeException(nameof(AccountNumber), "El número de cuenta debe tener entre 10 y 14 dígitos.");
         }
 
-        public void Update(UpdatableData data)
-        {
-            AccountName = data.AccountName ?? AccountName;
-            AccountNumber = data.AccountNumber ?? AccountNumber;
-            Bank = data.Bank ?? Bank;
-        }
-
-        public void MarkAsDeleted(int? userId, Location? location)
-        {
-            throw new NotImplementedException();
-        }
-
-        public class UpdatableData
-        {
-            public string? AccountName { get; set; }
-            public string? AccountNumber { get; set; }
-            public Bank? Bank { get; set; }
-        }
     }
 }

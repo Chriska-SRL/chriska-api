@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Común.Enums;
 using BusinessLogic.DTOs.DTOsAudit;
+using BusinessLogic.DTOs.DTOsBankAccount;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,6 @@ namespace BusinessLogic.DTOs.DTOsSupplier
         public string ContactName { get; set; }
         public string Email { get; set; }
         public string Observations { get; set; }
+        public List<BankAccountAddRequest> BankAccounts { get; set; }
     }
 }

@@ -124,13 +124,14 @@ namespace BusinessLogic.Domain
             ContactName = data.ContactName ?? ContactName;
             Email = data.Email ?? Email;
             Observations = data.Observations ?? Observations;
+            BankAccounts = data.BankAccounts ?? BankAccounts;
             AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
         }
 
         public void MarkAsDeleted(int? userId, Location? location)
         {
-            throw new NotImplementedException();
+            AuditInfo.SetDeleted(userId, location);
         }
 
         public class UpdatableData:AuditData
@@ -144,6 +145,7 @@ namespace BusinessLogic.Domain
             public string? ContactName { get; set; }
             public string? Email { get; set; }
             public string? Observations { get; set; }
+            public List<BankAccount>? BankAccounts { get; set; } 
         }
     }
 }
