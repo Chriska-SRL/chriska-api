@@ -6,7 +6,6 @@ using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.Repository;
 using BusinessLogic.Services;
-using Microsoft.AspNetCore.Http;
 
 namespace BusinessLogic.SubSystem
 {

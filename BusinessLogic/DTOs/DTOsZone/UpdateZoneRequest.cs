@@ -12,7 +12,7 @@ namespace BusinessLogic.DTOs.DTOsZone
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<int> DeliveryDays { get; set; } = new List<int>();
-        public List<int> RequestDays { get; set; } = new List<int>();
+        public List<string> DeliveryDays { get; set; } = new List<string>();
+        public List<string> RequestDays { get; set; } = new List<string>();
     }
 }

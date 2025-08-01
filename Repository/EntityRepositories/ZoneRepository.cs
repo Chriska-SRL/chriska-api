@@ -2,7 +2,6 @@
 using BusinessLogic.Repository;
 using BusinessLogic.Común;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging;
 using Repository.Mappers;
 using Repository.Logging;
 
@@ -16,9 +15,9 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
     public async Task<Zone> AddAsync(Zone entity)
     {
         const string insertZoneQuery = @"
-        INSERT INTO Zones (Name, Description, ImageUrl, CreatedAt, CreatedBy, CreatedLocation)
-        OUTPUT INSERTED.Id
-        VALUES (@Name, @Description, @ImageUrl, @CreatedAt, @CreatedBy, @CreatedLocation)";
+    INSERT INTO Zones (Name, Description, DeliveryDays, RequestDays)
+    OUTPUT INSERTED.Id
+    VALUES (@Name, @Description, @DeliveryDays, @RequestDays)";
 
         return await ExecuteWriteWithAuditAsync(
             insertZoneQuery,
@@ -28,30 +27,27 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
             {
                 cmd.Parameters.AddWithValue("@Name", entity.Name);
                 cmd.Parameters.AddWithValue("@Description", entity.Description);
-                cmd.Parameters.AddWithValue("@ImageUrl", (object?)entity.ImageUrl ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@DeliveryDays", string.Join(",", entity.DeliveryDays.Select(d => d.ToString())));
+                cmd.Parameters.AddWithValue("@RequestDays", string.Join(",", entity.RequestDays.Select(d => d.ToString())));
+
             },
             async cmd =>
             {
                 var zoneId = (int)await cmd.ExecuteScalarAsync();
 
-                using var connection = cmd.Connection!;
-                using var transaction = cmd.Transaction!;
-
-                await InsertDaysAsync(zoneId, entity.DeliveryDays, "Entrega", connection, transaction);
-                await InsertDaysAsync(zoneId, entity.RequestDays, "Pedido", connection, transaction);
-
-                return new Zone(zoneId, entity.Name, entity.Description, entity.DeliveryDays, entity.RequestDays, entity.AuditInfo);
+                return new Zone(zoneId, entity.Name, entity.Description,entity.ImageUrl, entity.DeliveryDays, entity.RequestDays, entity.AuditInfo);
             }
         );
     }
-
 
     public async Task<Zone> UpdateAsync(Zone entity)
     {
         const string updateQuery = @"
         UPDATE Zones 
-        SET Name = @Name, Description = @Description, ImageUrl = @ImageUrl,
-            UpdatedAt = @UpdatedAt, UpdatedBy = @UpdatedBy, UpdatedLocation = @UpdatedLocation
+        SET Name = @Name,
+            Description = @Description,
+            DeliveryDays = @DeliveryDays,
+            RequestDays = @RequestDays
         WHERE Id = @Id";
 
         return await ExecuteWriteWithAuditAsync(
@@ -63,33 +59,27 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
                 cmd.Parameters.AddWithValue("@Id", entity.Id);
                 cmd.Parameters.AddWithValue("@Name", entity.Name);
                 cmd.Parameters.AddWithValue("@Description", entity.Description);
-                cmd.Parameters.AddWithValue("@ImageUrl", (object?)entity.ImageUrl ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@DeliveryDays", string.Join(",", entity.DeliveryDays.Select(d => d.ToString())));
+                cmd.Parameters.AddWithValue("@RequestDays", string.Join(",", entity.RequestDays.Select(d => d.ToString())));
             },
             async cmd =>
             {
-                await cmd.ExecuteNonQueryAsync();
-
-                using var connection = cmd.Connection!;
-                using var transaction = cmd.Transaction!;
-
-                var deleteDaysCmd = new SqlCommand("DELETE FROM ZoneDays WHERE ZoneId = @ZoneId", connection, transaction);
-                deleteDaysCmd.Parameters.AddWithValue("@ZoneId", entity.Id);
-                await deleteDaysCmd.ExecuteNonQueryAsync();
-
-                await InsertDaysAsync(entity.Id, entity.DeliveryDays, "Entrega", connection, transaction);
-                await InsertDaysAsync(entity.Id, entity.RequestDays, "Pedido", connection, transaction);
+                var rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected == 0)
+                    throw new InvalidOperationException($"No se encontró la zona con Id {entity.Id} para actualizar.");
 
                 return entity;
             }
         );
     }
 
+
     public async Task<Zone> DeleteAsync(Zone entity)
     {
         const string deleteQuery = @"
-        UPDATE Zones 
-        SET DeletedAt = @DeletedAt, DeletedBy = @DeletedBy, DeletedLocation = @DeletedLocation 
-        WHERE Id = @Id";
+    UPDATE Zones 
+    SET IsDeleted = 1 
+    WHERE Id = @Id";
 
         return await ExecuteWriteWithAuditAsync(
             deleteQuery,
@@ -130,12 +120,7 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
                 zone = ZoneMapper.FromReader(reader);
             }
 
-            if (zone != null)
-            {
-                zone.DeliveryDays = await GetDaysAsync(zone.Id, "Entrega", connection);
-                zone.RequestDays = await GetDaysAsync(zone.Id, "Pedido", connection);
-            }
-
+   
             return zone;
         }
         catch (Exception ex)
@@ -163,55 +148,33 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
                 if (zone != null)
                     zones.Add(zone);
             }
-
-            foreach (var zone in zones)
-            {
-                zone.DeliveryDays = await GetDaysAsync(zone.Id, "Entrega", connection);
-                zone.RequestDays = await GetDaysAsync(zone.Id, "Pedido", connection);
-            }
-
+     
             return zones;
         }
         catch (Exception ex)
         {
-            throw new Exception("Ocurrió un error al obtener las zonas.");
+            throw new Exception("Ocurrió un error al obtener las zonas: " + ex.Message, ex);
         }
     }
-
-    private async Task InsertDaysAsync(int zoneId, List<Day> days, string type, SqlConnection connection, SqlTransaction transaction)
+    
+    public async Task<string> UpdateImageUrlAsync(Zone zone, string imageUrl)
     {
-        const string insertDay = @"
-            INSERT INTO ZoneDays (ZoneId, Day, Type)
-            VALUES (@ZoneId, @Day, @Type)";
+        int rows = await ExecuteWriteWithAuditAsync(
+            "UPDATE Zones SET ImageUrl = @ImageUrl WHERE Id = @Id",
+            zone,
+            AuditAction.Update,
+            configureCommand: cmd =>
+            {
+                cmd.Parameters.AddWithValue("@Id", zone.Id);
+                cmd.Parameters.AddWithValue("@ImageUrl", (object?)imageUrl ?? DBNull.Value);
+            }
+        );
 
-        foreach (var day in days)
-        {
-            var cmd = new SqlCommand(insertDay, connection, transaction);
-            cmd.Parameters.AddWithValue("@ZoneId", zoneId);
-            cmd.Parameters.AddWithValue("@Day", day.ToString());
-            cmd.Parameters.AddWithValue("@Type", type);
-            await cmd.ExecuteNonQueryAsync();
-        }
+        if (rows == 0)
+            throw new InvalidOperationException($"No se pudo actualizar la imagen de la zona con Id {zone.Id}");
+
+        return imageUrl;
     }
 
-    private async Task<List<Day>> GetDaysAsync(int zoneId, string type, SqlConnection connection)
-    {
-        const string query = @"
-            SELECT Day FROM ZoneDays WHERE ZoneId = @ZoneId AND Type = @Type";
 
-        var days = new List<Day>();
-
-        using var command = new SqlCommand(query, connection);
-        command.Parameters.AddWithValue("@ZoneId", zoneId);
-        command.Parameters.AddWithValue("@Type", type);
-
-        using var reader = await command.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-        {
-            if (Enum.TryParse(reader.GetString(0), out Day day))
-                days.Add(day);
-        }
-
-        return days;
-    }
 }
