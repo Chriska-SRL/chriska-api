@@ -35,6 +35,7 @@ namespace BusinessLogic.Común.Mappers
                 Id = category.Id,
                 Name = category.Name,
                 Description = category.Description,
+                SubCategories = category.SubCategories.Select(SubCategoryMapper.ToResponse).ToList(),
                 AuditInfo = AuditMapper.ToResponse(category.AuditInfo)
             };
         }

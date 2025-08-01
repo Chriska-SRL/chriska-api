@@ -12,6 +12,7 @@ namespace Repository.Mappers
                 id: reader.GetInt32(reader.GetOrdinal("Id")),
                 name: reader.GetString(reader.GetOrdinal("Name")),
                 description: reader.GetString(reader.GetOrdinal("Description")),
+                subCategories: new List<SubCategory>(),
                 auditInfo: AuditInfoMapper.FromReader(reader)
             );
 
@@ -22,6 +23,7 @@ namespace Repository.Mappers
                 id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
                 name: reader.GetString(reader.GetOrdinal("CategoryName")),
                 description: reader.GetString(reader.GetOrdinal("CategoryDescription")),
+                subCategories: new List<SubCategory>(),
                 auditInfo: new AuditInfo()
             );
         }

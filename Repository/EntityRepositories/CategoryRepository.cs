@@ -30,7 +30,7 @@ namespace Repository.EntityRepositories
             if (newId == 0)
                 throw new InvalidOperationException("No se pudo obtener el Id insertado.");
 
-            return new Category(newId, category.Name, category.Description, category.AuditInfo);
+            return new Category(newId, category.Name, category.Description,new List<SubCategory>() ,category.AuditInfo);
         }
 
         #endregion
@@ -88,19 +88,40 @@ namespace Repository.EntityRepositories
 
         public async Task<List<Category>> GetAllAsync(QueryOptions options)
         {
-            var allowedFilters = new[] { "Name" };
+            var allowedFilters = new[] { "Name","Description" };
+
             return await ExecuteReadAsync(
-                baseQuery: "SELECT * FROM Categories",
+                baseQuery: @"
+            SELECT c.Id, c.Name, c.Description,
+                   sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, sc.Description AS SubCategoryDescription
+            FROM Categories c
+            LEFT JOIN SubCategories sc ON sc.CategoryId = c.Id",
                 map: reader =>
                 {
-                    var categories = new List<Category>();
+                    var categories = new Dictionary<int, Category>();
+
                     while (reader.Read())
                     {
-                        categories.Add(CategoryMapper.FromReader(reader));
+                        var categoryId = reader.GetInt32(reader.GetOrdinal("Id"));
+
+                        if (!categories.TryGetValue(categoryId, out var category))
+                        {
+                            category = CategoryMapper.FromReader(reader);
+                            category.SubCategories = new List<SubCategory>(); 
+                            categories[categoryId] = category;
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("SubCategoryId")))
+                        {
+                            var subCategory = SubCategoryMapper.FromReaderForCategory(reader);
+                            category.SubCategories.Add(subCategory);
+                        }
                     }
-                    return categories;
+
+                    return categories.Values.ToList();
                 },
                 options: options,
+                tableAlias: "c",
                 allowedFilterColumns: allowedFilters
             );
         }
@@ -109,17 +130,39 @@ namespace Repository.EntityRepositories
 
         #region GetById
 
+
         public async Task<Category?> GetByIdAsync(int id)
         {
             return await ExecuteReadAsync(
-                baseQuery: "SELECT * FROM Categories WHERE Id = @Id",
+                baseQuery: @"
+            SELECT c.Id, c.Name, c.Description,
+                   sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, sc.Description AS SubCategoryDescription
+            FROM Categories c
+            LEFT JOIN SubCategories sc ON sc.CategoryId = c.Id
+            WHERE c.Id = @Id",
                 map: reader =>
                 {
-                    if (reader.Read())
-                        return CategoryMapper.FromReader(reader);
-                    return null;
+                    Category? category = null;
+
+                    while (reader.Read())
+                    {
+                        if (category == null)
+                        {
+                            category = CategoryMapper.FromReader(reader);
+                            category.SubCategories = new List<SubCategory>();
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("SubCategoryId")))
+                        {
+                            var subCategory = SubCategoryMapper.FromReaderForCategory(reader);
+                            category.SubCategories.Add(subCategory);
+                        }
+                    }
+
+                    return category;
                 },
                 options: new QueryOptions(),
+                tableAlias: "c",
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
@@ -133,14 +176,35 @@ namespace Repository.EntityRepositories
         public async Task<Category?> GetByNameAsync(string name)
         {
             return await ExecuteReadAsync(
-                baseQuery: "SELECT * FROM Categories WHERE Name = @Name",
+                baseQuery: @"
+            SELECT c.Id, c.Name, c.Description,
+                   sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, sc.Description AS SubCategoryDescription
+            FROM Categories c
+            LEFT JOIN SubCategories sc ON sc.CategoryId = c.Id 
+            WHERE c.Name = @Name",
                 map: reader =>
                 {
-                    if (reader.Read())
-                        return CategoryMapper.FromReader(reader);
-                    return null;
+                    Category? category = null;
+
+                    while (reader.Read())
+                    {
+                        if (category == null)
+                        {
+                            category = CategoryMapper.FromReader(reader);
+                            category.SubCategories = new List<SubCategory>();
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("SubCategoryId")))
+                        {
+                            var subCategory = SubCategoryMapper.FromReaderForCategory(reader);
+                            category.SubCategories.Add(subCategory);
+                        }
+                    }
+
+                    return category;
                 },
                 options: new QueryOptions(),
+                tableAlias: "c",
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Name", name);
