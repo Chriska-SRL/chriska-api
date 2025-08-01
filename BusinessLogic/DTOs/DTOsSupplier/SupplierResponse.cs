@@ -19,6 +19,6 @@ namespace BusinessLogic.DTOs.DTOsSupplier
         public string ContactName { get; set; }
         public string Email { get; set; }
         public string Observations { get; set; }
-        public List<ProductResponse> Products { get; set; } = new List<ProductResponse>();
+        public List<BankAccountResponse> BankAccounts { get; set; }
     }
 }

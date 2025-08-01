@@ -4,26 +4,11 @@
     [Id] INT NOT NULL PRIMARY KEY IDENTITY,
 
     -- Campos de la entidad
-    [BankName] NVARCHAR(50) NULL, 
+    [BankName] NVARCHAR(50) NOT NULL, 
     [AccountName] NVARCHAR(50) NOT NULL, 
     [AccountNumber] NVARCHAR(50) NOT NULL, 
+    [ClientId] INT NOT NULL,
 
-    -- Campos de auditoría
-    [CreatedAt] DATETIME2 NOT NULL,
-    [CreatedBy] INT NOT NULL,
-    [CreatedLocation] NVARCHAR(50) NULL, -- Coordenadas GPS: "lat,long"
-    [UpdatedAt] DATETIME2 NULL,
-    [UpdatedBy] INT NULL,
-    [UpdatedLocation] NVARCHAR(50) NULL, -- Coordenadas GPS: "lat,long"
-    [DeletedAt] DATETIME2 NULL,
-    [DeletedBy] INT NULL,
-    [DeletedLocation] NVARCHAR(50) NULL, -- Coordenadas GPS: "lat,long"
+    CONSTRAINT FK_ClientBankAccounts_ClientId FOREIGN KEY (ClientId) REFERENCES Clients(Id),
 
-    -- Soft delete flag
-    [IsDeleted] BIT NOT NULL DEFAULT 0,
-
-        -- Foreign keys de auditoría
-    CONSTRAINT FK_ClientBankAccounts_CreatedBy FOREIGN KEY (CreatedBy) REFERENCES Users(Id),
-    CONSTRAINT FK_ClientBankAccounts_UpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES Users(Id),
-    CONSTRAINT FK_ClientBankAccounts_DeletedBy FOREIGN KEY (DeletedBy) REFERENCES Users(Id)
 )

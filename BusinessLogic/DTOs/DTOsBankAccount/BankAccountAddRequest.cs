@@ -1,10 +1,8 @@
-﻿using BusinessLogic.Común;
-using BusinessLogic.Común.Enums;
-using BusinessLogic.DTOs.DTOsAudit;
+﻿using BusinessLogic.Común.Enums;
 
 namespace BusinessLogic.DTOs.DTOsBankAccount
 {
-    public class BankAccountResponse
+    public class BankAccountAddRequest
     {
         public string AccountName { get; set; } = string.Empty;
         public string AccountNumber { get; set; } = string.Empty;
