@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace Repository.Mappers
 {
@@ -17,6 +18,16 @@ namespace Repository.Mappers
 
          );
         }
-    
+        public static SubCategory FromReaderForCategory(SqlDataReader reader)
+        {
+            return new SubCategory(
+                id: reader.GetInt32(reader.GetOrdinal("SubCategoryId")),
+                name: reader.GetString(reader.GetOrdinal("SubCategoryName")),
+                description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
+                category: new Category(0),
+                auditInfo: new AuditInfo()
+            );
+        }
+
     }
 }
