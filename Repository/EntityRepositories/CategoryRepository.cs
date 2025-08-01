@@ -95,7 +95,7 @@ namespace Repository.EntityRepositories
             SELECT c.Id, c.Name, c.Description,
                    sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, sc.Description AS SubCategoryDescription
             FROM Categories c
-            LEFT JOIN SubCategories sc ON sc.CategoryId = c.Id",
+            LEFT JOIN SubCategories sc ON sc.CategoryId = c.Id AND sc.IsDeleted = 0",
                 map: reader =>
                 {
                     var categories = new Dictionary<int, Category>();
@@ -138,7 +138,7 @@ namespace Repository.EntityRepositories
             SELECT c.Id, c.Name, c.Description,
                    sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, sc.Description AS SubCategoryDescription
             FROM Categories c
-            LEFT JOIN SubCategories sc ON sc.CategoryId = c.Id
+            LEFT JOIN SubCategories sc ON sc.CategoryId = c.Id AND sc.IsDeleted = 0
             WHERE c.Id = @Id",
                 map: reader =>
                 {
@@ -180,7 +180,7 @@ namespace Repository.EntityRepositories
             SELECT c.Id, c.Name, c.Description,
                    sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, sc.Description AS SubCategoryDescription
             FROM Categories c
-            LEFT JOIN SubCategories sc ON sc.CategoryId = c.Id 
+            LEFT JOIN SubCategories sc ON sc.CategoryId = c.Id  AND sc.IsDeleted = 0
             WHERE c.Name = @Name",
                 map: reader =>
                 {
