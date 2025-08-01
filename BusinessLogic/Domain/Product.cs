@@ -1,8 +1,6 @@
 ﻿using BusinessLogic.Common;
 using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
-using BusinessLogic.Domain;
-using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.Domain
 {
@@ -18,7 +16,7 @@ namespace BusinessLogic.Domain
         public TemperatureCondition TemperatureCondition { get; set; }
         public int Stock { get; set; }
         public int AviableStock { get; set; }
-        public string Image { get; set; } //url de la imagen
+        public string ImageUrl { get; set; } //url de la imagen
         public string Observation { get; set; }
         public SubCategory SubCategory { get; set; }
         public Brand Brand { get; set; }
@@ -31,7 +29,7 @@ namespace BusinessLogic.Domain
             Barcode = barcode;
             Name = name;
             Price = price;
-            Image = image;
+            ImageUrl = image;
             Stock = stock;
             AviableStock = aviableStock;
             Description = description;
@@ -41,6 +39,7 @@ namespace BusinessLogic.Domain
             SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
             Brand = brand ?? throw new ArgumentNullException(nameof(brand));
             Suppliers = suppliers ?? throw new ArgumentNullException(nameof(suppliers));
+            SetInternalCode();
             Validate();
         }
         public Product(int id, string? barcode, string name, decimal price, string image, int stock, int aviableStock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand,List<Supplier> suppliers, AuditInfo auditInfo)
@@ -49,7 +48,7 @@ namespace BusinessLogic.Domain
             Barcode = barcode;
             Name = name;
             Price = price;
-            Image = image;
+            ImageUrl = image;
             Stock = stock;
             AviableStock = aviableStock;
             Description = description;
@@ -60,6 +59,7 @@ namespace BusinessLogic.Domain
             Brand = brand ?? throw new ArgumentNullException(nameof(brand));
             Suppliers = suppliers ?? throw new ArgumentNullException(nameof(suppliers));
             AuditInfo = auditInfo;
+            SetInternalCode();
             Validate();
         }
 
@@ -73,7 +73,7 @@ namespace BusinessLogic.Domain
             Barcode = "0000000000000";
             Name = "Nombre Temporal";
             Price = 1;
-            Image = "ImagenTemporal.jpg";
+            ImageUrl = "ImagenTemporal.jpg";
             Stock = 0;
             AviableStock = 0;
             Description = "Descripcion Temporal";
@@ -118,8 +118,8 @@ namespace BusinessLogic.Domain
             if (!Enum.IsDefined(typeof(TemperatureCondition), TemperatureCondition))
                 throw new ArgumentOutOfRangeException(nameof(TemperatureCondition), "Condición de temperatura inválida.");
 
-            if (!string.IsNullOrWhiteSpace(Image) && Image.Length > 255)
-                throw new ArgumentOutOfRangeException(nameof(Image), "La ruta de imagen no puede superar los 255 caracteres.");
+            if (!string.IsNullOrWhiteSpace(ImageUrl) && ImageUrl.Length > 255)
+                throw new ArgumentOutOfRangeException(nameof(ImageUrl), "La ruta de imagen no puede superar los 255 caracteres.");
 
             if (!string.IsNullOrWhiteSpace(Observation) && Observation.Length > 255)
                 throw new ArgumentOutOfRangeException(nameof(Observation), "La observación no puede superar los 255 caracteres.");
@@ -136,7 +136,7 @@ namespace BusinessLogic.Domain
             Name = data.Name ?? Name;
             Barcode = data.Barcode ?? Barcode;
             Price = data.Price ?? Price;
-            Image = data.Image ?? Image;
+            ImageUrl = data.Image ?? ImageUrl;
             Description = data.Description ?? Description;
             UnitType = data.UnitType ?? UnitType;
             TemperatureCondition = data.TemperatureCondition ?? TemperatureCondition;
