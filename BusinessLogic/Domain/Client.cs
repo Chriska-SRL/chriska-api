@@ -21,9 +21,6 @@ namespace BusinessLogic.Domain
         public string Qualification { get; set; }
         public Zone Zone { get; set; }
         public List<BankAccount> BankAccounts { get; set; } = new();
-        public List<Request> Requests { get; set; } = new();
-        public List<Receipt> Receipts { get; set; } = new();
-        public List<ClientDocument> Documents { get; set; } = new();
         public AuditInfo AuditInfo { get; set; } = new();
 
         public Client(string name, string rut, string razonSocial, string address, string mapsAddress,
@@ -154,7 +151,7 @@ namespace BusinessLogic.Domain
 
         public void MarkAsDeleted(int? userId, Location? location)
         {
-            throw new NotImplementedException();
+            AuditInfo.SetDeleted(userId, location);
         }
 
         public class UpdatableData: AuditData

@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Domain;
+﻿using BusinessLogic.Common.Mappers;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsSupplier;
 
 namespace BusinessLogic.Común.Mappers
@@ -10,14 +11,14 @@ namespace BusinessLogic.Común.Mappers
             var supplier = new Supplier(
                 name: request.Name,
                 rut: request.RUT,
-                razonSocial: request.BusinessName,
+                razonSocial: request.RazonSocial,
                 address: request.Address,
                 mapsAddress: request.MapsAddress,
                 phone: request.Phone,
                 contactName: request.ContactName,
                 email: request.Email,
-                observations: request.Observation,
-                bankAccounts: new List<BankAccount>()
+                observations: request.Observations,
+                bankAccounts: request.BankAccounts.Select(BankAccountMapper.ToDomain).ToList()
             );
 
             supplier.AuditInfo.SetCreated(request.getUserId(), request.Location);
@@ -37,6 +38,7 @@ namespace BusinessLogic.Común.Mappers
                 ContactName = request.ContactName,
                 Email = request.Email,
                 Observations = request.Observations,
+                BankAccounts = request.BankAccounts.Select(BankAccountMapper.ToDomain).ToList(),
                 UserId = request.getUserId(),
                 Location = request.Location
             };
@@ -56,7 +58,7 @@ namespace BusinessLogic.Común.Mappers
                 ContactName = supplier.ContactName,
                 Email = supplier.Email,
                 Observations = supplier.Observations,
-                Products = supplier.Products.Select(ProductMapper.ToResponse).ToList(),
+                BankAccounts = supplier.BankAccounts.Select(BankAccountMapper.ToResponse).ToList(),
                 AuditInfo = AuditMapper.ToResponse(supplier.AuditInfo)
             };
         }

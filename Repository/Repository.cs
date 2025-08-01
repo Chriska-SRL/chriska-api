@@ -23,12 +23,12 @@ namespace Repository
         #region Read
 
         protected async Task<TResult> ExecuteReadAsync<TResult>(
-    string baseQuery,
-    Func<SqlDataReader, TResult> map,
-    QueryOptions options,
-    string? tableAlias = null,
-    Action<SqlCommand>? configureCommand = null,
-    IEnumerable<string>? allowedFilterColumns = null)
+        string baseQuery,
+        Func<SqlDataReader, TResult> map,
+        QueryOptions options,
+        string? tableAlias = null,
+        Action<SqlCommand>? configureCommand = null,
+        IEnumerable<string>? allowedFilterColumns = null)
         {
             try
             {
