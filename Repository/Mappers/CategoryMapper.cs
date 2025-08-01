@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Domain;
+﻿using BusinessLogic.Común;
+using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
@@ -13,6 +14,17 @@ namespace Repository.Mappers
                 description: reader.GetString(reader.GetOrdinal("Description")),
                 auditInfo: AuditInfoMapper.FromReader(reader)
             );
+
         }
+        public static Category FromReaderForSubCategory(SqlDataReader reader)
+        {
+            return new Category(
+                id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                name: reader.GetString(reader.GetOrdinal("CategoryName")),
+                description: reader.GetString(reader.GetOrdinal("CategoryDescription")),
+                auditInfo: new AuditInfo()
+            );
+        }
+        
     }
 }

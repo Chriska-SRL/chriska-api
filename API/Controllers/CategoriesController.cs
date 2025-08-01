@@ -77,7 +77,7 @@ namespace API.Controllers
         {
             request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddSubCategoryAsync(request);
-            return CreatedAtAction(nameof(GetSubCategoryByIdAsync), new { id = result.Id }, result);
+            return Created(String.Empty, result); // 201 Created con Location
         }
 
         [HttpPut("subcategories/{id}")]
