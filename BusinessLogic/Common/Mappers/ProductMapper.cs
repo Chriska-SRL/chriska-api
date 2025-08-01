@@ -60,7 +60,7 @@ namespace BusinessLogic.Común.Mappers
                 Barcode = product.Barcode,
                 Name = product.Name,
                 Price = product.Price,
-                Image = product.Image,
+                Image = product.ImageUrl,
                 Stock = product.Stock,
                 AvailableStock = product.AviableStock,
                 Description = product.Description,

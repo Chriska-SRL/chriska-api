@@ -4,8 +4,9 @@
     [Id] INT NOT NULL PRIMARY KEY IDENTITY, 
 
     -- Campos de la entidad
-    [Name] NVARCHAR(50) NOT NULL UNIQUE,
-    [BarCode] NCHAR(13) NULL,
+    [Name] NVARCHAR(50) NOT NULL,
+    [InternalCode] NCHAR(10) NOT NULL,
+    [BarCode] NCHAR(13) NOT NULL,
     [UnitType] NCHAR(10) NOT NULL,
     [Price] MONEY NOT NULL, 
     [Description] NVARCHAR(255) NOT NULL, 
@@ -15,6 +16,7 @@
     [Observations] NVARCHAR(255) NOT NULL, 
     [SubCategoryId] INT NOT NULL, 
     [BrandId] INT NOT NULL, 
+    [ImageUrl] NVARCHAR(255) NOT NULL,
 
     -- Campos de auditoría
     [CreatedAt] DATETIME2 NOT NULL,

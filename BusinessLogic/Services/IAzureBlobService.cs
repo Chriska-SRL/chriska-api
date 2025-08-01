@@ -4,8 +4,7 @@ namespace BusinessLogic.Services
 {
     public interface IAzureBlobService
     {
-        Task<string> UploadBlobAsync(string blobName, IFormFile file);
-        Task<string> GetBlobUrlAsync(string blobName);
-        Task<bool> DeleteBlobAsync(string blobName);
+        Task<string> UploadFileAsync(IFormFile file, string containerName);
+        Task DeleteFileAsync(string blobUrl, string containerName);
     }
 }
