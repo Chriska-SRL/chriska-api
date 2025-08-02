@@ -3,6 +3,7 @@ using BusinessLogic;
 using BusinessLogic.Común;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.DTOs.DTOsProduct;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace API.Controllers
         {
             request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddProductAsync(request);
-            return CreatedAtAction(nameof(GetProductByIdAsync), new { id = result.Id }, result);
+            return Created(String.Empty, result);
         }
 
         [HttpPut("{id}")]
@@ -66,6 +67,30 @@ namespace API.Controllers
         {
             var result = await _facade.GetAllProductsAsync(options);
             return Ok(result);
+        }
+
+        [HttpPost("{id}/upload-image")]
+        [Authorize(Policy = nameof(Permission.EDIT_PRODUCTS))]
+        public async Task<IActionResult> UploadProductImageAsync(int id, IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("El archivo es inválido o está vacío.");
+            AddImageRequest request = new AddImageRequest
+            {
+                EntityId = id,
+                File = file,
+            };
+            request.setUserId(_tokenUtils.GetUserId());
+            string url = await _facade.UploadProductImageAsync(request);
+            return Ok(url);
+        }
+
+        [HttpPost("{id}/delete-image")]
+        [Authorize(Policy = nameof(Permission.EDIT_PRODUCTS))]
+        public async Task<IActionResult> DeleteProductImageAsync(int id)
+        {
+            await _facade.DeleteProductImageAsync(id);
+            return NoContent();
         }
     }
 }

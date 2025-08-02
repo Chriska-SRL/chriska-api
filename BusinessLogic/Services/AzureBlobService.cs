@@ -1,85 +1,55 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
 {
     public class AzureBlobService : IAzureBlobService
     {
         private readonly BlobServiceClient _blobServiceClient;
-        private readonly string _containerName;
-        private readonly ILogger<AzureBlobService> _logger;
 
-        public AzureBlobService(IConfiguration configuration, ILogger<AzureBlobService> logger)
+        public AzureBlobService(BlobServiceClient blobServiceClient)
         {
-            var connectionString = configuration.GetConnectionString("AzureStorage");
-            _containerName = configuration["AzureStorage:ContainerName"] ?? "images";
-            _blobServiceClient = null;//new BlobServiceClient(connectionString);
-            _logger = logger;
+            _blobServiceClient = blobServiceClient;
         }
 
-        public async Task<string> UploadBlobAsync(string blobName, IFormFile file)
+        public async Task<string> UploadFileAsync(IFormFile file, string containerName, string fileName)
         {
-            try
-            {
-                var blobClient = await GetBlobClientAsync(blobName);
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            await containerClient.CreateIfNotExistsAsync();
 
-                var blobHttpHeaders = new BlobHttpHeaders
+            string extension = Path.GetExtension(file.FileName);
+            string blobName = $"{fileName}{extension}";
+
+            var blobClient = containerClient.GetBlobClient(blobName);
+
+            // Eliminar el archivo anterior si existe
+            await blobClient.DeleteIfExistsAsync();
+
+            using var stream = file.OpenReadStream();
+            await blobClient.UploadAsync(
+                stream,
+                new BlobUploadOptions
                 {
-                    ContentType = file.ContentType
-                };
+                    HttpHeaders = new BlobHttpHeaders { ContentType = file.ContentType }
+                }
+            );
 
-                using var stream = file.OpenReadStream();
-                await blobClient.UploadAsync(stream, new BlobUploadOptions
-                {
-                    HttpHeaders = blobHttpHeaders
-                });
-
-                return blobClient.Uri.ToString();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al subir blob {BlobName}", blobName);
-                throw new ApplicationException($"Error al subir la imagen: {ex.Message}", ex);
-            }
+            return blobClient.Uri.ToString();
         }
 
-        public async Task<string> GetBlobUrlAsync(string blobName)
-        {
-            try
-            {
-                var blobClient = await GetBlobClientAsync(blobName);
-                return blobClient.Uri.ToString();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al obtener URL del blob {BlobName}", blobName);
-                throw new ApplicationException($"Error al obtener la URL de la imagen: {ex.Message}", ex);
-            }
-        }
 
-        public async Task<bool> DeleteBlobAsync(string blobName)
+        public async Task DeleteFileAsync(string blobUrl, string containerName)
         {
-            try
-            {
-                var blobClient = await GetBlobClientAsync(blobName);
-                var response = await blobClient.DeleteIfExistsAsync();
-                return response.Value;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al eliminar blob {BlobName}", blobName);
-                throw new ApplicationException($"Error al eliminar la imagen: {ex.Message}", ex);
-            }
-        }
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
 
-        private async Task<BlobClient> GetBlobClientAsync(string blobName)
-        {
-            var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
-            await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
-            return containerClient.GetBlobClient(blobName);
+            string blobName = Path.GetFileName(new Uri(blobUrl).LocalPath);
+            var blobClient = containerClient.GetBlobClient(blobName);
+
+            await blobClient.DeleteIfExistsAsync();
         }
     }
 }

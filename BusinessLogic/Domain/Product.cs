@@ -1,8 +1,6 @@
 ﻿using BusinessLogic.Common;
 using BusinessLogic.Común;
 using BusinessLogic.Común.Enums;
-using BusinessLogic.Domain;
-using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.Domain
 {
@@ -16,75 +14,57 @@ namespace BusinessLogic.Domain
         public decimal Price { get; set; }
         public string Description { get; set; }
         public TemperatureCondition TemperatureCondition { get; set; }
+        public int EstimatedWeight { get; set; } //Peso estimado en gramos
         public int Stock { get; set; }
-        public int AviableStock { get; set; }
-        public string Image { get; set; } //url de la imagen
+        public int AvailableStocks { get; set; }
+        public string ImageUrl { get; set; } = ""; //url de la imagen
         public string Observation { get; set; }
         public SubCategory SubCategory { get; set; }
         public Brand Brand { get; set; }
         //public List<Discount> Discounts { get; set; } = new List<Discount>();
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
-        public AuditInfo AuditInfo { get; set ; }
+        public AuditInfo AuditInfo { get; set ; } = new AuditInfo();
 
-        public Product( string? barcode, string name, decimal price, string image, int stock, int aviableStock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
+        public Product( string? barcode, string name, decimal price, string description, UnitType unitType, TemperatureCondition temperatureCondition, int estimatedWeight, string observations, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
         {
             Barcode = barcode;
             Name = name;
             Price = price;
-            Image = image;
-            Stock = stock;
-            AviableStock = aviableStock;
+            ImageUrl = "";
+            Stock = 0;
+            AvailableStocks = 0;
             Description = description;
             UnitType = unitType;
             TemperatureCondition = temperatureCondition;
+            EstimatedWeight = estimatedWeight;
             Observation = observations;
             SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
             Brand = brand ?? throw new ArgumentNullException(nameof(brand));
             Suppliers = suppliers ?? throw new ArgumentNullException(nameof(suppliers));
             Validate();
         }
-        public Product(int id, string? barcode, string name, decimal price, string image, int stock, int aviableStock, string description, UnitType unitType, TemperatureCondition temperatureCondition, string observations, SubCategory subCategory, Brand brand,List<Supplier> suppliers, AuditInfo auditInfo)
+        public Product(int id, string? barcode, string name, decimal price, string image, int stock, int availableStocks, string description, UnitType unitType, TemperatureCondition temperatureCondition, int estimatedWeight, string observations, SubCategory subCategory, Brand brand,List<Supplier> suppliers, AuditInfo auditInfo)
         {
             Id = id;
             Barcode = barcode;
             Name = name;
             Price = price;
-            Image = image;
+            ImageUrl = image;
             Stock = stock;
-            AviableStock = aviableStock;
+            AvailableStocks = availableStocks;
             Description = description;
             UnitType = unitType;
             TemperatureCondition = temperatureCondition;
+            EstimatedWeight = estimatedWeight;
             Observation = observations;
             SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
             Brand = brand ?? throw new ArgumentNullException(nameof(brand));
             Suppliers = suppliers ?? throw new ArgumentNullException(nameof(suppliers));
             AuditInfo = auditInfo;
+            SetInternalCode();
             Validate();
         }
-
-        public Product(int id)
-        {
-            if (id <= 0)
-                throw new ArgumentOutOfRangeException(nameof(id), "El ID del producto debe ser mayor a cero.");
-
-            Id = id;
-            InternalCode = "000000";
-            Barcode = "0000000000000";
-            Name = "Nombre Temporal";
-            Price = 1;
-            Image = "ImagenTemporal.jpg";
-            Stock = 0;
-            AviableStock = 0;
-            Description = "Descripcion Temporal";
-            UnitType = UnitType.Unit;
-            TemperatureCondition = TemperatureCondition.None;
-            Observation = "Observaciones Temporales";
-            SubCategory = new SubCategory(9999);
-            Brand = new Brand(9999);
-            Suppliers = new List<Supplier>();
-        }
-
+     
         public void Validate()
         {
             if (!string.IsNullOrWhiteSpace(Barcode))
@@ -104,8 +84,8 @@ namespace BusinessLogic.Domain
             if (Stock < 0)
                 throw new ArgumentOutOfRangeException(nameof(Stock), "El stock no puede ser negativo.");
 
-            if (AviableStock < 0)
-                throw new ArgumentOutOfRangeException(nameof(AviableStock), "El stock disponible no puede ser negativo.");
+            if (AvailableStocks < 0)
+                throw new ArgumentOutOfRangeException(nameof(AvailableStocks), "El stock disponible no puede ser negativo.");
 
             if (string.IsNullOrWhiteSpace(Description))
                 throw new ArgumentNullException(nameof(Description), "La descripción es obligatoria.");
@@ -118,8 +98,11 @@ namespace BusinessLogic.Domain
             if (!Enum.IsDefined(typeof(TemperatureCondition), TemperatureCondition))
                 throw new ArgumentOutOfRangeException(nameof(TemperatureCondition), "Condición de temperatura inválida.");
 
-            if (!string.IsNullOrWhiteSpace(Image) && Image.Length > 255)
-                throw new ArgumentOutOfRangeException(nameof(Image), "La ruta de imagen no puede superar los 255 caracteres.");
+            if (EstimatedWeight < 0)
+                throw new ArgumentOutOfRangeException(nameof(EstimatedWeight), "El peso estimado no puede ser negativo.");
+
+            if (!string.IsNullOrWhiteSpace(ImageUrl) && ImageUrl.Length > 255)
+                throw new ArgumentOutOfRangeException(nameof(ImageUrl), "La ruta de imagen no puede superar los 255 caracteres.");
 
             if (!string.IsNullOrWhiteSpace(Observation) && Observation.Length > 255)
                 throw new ArgumentOutOfRangeException(nameof(Observation), "La observación no puede superar los 255 caracteres.");
@@ -130,21 +113,19 @@ namespace BusinessLogic.Domain
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "Los datos de actualización no pueden ser nulos.");
 
-            if (data.SubCategory == null)
-                throw new ArgumentNullException(nameof(data.SubCategory), "La subcategoría es obligatoria.");
 
             Name = data.Name ?? Name;
             Barcode = data.Barcode ?? Barcode;
             Price = data.Price ?? Price;
-            Image = data.Image ?? Image;
             Description = data.Description ?? Description;
             UnitType = data.UnitType ?? UnitType;
             TemperatureCondition = data.TemperatureCondition ?? TemperatureCondition;
+            EstimatedWeight = data.EstimatedWeight ?? EstimatedWeight;
             Observation = data.Observation ?? Observation;
             SubCategory = data.SubCategory ?? SubCategory;
             Brand = data.Brand ?? Brand;
-            AviableStock = data.AviableStock ?? AviableStock;
-            Stock = data.Stock ?? Stock;
+            Suppliers = data.Suppliers ?? Suppliers;
+
             AuditInfo.SetUpdated(data.UserId, data.Location);
 
             SetInternalCode();
@@ -156,15 +137,14 @@ namespace BusinessLogic.Domain
             public string? Name { get; set; } = string.Empty;
             public string? Barcode { get; set; } = string.Empty;
             public decimal? Price { get; set; }
-            public string? Image { get; set; } = string.Empty;
             public string? Description { get; set; } = string.Empty;
             public UnitType? UnitType { get; set; }
             public TemperatureCondition? TemperatureCondition { get; set; }
+            public int? EstimatedWeight { get; set; }
             public string? Observation { get; set; } = string.Empty;
             public SubCategory? SubCategory { get; set; } = null!;
             public Brand? Brand { get; set; } = null!;
-            public int? Stock { get; set; }
-            public int? AviableStock { get; set; }
+            public List<Supplier>? Suppliers { get; set; } = null!;
         }
 
         public void SetInternalCode()
@@ -185,7 +165,7 @@ namespace BusinessLogic.Domain
 
         public void MarkAsDeleted(int? userId, Location? location)
         {
-            throw new NotImplementedException();
+            AuditInfo.SetDeleted(userId, location);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using API.Utils;
+using Azure.Storage.Blobs;
 using BusinessLogic;
 using BusinessLogic.Domain;
 using BusinessLogic.Repository;
@@ -124,6 +125,8 @@ namespace API
 
             var connectionString = builder.Configuration.GetConnectionString("Database");
             builder.Services.AddSingleton(connectionString);
+            builder.Services.AddSingleton(new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlob")));
+            builder.Services.AddScoped<IAzureBlobService, AzureBlobService>();
 
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -143,7 +146,6 @@ namespace API
 
             builder.Services.AddScoped<IAzureBlobService, AzureBlobService>();
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
-            builder.Services.AddScoped<ImagesSubSystem>();
 
             builder.Services.AddScoped<RolesSubSystem>();
             builder.Services.AddScoped<UserSubSystem>();
