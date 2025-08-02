@@ -12,11 +12,10 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public decimal Price { get; set; }
         public required string Description { get; set; }
         public TemperatureCondition TemperatureCondition { get; set; }
-        public int Stock { get; set; }
-        public int AvailableStock { get; set; }
-        public required string Image { get; set; }
+        public int EstimatedWeight { get; set; } //Peso estimado en gramos
         public required string Observations { get; set; }
         public int SubCategoryId { get; set; }
         public int BrandId { get; set; }
+        public List<int> SupplierIds { get; set; } = new List<int>();
     }
 }

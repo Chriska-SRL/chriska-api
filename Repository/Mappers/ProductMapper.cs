@@ -9,34 +9,33 @@ namespace Repository.Mappers
     {
         public static Product FromReader(SqlDataReader reader)
         {
-            // Cargar la categoría
+            // Categoria (NOT NULL)
             var category = new Category(
                 id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
                 name: reader.GetString(reader.GetOrdinal("CategoryName")),
                 description: reader.GetString(reader.GetOrdinal("CategoryDescription")),
-                subCategories: new List<SubCategory>()
-                ,
-                auditInfo:null
+                subCategories: new List<SubCategory>(),
+                auditInfo: new AuditInfo()
             );
 
-            // Cargar la subcategoría
+            // Subcategoria (NOT NULL)
             var subCategory = new SubCategory(
                 id: reader.GetInt32(reader.GetOrdinal("SubCategoryId")),
                 name: reader.GetString(reader.GetOrdinal("SubCategoryName")),
                 description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
                 category: category,
-                auditInfo: null
+                auditInfo: new AuditInfo()
             );
 
-            // Cargar la marca
+            // Marca (NOT NULL)
             var brand = new Brand(
                 id: reader.GetInt32(reader.GetOrdinal("BrandId")),
                 name: reader.GetString(reader.GetOrdinal("BrandName")),
                 description: reader.GetString(reader.GetOrdinal("BrandDescription")),
-                auditInfo: null
+                auditInfo: new AuditInfo()
             );
 
-            // Mapeo del tipo de unidad (UnitType)
+            // UnitType (enum) - NOT NULL
             string unitTypeStr = reader.GetString(reader.GetOrdinal("UnitType")).Trim();
             UnitType unitType = unitTypeStr switch
             {
@@ -45,7 +44,7 @@ namespace Repository.Mappers
                 _ => UnitType.None
             };
 
-            // Mapeo de la condición de temperatura (TemperatureCondition)
+            // TemperatureCondition (enum) - NOT NULL
             string tempStr = reader.GetString(reader.GetOrdinal("TemperatureCondition")).Trim();
             TemperatureCondition tempCondition = tempStr switch
             {
@@ -55,39 +54,24 @@ namespace Repository.Mappers
                 _ => TemperatureCondition.None
             };
 
-            // Cargar el código de barras
-            string? barcode = reader.IsDBNull(reader.GetOrdinal("BarCode"))
-                ? null
-                : reader.GetString(reader.GetOrdinal("BarCode"));
-
-            // Obtener la imagen y la URL (si está disponible)
-            string imageFileName = reader.IsDBNull(reader.GetOrdinal("ImageFileName")) ? null : reader.GetString(reader.GetOrdinal("ImageFileName"));
-            string imageBlobName = reader.IsDBNull(reader.GetOrdinal("ImageBlobName")) ? null : reader.GetString(reader.GetOrdinal("ImageBlobName"));
-
-            // Asignar la URL de la imagen si existe
-            string? imageUrl = null;
-            if (!string.IsNullOrEmpty(imageBlobName))
-            {
-                imageUrl = imageBlobName;
-            }
-
-            // Crear y devolver el producto
+            // Producto
             return new Product(
                 id: reader.GetInt32(reader.GetOrdinal("Id")),
-                barcode: barcode,
+                barcode: reader.GetString(reader.GetOrdinal("Barcode")),
                 name: reader.GetString(reader.GetOrdinal("Name")),
                 price: reader.GetDecimal(reader.GetOrdinal("Price")),
-                image: imageUrl ?? imageFileName, // Usamos la URL de la imagen si existe
+                image: reader.GetString(reader.GetOrdinal("ImageUrl")),
                 stock: reader.GetInt32(reader.GetOrdinal("Stock")),
-                aviableStock: reader.GetInt32(reader.GetOrdinal("AviableStock")),
+                availableStocks: reader.GetInt32(reader.GetOrdinal("AvailableStock")),
                 description: reader.GetString(reader.GetOrdinal("Description")),
                 unitType: unitType,
                 temperatureCondition: tempCondition,
+                estimatedWeight: reader.GetInt32(reader.GetOrdinal("EstimatedWeight")),
                 observations: reader.GetString(reader.GetOrdinal("Observations")),
                 subCategory: subCategory,
                 brand: brand,
                 suppliers: new List<Supplier>(),
-                auditInfo: new AuditInfo()
+                auditInfo: AuditInfoMapper.FromReader(reader)
             );
         }
     }

@@ -8,44 +8,42 @@ namespace BusinessLogic.Común.Mappers
 {
     public static class ProductMapper
     {
-        public static Product ToDomain(ProductAddRequest request, SubCategory subCategory)
+        public static Product ToDomain(ProductAddRequest request, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
         {
             Product product = new Product(
                 barcode: request.Barcode,
                 name: request.Name,
                 price: request.Price,
-                image: request.Image,
-                stock: request.Stock,
-                aviableStock: request.AvailableStock,
                 description: request.Description,
                 unitType: request.UnitType,
                 temperatureCondition: request.TemperatureCondition,
+                estimatedWeight: request.EstimatedWeight,
                 observations: request.Observations,
                 subCategory: subCategory,
-                brand: new Brand(request.BrandId),
-                suppliers: new List<Supplier>()
+                brand: brand,
+                suppliers: suppliers
             );
 
             product.AuditInfo.SetCreated(request.getUserId(), request.Location);
             return product;
         }
 
-        public static Product.UpdatableData ToUpdatableData(ProductUpdateRequest request, SubCategory subCategory)
+        public static Product.UpdatableData ToUpdatableData(ProductUpdateRequest request, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
         {
             return new Product.UpdatableData
             {
                 Name = request.Name,
                 Barcode = request.Barcode,
                 Price = request.Price,
-                Image = request.Image,
                 Description = request.Description,
                 UnitType = request.UnitType,
                 TemperatureCondition = request.TemperatureCondition,
+                EstimatedWeight = request.EstimatedWeight,
                 Observation = request.Observations,
                 SubCategory = subCategory,
                 Brand = new Brand(request.BrandId),
-                Stock = request.Stock,
-                AviableStock = request.AvailableStock,
+                Suppliers = suppliers,
+
                 UserId = request.getUserId(),
                 Location = request.Location
             };
@@ -60,31 +58,17 @@ namespace BusinessLogic.Común.Mappers
                 Barcode = product.Barcode,
                 Name = product.Name,
                 Price = product.Price,
-                Image = product.Image,
+                ImageUrl = product.ImageUrl,
                 Stock = product.Stock,
-                AvailableStock = product.AviableStock,
+                AvailableStock = product.AvailableStocks,
                 Description = product.Description,
                 UnitType = product.UnitType,
                 TemperatureCondition = product.TemperatureCondition,
+                EstimatedWeight = product.EstimatedWeight,
                 Observations = product.Observation,
-                SubCategory = new SubCategoryResponse
-                {
-                    Id = product.SubCategory.Id,
-                    Name = product.SubCategory.Name,
-                    Description = product.SubCategory.Description,
-                    Category = new CategoryResponse
-                    {
-                        Id = product.SubCategory.Category.Id,
-                        Name = product.SubCategory.Category.Name,
-                        Description = product.SubCategory.Category.Description
-                    }
-                },
-                Brand = new BrandResponse
-                {
-                    Id = product.Brand.Id,
-                    Name = product.Brand.Name,
-                    Description = product.Brand.Description
-                },
+                SubCategory = SubCategoryMapper.ToResponse(product.SubCategory),
+                Brand = BrandMapper.ToResponse(product.Brand),
+                Suppliers = product.Suppliers.Select(SupplierMapper.ToResponse).ToList(),
                 AuditInfo = AuditMapper.ToResponse(product.AuditInfo)
             };
         }
