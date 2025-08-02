@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Común;
 using BusinessLogic.Domain;
 using BusinessLogic.Repository;
+using Microsoft.Data.SqlClient;
 using Repository.Logging;
 using Repository.Mappers;
 
@@ -16,8 +17,9 @@ namespace Repository.EntityRepositories
         public async Task<Product> AddAsync(Product product)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-                "INSERT INTO Products (InternalCode, BarCode, Name, UnitType, Price, Description, TemperatureCondition, Stock, AvailableStock, Observations, SubCategoryId, BrandId) " +
-                "OUTPUT INSERTED.Id VALUES (@InternalCode, @BarCode, @Name, @UnitType, @Price, @Description, @TemperatureCondition, @Stock, @AvailableStock, @Observations, @SubCategoryId, @BrandId)",
+                "INSERT INTO Products (InternalCode, BarCode, Name, UnitType, Price, Description, TemperatureCondition, EstimatedWeight, Stock, AvailableStock, Observations, SubCategoryId, BrandId) " +
+                "VALUES (@InternalCode, @BarCode, @Name, @UnitType, @Price, @Description, @TemperatureCondition, @EstimatedWeight, @Stock, @AvailableStock, @Observations, @SubCategoryId, @BrandId); " +
+                "SELECT CAST(SCOPE_IDENTITY() AS INT);",
                 product,
                 AuditAction.Insert,
                 configureCommand: cmd =>
@@ -29,8 +31,9 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Price", product.Price);
                     cmd.Parameters.AddWithValue("@Description", product.Description);
                     cmd.Parameters.AddWithValue("@TemperatureCondition", product.TemperatureCondition.ToString());
+                    cmd.Parameters.AddWithValue("@EstimatedWeight", product.EstimatedWeight);
                     cmd.Parameters.AddWithValue("@Stock", product.Stock);
-                    cmd.Parameters.AddWithValue("@AvailableStock", product.AviableStock);
+                    cmd.Parameters.AddWithValue("@AvailableStock", product.AvailableStocks);
                     cmd.Parameters.AddWithValue("@Observations", product.Observation);
                     cmd.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
                     cmd.Parameters.AddWithValue("@BrandId", product.Brand.Id);
@@ -38,9 +41,11 @@ namespace Repository.EntityRepositories
                 async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
             );
 
+            await AddProductSuppliersAsync(newId, product.Suppliers);
             if (newId == 0)
                 throw new InvalidOperationException("No se pudo obtener el Id insertado.");
-
+            product.Id = newId;
+            product.SetInternalCode();
             return product;
         }
 
@@ -51,7 +56,7 @@ namespace Repository.EntityRepositories
         public async Task<Product> UpdateAsync(Product product)
         {
             int rows = await ExecuteWriteWithAuditAsync(
-                "UPDATE Products SET InternalCode = @InternalCode, BarCode = @BarCode, Name = @Name, UnitType = @UnitType, Price = @Price, Description = @Description, TemperatureCondition = @TemperatureCondition, Stock = @Stock, AvailableStock = @AvailableStock, Observations = @Observations, SubCategoryId = @SubCategoryId, BrandId = @BrandId " +
+                "UPDATE Products SET InternalCode = @InternalCode, BarCode = @BarCode, Name = @Name, UnitType = @UnitType, Price = @Price, Description = @Description, TemperatureCondition = @TemperatureCondition, EstimatedWeight = @EstimatedWeight, Stock = @Stock, AvailableStock = @AvailableStock, Observations = @Observations, SubCategoryId = @SubCategoryId, BrandId = @BrandId " +
                 "WHERE Id = @Id",
                 product,
                 AuditAction.Update,
@@ -65,13 +70,17 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Price", product.Price);
                     cmd.Parameters.AddWithValue("@Description", product.Description);
                     cmd.Parameters.AddWithValue("@TemperatureCondition", product.TemperatureCondition.ToString());
+                    cmd.Parameters.AddWithValue("@EstimatedWeight", product.EstimatedWeight);
                     cmd.Parameters.AddWithValue("@Stock", product.Stock);
-                    cmd.Parameters.AddWithValue("@AvailableStock", product.AviableStock);
+                    cmd.Parameters.AddWithValue("@AvailableStock", product.AvailableStocks);
                     cmd.Parameters.AddWithValue("@Observations", product.Observation);
                     cmd.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
                     cmd.Parameters.AddWithValue("@BrandId", product.Brand.Id);
                 }
             );
+
+            await DeleteProductSuppliersAsync(product.Id);
+            await AddProductSuppliersAsync(product.Id, product.Suppliers);
 
             if (rows == 0)
                 throw new InvalidOperationException($"No se pudo actualizar el producto con Id {product.Id}");
@@ -115,8 +124,8 @@ namespace Repository.EntityRepositories
                 baseQuery: @"SELECT p.*, 
                                    sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, sc.Description AS SubCategoryDescription, 
                                    b.Id AS BrandId, b.Name AS BrandName, b.description AS BrandDescription,
-                                   c.Id AS CategoryId, c.Name AS CategoryName, c.Description AS CategoryDescription, c.Address AS CategoryAddress,
-                                   s.Id AS SupplierId, s.Name AS SupplierName, s.RazonSocial AS SupplierRazónSocial, s.Address AS SupplierAddress, 
+                                   c.Id AS CategoryId, c.Name AS CategoryName, c.Description AS CategoryDescription,
+                                   s.Id AS SupplierId, s.Name AS SupplierName, s.RazonSocial AS SupplierRazonSocial, s.Address AS SupplierAddress, 
                                    s.Phone AS SupplierPhone, s.Email AS SupplierEmail, s.ContactName AS SupplierContactName, s.RUT AS SupplierRUT, 
                                    s.MapsAddress AS SupplierMapsAddress, s.Observations AS SupplierObservations    
                             FROM Products p
@@ -166,8 +175,8 @@ namespace Repository.EntityRepositories
                 baseQuery: @"SELECT p.*, 
                                    sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, sc.Description AS SubCategoryDescription, 
                                    b.Id AS BrandId, b.Name AS BrandName, b.description AS BrandDescription,
-                                   c.Id AS CategoryId, c.Name AS CategoryName, c.Description AS CategoryDescription, c.Address AS CategoryAddress,
-                                   s.Id AS SupplierId, s.Name AS SupplierName, s.RazonSocial AS SupplierRazónSocial, s.Address AS SupplierAddress, 
+                                   c.Id AS CategoryId, c.Name AS CategoryName, c.Description AS CategoryDescription,
+                                   s.Id AS SupplierId, s.Name AS SupplierName, s.RazonSocial AS SupplierRazonSocial, s.Address AS SupplierAddress, 
                                    s.Phone AS SupplierPhone, s.Email AS SupplierEmail, s.ContactName AS SupplierContactName, s.RUT AS SupplierRUT, 
                                    s.MapsAddress AS SupplierMapsAddress, s.Observations AS SupplierObservations    
                             FROM Products p
@@ -197,7 +206,7 @@ namespace Repository.EntityRepositories
                                 suppliers.Add(supplier);
                         }
                     }
-
+                    if (product != null) product.Suppliers = suppliers;
                     return product;
                 },
                 options: new QueryOptions(),
@@ -229,6 +238,64 @@ namespace Repository.EntityRepositories
 
             return imageUrl;
         }
+
+        private async Task AddProductSuppliersAsync(int productId, IEnumerable<Supplier> suppliers)
+        {
+            if (suppliers == null || !suppliers.Any())
+                return;
+
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                var values = new List<string>();
+                var parameters = new List<SqlParameter>();
+                int i = 0;
+
+                foreach (var supplier in suppliers)
+                {
+                    values.Add($"(@ProductId, @SupplierId{i})");
+                    parameters.Add(new SqlParameter($"@SupplierId{i}", supplier.Id));
+                    i++;
+                }
+
+                string sql = $@"INSERT INTO Products_Suppliers (ProductId, SupplierId)
+                        VALUES {string.Join(", ", values)}";
+
+                using var cmd = new SqlCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@ProductId", productId);
+                foreach (var p in parameters)
+                    cmd.Parameters.Add(p);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al agregar proveedores del producto.", ex);
+            }
+        }
+
+        private async Task DeleteProductSuppliersAsync(int productId)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                const string sql = @"DELETE FROM Products_Suppliers WHERE ProductId = @ProductId";
+
+                using var cmd = new SqlCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@ProductId", productId);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar proveedores del producto.", ex);
+            }
+        }
+
 
     }
 }

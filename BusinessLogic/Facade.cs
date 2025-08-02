@@ -33,7 +33,6 @@ namespace BusinessLogic
         private readonly ZonesSubSystem Zones;
         private readonly RolesSubSystem Roles;
         private readonly VehicleSubSystem Vehicles;
-        private readonly ImagesSubSystem Images;
         private readonly BrandSubSystem Brand;
 
         public Facade(
@@ -48,7 +47,6 @@ namespace BusinessLogic
             ZonesSubSystem zones,
             RolesSubSystem roles,
             VehicleSubSystem vehicles,
-            ImagesSubSystem images,
             BrandSubSystem brand)
         {
             Auth = auth;
@@ -62,7 +60,6 @@ namespace BusinessLogic
             Zones = zones;
             Roles = roles;
             Vehicles = vehicles;
-            Images = images;
             Brand = brand;
         }
 
@@ -111,6 +108,8 @@ namespace BusinessLogic
         public async Task DeleteProductAsync(DeleteRequest request) => await Products.DeleteProductAsync(request);
         public async Task<ProductResponse> GetProductByIdAsync(int id) => await Products.GetProductByIdAsync(id);
         public async Task<List<ProductResponse>> GetAllProductsAsync(QueryOptions options) => await Products.GetAllProductsAsync(options);
+        public async Task<string> UploadProductImageAsync(AddImageRequest request) => await Products.UploadProductImageAsync(request);
+        public async Task DeleteProductImageAsync(int id) => await Products.DeleteProductImageAsync(id);
 
         // --- Stock Movements ---
         public async Task<StockMovementResponse> AddStockMovementAsync(AddStockMovementRequest request) => await Stock.AddStockMovementAsync(request);
@@ -171,15 +170,6 @@ namespace BusinessLogic
         public async Task<List<VehicleCostResponse>> GetVehicleCostsAsync(int vehicleId) => await Vehicles.GetVehicleCostsAsync(vehicleId);
         public async Task<List<VehicleCostResponse>> GetCostsByDateRangeAsync(int vehicleId, DateTime from, DateTime to) => await Vehicles.GetCostsByDateRangeAsync(vehicleId, from, to);
 
-        // --- Images ---
-        public async Task<ImageResponse> UploadImageAsync(string entityType, int entityId, IFormFile file)
-            => await Images.UploadImageAsync(entityType, entityId, file);
-
-        public async Task<ImageResponse?> GetImageAsync(string entityType, int entityId)
-            => await Images.GetImageAsync(entityType, entityId);
-
-        public async Task<bool> DeleteImageAsync(string entityType, int entityId)
-            => await Images.DeleteImageAsync(entityType, entityId);
-
+        
     }
 }

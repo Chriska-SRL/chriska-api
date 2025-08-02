@@ -11,12 +11,13 @@
     [Price] MONEY NOT NULL, 
     [Description] NVARCHAR(255) NOT NULL, 
     [TemperatureCondition] NVARCHAR(10) NOT NULL, 
+    [EstimatedWeight] INT NOT NULL DEFAULT 0, -- Peso estimado en gramos
     [Stock] INT NOT NULL, 
     [AvailableStock] INT NOT NULL, 
     [Observations] NVARCHAR(255) NOT NULL, 
     [SubCategoryId] INT NOT NULL, 
     [BrandId] INT NOT NULL, 
-    [ImageUrl] NVARCHAR(255) NOT NULL,
+    [ImageUrl] NVARCHAR(255) NOT NULL DEFAULT '',
 
     -- Campos de auditoría
     [CreatedAt] DATETIME2 NOT NULL,
@@ -42,3 +43,16 @@
     CONSTRAINT [CHK_Product_Stock] CHECK ([Stock] >= 0),
     CONSTRAINT [CHK_Product_BarcodeFormat] CHECK ([BarCode] IS NULL OR [BarCode] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
 )
+
+GO
+
+CREATE TRIGGER [dbo].[Trigger_Products]
+    ON [dbo].[Products]
+  AFTER INSERT
+    AS
+    BEGIN
+        UPDATE p
+        SET InternalCode = CAST(p.SubCategoryId AS NVARCHAR(10)) + RIGHT('0000' + CAST(p.Id AS NVARCHAR(4)), 4)
+        FROM Products p
+        INNER JOIN inserted i ON p.Id = i.Id
+    END

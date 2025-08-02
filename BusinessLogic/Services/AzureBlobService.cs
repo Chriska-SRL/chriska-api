@@ -16,19 +16,31 @@ namespace BusinessLogic.Services
             _blobServiceClient = blobServiceClient;
         }
 
-        public async Task<string> UploadFileAsync(IFormFile file, string containerName)
+        public async Task<string> UploadFileAsync(IFormFile file, string containerName, string fileName)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-            await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+            await containerClient.CreateIfNotExistsAsync();
 
-            string blobName = $"{Guid.NewGuid()}_{file.FileName}";
+            string extension = Path.GetExtension(file.FileName);
+            string blobName = $"{fileName}{extension}";
+
             var blobClient = containerClient.GetBlobClient(blobName);
 
+            // Eliminar el archivo anterior si existe
+            await blobClient.DeleteIfExistsAsync();
+
             using var stream = file.OpenReadStream();
-            await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = file.ContentType });
+            await blobClient.UploadAsync(
+                stream,
+                new BlobUploadOptions
+                {
+                    HttpHeaders = new BlobHttpHeaders { ContentType = file.ContentType }
+                }
+            );
 
             return blobClient.Uri.ToString();
         }
+
 
         public async Task DeleteFileAsync(string blobUrl, string containerName)
         {

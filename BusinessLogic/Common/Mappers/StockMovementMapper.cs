@@ -14,7 +14,7 @@ namespace BusinessLogic.Común.Mappers
                 reason: request.Reason,
                 shelve: new Shelve(request.ShelveId),
                 user: new User(request.UserId),
-                product: new Product(request.ProductId)
+                product: null
             );
 
             movement.AuditInfo.SetCreated(request.getUserId(), request.Location);

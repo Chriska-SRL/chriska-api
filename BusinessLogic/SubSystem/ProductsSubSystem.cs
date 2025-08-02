@@ -2,6 +2,7 @@
 using BusinessLogic.Común.Mappers;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.Repository;
 using BusinessLogic.Services;
@@ -14,34 +15,43 @@ namespace BusinessLogic.SubSystem
         private readonly IProductRepository _productRepository;
         private readonly ISubCategoryRepository _subCategoryRepository;
         private readonly IBrandRepository _brandRepository;
+        private readonly ISupplierRepository _supplierRepository;
         private readonly IAzureBlobService _blobService;
 
         public ProductsSubSystem(
             IProductRepository productRepository,
             ISubCategoryRepository subCategoryRepository,
             IBrandRepository brandRepository,
+            ISupplierRepository supplierRepository,
             IAzureBlobService blobService)
         {
             _productRepository = productRepository;
             _subCategoryRepository = subCategoryRepository;
             _brandRepository = brandRepository;
+            _supplierRepository = supplierRepository;
             _blobService = blobService;
         }
 
         public async Task<ProductResponse> AddProductAsync(ProductAddRequest request)
         {
-            var subCategory = await _subCategoryRepository.GetByIdAsync(request.SubCategoryId)
+            SubCategory subCategory = await _subCategoryRepository.GetByIdAsync(request.SubCategoryId)
                 ?? throw new ArgumentException("No se encontró la subcategoría asociada.", nameof(request.SubCategoryId));
 
-            var brand = await _brandRepository.GetByIdAsync(request.BrandId)
+            Brand brand = await _brandRepository.GetByIdAsync(request.BrandId)
                 ?? throw new ArgumentException("No se encontró la marca asociada.", nameof(request.BrandId));
 
-            var product = ProductMapper.ToDomain(request);
+            List<Supplier> suppliers = new List<Supplier>();
+            foreach (var supplierId in request.SupplierIds)
+            {
+                var supplier = await _supplierRepository.GetByIdAsync(supplierId)
+                    ?? throw new ArgumentException($"No se encontró el proveedor con ID {supplierId}.", nameof(request.SupplierIds));
+                suppliers.Add(supplier);
+            }
+
+            var product = ProductMapper.ToDomain(request, subCategory, brand, suppliers);
             product.Validate();
 
             var added = await _productRepository.AddAsync(product);
-            added.SubCategory = subCategory;
-            added.Brand = brand;
             return ProductMapper.ToResponse(added);
         }
 
@@ -56,12 +66,18 @@ namespace BusinessLogic.SubSystem
             var brand = await _brandRepository.GetByIdAsync(request.BrandId)
                 ?? throw new ArgumentException("No se encontró la marca asociada.", nameof(request.BrandId));
 
-            var updatedData = ProductMapper.ToUpdatableData(request);
+            List<Supplier> suppliers = new List<Supplier>();
+            foreach (var supplierId in request.SupplierIds)
+            {
+                var supplier = await _supplierRepository.GetByIdAsync(supplierId)
+                    ?? throw new ArgumentException($"No se encontró el proveedor con ID {supplierId}.", nameof(request.SupplierIds));
+                suppliers.Add(supplier);
+            }
+
+            Product.UpdatableData updatedData = ProductMapper.ToUpdatableData(request, subCategory, brand, suppliers);
             existing.Update(updatedData);
 
             var updated = await _productRepository.UpdateAsync(existing);
-            updated.SubCategory = subCategory;
-            updated.Brand = brand;
             return ProductMapper.ToResponse(updated);
         }
 
@@ -88,10 +104,23 @@ namespace BusinessLogic.SubSystem
             return products.Select(ProductMapper.ToResponse).ToList();
         }
 
-        public async Task UploadImageAsync(int productId, IFormFile file, int userId)
+        public async Task<string> UploadProductImageAsync(AddImageRequest request)
         {
-            var url = await _blobService.UploadFileAsync(file, "products");
-            await _productRepository.UpdateImageUrlAsync(productId, url, userId);
+            Product product = await _productRepository.GetByIdAsync(request.EntityId)
+                ?? throw new ArgumentException("No se encontró el producto seleccionado.", nameof(request.EntityId));
+            product.AuditInfo.SetUpdated(request.getUserId(), request.Location);
+
+            var url = await _blobService.UploadFileAsync(request.File, "products", $"product{product.Id}");
+            return await _productRepository.UpdateImageUrlAsync(product, url);
+        }
+
+        public async Task DeleteProductImageAsync(int productId)
+        {
+            Product product = await _productRepository.GetByIdAsync(productId)
+                ?? throw new ArgumentException("No se encontró el producto seleccionado.", nameof(productId));
+
+            await _blobService.DeleteFileAsync(product.ImageUrl, "products"); 
+            await _productRepository.UpdateImageUrlAsync(product, "");
         }
     }
 }

@@ -146,7 +146,6 @@ namespace API
 
             builder.Services.AddScoped<IAzureBlobService, AzureBlobService>();
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
-            builder.Services.AddScoped<ImagesSubSystem>();
 
             builder.Services.AddScoped<RolesSubSystem>();
             builder.Services.AddScoped<UserSubSystem>();
