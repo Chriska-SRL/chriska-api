@@ -24,7 +24,6 @@ namespace BusinessLogic.Domain
             NeedsPasswordChange = needsPasswordChange;
             Role = role ?? throw new ArgumentNullException(nameof(role));
             AuditInfo = auditInfo ?? new AuditInfo();
-            Validate();
         }
 
         public User(string name, string username, string password, bool isEnabled, bool needsPasswordChange, Role role)

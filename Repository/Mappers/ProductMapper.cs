@@ -34,6 +34,23 @@ namespace Repository.Mappers
                 description: reader.GetString(reader.GetOrdinal("BrandDescription")),
                 auditInfo: new AuditInfo()
             );
+            //Warehouse (NOT NULL)
+            var warehouse = new Warehouse(
+                id: reader.GetInt32(reader.GetOrdinal("WarehouseId")),
+                name: reader.GetString(reader.GetOrdinal("WarehouseName")),
+                description: reader.GetString(reader.GetOrdinal("WarehouseDescription")),
+                shelves: new List<Shelve>(),
+                auditInfo: new AuditInfo()
+            );
+
+            // Shelve (NOT NULL)
+            var shelve = new Shelve(
+                id: reader.GetInt32(reader.GetOrdinal("ShelveId")),
+                name: reader.GetString(reader.GetOrdinal("ShelveName")),
+                description: reader.GetString(reader.GetOrdinal("ShelveDescription")),
+                warehouse: warehouse,
+                auditInfo: new AuditInfo()
+            );
 
             // UnitType (enum) - NOT NULL
             string unitTypeStr = reader.GetString(reader.GetOrdinal("UnitType")).Trim();
@@ -70,6 +87,7 @@ namespace Repository.Mappers
                 observations: reader.GetString(reader.GetOrdinal("Observations")),
                 subCategory: subCategory,
                 brand: brand,
+                shelve: shelve,
                 suppliers: new List<Supplier>(),
                 auditInfo: AuditInfoMapper.FromReader(reader)
             );

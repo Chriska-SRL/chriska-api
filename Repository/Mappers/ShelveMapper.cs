@@ -23,7 +23,7 @@ namespace Repository.Mappers
                 id: reader.GetInt32(reader.GetOrdinal("ShelveId")),
                 name: reader.GetString(reader.GetOrdinal("ShelveName")),
                 description: reader.GetString(reader.GetOrdinal("ShelveDescription")),
-                warehouse: new Warehouse(0),
+                warehouse: null,
                 auditInfo: new AuditInfo()
             );
         }

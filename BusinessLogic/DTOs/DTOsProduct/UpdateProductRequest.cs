@@ -16,6 +16,7 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public required string Observations { get; set; }
         public int SubCategoryId { get; set; }
         public int BrandId { get; set; }
+        public int ShelveId { get; set; }
         public List<int> SupplierIds { get; set; } = new List<int>();
     }
 }

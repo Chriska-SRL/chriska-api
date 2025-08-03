@@ -12,7 +12,6 @@ namespace BusinessLogic.DTOs.DTOsStockMovement
         public int Quantity { get; set; }
         public StockMovementType Type { get; set; }
         public string Reason { get; set; }
-        public ShelveResponse Shelve { get; set; }
         public UserResponse User { get; set; }
         public ProductResponse Product { get; set; }
     }

@@ -1,6 +1,5 @@
 ﻿using BusinessLogic.Common;
 using BusinessLogic.Common.Mappers;
-using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsWarehouse;
@@ -87,11 +86,10 @@ namespace BusinessLogic.SubSystem
             if ( await _shelveRepository.GetByNameAsync(request.Name) != null)
                 throw new ArgumentException("Ya existe una estantería con ese nombre.");
 
-            var newShelve = ShelveMapper.ToDomain(request);
+            var newShelve = ShelveMapper.ToDomain(request, warehouse);
             newShelve.Validate();
 
             var added = await _shelveRepository.AddAsync(newShelve);
-            added.Warehouse = warehouse;
             return ShelveMapper.ToResponse(added);
         }
 
@@ -104,11 +102,10 @@ namespace BusinessLogic.SubSystem
             if (warehouse == null)
                 throw new ArgumentException("El almacén seleccionado no existe.");
 
-            var updatedData = ShelveMapper.ToUpdatableData(request);
+            var updatedData = ShelveMapper.ToUpdatableData(request, warehouse);
             existingShelve.Update(updatedData);
 
             var updated = await _shelveRepository.UpdateAsync(existingShelve);
-            updated.Warehouse = warehouse;
             return ShelveMapper.ToResponse(updated);
         }
 

@@ -55,7 +55,6 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
-    <Folder Include="Triggers" />
     <Folder Include="Tables\Users And Roles" />
     <Folder Include="Tables\Vehicles" />
     <Folder Include="Tables\Clients" />
@@ -111,8 +110,5 @@
     <None Include="Data\testdata.sql" />
     <None Include="Data\cleardatabase.sql" />
     <None Include="Data\adminUser.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <PostDeploy Include="Triggers\trg_UpdateStockOnMovement.sql" />
   </ItemGroup>
 </Project>

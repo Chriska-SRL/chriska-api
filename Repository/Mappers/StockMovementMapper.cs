@@ -9,7 +9,7 @@ namespace Repository.Mappers
     {
         public static StockMovement FromReader(SqlDataReader reader)
         {
-            string unitTypeStr = reader.GetString(reader.GetOrdinal("UnitType")).Trim();
+            string unitTypeStr = reader.GetString(reader.GetOrdinal("ProductUnitType")).Trim();
             UnitType unitType = unitTypeStr switch
             {
                 "Unit" => UnitType.Unit,
@@ -17,7 +17,7 @@ namespace Repository.Mappers
                 _ => UnitType.None
             };
 
-            string tempStr = reader.GetString(reader.GetOrdinal("TemperatureCondition")).Trim();
+            string tempStr = reader.GetString(reader.GetOrdinal("ProductTemperatureCondition")).Trim();
             TemperatureCondition tempCondition = tempStr switch
             {
                 "Cold" => TemperatureCondition.Cold,
@@ -31,7 +31,7 @@ namespace Repository.Mappers
                 name: reader.GetString(reader.GetOrdinal("CategoryName")),
                 description: reader.GetString(reader.GetOrdinal("CategoryDescription")),
                 subCategories: new List<SubCategory>(),
-                auditInfo: null
+                auditInfo: new AuditInfo()
             );
 
             var subCategory = new SubCategory(
@@ -39,7 +39,7 @@ namespace Repository.Mappers
                 name: reader.GetString(reader.GetOrdinal("SubCategoryName")),
                 description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
                 category: category,
-                auditInfo: null
+                auditInfo: new AuditInfo()
             );
             var brand = new Brand(
                 id: reader.GetInt32(reader.GetOrdinal("BrandId")),
@@ -48,30 +48,12 @@ namespace Repository.Mappers
                 auditInfo: new AuditInfo()
             );
 
-            var product = new Product(
-                id: reader.GetInt32(reader.GetOrdinal("ProductId")),
-                name: reader.GetString(reader.GetOrdinal("ProductName")),
-                barcode: reader.GetString(reader.GetOrdinal("BarCode")),
-                unitType: unitType,
-                price: reader.GetDecimal(reader.GetOrdinal("Price")),
-                description: reader.GetString(reader.GetOrdinal("ProductDescription")),
-                temperatureCondition: tempCondition,
-                estimatedWeight: reader.GetInt32(reader.GetOrdinal("EstimatedWeight")),
-                stock: reader.GetInt32(reader.GetOrdinal("ProductStock")),
-                availableStocks: reader.GetInt32(reader.GetOrdinal("ProductAviableStock")),
-                image: reader.GetString(reader.GetOrdinal("Image")),
-                observations: reader.GetString(reader.GetOrdinal("Observations")),
-                subCategory: subCategory,
-                brand:brand,
-                suppliers: new List<Supplier>(),
-                auditInfo: new AuditInfo()
-            );
+
 
             var warehouse = new Warehouse(
                 id: reader.GetInt32(reader.GetOrdinal("WarehouseId")),
                 name: reader.GetString(reader.GetOrdinal("WarehouseName")),
                 description: reader.GetString(reader.GetOrdinal("WarehouseDescription")),
-                address: reader.GetString(reader.GetOrdinal("Address")),
                 shelves: new List<Shelve>(), 
                 auditInfo: new AuditInfo()
             );
@@ -91,18 +73,39 @@ namespace Repository.Mappers
                 name: reader.GetString(reader.GetOrdinal("RoleName")),
                 description: reader.GetString(reader.GetOrdinal("RoleDescription")),
                 permissions: new List<Permission>(),
-                auditInfo: null
+                auditInfo: new AuditInfo()
             );
 
             var user = new User(
                 id: reader.GetInt32(reader.GetOrdinal("UserId")),
                 name: reader.GetString(reader.GetOrdinal("UserName")),
-                username: reader.GetString(reader.GetOrdinal("Username")),
-                isEnabled: reader.GetString(reader.GetOrdinal("IsEnabled")).Trim() == "T",
-                needsPasswordChange: reader.GetString(reader.GetOrdinal("NeedsPasswordChange")).Trim() == "T",
-                password: reader.GetString(reader.GetOrdinal("Password")),
+                username: reader.GetString(reader.GetOrdinal("UserUsername")),
+                isEnabled: reader.GetString(reader.GetOrdinal("UserIsEnabled")).Trim() == "T",
+                needsPasswordChange: reader.GetString(reader.GetOrdinal("UserNeedsPasswordChange")).Trim() == "T",
+                password: "",
                 role: role,
-                auditInfo: null
+                auditInfo: new AuditInfo()
+            );
+
+
+            var product = new Product(
+                id: reader.GetInt32(reader.GetOrdinal("ProductId")),
+                name: reader.GetString(reader.GetOrdinal("ProductName")),
+                barcode: reader.GetString(reader.GetOrdinal("ProductBarCode")),
+                unitType: unitType,
+                price: reader.GetDecimal(reader.GetOrdinal("ProductPrice")),
+                description: reader.GetString(reader.GetOrdinal("ProductDescription")),
+                temperatureCondition: tempCondition,
+                estimatedWeight: reader.GetInt32(reader.GetOrdinal("ProductEstimatedWeight")),
+                stock: reader.GetInt32(reader.GetOrdinal("ProductStock")),
+                availableStocks: reader.GetInt32(reader.GetOrdinal("ProductAvailableStock")),
+                image: reader.GetString(reader.GetOrdinal("ProductImageUrl")),
+                observations: reader.GetString(reader.GetOrdinal("ProductObservations")),
+                subCategory: subCategory,
+                brand: brand,
+                shelve: shelve,
+                suppliers: new List<Supplier>(),
+                auditInfo: new AuditInfo()
             );
 
             var stockMovement = new StockMovement(
@@ -111,10 +114,9 @@ namespace Repository.Mappers
                 quantity: reader.GetInt32(reader.GetOrdinal("Quantity")),
                 type: ParseType(reader.GetString(reader.GetOrdinal("Type")).Trim()),
                 reason: reader.GetString(reader.GetOrdinal("Reason")),
-                shelve: shelve,
                 user: user,
                 product: product,
-                auditInfo: new AuditInfo()
+                auditInfo: AuditInfoMapper.FromReader(reader)
             );
 
             return stockMovement;
@@ -124,8 +126,8 @@ namespace Repository.Mappers
         {
             return typeCode switch
             {
-                "I" => StockMovementType.Ingreso,
-                "E" => StockMovementType.Egreso,
+                "Inbound" => StockMovementType.Inbound,
+                "Outbound" => StockMovementType.Outbound,
                 _ => throw new InvalidOperationException($"Tipo de movimiento desconocido: {typeCode}")
             };
         }

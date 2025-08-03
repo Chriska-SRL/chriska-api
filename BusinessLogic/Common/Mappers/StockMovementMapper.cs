@@ -5,16 +5,15 @@ namespace BusinessLogic.Common.Mappers
 {
     public static class StockMovementMapper
     {
-        public static StockMovement ToDomain(AddStockMovementRequest request)
+        public static StockMovement ToDomain(AddStockMovementRequest request, User user, Product product)
         {
             var movement = new StockMovement(
-                date: request.Date,
+                date: request.Date ?? DateTime.Now,
                 quantity: request.Quantity,
                 type: request.Type,
                 reason: request.Reason,
-                shelve: new Shelve(request.ShelveId),
-                user: new User(request.UserId),
-                product: null
+                user: user,
+                product: product
             );
 
             movement.AuditInfo.SetCreated(request.getUserId(), request.Location);
@@ -30,7 +29,6 @@ namespace BusinessLogic.Common.Mappers
                 Quantity = movement.Quantity,
                 Type = movement.Type,
                 Reason = movement.Reason,
-                Shelve = ShelveMapper.ToResponse(movement.Shelve),
                 User = UserMapper.ToResponse(movement.User),
                 Product = ProductMapper.ToResponse(movement.Product),
                 AuditInfo = AuditMapper.ToResponse(movement.AuditInfo)
