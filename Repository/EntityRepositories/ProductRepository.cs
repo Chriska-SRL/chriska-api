@@ -120,6 +120,7 @@ namespace Repository.EntityRepositories
         //no trae las cuentas bancarias de los proveedores
         public async Task<List<Product>> GetAllAsync(QueryOptions options)
         {
+            var allowedFilters = new[] { "Name", "InternalCode", "BarCode", "UnitType", "BrandId", "SubCategoryId"};
             return await ExecuteReadAsync(
                 baseQuery: @"SELECT p.*, 
                                    sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, sc.Description AS SubCategoryDescription, 
@@ -160,6 +161,7 @@ namespace Repository.EntityRepositories
                     return products.Values.ToList();
                 },
                 options: options,
+                allowedFilterColumns: allowedFilters,
                 tableAlias: "p"
             );
         }
