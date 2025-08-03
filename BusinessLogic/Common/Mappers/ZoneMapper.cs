@@ -7,11 +7,11 @@ namespace BusinessLogic.Común.Mappers
     {
         public static Zone ToDomain(AddZoneRequest request)
         {
-            var zone = new Zone(
+            Zone zone = new Zone(
                 name: request.Name,
                 description: request.Description,
-                deliveryDays: new List<Day>(),
-                requestDays: new List<Day>()
+                deliveryDays: request.DeliveryDays.Select(d => (Day)Enum.Parse(typeof(Day), d)).ToList(),
+                requestDays: request.RequestDays.Select(d => (Day)Enum.Parse(typeof(Day), d)).ToList()
             );
 
             zone.AuditInfo.SetCreated(request.getUserId(), request.Location);
@@ -24,8 +24,8 @@ namespace BusinessLogic.Común.Mappers
             {
                 Name = request.Name,
                 Description = request.Description,
-                DeliveryDays = request.DeliveryDays.Select(d => (Day)d).ToList(),
-                RequestDays = request.RequestDays.Select(d => (Day)d).ToList(),
+                DeliveryDays = request.DeliveryDays.Select(d => (Day)Enum.Parse(typeof(Day), d)).ToList(),
+                RequestDays = request.RequestDays.Select(d => (Day)Enum.Parse(typeof(Day), d)).ToList(),
                 UserId = request.getUserId(),
                 Location = request.Location
             };
@@ -39,6 +39,8 @@ namespace BusinessLogic.Común.Mappers
                 Name = zone.Name,
                 Description = zone.Description,
                 ImageUrl = zone.ImageUrl,
+                DeliveryDays = zone.DeliveryDays.Select(d => d.ToString()).ToList(),
+                RequestDays = zone.RequestDays.Select(d => d.ToString()).ToList(),
                 AuditInfo = AuditMapper.ToResponse(zone.AuditInfo)
             };
         }

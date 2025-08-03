@@ -12,6 +12,8 @@ namespace BusinessLogic.DTOs.DTOsZone
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        
+        public List<string> DeliveryDays { get; set; } = new List<string>();
+        public List<string> RequestDays { get; set; } = new List<string>();
+
     }
 }
