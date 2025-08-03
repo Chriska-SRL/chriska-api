@@ -12,151 +12,127 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
     public ZoneRepository(string connectionString, AuditLogger auditLogger)
         : base(connectionString, auditLogger) { }
 
-    public async Task<Zone> AddAsync(Zone entity)
+    #region Add
+    public async Task<Zone> AddAsync(Zone zone)
     {
-        const string insertZoneQuery = @"
-    INSERT INTO Zones (Name, Description, DeliveryDays, RequestDays)
-    OUTPUT INSERTED.Id
-    VALUES (@Name, @Description, @DeliveryDays, @RequestDays)";
-
-        return await ExecuteWriteWithAuditAsync(
-            insertZoneQuery,
-            entity,
+        int newId = await ExecuteWriteWithAuditAsync(
+            "INSERT INTO Zones (Name, Description, DeliveryDays, RequestDays) " +
+            "VALUES (@Name, @Description, @DeliveryDays, @RequestDays); " +
+            "SELECT CAST(SCOPE_IDENTITY() AS INT);",
+            zone,
             AuditAction.Insert,
-            cmd =>
+            configureCommand: cmd =>
             {
-                cmd.Parameters.AddWithValue("@Name", entity.Name);
-                cmd.Parameters.AddWithValue("@Description", entity.Description);
-                cmd.Parameters.AddWithValue("@DeliveryDays", string.Join(",", entity.DeliveryDays.Select(d => d.ToString())));
-                cmd.Parameters.AddWithValue("@RequestDays", string.Join(",", entity.RequestDays.Select(d => d.ToString())));
-
+                cmd.Parameters.AddWithValue("@Name", zone.Name);
+                cmd.Parameters.AddWithValue("@Description", zone.Description);
+                cmd.Parameters.AddWithValue("@DeliveryDays", string.Join(",", zone.DeliveryDays));
+                cmd.Parameters.AddWithValue("@RequestDays", string.Join(",", zone.RequestDays));
             },
-            async cmd =>
-            {
-                var zoneId = (int)await cmd.ExecuteScalarAsync();
-
-                return new Zone(zoneId, entity.Name, entity.Description,entity.ImageUrl, entity.DeliveryDays, entity.RequestDays, entity.AuditInfo);
-            }
+            async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
         );
+
+        zone.Id = newId;
+        return zone;
     }
+    #endregion
 
-    public async Task<Zone> UpdateAsync(Zone entity)
+    #region Update
+    public async Task<Zone> UpdateAsync(Zone zone)
     {
-        const string updateQuery = @"
-        UPDATE Zones 
-        SET Name = @Name,
-            Description = @Description,
-            DeliveryDays = @DeliveryDays,
-            RequestDays = @RequestDays
-        WHERE Id = @Id";
-
-        return await ExecuteWriteWithAuditAsync(
-            updateQuery,
-            entity,
+        int rows = await ExecuteWriteWithAuditAsync(
+            "UPDATE Zones SET Name = @Name, Description = @Description, DeliveryDays = @DeliveryDays, RequestDays = @RequestDays " +
+            "WHERE Id = @Id",
+            zone,
             AuditAction.Update,
-            cmd =>
+            configureCommand: cmd =>
             {
-                cmd.Parameters.AddWithValue("@Id", entity.Id);
-                cmd.Parameters.AddWithValue("@Name", entity.Name);
-                cmd.Parameters.AddWithValue("@Description", entity.Description);
-                cmd.Parameters.AddWithValue("@DeliveryDays", string.Join(",", entity.DeliveryDays.Select(d => d.ToString())));
-                cmd.Parameters.AddWithValue("@RequestDays", string.Join(",", entity.RequestDays.Select(d => d.ToString())));
-            },
-            async cmd =>
-            {
-                var rowsAffected = await cmd.ExecuteNonQueryAsync();
-                if (rowsAffected == 0)
-                    throw new InvalidOperationException($"No se encontró la zona con Id {entity.Id} para actualizar.");
-
-                return entity;
+                cmd.Parameters.AddWithValue("@Id", zone.Id);
+                cmd.Parameters.AddWithValue("@Name", zone.Name);
+                cmd.Parameters.AddWithValue("@Description", zone.Description);
+                cmd.Parameters.AddWithValue("@DeliveryDays", string.Join(",", zone.DeliveryDays));
+                cmd.Parameters.AddWithValue("@RequestDays", string.Join(",", zone.RequestDays));
             }
         );
+
+        if (rows == 0)
+            throw new InvalidOperationException($"No se pudo actualizar la zona con Id {zone.Id}");
+
+        return zone;
     }
+    #endregion
 
 
-    public async Task<Zone> DeleteAsync(Zone entity)
+
+    #region Delete
+    public async Task<Zone> DeleteAsync(Zone zone)
     {
-        const string deleteQuery = @"
-    UPDATE Zones 
-    SET IsDeleted = 1 
-    WHERE Id = @Id";
-
-        return await ExecuteWriteWithAuditAsync(
-            deleteQuery,
-            entity,
+        int rows = await ExecuteWriteWithAuditAsync(
+            "UPDATE Zones SET IsDeleted = 1 WHERE Id = @Id",
+            zone,
             AuditAction.Delete,
-            cmd =>
+            configureCommand: cmd =>
             {
-                cmd.Parameters.AddWithValue("@Id", entity.Id);
-            },
-            async cmd =>
-            {
-                await cmd.ExecuteNonQueryAsync();
-                return entity;
+                cmd.Parameters.AddWithValue("@Id", zone.Id);
             }
         );
+
+        if (rows == 0)
+            throw new InvalidOperationException($"No se pudo eliminar la zona con Id {zone.Id}");
+
+        return zone;
     }
+    #endregion
 
-
-    public async Task<Zone?> GetByIdAsync(int id)
-    {
-        const string query = "SELECT * FROM Zones WHERE Id = @Id";
-
-        try
-        {
-            using var connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync();
-
-            using var command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@Id", id);
-            using var reader = await command.ExecuteReaderAsync();
-
-            if (!reader.HasRows)
-                return null;
-
-            Zone? zone = null;
-            while (await reader.ReadAsync())
-            {
-                zone = ZoneMapper.FromReader(reader);
-            }
-
-   
-            return zone;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Ocurrió un error al obtener la zona.");
-        }
-    }
-
+    #region GetAll
     public async Task<List<Zone>> GetAllAsync(QueryOptions options)
     {
-        const string query = "SELECT * FROM Zones";
+        var allowedFilters = new[] { "Name", "Observation" };
 
-        try
-        {
-            using var connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync();
-
-            using var command = new SqlCommand(query, connection);
-            using var reader = await command.ExecuteReaderAsync();
-
-            var zones = new List<Zone>();
-            while (await reader.ReadAsync())
+        return await ExecuteReadAsync(
+            baseQuery: "SELECT z.* FROM Zones z",
+            map: reader =>
             {
-                var zone = ZoneMapper.FromReader(reader);
-                if (zone != null)
-                    zones.Add(zone);
-            }
-     
-            return zones;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Ocurrió un error al obtener las zonas: " + ex.Message, ex);
-        }
+                var zones = new List<Zone>();
+                while (reader.Read())
+                {
+                    var zone = ZoneMapper.FromReader(reader);
+                    if (zone != null)
+                        zones.Add(zone);
+                }
+                return zones;
+            },
+            options: options,
+            allowedFilterColumns: allowedFilters,
+            tableAlias: "z"
+        );
     }
-    
+    #endregion
+
+    #region GetById
+    public async Task<Zone?> GetByIdAsync(int id)
+    {
+        return await ExecuteReadAsync(
+            baseQuery: "SELECT z.* FROM Zones z WHERE z.Id = @Id",
+            map: reader =>
+            {
+                Zone? zone = null;
+                while (reader.Read())
+                {
+                    zone = ZoneMapper.FromReader(reader);
+                }
+                return zone;
+            },
+            options: new QueryOptions(),
+            tableAlias: "z",
+            configureCommand: cmd =>
+            {
+                cmd.Parameters.AddWithValue("@Id", id);
+            }
+        );
+    }
+    #endregion
+
+
     public async Task<string> UpdateImageUrlAsync(Zone zone, string imageUrl)
     {
         int rows = await ExecuteWriteWithAuditAsync(
