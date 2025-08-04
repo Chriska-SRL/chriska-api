@@ -86,7 +86,7 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
     #region GetAll
     public async Task<List<Zone>> GetAllAsync(QueryOptions options)
     {
-        var allowedFilters = new[] { "Name" };
+        var allowedFilters = new[] { "Name", "DeliveryDays", "RequestDays" };
 
         return await ExecuteReadAsync(
             baseQuery: "SELECT z.* FROM Zones z",
@@ -126,6 +126,26 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
             configureCommand: cmd =>
             {
                 cmd.Parameters.AddWithValue("@Id", id);
+            }
+        );
+    }
+    #endregion
+
+    #region GetByName
+    public async Task<Zone?> GetByNameAsync(string name)
+    {
+        return await ExecuteReadAsync(
+            baseQuery: "SELECT * FROM Zones WHERE Name = @Name",
+            map: reader =>
+            {
+                if (reader.Read())
+                    return ZoneMapper.FromReader(reader);
+                return null;
+            },
+            options: new QueryOptions(),
+            configureCommand: cmd =>
+            {
+                cmd.Parameters.AddWithValue("@Name", name);
             }
         );
     }

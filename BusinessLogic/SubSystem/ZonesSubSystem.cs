@@ -25,6 +25,10 @@ namespace BusinessLogic.SubSystem
             var newZone = ZoneMapper.ToDomain(request);
             newZone.Validate();
 
+            var existing = await _zoneRepository.GetByNameAsync(newZone.Name);
+            if (existing != null)
+                throw new ArgumentException("Ya existe una zona con ese nombre.");
+
             var added = await _zoneRepository.AddAsync(newZone);
             return ZoneMapper.ToResponse(added);
         }
@@ -65,6 +69,7 @@ namespace BusinessLogic.SubSystem
             var zones = await _zoneRepository.GetAllAsync(options);
             return zones.Select(ZoneMapper.ToResponse).ToList();
         }
+
         public async Task<string> UploadZoneImageAsync(AddImageRequest request)
         {
             Zone zone = await _zoneRepository.GetByIdAsync(request.EntityId)
