@@ -4,7 +4,7 @@
     [Id] INT NOT NULL PRIMARY KEY IDENTITY,
 
     -- Campos de la entidad
-    [Name] NVARCHAR(50) NULL UNIQUE,
+    [Name] NVARCHAR(50) NULL,
     [Description] NVARCHAR(100) NULL,
     [DeliveryDays] NVARCHAR(MAX) NULL, -- JSON: [1,3,5]
     [RequestDays] NVARCHAR(MAX) NULL,  -- JSON: [2,4,6]
