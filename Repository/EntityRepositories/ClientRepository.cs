@@ -115,20 +115,17 @@ namespace Repository.EntityRepositories
 
         public async Task<List<Client>> GetAllAsync(QueryOptions options)
         {
+            var allowedFilters = new[] { "Name", "RUT", "RazonSocial", "Address", "Phone", "ContactName", "Email", "Schedule", "Qualification", "ZoneId" };
             var clientDict = new Dictionary<int, Client>();
 
             return await ExecuteReadAsync(
                 baseQuery: @"SELECT 
                         c.*, 
-                        z.Id AS ZoneId, z.Name AS ZoneName,
-                        b.Id AS BankAccountId, b.BankName, b.AccountName, b.AccountNumber,
-                        b.CreatedAt, b.CreatedBy, b.CreatedLocation,
-                        b.UpdatedAt, b.UpdatedBy, b.UpdatedLocation,
-                        b.DeletedAt, b.DeletedBy, b.DeletedLocation
+                        z.Name AS ZoneName, z.Description AS ZoneDescription, z.DeliveryDays As ZoneDeliveryDays, z.RequestDays AS ZoneRequestDays, z.ImageUrl AS ZoneImageUrl,
+                        b.Id AS BankAccountId, b.BankName, b.AccountName, b.AccountNumber
                      FROM Clients c
                      INNER JOIN Zones z ON c.ZoneId = z.Id
-                     LEFT JOIN ClientBankAccounts b ON c.Id = b.ClientId AND b.IsDeleted = 0
-                     WHERE c.IsDeleted = 0",
+                     LEFT JOIN ClientBankAccounts b ON c.Id = b.ClientId",
                 map: reader =>
                 {
                     while (reader.Read())
@@ -143,13 +140,15 @@ namespace Repository.EntityRepositories
 
                         if (!reader.IsDBNull(reader.GetOrdinal("BankAccountId")))
                         {
-                            //client.BankAccounts.Add(BankAccountMapper.FromReaderWithClientJoin(reader));
+                            client.BankAccounts.Add(BankAccountMapper.FromReader(reader));
                         }
                     }
 
                     return clientDict.Values.ToList();
                 },
-                options: options
+                options: options,
+                tableAlias: "c",
+                allowedFilterColumns: allowedFilters
             );
         }
 
@@ -160,46 +159,7 @@ namespace Repository.EntityRepositories
 
         public async Task<Client?> GetByIdAsync(int id)
         {
-            Client? client = null;
-
-            await ExecuteReadAsync(
-                baseQuery: @"SELECT 
-                        c.*, 
-                        z.Id AS ZoneId, z.Name AS ZoneName,
-                        b.Id AS BankAccountId, b.BankName, b.AccountName, b.AccountNumber,
-                        b.CreatedAt, b.CreatedBy, b.CreatedLocation,
-                        b.UpdatedAt, b.UpdatedBy, b.UpdatedLocation,
-                        b.DeletedAt, b.DeletedBy, b.DeletedLocation
-                     FROM Clients c
-                     INNER JOIN Zones z ON c.ZoneId = z.Id
-                     LEFT JOIN ClientBankAccounts b ON c.Id = b.ClientId AND b.IsDeleted = 0
-                     WHERE c.Id = @Id AND c.IsDeleted = 0",
-                map: reader =>
-                {
-                    while (reader.Read())
-                    {
-                        if (client == null)
-                        {
-                            client = ClientMapper.FromReader(reader);
-                            client.BankAccounts = new List<BankAccount>();
-                        }
-
-                        if (!reader.IsDBNull(reader.GetOrdinal("BankAccountId")))
-                        {
-                          //  client.BankAccounts.Add(BankAccountMapper.FromReaderWithClientJoin(reader));
-                        }
-                    }
-
-                    return client;
-                },
-                options: new QueryOptions(),
-                configureCommand: cmd =>
-                {
-                    cmd.Parameters.AddWithValue("@Id", id);
-                }
-            );
-
-            return client;
+            return await GetByFieldAsync("Id", id.ToString());
         }
 
 
@@ -265,5 +225,45 @@ namespace Repository.EntityRepositories
             }
         }
 
+        public async Task<Client?> GetByNameAsync(string name)
+        {
+            return await GetByFieldAsync("Name", name);
+        }
+
+        public async Task<Client?> GetByRUTAsync(string rut)
+        {
+            return await GetByFieldAsync("RUT", rut);
+        }
+
+        private async Task<Client?> GetByFieldAsync(string fieldName, string value)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: $@"SELECT 
+                            c.*, 
+                            z.Name AS ZoneName, z.Description AS ZoneDescription, z.DeliveryDays As ZoneDeliveryDays, z.RequestDays AS ZoneRequestDays, z.ImageUrl AS ZoneImageUrl,
+                            b.Id AS BankAccountId, b.BankName, b.AccountName, b.AccountNumber
+                         FROM Clients c
+                         INNER JOIN Zones z ON c.ZoneId = z.Id
+                         LEFT JOIN ClientBankAccounts b ON c.Id = b.ClientId
+                         WHERE c.{fieldName} = @Value",
+                map: reader =>
+                {
+                    Client? client = null;
+                    while (reader.Read())
+                    {
+                        if (client == null)
+                        {
+                            client = ClientMapper.FromReader(reader);
+                            client.BankAccounts = new List<BankAccount>();
+                        }
+                        if (!reader.IsDBNull(reader.GetOrdinal("BankAccountId")))
+                            client.BankAccounts.Add(BankAccountMapper.FromReader(reader));
+                    }
+                    return client;
+                },
+                options: new QueryOptions(),
+                tableAlias: "c",
+                configureCommand: cmd => cmd.Parameters.AddWithValue("@Value", value));
+        }
     }
 }

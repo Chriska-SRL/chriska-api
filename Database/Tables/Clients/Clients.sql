@@ -6,16 +6,16 @@
     -- Campos de la entidad
     [Name] NVARCHAR(50) NOT NULL, 
     [RazonSocial] NVARCHAR(50) NOT NULL, 
-    [RUT] NCHAR(20) NOT NULL, 
+    [RUT] NCHAR(12) NOT NULL, 
     [Address] NVARCHAR(255) NOT NULL, 
     [MapsAddress] NVARCHAR(255) NOT NULL, 
-    [Phone] NCHAR(12) NOT NULL, 
+    [Phone] NVARCHAR(12) NOT NULL, 
     [Email] NVARCHAR(50) NOT NULL, 
     [ContactName] NVARCHAR(50) NOT NULL, 
     [Schedule] NVARCHAR(100) NOT NULL, 
     [LoanedCrates] INT NOT NULL DEFAULT 0, 
-    [Observations] NVARCHAR(255) NULL, 
-    [Qualification] INT NOT NULL DEFAULT 3,
+    [Observations] NVARCHAR(255) NOT NULL, 
+    [Qualification] NVARCHAR(5) NOT NULL DEFAULT '3/5',
     [ZoneId] INT NOT NULL,
 
     -- Campos de auditoría
