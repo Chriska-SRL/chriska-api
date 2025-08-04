@@ -35,17 +35,17 @@ namespace BusinessLogic.SubSystem
 
         public async Task<ZoneResponse> UpdateZoneAsync(UpdateZoneRequest request)
         {
-            var existingBrand = await _zoneRepository.GetByIdAsync(request.Id)
+            var existingZone = await _zoneRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la zona seleccionada.");
 
             var existing = await _zoneRepository.GetByNameAsync(request.Name);
-            if (existingBrand.Name != request.Name && existing != null)
+            if (existingZone.Name != request.Name && existing != null)
                 throw new ArgumentException("Ya existe una zona con ese nombre.");
 
             var updatedData = ZoneMapper.ToUpdatableData(request);
-            existing.Update(updatedData);
+            existingZone.Update(updatedData);
 
-            var updated = await _zoneRepository.UpdateAsync(existing);
+            var updated = await _zoneRepository.UpdateAsync(existingZone);
             return ZoneMapper.ToResponse(updated);
         }
 
