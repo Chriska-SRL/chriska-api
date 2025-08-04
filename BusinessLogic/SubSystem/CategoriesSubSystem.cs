@@ -28,7 +28,7 @@ namespace BusinessLogic.SubSystem
         public async Task<CategoryResponse> AddCategoryAsync(AddCategoryRequest request)
         {
             if (await _categoryRepository.GetByNameAsync(request.Name) != null)
-                throw new ArgumentException("Ya existe una categoría con el mismo nombre.", nameof(request.Name));
+                throw new ArgumentException("Ya existe una categoría con el mismo nombre.");
 
             var category = CategoryMapper.ToDomain(request);
             category.Validate();
@@ -40,10 +40,10 @@ namespace BusinessLogic.SubSystem
         public async Task<CategoryResponse> UpdateCategoryAsync(UpdateCategoryRequest request)
         {
             var existing = await _categoryRepository.GetByIdAsync(request.Id)
-                          ?? throw new ArgumentException("Categoría no encontrada.", nameof(request.Id));
+                          ?? throw new ArgumentException("Categoría no encontrada.");
 
             if (existing.Name != request.Name && await _categoryRepository.GetByNameAsync(request.Name) != null)
-                throw new ArgumentException("Ya existe una categoría con el mismo nombre.", nameof(request.Name));
+                throw new ArgumentException("Ya existe una categoría con el mismo nombre.");
 
             var updatedData = CategoryMapper.ToUpdatableData(request);
             existing.Update(updatedData);
@@ -55,7 +55,7 @@ namespace BusinessLogic.SubSystem
         public async Task<CategoryResponse> DeleteCategoryAsync(DeleteRequest request)
         {
             var deleted = await _categoryRepository.GetByIdAsync(request.Id)
-                          ?? throw new ArgumentException("Categoría no encontrada.", nameof(request.Id));
+                          ?? throw new ArgumentException("Categoría no encontrada.");
 
             deleted.MarkAsDeleted(request.getUserId(), request.Location);
             await _categoryRepository.DeleteAsync(deleted);
@@ -65,7 +65,7 @@ namespace BusinessLogic.SubSystem
         public async Task<CategoryResponse> GetCategoryByIdAsync(int id)
         {
             var category = await _categoryRepository.GetByIdAsync(id)
-                          ?? throw new ArgumentException("Categoría no encontrada.", nameof(id));
+                          ?? throw new ArgumentException("Categoría no encontrada.");
 
             return CategoryMapper.ToResponse(category);
         }
@@ -81,10 +81,10 @@ namespace BusinessLogic.SubSystem
         public async Task<SubCategoryResponse> AddSubCategoryAsync(AddSubCategoryRequest request)
         {
             var existingCategory = await _categoryRepository.GetByIdAsync(request.CategoryId)
-                ?? throw new ArgumentException("Categoría no encontrada.", nameof(request.CategoryId));
+                ?? throw new ArgumentException("Categoría no encontrada.");
 
             if (await _subCategoryRepository.GetByNameAsync(request.Name) != null)
-                throw new ArgumentException("Ya existe una subcategoría con el mismo nombre.", nameof(request.Name));
+                throw new ArgumentException("Ya existe una subcategoría con el mismo nombre.");
 
             var subCategory = SubCategoryMapper.ToDomain(request);
             subCategory.Validate();
@@ -96,10 +96,10 @@ namespace BusinessLogic.SubSystem
         public async Task<SubCategoryResponse> UpdateSubCategoryAsync(UpdateSubCategoryRequest request)
         {
             var existing = await _subCategoryRepository.GetByIdAsync(request.Id)
-                ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(request.Id));
+                ?? throw new ArgumentException("Subcategoría no encontrada.");
 
             if (existing.Name != request.Name && await _subCategoryRepository.GetByNameAsync(request.Name) != null)
-                throw new ArgumentException("Ya existe una subcategoría con el mismo nombre.", nameof(request.Name));
+                throw new ArgumentException("Ya existe una subcategoría con el mismo nombre.");
 
             var updatedData = SubCategoryMapper.ToUpdatableData(request);
             existing.Update(updatedData);
@@ -111,7 +111,7 @@ namespace BusinessLogic.SubSystem
         public async Task<SubCategoryResponse> DeleteSubCategoryAsync(DeleteRequest request)
         {
             var deleted = await _subCategoryRepository.GetByIdAsync(request.Id)
-                ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(request.Id));
+                ?? throw new ArgumentException("Subcategoría no encontrada.");
 
             //var associatedProducts = await _productRepository.GetBySubCategoryIdAsync(request.Id);
             //if (associatedProducts.Any())
@@ -126,7 +126,7 @@ namespace BusinessLogic.SubSystem
         public async Task<SubCategoryResponse> GetSubCategoryByIdAsync(int id)
         {
             var subCategory = await _subCategoryRepository.GetByIdAsync(id)
-                ?? throw new ArgumentException("Subcategoría no encontrada.", nameof(id));
+                ?? throw new ArgumentException("Subcategoría no encontrada.");
 
             return SubCategoryMapper.ToResponse(subCategory);
         }

@@ -23,7 +23,7 @@ namespace BusinessLogic.SubSystem
 
             Role existing = await _roleRepository.GetByNameAsync(newRole.Name);
             if (existing != null)
-                throw new ArgumentException("Ya existe un rol con ese nombre.", nameof(newRole.Name));
+                throw new ArgumentException("Ya existe un rol con ese nombre.");
 
             var added = await _roleRepository.AddAsync(newRole);
             return RoleMapper.ToResponse(added);
@@ -32,11 +32,11 @@ namespace BusinessLogic.SubSystem
         public async Task<RoleResponse> UpdateRoleAsync(UpdateRoleRequest request)
         {
             var existingRole = await _roleRepository.GetByIdAsync(request.Id)
-                ?? throw new ArgumentException("No se encontró el rol seleccionado.", nameof(request.Id));
+                ?? throw new ArgumentException("No se encontró el rol seleccionado.");
 
             var existing = await _roleRepository.GetByNameAsync(request.Name);
             if (existingRole.Name != request.Name && existing != null)
-                throw new ArgumentException("Ya existe un rol con ese nombre.", nameof(request.Name));
+                throw new ArgumentException("Ya existe un rol con ese nombre.");
 
             var updatedData = RoleMapper.ToUpdatableData(request);
             existingRole.Update(updatedData);
@@ -48,7 +48,7 @@ namespace BusinessLogic.SubSystem
         public async Task<RoleResponse> DeleteRoleAsync(DeleteRequest request)
         {
             Role role = await _roleRepository.GetByIdWithUsersAsync(request.Id)
-                ?? throw new ArgumentException("No se encontró el rol seleccionado.", nameof(request.Id));
+                ?? throw new ArgumentException("No se encontró el rol seleccionado.");
 
             if (role.Users.Any())
                 throw new InvalidOperationException("No se puede eliminar el rol porque tiene usuarios asociados.");
@@ -61,7 +61,7 @@ namespace BusinessLogic.SubSystem
         public async Task<RoleResponse> GetRoleByIdAsync(int id)
         {
             var role = await _roleRepository.GetByIdAsync(id)
-                ?? throw new ArgumentException("No se encontró el rol seleccionado.", nameof(id));
+                ?? throw new ArgumentException("No se encontró el rol seleccionado.");
 
             return RoleMapper.ToResponse(role);
         }

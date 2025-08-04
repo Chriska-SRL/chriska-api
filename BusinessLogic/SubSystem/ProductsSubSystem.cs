@@ -34,16 +34,16 @@ namespace BusinessLogic.SubSystem
         public async Task<ProductResponse> AddProductAsync(ProductAddRequest request)
         {
             SubCategory subCategory = await _subCategoryRepository.GetByIdAsync(request.SubCategoryId)
-                ?? throw new ArgumentException("No se encontró la subcategoría asociada.", nameof(request.SubCategoryId));
+                ?? throw new ArgumentException("No se encontró la subcategoría asociada.");
 
             Brand brand = await _brandRepository.GetByIdAsync(request.BrandId)
-                ?? throw new ArgumentException("No se encontró la marca asociada.", nameof(request.BrandId));
+                ?? throw new ArgumentException("No se encontró la marca asociada.");
 
             List<Supplier> suppliers = new List<Supplier>();
             foreach (var supplierId in request.SupplierIds)
             {
                 var supplier = await _supplierRepository.GetByIdAsync(supplierId)
-                    ?? throw new ArgumentException($"No se encontró el proveedor con ID {supplierId}.", nameof(request.SupplierIds));
+                    ?? throw new ArgumentException($"No se encontró el proveedor con ID {supplierId}.");
                 suppliers.Add(supplier);
             }
 
@@ -57,19 +57,19 @@ namespace BusinessLogic.SubSystem
         public async Task<ProductResponse> UpdateProductAsync(ProductUpdateRequest request)
         {
             var existing = await _productRepository.GetByIdAsync(request.Id)
-                ?? throw new ArgumentException("No se encontró el producto seleccionado.", nameof(request.Id));
+                ?? throw new ArgumentException("No se encontró el producto seleccionado.");
 
             var subCategory = await _subCategoryRepository.GetByIdAsync(request.SubCategoryId)
-                ?? throw new ArgumentException("No se encontró la subcategoría asociada.", nameof(request.SubCategoryId));
+                ?? throw new ArgumentException("No se encontró la subcategoría asociada.");
 
             var brand = await _brandRepository.GetByIdAsync(request.BrandId)
-                ?? throw new ArgumentException("No se encontró la marca asociada.", nameof(request.BrandId));
+                ?? throw new ArgumentException("No se encontró la marca asociada.");
 
             List<Supplier> suppliers = new List<Supplier>();
             foreach (var supplierId in request.SupplierIds)
             {
                 var supplier = await _supplierRepository.GetByIdAsync(supplierId)
-                    ?? throw new ArgumentException($"No se encontró el proveedor con ID {supplierId}.", nameof(request.SupplierIds));
+                    ?? throw new ArgumentException($"No se encontró el proveedor con ID {supplierId}.");
                 suppliers.Add(supplier);
             }
 
@@ -83,7 +83,7 @@ namespace BusinessLogic.SubSystem
         public async Task DeleteProductAsync(DeleteRequest request)
         {
             var product = await _productRepository.GetByIdAsync(request.Id)
-                ?? throw new ArgumentException("No se encontró el producto seleccionado.", nameof(request.Id));
+                ?? throw new ArgumentException("No se encontró el producto seleccionado.");
 
             product.MarkAsDeleted(request.getUserId(), request.Location);
             await _productRepository.DeleteAsync(product);
@@ -92,7 +92,7 @@ namespace BusinessLogic.SubSystem
         public async Task<ProductResponse> GetProductByIdAsync(int id)
         {
             var product = await _productRepository.GetByIdAsync(id)
-                ?? throw new ArgumentException("No se encontró el producto seleccionado.", nameof(id));
+                ?? throw new ArgumentException("No se encontró el producto seleccionado.");
 
             return ProductMapper.ToResponse(product);
         }
@@ -106,7 +106,7 @@ namespace BusinessLogic.SubSystem
         public async Task<string> UploadProductImageAsync(AddImageRequest request)
         {
             Product product = await _productRepository.GetByIdAsync(request.EntityId)
-                ?? throw new ArgumentException("No se encontró el producto seleccionado.", nameof(request.EntityId));
+                ?? throw new ArgumentException("No se encontró el producto seleccionado.");
             product.AuditInfo.SetUpdated(request.getUserId(), request.Location);
 
             var url = await _blobService.UploadFileAsync(request.File, "products", $"product{product.Id}");
@@ -116,7 +116,7 @@ namespace BusinessLogic.SubSystem
         public async Task DeleteProductImageAsync(int productId)
         {
             Product product = await _productRepository.GetByIdAsync(productId)
-                ?? throw new ArgumentException("No se encontró el producto seleccionado.", nameof(productId));
+                ?? throw new ArgumentException("No se encontró el producto seleccionado.");
 
             await _blobService.DeleteFileAsync(product.ImageUrl, "products"); 
             await _productRepository.UpdateImageUrlAsync(product, "");

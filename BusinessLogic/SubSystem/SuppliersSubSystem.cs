@@ -22,13 +22,13 @@ namespace BusinessLogic.SubSystem
             newSupplier.Validate();
 
             if (await _supplierRepository.GetByRUTAsync(newSupplier.RUT) != null)
-                throw new ArgumentException("Ya existe un proveedor con ese RUT.", nameof(newSupplier.RUT));
+                throw new ArgumentException("Ya existe un proveedor con ese RUT.");
 
             if (await _supplierRepository.GetByNameAsync(newSupplier.Name) != null)
-                throw new ArgumentException("Ya existe un proveedor con ese nombre.", nameof(newSupplier.Name));
+                throw new ArgumentException("Ya existe un proveedor con ese nombre.");
 
             if (await _supplierRepository.GetByRazonSocialAsync(newSupplier.RazonSocial) != null)
-                throw new ArgumentException("Ya existe un proveedor con esa razón social.", nameof(newSupplier.RazonSocial));
+                throw new ArgumentException("Ya existe un proveedor con esa razón social.");
 
             Supplier added = await _supplierRepository.AddAsync(newSupplier);
             return SupplierMapper.ToResponse(added);
@@ -37,10 +37,10 @@ namespace BusinessLogic.SubSystem
         public async Task<SupplierResponse> UpdateSupplierAsync(UpdateSupplierRequest request)
         {
             var existingSupplier = await _supplierRepository.GetByIdAsync(request.Id)
-                ?? throw new ArgumentException("No se encontró el proveedor seleccionado.", nameof(request.Id));
+                ?? throw new ArgumentException("No se encontró el proveedor seleccionado.");
 
             if (existingSupplier.RUT != request.RUT && await _supplierRepository.GetByRUTAsync(request.RUT) != null)
-                throw new ArgumentException("Ya existe un proveedor con ese RUT.", nameof(request.RUT));
+                throw new ArgumentException("Ya existe un proveedor con ese RUT.");
 
             var updatedData = SupplierMapper.ToUpdatableData(request);
             existingSupplier.Update(updatedData);
@@ -52,7 +52,7 @@ namespace BusinessLogic.SubSystem
         public async Task DeleteSupplierAsync(DeleteRequest request)
         {
             var supplier = await _supplierRepository.GetByIdAsync(request.Id)
-                ?? throw new ArgumentException("No se encontró el proveedor seleccionado.", nameof(request.Id));
+                ?? throw new ArgumentException("No se encontró el proveedor seleccionado.");
 
             supplier.MarkAsDeleted(request.getUserId(), request.Location);
             await _supplierRepository.DeleteAsync(supplier);
@@ -61,7 +61,7 @@ namespace BusinessLogic.SubSystem
         public async Task<SupplierResponse> GetSupplierByIdAsync(int id)
         {
             var supplier = await _supplierRepository.GetByIdAsync(id)
-                ?? throw new ArgumentException("No se encontró el proveedor seleccionado.", nameof(id));
+                ?? throw new ArgumentException("No se encontró el proveedor seleccionado.");
 
             return SupplierMapper.ToResponse(supplier);
         }

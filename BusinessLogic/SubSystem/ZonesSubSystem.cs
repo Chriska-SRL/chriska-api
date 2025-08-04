@@ -77,7 +77,7 @@ namespace BusinessLogic.SubSystem
         public async Task<string> UploadZoneImageAsync(AddImageRequest request)
         {
             Zone zone = await _zoneRepository.GetByIdAsync(request.EntityId)
-                ?? throw new ArgumentException("No se encontró la zona seleccionada.", nameof(request.EntityId));
+                ?? throw new ArgumentException("No se encontró la zona seleccionada.");
             zone.AuditInfo.SetUpdated(request.getUserId(), request.Location);
 
             var url = await _blobService.UploadFileAsync(request.File, "zones", $"zone{zone.Id}");
@@ -87,7 +87,7 @@ namespace BusinessLogic.SubSystem
         public async Task DeleteZoneImageAsync(int zoneId)
         {
             Zone zone = await _zoneRepository.GetByIdAsync(zoneId)
-                ?? throw new ArgumentException("No se encontró la zona seleccionada.", nameof(zoneId));
+                ?? throw new ArgumentException("No se encontró la zona seleccionada.");
 
             await _blobService.DeleteFileAsync(zone.ImageUrl, "zones");
             await _zoneRepository.UpdateImageUrlAsync(zone, "");
