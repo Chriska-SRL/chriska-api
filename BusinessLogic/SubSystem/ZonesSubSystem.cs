@@ -35,8 +35,12 @@ namespace BusinessLogic.SubSystem
 
         public async Task<ZoneResponse> UpdateZoneAsync(UpdateZoneRequest request)
         {
-            var existing = await _zoneRepository.GetByIdAsync(request.Id)
-                ?? throw new InvalidOperationException("Zona no encontrada.");
+            var existingBrand = await _zoneRepository.GetByIdAsync(request.Id)
+                ?? throw new ArgumentException("No se encontró la zona seleccionada.");
+
+            var existing = await _zoneRepository.GetByNameAsync(request.Name);
+            if (existingBrand.Name != request.Name && existing != null)
+                throw new ArgumentException("Ya existe una zona con ese nombre.");
 
             var updatedData = ZoneMapper.ToUpdatableData(request);
             existing.Update(updatedData);
@@ -48,7 +52,7 @@ namespace BusinessLogic.SubSystem
         public async Task<ZoneResponse> DeleteZoneAsync(DeleteRequest request)
         {
             var zone = await _zoneRepository.GetByIdAsync(request.Id)
-                ?? throw new ArgumentException("No se encontró la zona seleccionada.", nameof(request.Id));
+                ?? throw new ArgumentException("No se encontró la zona seleccionada.");
 
             zone.MarkAsDeleted(request.getUserId(), request.Location);
             await _zoneRepository.DeleteAsync(zone);
