@@ -150,5 +150,55 @@ namespace Repository.EntityRepositories
         }
         #endregion
 
+        public async Task<Brand?> GetByIdWithProductsAsync(int id)
+        {
+            var brandDictionary = new Dictionary<int, Brand>();
+
+            string query = @"
+            SELECT 
+                b.Id,
+                b.Name,
+                b.Description,
+
+                p.Id AS ProductId,
+                p.Name AS ProductName
+            FROM dbo.Brands b
+            LEFT JOIN dbo.Products p ON p.BrandId = b.Id
+            WHERE b.Id = @Id AND (p.Id IS NULL OR p.IsDeleted = 0)
+            ";
+
+            return await ExecuteReadAsync(
+                baseQuery: query,
+                map: reader =>
+                {
+                    while (reader.Read())
+                    {
+                        int brandId = reader.GetInt32(reader.GetOrdinal("Id"));
+
+                        if (!brandDictionary.TryGetValue(brandId, out var brand))
+                        {
+                            brand = BrandMapper.FromReader(reader);
+                            brand.Products = new List<Product>();
+                            brandDictionary[brandId] = brand;
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("ProductId"))) // Asume que UserMapper espera esto
+                        {
+                            var product = ProductMapper.FromReaderForBrand(reader);
+                            if (!brand.Products.Any(u => u.Id == product.Id))
+                                brand.Products.Add(product);
+                        }
+                    }
+
+                    return brandDictionary.Values.FirstOrDefault();
+                },
+                options: new QueryOptions(),
+                tableAlias: "r",
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                }
+            );
+        }
     }
 }

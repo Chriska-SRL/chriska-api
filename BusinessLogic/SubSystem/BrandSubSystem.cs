@@ -46,8 +46,11 @@ namespace BusinessLogic.SubSystem
 
         public async Task<BrandResponse> DeleteBrandAsync(DeleteRequest request)
         {
-            var brand = await _brandRepository.GetByIdAsync(request.Id)
+            var brand = await _brandRepository.GetByIdWithProductsAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la marca seleccionada.");
+
+            if (brand.Products.Any())
+                throw new InvalidOperationException("No se puede eliminar la marca porque tiene productos asociados.");
 
             brand.MarkAsDeleted(request.getUserId(), request.Location);
             await _brandRepository.DeleteAsync(brand);

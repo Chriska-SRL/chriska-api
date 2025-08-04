@@ -7,6 +7,7 @@ namespace BusinessLogic.Domain
         public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string Description { get; set; }
+        public List<Product> Products { get; set; } = new List<Product>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
         public Brand(string name, string description)
