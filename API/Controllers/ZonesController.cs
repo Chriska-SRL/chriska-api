@@ -3,6 +3,7 @@ using BusinessLogic;
 using BusinessLogic.Común;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.DTOs.DTOsZone;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace API.Controllers
         {
             request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddZoneAsync(request);
-            return CreatedAtAction(nameof(GetZoneByIdAsync), new { id = result.Id }, result); // 201 Created
+            return Created(String.Empty, result);
         }
 
         [HttpPut("{id}")]
@@ -66,6 +67,30 @@ namespace API.Controllers
         {
             var result = await _facade.GetAllZonesAsync(options);
             return Ok(result); // 200 OK
+        }
+
+        [HttpPost("{id}/upload-image")]
+        [Authorize(Policy = nameof(Permission.EDIT_ZONES))]
+        public async Task<IActionResult> UploadZoneImageAsync(int id, IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("El archivo es inválido o está vacío.");
+            AddImageRequest request = new AddImageRequest
+            {
+                EntityId = id,
+                File = file,
+            };
+            request.setUserId(_tokenUtils.GetUserId());
+            string url = await _facade.UploadZoneImageAsync(request);
+            return Ok(url);
+        }
+
+        [HttpPost("{id}/delete-image")]
+        [Authorize(Policy = nameof(Permission.EDIT_ZONES))]
+        public async Task<IActionResult> DeleteZoneImageAsync(int id)
+        {
+            await _facade.DeleteZoneImageAsync(id);
+            return NoContent();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Común;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsCategory;
@@ -153,6 +154,8 @@ namespace BusinessLogic
         public async Task DeleteZoneAsync(DeleteRequest request) => await Zones.DeleteZoneAsync(request);
         public async Task<ZoneResponse> GetZoneByIdAsync(int id) => await Zones.GetZoneByIdAsync(id);
         public async Task<List<ZoneResponse>> GetAllZonesAsync(QueryOptions options) => await Zones.GetAllZonesAsync(options);
+        public async Task<string> UploadZoneImageAsync(AddImageRequest request) => await Zones.UploadZoneImageAsync(request);
+        public async Task DeleteZoneImageAsync(int id) => await Zones.DeleteZoneImageAsync(id);
 
         // --- Vehicles ---
         public async Task<VehicleResponse> AddVehicleAsync(AddVehicleRequest request) => await Vehicles.AddVehicleAsync(request);

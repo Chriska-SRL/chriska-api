@@ -1,44 +1,87 @@
-﻿using BusinessLogic.Común;
-using BusinessLogic.Común.Mappers;
-using BusinessLogic.Domain;
-using BusinessLogic.DTOs;
-using BusinessLogic.DTOs.DTOsZone;
+﻿using BusinessLogic.Domain;
 using BusinessLogic.Repository;
+using BusinessLogic.DTOs.DTOsZone;
+using BusinessLogic.Común.Mappers;
+using BusinessLogic.DTOs;
+using BusinessLogic.Común;
+using BusinessLogic.DTOs.DTOsImage;
+using BusinessLogic.Services;
 
 namespace BusinessLogic.SubSystem
 {
     public class ZonesSubSystem
     {
         private readonly IZoneRepository _zoneRepository;
+        private readonly IAzureBlobService _blobService;
 
-        public ZonesSubSystem(IZoneRepository zoneRepository)
+        public ZonesSubSystem(IZoneRepository zoneRepository,IAzureBlobService azureBlobService)
         {
             _zoneRepository = zoneRepository;
+            _blobService = azureBlobService;
         }
 
         public async Task<ZoneResponse> AddZoneAsync(AddZoneRequest request)
         {
-            throw new NotImplementedException();
+            var newZone = ZoneMapper.ToDomain(request);
+            newZone.Validate();
+
+            var added = await _zoneRepository.AddAsync(newZone);
+            return ZoneMapper.ToResponse(added);
         }
 
         public async Task<ZoneResponse> UpdateZoneAsync(UpdateZoneRequest request)
         {
-            throw new NotImplementedException();
+            var existing = await _zoneRepository.GetByIdAsync(request.Id)
+                ?? throw new InvalidOperationException("Zona no encontrada.");
+
+            var updatedData = ZoneMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
+
+            var updated = await _zoneRepository.UpdateAsync(existing);
+            return ZoneMapper.ToResponse(updated);
         }
 
-        public async Task DeleteZoneAsync(DeleteRequest request)
+        public async Task<ZoneResponse> DeleteZoneAsync(DeleteRequest request)
         {
-            throw new NotImplementedException();
+            var zone = await _zoneRepository.GetByIdAsync(request.Id)
+                ?? throw new ArgumentException("No se encontró la zona seleccionada.", nameof(request.Id));
+
+            zone.MarkAsDeleted(request.getUserId(), request.Location);
+            await _zoneRepository.DeleteAsync(zone);
+            return ZoneMapper.ToResponse(zone);
         }
+
 
         public async Task<ZoneResponse> GetZoneByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var zone = await _zoneRepository.GetByIdAsync(id)
+                ?? throw new InvalidOperationException("Zona no encontrada.");
+
+            return ZoneMapper.ToResponse(zone);
         }
 
         public async Task<List<ZoneResponse>> GetAllZonesAsync(QueryOptions options)
         {
-            throw new NotImplementedException();
+            var zones = await _zoneRepository.GetAllAsync(options);
+            return zones.Select(ZoneMapper.ToResponse).ToList();
+        }
+        public async Task<string> UploadZoneImageAsync(AddImageRequest request)
+        {
+            Zone zone = await _zoneRepository.GetByIdAsync(request.EntityId)
+                ?? throw new ArgumentException("No se encontró la zona seleccionada.", nameof(request.EntityId));
+            zone.AuditInfo.SetUpdated(request.getUserId(), request.Location);
+
+            var url = await _blobService.UploadFileAsync(request.File, "zones", $"zone{zone.Id}");
+            return await _zoneRepository.UpdateImageUrlAsync(zone, url);
+        }
+
+        public async Task DeleteZoneImageAsync(int zoneId)
+        {
+            Zone zone = await _zoneRepository.GetByIdAsync(zoneId)
+                ?? throw new ArgumentException("No se encontró la zona seleccionada.", nameof(zoneId));
+
+            await _blobService.DeleteFileAsync(zone.ImageUrl, "zones");
+            await _zoneRepository.UpdateImageUrlAsync(zone, "");
         }
     }
 }
