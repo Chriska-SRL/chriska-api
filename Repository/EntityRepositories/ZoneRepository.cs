@@ -86,7 +86,7 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
     #region GetAll
     public async Task<List<Zone>> GetAllAsync(QueryOptions options)
     {
-        var allowedFilters = new[] { "Name", "Observation" };
+        var allowedFilters = new[] { "Name" };
 
         return await ExecuteReadAsync(
             baseQuery: "SELECT z.* FROM Zones z",
@@ -115,12 +115,11 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
             baseQuery: "SELECT z.* FROM Zones z WHERE z.Id = @Id",
             map: reader =>
             {
-                Zone? zone = null;
-                while (reader.Read())
+                if (reader.Read())
                 {
-                    zone = ZoneMapper.FromReader(reader);
+                    return ZoneMapper.FromReader(reader);
                 }
-                return zone;
+                return null;
             },
             options: new QueryOptions(),
             tableAlias: "z",
@@ -132,7 +131,6 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
     }
     #endregion
 
-
     public async Task<string> UpdateImageUrlAsync(Zone zone, string imageUrl)
     {
         int rows = await ExecuteWriteWithAuditAsync(
@@ -142,7 +140,7 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
             configureCommand: cmd =>
             {
                 cmd.Parameters.AddWithValue("@Id", zone.Id);
-                cmd.Parameters.AddWithValue("@ImageUrl", (object?)imageUrl ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@ImageUrl", imageUrl);
             }
         );
 
