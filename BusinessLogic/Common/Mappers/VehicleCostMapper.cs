@@ -5,10 +5,10 @@ namespace BusinessLogic.Common.Mappers
 {
     public static class VehicleCostMapper
     {
-        public static VehicleCost ToDomain(AddVehicleCostRequest request)
+        public static VehicleCost ToDomain(AddVehicleCostRequest request,Vehicle vehicle)
         {
             var cost = new VehicleCost(
-                vehicleId: request.VehicleId,
+                vehicle: vehicle,
                 type: request.Type,
                 description: request.Description,
                 amount: request.Amount,
@@ -36,7 +36,7 @@ namespace BusinessLogic.Common.Mappers
         {
             return new VehicleCostResponse
             {
-                VehicleId = cost.VehicleId,
+                Vehicle= VehicleMapper.ToResponse(cost.Vehicle),
                 Id = cost.Id,
                 Date = cost.Date,
                 Type = cost.Type,
