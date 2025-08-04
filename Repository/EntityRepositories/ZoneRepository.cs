@@ -86,7 +86,7 @@ public class ZoneRepository : Repository<Zone, Zone.UpdatableData>, IZoneReposit
     #region GetAll
     public async Task<List<Zone>> GetAllAsync(QueryOptions options)
     {
-        var allowedFilters = new[] { "Name" };
+        var allowedFilters = new[] { "Name" ,"Description", "DeliveryDays", "RequestDays" };
 
         return await ExecuteReadAsync(
             baseQuery: "SELECT z.* FROM Zones z",
