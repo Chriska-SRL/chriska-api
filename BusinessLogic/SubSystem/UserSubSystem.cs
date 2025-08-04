@@ -21,10 +21,10 @@ namespace BusinessLogic.SubSystem
         public async Task<UserResponse> AddUserAsync(AddUserRequest request)
         {
             if (await _userRepository.GetByUsernameAsync(request.Username) != null)
-                throw new ArgumentException("Ya existe un usuario con ese nombre de usuario.", nameof(request.Username));
+                throw new ArgumentException("Ya existe un usuario con ese nombre de usuario.");
 
             var role = await _roleRepository.GetByIdAsync(request.RoleId)
-             ?? throw new ArgumentException("No se encontró el rol asociado.", nameof(request.RoleId));
+             ?? throw new ArgumentException("No se encontró el rol asociado.");
 
             var newUser = UserMapper.ToDomain(request);
             newUser.Validate();
@@ -39,7 +39,7 @@ namespace BusinessLogic.SubSystem
         public async Task<string> ResetPasswordAsync(ResetPasswordRequest request)
         {
             User user = await _userRepository.GetByIdAsync(request.UserId)
-                ?? throw new ArgumentException("No se encontró el usuario seleccionado.", nameof(request.UserId));
+                ?? throw new ArgumentException("No se encontró el usuario seleccionado.");
 
             string password = request.NewPassword;
             if (string.IsNullOrWhiteSpace(password))
@@ -60,14 +60,14 @@ namespace BusinessLogic.SubSystem
         public async Task<UserResponse> UpdateUserAsync(UpdateUserRequest request)
         {
             var existingUser = await _userRepository.GetByIdAsync(request.Id)
-                ?? throw new ArgumentException("No se encontró el usuario seleccionado.", nameof(request.Id));
+                ?? throw new ArgumentException("No se encontró el usuario seleccionado.");
 
             if (existingUser.Username != request.Username &&
                 await _userRepository.GetByUsernameAsync(request.Username)!= null)
-                throw new ArgumentException("Ya existe un usuario con ese nombre de usuario.", nameof(request.Username));
+                throw new ArgumentException("Ya existe un usuario con ese nombre de usuario.");
 
             var role = await _roleRepository.GetByIdAsync(request.RoleId)
-                ?? throw new ArgumentException("No se encontró el rol asociado.", nameof(request.RoleId));
+                ?? throw new ArgumentException("No se encontró el rol asociado.");
             
 
             var updatedData = UserMapper.ToUpdatableData(request);
@@ -81,7 +81,7 @@ namespace BusinessLogic.SubSystem
         public async Task DeleteUserAsync(DeleteRequest request)
         {
             var user = await _userRepository.GetByIdAsync(request.Id)
-                ?? throw new ArgumentException("No se encontró el usuario seleccionado.", nameof(request.Id));
+                ?? throw new ArgumentException("No se encontró el usuario seleccionado.");
 
             user.MarkAsDeleted(request.getUserId(), request.Location);
             await _userRepository.DeleteAsync(user);
@@ -90,7 +90,7 @@ namespace BusinessLogic.SubSystem
         public async Task<UserResponse> GetUserByIdAsync(int id)
         {
             var user = await _userRepository.GetByIdAsync(id)
-                ?? throw new ArgumentException("No se encontró el usuario seleccionado.", nameof(id));
+                ?? throw new ArgumentException("No se encontró el usuario seleccionado.");
 
             return UserMapper.ToResponse(user);
         }
@@ -104,7 +104,7 @@ namespace BusinessLogic.SubSystem
         public async Task<UserResponse> GetByUsernameAsync(string username)
         {
             var user = await _userRepository.GetByUsernameAsync(username)
-                ?? throw new ArgumentException("No se encontró un usuario con ese nombre de usuario.", nameof(username));
+                ?? throw new ArgumentException("No se encontró un usuario con ese nombre de usuario.");
 
             return UserMapper.ToResponse(user);
         }

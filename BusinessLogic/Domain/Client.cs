@@ -18,28 +18,27 @@ namespace BusinessLogic.Domain
         public string Email { get; set; }
         public string Observations { get; set; }
         public int LoanedCrates { get; set; }
-        public string Qualification { get; set; }
+        public string Qualification { get; set; } = "3/5";
         public Zone Zone { get; set; }
         public List<BankAccount> BankAccounts { get; set; } = new();
         public AuditInfo AuditInfo { get; set; } = new();
 
-        public Client(string name, string rut, string razonSocial, string address, string mapsAddress,
-                      string schedule, string phone, string contactName, string email, string observations,
-                      List<BankAccount> bankAccounts, int loanedCrates, string qualification, Zone zone)
+        public Client(string name, string? rut, string razonSocial, string address, string mapsAddress,
+                      string schedule, string phone, string contactName, string? email, string? observations,
+                      List<BankAccount> bankAccounts, int loanedCrates, Zone zone)
         {
             Name = name;
-            RUT = rut;
+            RUT = rut ?? "";
             RazonSocial = razonSocial;
             Address = address;
             MapsAddress = mapsAddress;
             Schedule = schedule;
             Phone = phone;
             ContactName = contactName;
-            Email = email;
-            Observations = observations;
+            Email = email ?? "";
+            Observations = observations ?? "";
             BankAccounts = bankAccounts;
             LoanedCrates = loanedCrates;
-            Qualification = qualification;
             Zone = zone;
             Validate();
         }
@@ -65,36 +64,16 @@ namespace BusinessLogic.Domain
             AuditInfo = auditInfo;
             Validate();
         }
-
-        public Client(int id)
-        {
-            Id = id;
-            Name = "Nombre Temporal";
-            RUT = "000000000000";
-            RazonSocial = "Razón Social Temporal";
-            Address = "Dirección Temporal";
-            MapsAddress = "Maps Temporal";
-            Schedule = "Horario Temporal";
-            Phone = "099000000";
-            ContactName = "Contacto Temporal";
-            Email = "email@temporal.com";
-            Observations = "Sin observaciones";
-            Qualification = "3/5";
-            BankAccounts = new List<BankAccount>();
-            LoanedCrates = 0;
-            Zone = new Zone(99999);
-        }
-
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name) || Name.Length > 50)
                 throw new ArgumentException("El nombre es obligatorio y no puede superar los 50 caracteres.");
 
-            if (string.IsNullOrWhiteSpace(RUT) || RUT.Length != 12 || !RUT.All(char.IsDigit))
+            if (!string.IsNullOrWhiteSpace(RUT) && (RUT.Length != 12 || !RUT.All(char.IsDigit)))
                 throw new ArgumentException("El RUT debe tener exactamente 12 dígitos numéricos.");
 
-            if (string.IsNullOrWhiteSpace(RazonSocial) || RazonSocial.Length > 50)
-                throw new ArgumentException("La razón social es obligatoria y no puede superar los 50 caracteres.");
+            if (!string.IsNullOrWhiteSpace(RazonSocial) && RazonSocial.Length > 50)
+                throw new ArgumentException("La razón social no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(Address) || Address.Length > 50)
                 throw new ArgumentException("La dirección es obligatoria y no puede superar los 50 caracteres.");
@@ -114,13 +93,10 @@ namespace BusinessLogic.Domain
             if (string.IsNullOrWhiteSpace(ContactName))
                 throw new ArgumentException("El nombre del contacto es obligatorio.");
 
-            if (string.IsNullOrWhiteSpace(Email) || !Regex.IsMatch(Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
-                throw new ArgumentException("El email es obligatorio y debe tener un formato válido.");
+            if (!string.IsNullOrWhiteSpace(Email) && !Regex.IsMatch(Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                throw new ArgumentException("El email debe tener un formato válido.");
 
-            if (string.IsNullOrWhiteSpace(Qualification))
-                throw new ArgumentException("La calificación es obligatoria.");
-
-            if (!Regex.IsMatch(Qualification, @"^[1-5]/5$"))
+            if (!string.IsNullOrWhiteSpace(Qualification) && !Regex.IsMatch(Qualification, @"^[1-5]/5$"))
                 throw new ArgumentException("La calificación debe tener el formato n/5 (por ejemplo: 3/5).");
 
             if (LoanedCrates < 0)

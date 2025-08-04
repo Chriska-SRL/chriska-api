@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Domain;
+﻿using BusinessLogic.Common.Mappers;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsClient;
 
 namespace BusinessLogic.Común.Mappers
@@ -19,9 +20,8 @@ namespace BusinessLogic.Común.Mappers
                 contactName: request.ContactName,
                 request.Email,
                 request.Observations,
-                new List<BankAccount>(),
+                bankAccounts: request.BankAccounts.Select(BankAccountMapper.ToDomain).ToList(),
                 loanedCrates: 0,
-                request.Qualification,
                 new Zone(request.ZoneId)
             );
             client.AuditInfo.SetCreated(request.getUserId(), request.Location);
@@ -29,7 +29,7 @@ namespace BusinessLogic.Común.Mappers
             return client;
         }
 
-        public static Client.UpdatableData ToUpdatableData(UpdateClientRequest request)
+        public static Client.UpdatableData ToUpdatableData(UpdateClientRequest request, Zone zone)
         {
             return new Client.UpdatableData
             {
@@ -45,8 +45,8 @@ namespace BusinessLogic.Común.Mappers
                 Observations = request.Observations,
                 LoanedCrates = request.LoanedCrates,
                 Qualification = request.Qualification,
-                Zone = new Zone(request.ZoneId),
-                BankAccounts = new List<BankAccount>(),
+                Zone = zone,
+                BankAccounts = request.BankAccounts?.Select(BankAccountMapper.ToDomain).ToList(),
                 UserId = request.getUserId(),
                 Location = request.Location
             };
@@ -69,7 +69,8 @@ namespace BusinessLogic.Común.Mappers
                 Observations = client.Observations,
                 LoanedCrates = client.LoanedCrates,
                 Qualification = client.Qualification,
-                ZoneId = client.Zone.Id,
+                Zone = ZoneMapper.ToResponse(client.Zone),
+                BankAccounts = client.BankAccounts.Select(BankAccountMapper.ToResponse).ToList(),
                 AuditInfo = AuditMapper.ToResponse(client.AuditInfo)
             };
         }
