@@ -4,7 +4,7 @@
     [Id] INT NOT NULL PRIMARY KEY IDENTITY,
 
     -- Campos de la entidad
-    [Name] NVARCHAR(50) NOT NULL UNIQUE,
+    [Name] NVARCHAR(50) NOT NULL,
     [Description] NVARCHAR(255) NOT NULL,
 
     -- Campos de auditoría

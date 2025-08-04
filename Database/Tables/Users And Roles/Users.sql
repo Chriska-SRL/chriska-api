@@ -5,7 +5,7 @@
 
     -- Campos de la entidad
     [Name] NVARCHAR(50) NOT NULL, 
-    [Username] NVARCHAR(50) NOT NULL UNIQUE,
+    [Username] NVARCHAR(50) NOT NULL,
     [Password] NVARCHAR(100) NOT NULL, 
     [IsEnabled] NCHAR(1) NOT NULL DEFAULT 'T', 
     [NeedsPasswordChange] NCHAR(1) NOT NULL DEFAULT 'T', 
