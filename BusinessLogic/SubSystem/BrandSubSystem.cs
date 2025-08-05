@@ -9,10 +9,12 @@ namespace BusinessLogic.SubSystem
     public class BrandSubSystem
     {
         private readonly IBrandRepository _brandRepository;
+        private readonly IProductRepository _productRepository;
 
-        public BrandSubSystem(IBrandRepository brandRepository)
+        public BrandSubSystem(IBrandRepository brandRepository, IProductRepository productRepository)
         {
             _brandRepository = brandRepository;
+            _productRepository = productRepository;
         }
 
         public async Task<BrandResponse> AddBrandAsync(AddBrandRequest request)
@@ -49,10 +51,28 @@ namespace BusinessLogic.SubSystem
             var brand = await _brandRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la marca seleccionada.");
 
+            // Crear opciones de consulta con filtro por BrandId
+            var options = new QueryOptions
+            {
+                PageSize = 1, // para que no traiga más de lo necesario
+                Filters = new Dictionary<string, string>
+        {
+            { "BrandId", request.Id.ToString() }
+        }
+            };
+
+            var products = await _productRepository.GetAllAsync(options);
+
+            if (products.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar la marca porque tiene productos asociados.");
+            }
+
             brand.MarkAsDeleted(request.getUserId(), request.Location);
             await _brandRepository.DeleteAsync(brand);
             return BrandMapper.ToResponse(brand);
         }
+
 
         public async Task<BrandResponse> GetBrandByIdAsync(int id)
         {
