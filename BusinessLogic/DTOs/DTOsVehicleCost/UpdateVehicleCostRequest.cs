@@ -5,7 +5,6 @@ namespace BusinessLogic.DTOs.DTOsCost
 {
     public class UpdateVehicleCostRequest : AuditableRequest
     {
-        public int VehicleId { get; set; }
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public VehicleCostType Type { get; set; }

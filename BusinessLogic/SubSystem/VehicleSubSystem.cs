@@ -5,81 +5,126 @@ using BusinessLogic.DTOs.DTOsCost;
 using BusinessLogic.DTOs.DTOsVehicle;
 using BusinessLogic.Repository;
 
-namespace BusinessLogic.SubSystem
+namespace BusinessLogic.SubSystem;
+
+public class VehicleSubSystem
 {
-    public class VehicleSubSystem
+    private readonly IVehicleRepository _vehicleRepository;
+    private readonly IVehicleCostRepository _costRepository;
+
+    public VehicleSubSystem(IVehicleRepository vehicleRepository, IVehicleCostRepository costRepository)
     {
-        private readonly IVehicleRepository _vehicleRepository;
-        private readonly IVehicleCostRepository _costRepository;
-
-        public VehicleSubSystem(IVehicleRepository vehicleRepository, IVehicleCostRepository costRepository)
-        {
-            _vehicleRepository = vehicleRepository;
-            _costRepository = costRepository;
-        }
-
-        // Vehículos
-
-        public async Task<VehicleResponse> AddVehicleAsync(AddVehicleRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<VehicleResponse> UpdateVehicleAsync(UpdateVehicleRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task DeleteVehicleAsync(DeleteRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<VehicleResponse> GetVehicleByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<VehicleResponse> GetVehicleByPlateAsync(string plate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<VehicleResponse>> GetAllVehiclesAsync(QueryOptions options)
-        {
-            throw new NotImplementedException();
-        }
-
-        // Costos
-
-        public async Task<VehicleCostResponse> AddVehicleCostAsync(AddVehicleCostRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<VehicleCostResponse> UpdateVehicleCostAsync(UpdateVehicleCostRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task DeleteVehicleCostAsync(DeleteRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<VehicleCostResponse>> GetVehicleCostsAsync(int vehicleId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<VehicleCostResponse>> GetCostsByDateRangeAsync(int vehicleId, DateTime from, DateTime to)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<VehicleCostResponse> GetVehicleCostByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
+        _vehicleRepository = vehicleRepository;
+        _costRepository = costRepository;
     }
+
+    // VEHICLE
+
+
+    public async Task<VehicleResponse> AddVehicleAsync(AddVehicleRequest request)
+    {
+        var newVehicle = VehicleMapper.ToDomain(request);
+        newVehicle.Validate();
+
+        var added = await _vehicleRepository.AddAsync(newVehicle);
+        return VehicleMapper.ToResponse(added);
+    }
+
+    public async Task<VehicleResponse> UpdateVehicleAsync(UpdateVehicleRequest request)
+    {
+        var existingVehicle = await _vehicleRepository.GetByIdAsync(request.Id)
+            ?? throw new ArgumentException("No se encontró el vehículo seleccionado.");
+
+        var updatedData = VehicleMapper.ToUpdatableData(request);
+        existingVehicle.Update(updatedData);
+
+        var updated = await _vehicleRepository.UpdateAsync(existingVehicle);
+        return VehicleMapper.ToResponse(updated);
+    }
+
+    public async Task<VehicleResponse> DeleteVehicleAsync(DeleteRequest request)
+    {
+        var vehicle = await _vehicleRepository.GetByIdAsync(request.Id)
+            ?? throw new ArgumentException("No se encontró el vehículo seleccionado.");
+
+        vehicle.MarkAsDeleted(request.getUserId(), request.Location);
+        await _vehicleRepository.DeleteAsync(vehicle);
+        return VehicleMapper.ToResponse(vehicle);
+    }
+
+    public async Task<VehicleResponse> GetVehicleByIdAsync(int id)
+    {
+        var vehicle = await _vehicleRepository.GetByIdAsync(id)
+            ?? throw new ArgumentException("No se encontró el vehículo seleccionado.");
+
+        return VehicleMapper.ToResponse(vehicle);
+    }
+
+    public async Task<List<VehicleResponse>> GetAllVehiclesAsync(QueryOptions options)
+    {
+        var vehicles = await _vehicleRepository.GetAllAsync(options);
+        return vehicles.Select(VehicleMapper.ToResponse).ToList();
+    }
+    public async Task<VehicleResponse> GetVehicleByPlateAsync(string plate)
+    {
+        var vehicle = await _vehicleRepository.GetByPlateAsync(plate)
+            ?? throw new ArgumentException("No se encontró el vehículo con esa matrícula.");
+        return VehicleMapper.ToResponse(vehicle);
+    }
+
+    // COSTS
+    public async Task<VehicleCostResponse> AddVehicleCostAsync(AddVehicleCostRequest request)
+    {
+        var existingVehicle = await _vehicleRepository.GetByIdAsync(request.VehicleId)
+            ?? throw new ArgumentException("No se encontró el vehículo seleccionado.");
+        var cost = VehicleCostMapper.ToDomain(request,existingVehicle);
+        cost.Validate();
+
+        var added = await _costRepository.AddAsync(cost);
+        return VehicleCostMapper.ToResponse(added);
+    }
+
+    public async Task<VehicleCostResponse> UpdateVehicleCostAsync(UpdateVehicleCostRequest request)
+    {
+        var exisitingCost = await _costRepository.GetByIdAsync(request.Id)
+            ?? throw new ArgumentException("No se encontró el costo seleccionado.");
+
+        var updated = VehicleCostMapper.ToUpdatableData(request);
+        exisitingCost.Update(updated);
+
+        var saved = await _costRepository.UpdateAsync(exisitingCost);
+        return VehicleCostMapper.ToResponse(saved);
+    }
+
+    public async Task<VehicleCostResponse> DeleteVehicleCostAsync(DeleteRequest request)
+    {
+        var cost = await _costRepository.GetByIdAsync(request.Id)
+            ?? throw new ArgumentException("No se encontró el costo seleccionado.");
+
+        cost.MarkAsDeleted(request.getUserId(), request.Location);
+        await _costRepository.DeleteAsync(cost);
+
+        return VehicleCostMapper.ToResponse(cost);
+    }
+
+
+    public async Task<List<VehicleCostResponse>> GetVehicleCostsAsync(int vehicleId)
+    {
+        var costs = await _costRepository.GetVehicleCostIdAsync(vehicleId);
+        return costs.Select(VehicleCostMapper.ToResponse).ToList();
+    }
+    public async Task<VehicleCostResponse> GetVehicleCostByIdAsync(int id)
+    {
+        var cost = await _costRepository.GetByIdAsync(id)
+            ?? throw new ArgumentException("No se encontró el costo seleccionado.");
+
+        return VehicleCostMapper.ToResponse(cost);
+    }
+    public async Task<List<VehicleCostResponse>> GetCostsByDateRangeAsync(int vehicleId, DateTime from, DateTime to)
+    {
+        var costs = await _costRepository.GetByVehicleIdAndDateRangeAsync(vehicleId, from, to);
+        return costs.Select(VehicleCostMapper.ToResponse).ToList();
+    }
+
+
 }

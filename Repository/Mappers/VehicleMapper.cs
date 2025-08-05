@@ -15,7 +15,7 @@ namespace Repository.Mappers
                 model: reader.GetString(reader.GetOrdinal("Model")),
                 crateCapacity: reader.GetInt32(reader.GetOrdinal("CrateCapacity")),
                 costs: new List<VehicleCost>(),
-                auditInfo: new AuditInfo()
+                auditInfo: AuditInfoMapper.FromReader(reader)
             );
         }
     }

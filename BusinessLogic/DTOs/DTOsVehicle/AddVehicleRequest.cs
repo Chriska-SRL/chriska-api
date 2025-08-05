@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.DTOs.DTOsAudit;
+using BusinessLogic.DTOs.DTOsCost;
 
 namespace BusinessLogic.DTOs.DTOsVehicle
 {
