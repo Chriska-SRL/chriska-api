@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Común.Audits;
+﻿using BusinessLogic.Common.Audits;
 using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsBankAccount;
 

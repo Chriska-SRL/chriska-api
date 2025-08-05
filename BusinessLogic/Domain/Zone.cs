@@ -1,6 +1,4 @@
-﻿using Azure.Storage.Blobs.Models;
-using BusinessLogic.Common;
-using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
 
 namespace BusinessLogic.Domain
 {

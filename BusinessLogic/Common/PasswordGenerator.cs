@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace BusinessLogic.Común
+namespace BusinessLogic.Common
 {
     public static class PasswordGenerator
     {

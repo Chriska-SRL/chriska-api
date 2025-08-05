@@ -1,6 +1,6 @@
 ﻿using BusinessLogic.Common;
 
-namespace BusinessLogic.Común
+namespace BusinessLogic.Common
 {
     public class AuditInfo
     {

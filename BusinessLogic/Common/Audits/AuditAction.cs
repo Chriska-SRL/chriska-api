@@ -1,7 +1,7 @@
 ﻿
 using BusinessLogic.Common;
 
-namespace BusinessLogic.Común.Audits
+namespace BusinessLogic.Common.Audits
 {
     public class AuditAction
     {

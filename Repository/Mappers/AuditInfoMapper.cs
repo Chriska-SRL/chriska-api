@@ -1,5 +1,4 @@
 ﻿using BusinessLogic.Common;
-using BusinessLogic.Común;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers

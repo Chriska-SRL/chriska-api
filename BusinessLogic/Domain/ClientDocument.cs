@@ -1,5 +1,5 @@
-﻿using BusinessLogic.Común;
-using BusinessLogic.Común.Audits;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Audits;
 using System;
 using System.Collections.Generic;
 using System.Linq;

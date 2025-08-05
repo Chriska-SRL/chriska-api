@@ -2,7 +2,7 @@
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsClient;
 
-namespace BusinessLogic.Común.Mappers
+namespace BusinessLogic.Common.Mappers
 {
     public static class ClientMapper
     {

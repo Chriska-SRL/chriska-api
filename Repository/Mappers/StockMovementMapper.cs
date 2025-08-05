@@ -1,6 +1,5 @@
-﻿using BusinessLogic.Común;
-using BusinessLogic.Común.Enums;
-using BusinessLogic.Domain;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Enums;
 using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 

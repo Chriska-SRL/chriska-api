@@ -1,7 +1,7 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsZone;
 
-namespace BusinessLogic.Común.Mappers
+namespace BusinessLogic.Common.Mappers
 {
     public static class ZoneMapper
     {

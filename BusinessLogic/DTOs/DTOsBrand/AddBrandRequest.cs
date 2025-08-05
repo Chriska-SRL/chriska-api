@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
 using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsBrand

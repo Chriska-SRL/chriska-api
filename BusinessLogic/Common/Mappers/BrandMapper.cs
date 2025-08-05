@@ -1,7 +1,7 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsBrand;
 
-namespace BusinessLogic.Común.Mappers
+namespace BusinessLogic.Common.Mappers
 {
     public static class BrandMapper
     {

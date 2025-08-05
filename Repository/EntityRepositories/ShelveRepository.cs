@@ -1,7 +1,7 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using Repository.Logging;
-using BusinessLogic.Común;
+using BusinessLogic.Common;
 using Repository.Mappers;
 
 namespace Repository.EntityRepositories

@@ -1,8 +1,8 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsStockMovement;
-using BusinessLogic.Común.Mappers;
-using BusinessLogic.Común.Enums;
+using BusinessLogic.Common.Mappers;
+using BusinessLogic.Common.Enums;
 
 namespace BusinessLogic.SubSystem
 {

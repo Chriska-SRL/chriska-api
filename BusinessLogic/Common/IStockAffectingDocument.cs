@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.Común
+namespace BusinessLogic.Common
 {
     public interface IStockAffectingDocument
     {

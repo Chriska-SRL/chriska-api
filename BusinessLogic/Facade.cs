@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsBrand;

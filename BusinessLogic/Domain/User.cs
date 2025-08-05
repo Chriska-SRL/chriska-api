@@ -1,5 +1,4 @@
 ﻿using BusinessLogic.Common;
-using BusinessLogic.Común;
 using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Domain

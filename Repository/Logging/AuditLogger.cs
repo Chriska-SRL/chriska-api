@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Común;
+﻿using BusinessLogic.Common;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Logging

@@ -1,4 +1,4 @@
-﻿namespace BusinessLogic.Común
+﻿namespace BusinessLogic.Common
 {
     public record QueryOptions
     {

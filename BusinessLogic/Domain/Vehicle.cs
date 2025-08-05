@@ -1,7 +1,4 @@
 ﻿using BusinessLogic.Common;
-using BusinessLogic.Común;
-using BusinessLogic.Común.Enums;
-using BusinessLogic.DTOs.DTOsCost;
 using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Domain

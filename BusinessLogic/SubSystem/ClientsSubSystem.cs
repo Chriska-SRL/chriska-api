@@ -1,9 +1,9 @@
 ﻿using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs;
-using BusinessLogic.Común;
+using BusinessLogic.Common;
 using BusinessLogic.Domain;
-using BusinessLogic.Común.Mappers;
+using BusinessLogic.Common.Mappers;
 
 namespace BusinessLogic.SubSystem
 {

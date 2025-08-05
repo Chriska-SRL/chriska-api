@@ -47,7 +47,7 @@ namespace Repository.Mappers
                 image: reader.IsDBNull(reader.GetOrdinal("ZoneImageUrl")) ? "" : reader.GetString(reader.GetOrdinal("ZoneImageUrl")),
                 deliveryDays: new List<Day>(),
                 requestDays: new List<Day>(),
-                auditInfo: new BusinessLogic.Común.AuditInfo()
+                auditInfo: new BusinessLogic.Common.AuditInfo()
             );
 
 

@@ -1,9 +1,9 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsZone;
-using BusinessLogic.Común.Mappers;
+using BusinessLogic.Common.Mappers;
 using BusinessLogic.DTOs;
-using BusinessLogic.Común;
+using BusinessLogic.Common;
 using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.Services;
 

@@ -1,5 +1,5 @@
 ﻿
-namespace BusinessLogic.Común.Audits
+namespace BusinessLogic.Common.Audits
 {
     public class AuditUser
     {
