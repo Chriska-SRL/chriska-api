@@ -51,14 +51,12 @@ namespace BusinessLogic.SubSystem
             var brand = await _brandRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la marca seleccionada.");
 
-            // Crear opciones de consulta con filtro por BrandId
             var options = new QueryOptions
             {
-                PageSize = 1, // para que no traiga más de lo necesario
                 Filters = new Dictionary<string, string>
-        {
-            { "BrandId", request.Id.ToString() }
-        }
+                {
+                    { "BrandId", request.Id.ToString() }
+                }
             };
 
             var products = await _productRepository.GetAllAsync(options);
