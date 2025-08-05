@@ -1,7 +1,7 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.Common.Enums;
 using Microsoft.Data.SqlClient;
-using BusinessLogic.Común;
+using BusinessLogic.Common;
 
 namespace Repository.Mappers
 {
