@@ -10,10 +10,12 @@ namespace BusinessLogic.SubSystem
     public class RolesSubSystem
     {
         private readonly IRoleRepository _roleRepository;
+        private readonly IUserRepository _userRepository;
 
-        public RolesSubSystem(IRoleRepository roleRepository)
+        public RolesSubSystem(IRoleRepository roleRepository, IUserRepository userRepository)
         {
             _roleRepository = roleRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<RoleResponse> AddRoleAsync(AddRoleRequest request)
@@ -47,11 +49,23 @@ namespace BusinessLogic.SubSystem
 
         public async Task<RoleResponse> DeleteRoleAsync(DeleteRequest request)
         {
-            Role role = await _roleRepository.GetByIdWithUsersAsync(request.Id)
+            Role role = await _roleRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró el rol seleccionado.");
 
-            if (role.Users.Any())
+            var options = new QueryOptions
+            {
+                Filters = new Dictionary<string, string>
+                {
+                    { "RoleId", request.Id.ToString() }
+                }
+            };
+
+            var users = await _userRepository.GetAllAsync(options);
+
+            if (users.Any())
+            {
                 throw new InvalidOperationException("No se puede eliminar el rol porque tiene usuarios asociados.");
+            }
 
             role.MarkAsDeleted(request.getUserId(),request.Location);
             await _roleRepository.DeleteAsync(role);
