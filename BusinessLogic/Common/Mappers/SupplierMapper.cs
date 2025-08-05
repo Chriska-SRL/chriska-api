@@ -2,7 +2,7 @@
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsSupplier;
 
-namespace BusinessLogic.Común.Mappers
+namespace BusinessLogic.Common.Mappers
 {
     public static class SupplierMapper
     {

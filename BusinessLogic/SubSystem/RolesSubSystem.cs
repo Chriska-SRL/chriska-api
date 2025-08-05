@@ -1,8 +1,8 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsRole;
-using BusinessLogic.Común.Mappers;
-using BusinessLogic.Común;
+using BusinessLogic.Common.Mappers;
+using BusinessLogic.Common;
 using BusinessLogic.DTOs;
 
 namespace BusinessLogic.SubSystem

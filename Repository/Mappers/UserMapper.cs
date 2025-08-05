@@ -12,7 +12,7 @@ public static class UserMapper
             name: reader.GetString(reader.GetOrdinal("RoleName")),
             description: reader.GetString(reader.GetOrdinal("RoleDescription")),
             permissions: includePermissions ? ParsePermissions(reader) : new List<Permission>(),
-            auditInfo: new BusinessLogic.Común.AuditInfo()
+            auditInfo: new BusinessLogic.Common.AuditInfo()
         );
 
         var user = new User(

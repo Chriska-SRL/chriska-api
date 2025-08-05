@@ -2,7 +2,7 @@
 using BusinessLogic.Repository;
 using Repository.Logging;
 using Repository.Mappers;
-using BusinessLogic.Común;
+using BusinessLogic.Common;
 
 namespace Repository.EntityRepositories
 {

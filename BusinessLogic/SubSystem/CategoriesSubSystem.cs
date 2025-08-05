@@ -1,6 +1,6 @@
-﻿using BusinessLogic.Común;
-using BusinessLogic.Común.Enums;
-using BusinessLogic.Común.Mappers;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Enums;
+using BusinessLogic.Common.Mappers;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsBrand;

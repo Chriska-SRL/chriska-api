@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Común.Audits;
+﻿using BusinessLogic.Common.Audits;
 
 namespace BusinessLogic.DTOs.DTOsAudit
 {

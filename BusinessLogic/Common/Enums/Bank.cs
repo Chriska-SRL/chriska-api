@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BusinessLogic.Común.Enums
+namespace BusinessLogic.Common.Enums
 {
         public enum Bank
         {

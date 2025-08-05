@@ -1,6 +1,6 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.Repository;
-using BusinessLogic.Común;
+using BusinessLogic.Common;
 using Microsoft.Data.SqlClient;
 using Repository.Mappers;
 using Repository.Logging;

@@ -1,5 +1,5 @@
-﻿using BusinessLogic.Común;
-using BusinessLogic.Común.Mappers;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Mappers;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsImage;

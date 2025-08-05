@@ -4,7 +4,7 @@ using BusinessLogic.DTOs.DTOsSubCategory;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsBrand;
 
-namespace BusinessLogic.Común.Mappers
+namespace BusinessLogic.Common.Mappers
 {
     public static class ProductMapper
     {

@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Common.Enums;
 using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsSubCategory;

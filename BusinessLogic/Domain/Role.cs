@@ -1,5 +1,4 @@
 ﻿using BusinessLogic.Common;
-using BusinessLogic.Común;
 using System.Xml.Linq;
 
 namespace BusinessLogic.Domain

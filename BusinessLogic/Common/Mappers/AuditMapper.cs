@@ -1,5 +1,5 @@
-﻿using BusinessLogic.Común.Audits;
-using BusinessLogic.Común;
+﻿using BusinessLogic.Common.Audits;
+using BusinessLogic.Common;
 using BusinessLogic.DTOs.DTOsAudit;
 
 public static class AuditMapper

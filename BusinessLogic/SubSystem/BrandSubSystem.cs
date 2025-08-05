@@ -1,8 +1,8 @@
 ﻿using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs;
-using BusinessLogic.Común;
-using BusinessLogic.Común.Mappers;
+using BusinessLogic.Common;
+using BusinessLogic.Common.Mappers;
 
 namespace BusinessLogic.SubSystem
 {

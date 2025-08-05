@@ -1,5 +1,5 @@
-﻿using BusinessLogic.Común;
-using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Enums;
 using BusinessLogic.DTOs.DTOsAudit;
 
 namespace BusinessLogic.DTOs.DTOsBankAccount

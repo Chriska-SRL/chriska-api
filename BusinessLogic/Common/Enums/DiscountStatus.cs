@@ -1,4 +1,4 @@
-﻿namespace BusinessLogic.Común.Enums
+﻿namespace BusinessLogic.Common.Enums
 {
     public enum DiscountStatus
     {

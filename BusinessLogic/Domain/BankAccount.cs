@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Común.Enums;
+﻿using BusinessLogic.Common.Enums;
 
 namespace BusinessLogic.Domain
 {
