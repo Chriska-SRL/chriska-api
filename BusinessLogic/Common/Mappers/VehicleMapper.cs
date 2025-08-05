@@ -11,7 +11,8 @@ namespace BusinessLogic.Common.Mappers
                 plate: request.Plate,
                 brand: request.Brand,
                 model: request.Model,
-                crateCapacity: request.CrateCapacity
+                crateCapacity: request.CrateCapacity,
+                costs:new List<VehicleCost>()
             );
 
             vehicle.AuditInfo.SetCreated(request.getUserId(), request.Location);

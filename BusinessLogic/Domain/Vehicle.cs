@@ -24,12 +24,13 @@ namespace BusinessLogic.Domain
             AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
             Validate();
         }
-        public Vehicle(string plate, string brand, string model, int crateCapacity)
+        public Vehicle(string plate, string brand, string model, int crateCapacity,List<VehicleCost> costs)
         {
             Plate = plate;
             Brand = brand;
             Model = model;
             CrateCapacity = crateCapacity;
+            VehicleCosts = costs;
             Validate();
         }
 
@@ -71,9 +72,8 @@ namespace BusinessLogic.Domain
 
         public void MarkAsDeleted(int? userId, Location? location)
         {
-            throw new NotImplementedException();
+            AuditInfo.SetDeleted(userId, location);
         }
-
         public class UpdatableData:AuditData
         {
             public string? Plate { get; set; }
