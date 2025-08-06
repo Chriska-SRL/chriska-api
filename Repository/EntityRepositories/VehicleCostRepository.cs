@@ -83,10 +83,18 @@ namespace Repository.EntityRepositories
         #region GetAll
         public async Task<List<VehicleCost>> GetAllAsync(QueryOptions options)
         {
-            var allowedFilters = new[] { "Type", "Amount", "Date" };
+            var allowedFilters = new[] { "Type", "Amount", "DateFrom", "DateTo" };
 
             return await ExecuteReadAsync(
-                baseQuery: "SELECT vc.* FROM VehicleCosts vc",
+                baseQuery: @"
+                    SELECT 
+                        vc.*, 
+                        v.Id AS VehicleId,
+                        v.Plate, v.Brand, v.Model, v.CrateCapacity
+                    FROM VehicleCosts vc
+                    JOIN Vehicles v ON vc.VehicleId = v.Id
+                    WHERE vc.IsDeleted = 0
+",
                 map: reader =>
                 {
                     var costs = new List<VehicleCost>();
@@ -145,36 +153,12 @@ namespace Repository.EntityRepositories
         }
         #endregion
 
-        public async Task<List<VehicleCost>> GetByVehicleIdAndDateRangeAsync(int vehicleId, DateTime from, DateTime to)
-        {
-            return await ExecuteReadAsync(
-                baseQuery: @"SELECT vc.* FROM VehicleCosts vc 
-                     WHERE vc.VehicleId = @VehicleId 
-                     AND vc.Date BETWEEN @From AND @To
-                     AND vc.DeletedAt = 0",
-                map: reader =>
-                {
-                    var costs = new List<VehicleCost>();
-                    while (reader.Read())
-                    {
-                        costs.Add(VehicleCostMapper.FromReader(reader));
-                    }
-                    return costs;
-                },
-                options: new QueryOptions(),
-                tableAlias: "vc",
-                configureCommand: cmd =>
-                {
-                    cmd.Parameters.AddWithValue("@VehicleId", vehicleId);
-                    cmd.Parameters.AddWithValue("@From", from);
-                    cmd.Parameters.AddWithValue("@To", to);
-                }
-            );
-        }
 
 
-        public async Task<List<VehicleCost>> GetVehicleCostIdAsync(int vehicleId)
+        public async Task<List<VehicleCost>> GetVehicleCostIdAsync(QueryOptions options,int vehicleId)
         {
+            var allowedFilters = new[] { "Type", "Amount", "DateFrom", "DateTo" };
+
             return await ExecuteReadAsync(
                 baseQuery: @"
             SELECT 
@@ -203,7 +187,8 @@ namespace Repository.EntityRepositories
                     }
                     return costs;
                 },
-                options: new QueryOptions(),
+                options: options,
+                allowedFilterColumns: allowedFilters,
                 tableAlias: "vc",
                 configureCommand: cmd =>
                 {
