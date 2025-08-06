@@ -5,7 +5,7 @@
 
     -- Campos de la entidad
     [VehicleId] INT NOT NULL,
-    [Type] INT NOT NULL, -- Podría ser un enum (1=Combustible, 2=Servicio, etc.)
+    [Type] NVARCHAR(50) NOT NULL, 
     [Amount] MONEY NOT NULL,
     [Description] NVARCHAR(255) NOT NULL,
     [Date] DATE NOT NULL DEFAULT GETDATE(),
