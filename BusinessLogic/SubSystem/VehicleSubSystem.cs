@@ -66,12 +66,6 @@ public class VehicleSubSystem
         var vehicles = await _vehicleRepository.GetAllAsync(options);
         return vehicles.Select(VehicleMapper.ToResponse).ToList();
     }
-    public async Task<VehicleResponse> GetVehicleByPlateAsync(string plate)
-    {
-        var vehicle = await _vehicleRepository.GetByPlateAsync(plate)
-            ?? throw new ArgumentException("No se encontró el vehículo con esa matrícula.");
-        return VehicleMapper.ToResponse(vehicle);
-    }
 
     // COSTS
     public async Task<VehicleCostResponse> AddVehicleCostAsync(AddVehicleCostRequest request)
@@ -109,11 +103,6 @@ public class VehicleSubSystem
     }
 
 
-    public async Task<List<VehicleCostResponse>> GetVehicleCostsAsync(QueryOptions queryOptions,int vehicleId)
-    {
-        var costs = await _costRepository.GetVehicleCostIdAsync(queryOptions,vehicleId);
-        return costs.Select(VehicleCostMapper.ToResponse).ToList();
-    }
     public async Task<VehicleCostResponse> GetVehicleCostByIdAsync(int id)
     {
         var cost = await _costRepository.GetByIdAsync(id)

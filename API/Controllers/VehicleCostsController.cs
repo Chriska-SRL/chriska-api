@@ -68,13 +68,7 @@ namespace API.Controllers
             var result = await _facade.GetAllCosts(options);
             return Ok(result); // 200 OK
         }
-        [HttpGet("vehicle/{vehicleId}")]
-        [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
-        public async Task<ActionResult<List<VehicleCostResponse>>> GetAllForVehicleAsync([FromQuery] QueryOptions options,int vehicleId)
-        {
-            var result = await _facade.GetVehicleCostsAsync(options,vehicleId);
-            return Ok(result);
-        }
+      
 
     }
 }
