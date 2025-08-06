@@ -83,18 +83,16 @@ namespace Repository.EntityRepositories
         #region GetAll
         public async Task<List<VehicleCost>> GetAllAsync(QueryOptions options)
         {
-            var allowedFilters = new[] { "Type", "Amount", "DateFrom", "DateTo", "VehicleId" };
+            var allowedFilters = new[] { "Type", "Amount", "Date", "VehicleId" };
 
             return await ExecuteReadAsync(
                 baseQuery: @"
                     SELECT 
-                        vc.*, 
-                        v.Id AS VehicleId,
+                        vc.*,
                         v.Plate, v.Brand, v.Model, v.CrateCapacity
                     FROM VehicleCosts vc
-                    JOIN Vehicles v ON vc.VehicleId = v.Id
-                    WHERE vc.IsDeleted = 0
-",
+                    INNER JOIN Vehicles v ON vc.VehicleId = v.Id
+                    WHERE v.IsDeleted = 0",
                 map: reader =>
                 {
                     var costs = new List<VehicleCost>();

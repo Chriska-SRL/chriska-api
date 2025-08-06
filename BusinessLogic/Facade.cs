@@ -162,7 +162,6 @@ namespace BusinessLogic
         public async Task<VehicleResponse> UpdateVehicleAsync(UpdateVehicleRequest request) => await Vehicles.UpdateVehicleAsync(request);
         public async Task DeleteVehicleAsync(DeleteRequest request) => await Vehicles.DeleteVehicleAsync(request);
         public async Task<VehicleResponse> GetVehicleByIdAsync(int id) => await Vehicles.GetVehicleByIdAsync(id);
-        public async Task<VehicleResponse> GetVehicleByPlateAsync(string plate) => await Vehicles.GetVehicleByPlateAsync(plate);
         public async Task<List<VehicleResponse>> GetAllVehiclesAsync(QueryOptions options) => await Vehicles.GetAllVehiclesAsync(options);
 
         // --- Vehicle Costs ---
