@@ -36,12 +36,12 @@ namespace BusinessLogic.Common.Mappers
         {
             return new VehicleCostResponse
             {
-                Vehicle= VehicleMapper.ToResponse(cost.Vehicle),
                 Id = cost.Id,
                 Date = cost.Date,
                 Type = cost.Type,
                 Description = cost.Description,
                 Amount = cost.Amount,
+                Vehicle = VehicleMapper.ToResponse(cost.Vehicle),
                 AuditInfo = AuditMapper.ToResponse(cost.AuditInfo)
             };
         }

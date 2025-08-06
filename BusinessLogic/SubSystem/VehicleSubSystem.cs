@@ -3,6 +3,7 @@ using BusinessLogic.Common.Mappers;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsCost;
 using BusinessLogic.DTOs.DTOsVehicle;
+using BusinessLogic.DTOs.DTOsZone;
 using BusinessLogic.Repository;
 
 namespace BusinessLogic.SubSystem;
@@ -108,9 +109,9 @@ public class VehicleSubSystem
     }
 
 
-    public async Task<List<VehicleCostResponse>> GetVehicleCostsAsync(int vehicleId)
+    public async Task<List<VehicleCostResponse>> GetVehicleCostsAsync(QueryOptions queryOptions,int vehicleId)
     {
-        var costs = await _costRepository.GetVehicleCostIdAsync(vehicleId);
+        var costs = await _costRepository.GetVehicleCostIdAsync(queryOptions,vehicleId);
         return costs.Select(VehicleCostMapper.ToResponse).ToList();
     }
     public async Task<VehicleCostResponse> GetVehicleCostByIdAsync(int id)
@@ -120,11 +121,13 @@ public class VehicleSubSystem
 
         return VehicleCostMapper.ToResponse(cost);
     }
-    public async Task<List<VehicleCostResponse>> GetCostsByDateRangeAsync(int vehicleId, DateTime from, DateTime to)
+
+    public async Task<List<VehicleCostResponse>> GetAllCosts(QueryOptions options)
     {
-        var costs = await _costRepository.GetByVehicleIdAndDateRangeAsync(vehicleId, from, to);
+        var costs = await _costRepository.GetAllAsync(options);
         return costs.Select(VehicleCostMapper.ToResponse).ToList();
     }
+
 
 
 }
