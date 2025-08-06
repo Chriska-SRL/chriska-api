@@ -162,7 +162,6 @@ namespace BusinessLogic
         public async Task<VehicleResponse> UpdateVehicleAsync(UpdateVehicleRequest request) => await Vehicles.UpdateVehicleAsync(request);
         public async Task DeleteVehicleAsync(DeleteRequest request) => await Vehicles.DeleteVehicleAsync(request);
         public async Task<VehicleResponse> GetVehicleByIdAsync(int id) => await Vehicles.GetVehicleByIdAsync(id);
-        public async Task<VehicleResponse> GetVehicleByPlateAsync(string plate) => await Vehicles.GetVehicleByPlateAsync(plate);
         public async Task<List<VehicleResponse>> GetAllVehiclesAsync(QueryOptions options) => await Vehicles.GetAllVehiclesAsync(options);
 
         // --- Vehicle Costs ---
@@ -170,7 +169,6 @@ namespace BusinessLogic
         public async Task<VehicleCostResponse> UpdateVehicleCostAsync(UpdateVehicleCostRequest request) => await Vehicles.UpdateVehicleCostAsync(request);
         public async Task DeleteVehicleCostAsync(DeleteRequest request) => await Vehicles.DeleteVehicleCostAsync(request);
         public async Task<VehicleCostResponse> GetVehicleCostByIdAsync(int id) => await Vehicles.GetVehicleCostByIdAsync(id);
-        public async Task<List<VehicleCostResponse>> GetVehicleCostsAsync(QueryOptions options,int vehicleId) => await Vehicles.GetVehicleCostsAsync(options,vehicleId);
         public async Task<List<VehicleCostResponse>> GetAllCosts(QueryOptions query) => await Vehicles.GetAllCosts(query);
 
         

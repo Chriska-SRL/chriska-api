@@ -137,24 +137,6 @@ namespace Repository.EntityRepositories
 
         #endregion
 
-      
-        public async Task<Vehicle?> GetByPlateAsync(string plate)
-        {
-            return await ExecuteReadAsync(
-                baseQuery: "SELECT * FROM Vehicles WHERE Plate = @Plate AND IsDeleted = 0",
-                map: reader =>
-                {
-                    if (reader.Read())
-                        return VehicleMapper.FromReader(reader);
-                    return null;
-                },
-                options: new QueryOptions(),
-                configureCommand: cmd =>
-                {
-                    cmd.Parameters.AddWithValue("@Plate", plate);
-                }
-            );
-        }
 
     }
 }
