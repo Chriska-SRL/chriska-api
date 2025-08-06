@@ -23,7 +23,7 @@ namespace Repository.EntityRepositories
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@VehicleId", cost.Vehicle.Id);
-                    cmd.Parameters.AddWithValue("@Type", cost.Type);
+                    cmd.Parameters.AddWithValue("@Type", cost.Type.ToString());
                     cmd.Parameters.AddWithValue("@Description", cost.Description);
                     cmd.Parameters.AddWithValue("@Amount", cost.Amount);
                     cmd.Parameters.AddWithValue("@Date", cost.Date);
@@ -46,7 +46,7 @@ namespace Repository.EntityRepositories
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Id", cost.Id);
-                    cmd.Parameters.AddWithValue("@Type", cost.Type);
+                    cmd.Parameters.AddWithValue("@Type", cost.Type.ToString());
                     cmd.Parameters.AddWithValue("@Description", cost.Description);
                     cmd.Parameters.AddWithValue("@Amount", cost.Amount);
                     cmd.Parameters.AddWithValue("@Date", cost.Date);
