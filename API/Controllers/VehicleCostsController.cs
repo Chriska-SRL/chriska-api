@@ -4,6 +4,7 @@ using BusinessLogic.Common;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsCost;
+using BusinessLogic.DTOs.DTOsZone;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -60,6 +61,13 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
+        public async Task<ActionResult<List<VehicleCostResponse>>> GetAllVehicleCost([FromQuery] QueryOptions options)
+        {
+            var result = await _facade.GetAllCosts(options);
+            return Ok(result); // 200 OK
+        }
         [HttpGet("vehicle/{vehicleId}")]
         [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
         public async Task<ActionResult<List<VehicleCostResponse>>> GetAllForVehicleAsync(int vehicleId)

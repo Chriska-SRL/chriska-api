@@ -171,7 +171,7 @@ namespace BusinessLogic
         public async Task DeleteVehicleCostAsync(DeleteRequest request) => await Vehicles.DeleteVehicleCostAsync(request);
         public async Task<VehicleCostResponse> GetVehicleCostByIdAsync(int id) => await Vehicles.GetVehicleCostByIdAsync(id);
         public async Task<List<VehicleCostResponse>> GetVehicleCostsAsync(int vehicleId) => await Vehicles.GetVehicleCostsAsync(vehicleId);
-        public async Task<List<VehicleCostResponse>> GetCostsByDateRangeAsync(int vehicleId, DateTime from, DateTime to) => await Vehicles.GetCostsByDateRangeAsync(vehicleId, from, to);
+        public async Task<List<VehicleCostResponse>> GetAllCosts(QueryOptions query) => await Vehicles.GetAllCosts(query);
 
         
     }
