@@ -83,7 +83,7 @@ namespace Repository.EntityRepositories
         #region GetAll
         public async Task<List<VehicleCost>> GetAllAsync(QueryOptions options)
         {
-            var allowedFilters = new[] { "Type", "Amount", "DateFrom", "DateTo" };
+            var allowedFilters = new[] { "Type", "Amount", "DateFrom", "DateTo", "VehicleId" };
 
             return await ExecuteReadAsync(
                 baseQuery: @"
@@ -152,50 +152,6 @@ namespace Repository.EntityRepositories
             );
         }
         #endregion
-
-
-
-        public async Task<List<VehicleCost>> GetVehicleCostIdAsync(QueryOptions options,int vehicleId)
-        {
-            var allowedFilters = new[] { "Type", "Amount", "DateFrom", "DateTo" };
-
-            return await ExecuteReadAsync(
-                baseQuery: @"
-            SELECT 
-                vc.*, 
-                v.Id AS VehicleId,
-                v.Plate, v.Brand, v.Model, v.CrateCapacity,
-                v.CreatedAt AS VehicleCreatedAt,
-                v.CreatedBy AS VehicleCreatedBy,
-                v.CreatedLocation AS VehicleCreatedLocation,
-                v.UpdatedAt AS VehicleUpdatedAt,
-                v.UpdatedBy AS VehicleUpdatedBy,
-                v.UpdatedLocation AS VehicleUpdatedLocation,
-                v.DeletedAt AS VehicleDeletedAt,
-                v.DeletedBy AS VehicleDeletedBy,
-                v.DeletedLocation AS VehicleDeletedLocation
-            FROM VehicleCosts vc
-            JOIN Vehicles v ON vc.VehicleId = v.Id
-            WHERE vc.VehicleId = @VehicleId AND vc.IsDeleted = 0
-        ",
-                map: reader =>
-                {
-                    var costs = new List<VehicleCost>();
-                    while (reader.Read())
-                    {
-                        costs.Add(VehicleCostMapper.FromReader(reader));
-                    }
-                    return costs;
-                },
-                options: options,
-                allowedFilterColumns: allowedFilters,
-                tableAlias: "vc",
-                configureCommand: cmd =>
-                {
-                    cmd.Parameters.AddWithValue("@VehicleId", vehicleId);
-                }
-            );
-        }
 
 
     }

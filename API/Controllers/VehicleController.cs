@@ -68,12 +68,5 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("matricula/{plate}")]
-        [Authorize(Policy = nameof(Permission.VIEW_VEHICLES))]
-        public async Task<ActionResult<VehicleResponse>> GetVehicleByPlateAsync(string plate)
-        {
-            var result = await _facade.GetVehicleByPlateAsync(plate);
-            return Ok(result);
-        }
     }
 }
