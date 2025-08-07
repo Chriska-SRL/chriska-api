@@ -15,6 +15,7 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public UnitType UnitType { get; set; }
         public int EstimatedWeight { get; set; } //Peso estimado en gramos
         public required string Observations { get; set; }
+        public int ShelveId { get; set; }
         public List<int> SupplierIds { get; set; } = new List<int>();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Common.Enums;
 using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsBrand;
+using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsSubCategory;
 using BusinessLogic.DTOs.DTOsSupplier;
 
@@ -23,6 +24,7 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public required string Observations { get; set; }
         public required SubCategoryResponse SubCategory { get; set; }
         public required BrandResponse Brand { get; set; }
+        public required ShelveResponse Shelve { get; set; }
         public required List<SupplierResponse> Suppliers { get; set; }
     }
 }

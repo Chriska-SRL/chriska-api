@@ -1,8 +1,8 @@
-﻿using BusinessLogic.Domain;
-using BusinessLogic.Repository;
+﻿using BusinessLogic.Repository;
 using BusinessLogic.DTOs.DTOsStockMovement;
 using BusinessLogic.Common.Mappers;
-using BusinessLogic.Common.Enums;
+using BusinessLogic.Domain;
+using BusinessLogic.Common;
 
 namespace BusinessLogic.SubSystem
 {
@@ -10,52 +10,64 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IStockMovementRepository _stockMovementRepository;
         private readonly IShelveRepository _shelveRepository;
-        private readonly IWarehouseRepository _warehouseRepository;
         private readonly IProductRepository _productRepository;
         private readonly IUserRepository _userRepository;
 
         public StockSubSystem(
             IStockMovementRepository stockMovementRepository,
             IShelveRepository shelveRepository,
-            IWarehouseRepository warehouseRepository,
             IProductRepository productRepository,
             IUserRepository userRepository)
         {
             _stockMovementRepository = stockMovementRepository;
             _shelveRepository = shelveRepository;
-            _warehouseRepository = warehouseRepository;
             _productRepository = productRepository;
             _userRepository = userRepository;
         }
 
         public async Task<StockMovementResponse> AddStockMovementAsync(AddStockMovementRequest request)
         {
-            throw new NotImplementedException();
+
+            int userId = request.getUserId() ?? 0;
+
+            var user = await _userRepository.GetByIdAsync(userId) ?? throw new InvalidOperationException("Usuario no encontrado.");
+            var product = await _productRepository.GetByIdAsync(request.ProductId) ?? throw new InvalidOperationException("Producto no encontrado.");
+
+            StockMovement stockMovement = StockMovementMapper.ToDomain(request, user, product);
+
+            var added = await _stockMovementRepository.AddAsync(stockMovement);
+            if (stockMovement.Type == Common.Enums.StockMovementType.Inbound)
+            {
+                product.Stock += stockMovement.Quantity;
+                product.AvailableStocks += stockMovement.Quantity;
+            }
+            else
+            {
+                product.Stock -= stockMovement.Quantity;
+                product.AvailableStocks -= stockMovement.Quantity;
+            }
+            product.AuditInfo.SetUpdated(request.getUserId(), request.Location);
+
+            await _productRepository.UpdateAsync(product);
+            added.Product = product;
+            return StockMovementMapper.ToResponse(added);
+
         }
 
         public async Task<StockMovementResponse> GetStockMovementByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var stockMovement = await _stockMovementRepository.GetByIdAsync(id)
+                         ?? throw new InvalidOperationException("Movimiento no encontrado.");
+
+            return StockMovementMapper.ToResponse(stockMovement);
         }
 
-        public async Task<List<StockMovementResponse>> GetAllStockMovementsAsync(DateTime from, DateTime to)
+        public async Task<List<StockMovementResponse>> GetAllStockMovementsAsync(QueryOptions options)
         {
-            throw new NotImplementedException();
+            QueryOptions.CheckRangeDate(options, 60); // Verifica que el rango de fechas no exceda los 60 días
+            var entities = await _stockMovementRepository.GetAllAsync(options);
+            return entities.Select(StockMovementMapper.ToResponse).ToList();
         }
 
-        public async Task<List<StockMovementResponse>> GetAllStockMovementsByShelveAsync(int shelveId, DateTime from, DateTime to)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<StockMovementResponse>> GetAllStockMovementsByWarehouseAsync(int warehouseId, DateTime from, DateTime to)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void CheckRangeDate(DateTime from, DateTime to)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

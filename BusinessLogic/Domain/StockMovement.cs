@@ -10,32 +10,29 @@ namespace BusinessLogic.Domain
         public int Quantity { get; set; }
         public StockMovementType Type { get; set; }
         public string Reason { get; set; } = string.Empty;
-        public Shelve Shelve { get; set; }
         public User User { get; set; }
         public Product Product { get; set; }
         public StockMovementType StockMovementType { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public StockMovement(DateTime date, int quantity, StockMovementType type, string reason, Shelve shelve, User user, Product product)
+        public StockMovement(DateTime date, int quantity, StockMovementType type, string reason, User user, Product product)
         {
             Date = date;
             Quantity = quantity;
             Type = type;
             Reason = reason;
-            Shelve = shelve ?? throw new ArgumentNullException(nameof(shelve));
             User = user ?? throw new ArgumentNullException(nameof(user));
             Product = product ?? throw new ArgumentNullException(nameof(product));
 
             Validate();
         }
-        public StockMovement(int id, DateTime date, int quantity, StockMovementType type, string reason, Shelve shelve, User user, Product product,AuditInfo auditInfo)
+        public StockMovement(int id, DateTime date, int quantity, StockMovementType type, string reason, User user, Product product,AuditInfo auditInfo)
         {
             Id = id;
             Date = date;
             Quantity = quantity;
             Type = type;
             Reason = reason;
-            Shelve = shelve ?? throw new ArgumentNullException(nameof(shelve));
             User = user ?? throw new ArgumentNullException(nameof(user));
             Product = product ?? throw new ArgumentNullException(nameof(product));
             AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
@@ -57,9 +54,6 @@ namespace BusinessLogic.Domain
             if (Reason.Length > 255)
                 throw new ArgumentOutOfRangeException(nameof(Reason), "El motivo del movimiento no puede superar los 255 caracteres.");
 
-            if (Shelve == null)
-                throw new ArgumentNullException(nameof(Shelve), "El estante no puede estar vacío.");
-
             if (User == null)
                 throw new ArgumentNullException(nameof(User), "El usuario no puede estar vacío.");
 
@@ -69,30 +63,10 @@ namespace BusinessLogic.Domain
 
         public void Update(UpdatableData data)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data), "Los datos de actualización no pueden ser nulos.");
-
-            Date = data.Date;
-            Quantity = data.Quantity ?? Quantity;
-            Type = data.Type ?? Type;
-            Reason = data.Reason ?? Reason;
-            Shelve = data.Shelve ?? Shelve;
-            User = data.User ?? User;
-            Product = data.Product ?? Product;
-            AuditInfo = data.AuditInfo ?? AuditInfo;
-            Validate();
         }
 
         public class UpdatableData
         {
-            public DateTime Date { get; set; }
-            public int? Quantity { get; set; }
-            public StockMovementType? Type { get; set; }
-            public string? Reason { get; set; }
-            public Shelve? Shelve { get; set; }
-            public User? User { get; set; }
-            public Product? Product { get; set; }
-            public AuditInfo? AuditInfo { get; set; }
         }
 
         public override string ToString()

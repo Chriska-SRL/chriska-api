@@ -15,6 +15,7 @@ namespace BusinessLogic.SubSystem
         private readonly ISubCategoryRepository _subCategoryRepository;
         private readonly IBrandRepository _brandRepository;
         private readonly ISupplierRepository _supplierRepository;
+        private readonly IShelveRepository _shelveRepository;
         private readonly IAzureBlobService _blobService;
 
         public ProductsSubSystem(
@@ -22,12 +23,14 @@ namespace BusinessLogic.SubSystem
             ISubCategoryRepository subCategoryRepository,
             IBrandRepository brandRepository,
             ISupplierRepository supplierRepository,
+            IShelveRepository shelveRepository,
             IAzureBlobService blobService)
         {
             _productRepository = productRepository;
             _subCategoryRepository = subCategoryRepository;
             _brandRepository = brandRepository;
             _supplierRepository = supplierRepository;
+            _shelveRepository = shelveRepository;
             _blobService = blobService;
         }
 
@@ -39,6 +42,9 @@ namespace BusinessLogic.SubSystem
             Brand brand = await _brandRepository.GetByIdAsync(request.BrandId)
                 ?? throw new ArgumentException("No se encontró la marca asociada.");
 
+            Shelve shelve = await _shelveRepository.GetByIdAsync(request.ShelveId)
+                ?? throw new ArgumentException("No se encontró la estantería asociada.");
+
             List<Supplier> suppliers = new List<Supplier>();
             foreach (var supplierId in request.SupplierIds)
             {
@@ -47,7 +53,7 @@ namespace BusinessLogic.SubSystem
                 suppliers.Add(supplier);
             }
 
-            var product = ProductMapper.ToDomain(request, subCategory, brand, suppliers);
+            var product = ProductMapper.ToDomain(request, subCategory, brand, suppliers, shelve);
             product.Validate();
 
             var added = await _productRepository.AddAsync(product);
@@ -65,6 +71,9 @@ namespace BusinessLogic.SubSystem
             var brand = await _brandRepository.GetByIdAsync(request.BrandId)
                 ?? throw new ArgumentException("No se encontró la marca asociada.");
 
+            var shelve = await _shelveRepository.GetByIdAsync(request.ShelveId)
+                ?? throw new ArgumentException("No se encontró la estantería asociada.");
+
             List<Supplier> suppliers = new List<Supplier>();
             foreach (var supplierId in request.SupplierIds)
             {
@@ -73,7 +82,7 @@ namespace BusinessLogic.SubSystem
                 suppliers.Add(supplier);
             }
 
-            Product.UpdatableData updatedData = ProductMapper.ToUpdatableData(request, subCategory, brand, suppliers);
+            Product.UpdatableData updatedData = ProductMapper.ToUpdatableData(request, subCategory, brand, suppliers, shelve);
             existing.Update(updatedData);
 
             var updated = await _productRepository.UpdateAsync(existing);

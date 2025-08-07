@@ -8,7 +8,7 @@
     [RazonSocial] NVARCHAR(50) NOT NULL, 
     [RUT] NCHAR(12) NOT NULL UNIQUE, 
     [ContactName] NVARCHAR(50) NOT NULL, 
-    [Phone] NCHAR(15) NOT NULL, 
+    [Phone] NVARCHAR(15) NOT NULL, 
     [Email] NVARCHAR(50) NOT NULL, 
     [Address] NVARCHAR(100) NOT NULL, 
     [MapsAddress] NVARCHAR(100) NOT NULL, 

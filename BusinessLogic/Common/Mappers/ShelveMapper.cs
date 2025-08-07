@@ -5,25 +5,25 @@ namespace BusinessLogic.Common.Mappers
 {
     public static class ShelveMapper
     {
-        public static Shelve ToDomain(AddShelveRequest request)
+        public static Shelve ToDomain(AddShelveRequest request, Warehouse warehouse)
         {
             var shelve = new Shelve(
                 name: request.Name,
                 description: request.Description,
-                warehouse: new Warehouse(request.WarehouseId)
+                warehouse: warehouse
             );
 
             shelve.AuditInfo.SetCreated(request.getUserId(), request.Location);
             return shelve;
         }
 
-        public static Shelve.UpdatableData ToUpdatableData(UpdateShelveRequest request)
+        public static Shelve.UpdatableData ToUpdatableData(UpdateShelveRequest request, Warehouse warehouse)
         {
             return new Shelve.UpdatableData
             {
                 Name = request.Name,
                 Description = request.Description,
-                Warehouse = new Warehouse(request.WarehouseId),
+                Warehouse = warehouse,
                 UserId = request.getUserId(),
                 Location = request.Location
             };
@@ -36,7 +36,7 @@ namespace BusinessLogic.Common.Mappers
                 Id = shelve.Id,
                 Name = shelve.Name,
                 Description = shelve.Description,
-                Warehouse = WarehouseMapper.ToResponse(shelve.Warehouse),
+                Warehouse = shelve.Warehouse != null ? WarehouseMapper.ToResponse(shelve.Warehouse) : null,
                 AuditInfo = AuditMapper.ToResponse(shelve.AuditInfo)
             };
         }

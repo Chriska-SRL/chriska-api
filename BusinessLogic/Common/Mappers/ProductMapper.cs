@@ -1,14 +1,11 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsProduct;
-using BusinessLogic.DTOs.DTOsSubCategory;
-using BusinessLogic.DTOs.DTOsCategory;
-using BusinessLogic.DTOs.DTOsBrand;
 
 namespace BusinessLogic.Common.Mappers
 {
     public static class ProductMapper
     {
-        public static Product ToDomain(ProductAddRequest request, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
+        public static Product ToDomain(ProductAddRequest request, SubCategory subCategory, Brand brand, List<Supplier> suppliers, Shelve shelve)
         {
             Product product = new Product(
                 barcode: request.Barcode,
@@ -21,14 +18,15 @@ namespace BusinessLogic.Common.Mappers
                 observations: request.Observations,
                 subCategory: subCategory,
                 brand: brand,
-                suppliers: suppliers
+                suppliers: suppliers,
+                shelve: shelve
             );
 
             product.AuditInfo.SetCreated(request.getUserId(), request.Location);
             return product;
         }
 
-        public static Product.UpdatableData ToUpdatableData(ProductUpdateRequest request, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
+        public static Product.UpdatableData ToUpdatableData(ProductUpdateRequest request, SubCategory subCategory, Brand brand, List<Supplier> suppliers, Shelve shelve)
         {
             return new Product.UpdatableData
             {
@@ -43,6 +41,7 @@ namespace BusinessLogic.Common.Mappers
                 SubCategory = subCategory,
                 Brand = new Brand(request.BrandId),
                 Suppliers = suppliers,
+                Shelve = shelve,
 
                 UserId = request.getUserId(),
                 Location = request.Location
@@ -69,6 +68,7 @@ namespace BusinessLogic.Common.Mappers
                 SubCategory = SubCategoryMapper.ToResponse(product.SubCategory),
                 Brand = BrandMapper.ToResponse(product.Brand),
                 Suppliers = product.Suppliers.Select(SupplierMapper.ToResponse).ToList(),
+                Shelve = ShelveMapper.ToResponse(product.Shelve),
                 AuditInfo = AuditMapper.ToResponse(product.AuditInfo)
             };
         }

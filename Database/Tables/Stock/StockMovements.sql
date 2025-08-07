@@ -1,16 +1,31 @@
 ﻿CREATE TABLE [dbo].[StockMovements]
 (
-	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+	  -- Clave primaria de la entidad
+    [Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+
     [Quantity] INT NOT NULL, 
-    [Type] NCHAR(1) NOT NULL, 
+    [Type]  NVARCHAR(50) NOT NULL, 
     [Reason] NVARCHAR(255) NOT NULL, 
     [Date] DATETIME NOT NULL, 
     [ProductId] INT NOT NULL,
-    [ShelveId] INT NOT NULL,
-    [UserId] INT NOT NULL, 
+
+      -- Campos de auditoría
+    [CreatedAt] DATETIME2 NOT NULL,
+    [CreatedBy] INT NOT NULL,
+    [CreatedLocation] NVARCHAR(50) NULL, -- Coordenadas GPS: "lat,long"
+    [UpdatedAt] DATETIME2 NULL,
+    [UpdatedBy] INT NULL,
+    [UpdatedLocation] NVARCHAR(50) NULL, -- Coordenadas GPS: "lat,long"
+    [DeletedAt] DATETIME2 NULL,
+    [DeletedBy] INT NULL,
+    [DeletedLocation] NVARCHAR(50) NULL, -- Coordenadas GPS: "lat,long"
+
+    -- Soft delete flag
+    [IsDeleted] BIT NOT NULL DEFAULT 0,
+
+     -- Restricciones
+    CONSTRAINT [FK_StockMovements_CreatedBy] FOREIGN KEY ([CreatedBy]) REFERENCES [Users]([Id]),
+    CONSTRAINT [FK_StockMovements_UpdatedBy] FOREIGN KEY ([UpdatedBy]) REFERENCES [Users]([Id]),
+    CONSTRAINT [FK_StockMovements_DeletedBy] FOREIGN KEY ([DeletedBy]) REFERENCES [Users]([Id]),
     CONSTRAINT [FK_StockMovements_Products] FOREIGN KEY ([ProductId]) REFERENCES [Products]([Id]),
-    CONSTRAINT [FK_StockMovements_Users] FOREIGN KEY ([UserId]) REFERENCES [Users]([Id]),
-    CONSTRAINT [CHK_StockMovements_Type] CHECK ([Type] IN ('I', 'E')),
-    CONSTRAINT [CHK_StockMovements_Quantity] CHECK ([Quantity] > 0),
-    CONSTRAINT [FK_StockMovements_Shelves] FOREIGN KEY ([ShelveId]) REFERENCES [Shelves]([Id])
 )

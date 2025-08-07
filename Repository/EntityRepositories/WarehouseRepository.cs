@@ -16,14 +16,13 @@ namespace Repository.EntityRepositories
         public async Task<Warehouse> AddAsync(Warehouse warehouse)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-                "INSERT INTO dbo.Warehouses (Name, Description, Address) OUTPUT INSERTED.Id VALUES (@Name, @Description, @Address)",
+                "INSERT INTO dbo.Warehouses (Name, Description) OUTPUT INSERTED.Id VALUES (@Name, @Description)",
                 warehouse,
                 AuditAction.Insert,
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Name", warehouse.Name);
                     cmd.Parameters.AddWithValue("@Description", warehouse.Description);
-                    cmd.Parameters.AddWithValue("@Address", warehouse.Address);
                 },
                 async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
             );
@@ -31,7 +30,7 @@ namespace Repository.EntityRepositories
             if (newId == 0)
                 throw new InvalidOperationException("No se pudo obtener el Id insertado.");
 
-            return new Warehouse(newId, warehouse.Name, warehouse.Description, warehouse.Address, new List<Shelve>(), warehouse.AuditInfo);
+            return new Warehouse(newId, warehouse.Name, warehouse.Description, new List<Shelve>(), warehouse.AuditInfo);
         }
 
         #endregion
@@ -41,7 +40,7 @@ namespace Repository.EntityRepositories
         public async Task<Warehouse> UpdateAsync(Warehouse warehouse)
         {
             int rows = await ExecuteWriteWithAuditAsync(
-                "UPDATE dbo.Warehouses SET Name = @Name, Description = @Description, Address = @Address WHERE Id = @Id",
+                "UPDATE dbo.Warehouses SET Name = @Name, Description = @Description WHERE Id = @Id",
                 warehouse,
                 AuditAction.Update,
                 configureCommand: cmd =>
@@ -49,7 +48,6 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Id", warehouse.Id);
                     cmd.Parameters.AddWithValue("@Name", warehouse.Name);
                     cmd.Parameters.AddWithValue("@Description", warehouse.Description);
-                    cmd.Parameters.AddWithValue("@Address", warehouse.Address);
                 }
             );
 
@@ -90,10 +88,10 @@ namespace Repository.EntityRepositories
 
         public async Task<List<Warehouse>> GetAllAsync(QueryOptions options)
         {
-            var allowedFilters = new[] { "Name", "Description", "Address" };
+            var allowedFilters = new[] { "Name", "Description" };
 
             return await ExecuteReadAsync(
-                baseQuery: @"SELECT w.Id, w.Name, w.Description, w.Address, 
+                baseQuery: @"SELECT w.Id, w.Name, w.Description, 
                                     s.Id AS ShelveId, s.Name AS ShelveName, s.Description AS ShelveDescription 
                              FROM Warehouses w
                              LEFT JOIN Shelves s ON s.WarehouseId = w.Id AND s.IsDeleted = 0",
@@ -134,7 +132,7 @@ namespace Repository.EntityRepositories
         public async Task<Warehouse?> GetByIdAsync(int id)
         {
             return await ExecuteReadAsync(
-                @"SELECT w.Id, w.Name, w.Description, w.Address, 
+                @"SELECT w.Id, w.Name, w.Description, 
                                     s.Id AS ShelveId, s.Name AS ShelveName, s.Description AS ShelveDescription 
                              FROM Warehouses w
                              LEFT JOIN Shelves s ON s.WarehouseId = w.Id AND s.IsDeleted = 0
@@ -147,9 +145,12 @@ namespace Repository.EntityRepositories
                         if (warehouse == null)
                             warehouse = WarehouseMapper.FromReader(reader);
 
-                        var shelve = ShelveMapper.FromReaderForWarehouses(reader);
-                        if (shelve != null)
-                            warehouse.Shelves.Add(shelve);
+                        if (!reader.IsDBNull(reader.GetOrdinal("ShelveId")))
+                        {
+                            var shelve = ShelveMapper.FromReaderForWarehouses(reader);
+                            if (shelve != null)
+                                warehouse.Shelves.Add(shelve);
+                        }
                     }
                     return warehouse;
                 },
@@ -165,7 +166,7 @@ namespace Repository.EntityRepositories
         public async Task<Warehouse?> GetByNameAsync(string name)
         {
             return await ExecuteReadAsync(
-                 @"SELECT w.Id, w.Name, w.Description, w.Address, 
+                 @"SELECT w.Id, w.Name, w.Description,
                                     s.Id AS ShelveId, s.Name AS ShelveName, s.Description AS ShelveDescription 
                              FROM Warehouses w
                              LEFT JOIN Shelves s ON s.WarehouseId = w.Id AND s.IsDeleted = 0
