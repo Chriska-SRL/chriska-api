@@ -8,6 +8,6 @@ namespace BusinessLogic.DTOs.DTOsCategory
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<SubCategoryResponse> SubCategories { get; set; } = new List<SubCategoryResponse>();
+        public List<SubCategoryResponse>? SubCategories { get; set; }
     }
 }

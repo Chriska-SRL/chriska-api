@@ -23,7 +23,7 @@ namespace BusinessLogic.Domain
             Reason = reason;
             User = user ?? throw new ArgumentNullException(nameof(user));
             Product = product ?? throw new ArgumentNullException(nameof(product));
-
+            AuditInfo = new AuditInfo();
             Validate();
         }
         public StockMovement(int id, DateTime date, int quantity, StockMovementType type, string reason, User user, Product product,AuditInfo auditInfo)
@@ -33,9 +33,9 @@ namespace BusinessLogic.Domain
             Quantity = quantity;
             Type = type;
             Reason = reason;
-            User = user ?? throw new ArgumentNullException(nameof(user));
-            Product = product ?? throw new ArgumentNullException(nameof(product));
-            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+            User = user;
+            Product = product;
+            AuditInfo = auditInfo;
 
             Validate();
         }

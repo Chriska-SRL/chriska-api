@@ -19,10 +19,10 @@ namespace BusinessLogic.Domain
             Id = id;
             Name = name;
             Username = username;
-            Password = password ?? throw new ArgumentNullException(nameof(password));
+            Password = password;
             IsEnabled = isEnabled;
             NeedsPasswordChange = needsPasswordChange;
-            Role = role ?? throw new ArgumentNullException(nameof(role));
+            Role = role;
             AuditInfo = auditInfo ?? new AuditInfo();
         }
 
@@ -34,6 +34,7 @@ namespace BusinessLogic.Domain
             IsEnabled = isEnabled;
             NeedsPasswordChange = needsPasswordChange;
             Role = role ?? throw new ArgumentNullException(nameof(role));
+            AuditInfo = new AuditInfo();
             Validate();
         }
 

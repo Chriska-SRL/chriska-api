@@ -7,17 +7,17 @@ namespace BusinessLogic.Domain
         public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string Description { get; set; }
-        public Category Category { get; set; }
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+        public Category? Category { get; set; }
+        public AuditInfo? AuditInfo { get; set; }
 
-        public SubCategory(int id, string name, string description, Category category, AuditInfo auditInfo)
+        public SubCategory(int id, string name, string description, Category? category, AuditInfo? auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
-            Category = category ?? throw new ArgumentNullException(nameof(category));
-            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
-
+            Category = category;
+            AuditInfo = auditInfo;
+            AuditInfo = new AuditInfo();
             Validate();
         }
         public SubCategory(string name, string description, Category category)
@@ -27,14 +27,6 @@ namespace BusinessLogic.Domain
             Category = category ?? throw new ArgumentNullException(nameof(category));
 
             Validate();
-        }
-
-        public SubCategory(int id)
-        {
-            Id = id;
-            Name = "Nombre Temporal";
-            Description = "Descripción Temporal";
-            Category = new Category(9999);
         }
 
         public void Validate()
@@ -50,9 +42,6 @@ namespace BusinessLogic.Domain
 
             if (Description.Length > 255)
                 throw new ArgumentOutOfRangeException(nameof(Description), "La descripción no puede superar los 255 caracteres.");
-
-            if (Category == null)
-                throw new ArgumentNullException(nameof(Category), "La categoría es obligatoria.");
         }
 
         public void Update(UpdatableData data)

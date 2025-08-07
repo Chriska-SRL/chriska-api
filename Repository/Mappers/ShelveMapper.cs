@@ -1,30 +1,26 @@
-﻿using BusinessLogic.Common;
-using BusinessLogic.Domain;
+﻿using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
 {
     public static class ShelveMapper
     {
-        public static Shelve FromReader(SqlDataReader reader)
+        public static Shelve? FromReader(SqlDataReader r, string? prefix = null, string? origin = null)
         {
-            return new Shelve(
-                id: reader.GetInt32(reader.GetOrdinal("Id")),
-                name: reader.GetString(reader.GetOrdinal("Name")),
-                description: reader.GetString(reader.GetOrdinal("Description")),
-                warehouse: WarehouseMapper.FromReaderForShelves(reader),
-                auditInfo: AuditInfoMapper.FromReader(reader)
-            );
-        }
+            string Col(string c) => $"{origin ?? ""}{prefix ?? ""}{c}";
+            string S(string c) => r.IsDBNull(r.GetOrdinal(c)) ? "" : r.GetString(r.GetOrdinal(c));
 
-        public static Shelve FromReaderForWarehouses(SqlDataReader reader)
-        {
+            if (prefix != null)
+            {
+                try { var o = r.GetOrdinal(Col("Id")); if (r.IsDBNull(o)) return null; } catch { return null; }
+            }
+
             return new Shelve(
-                id: reader.GetInt32(reader.GetOrdinal("ShelveId")),
-                name: reader.GetString(reader.GetOrdinal("ShelveName")),
-                description: reader.GetString(reader.GetOrdinal("ShelveDescription")),
-                warehouse: null,
-                auditInfo: new AuditInfo()
+                id: r.GetInt32(r.GetOrdinal(Col("Id"))),
+                name: S(Col("Name")),
+                description: S(Col("Description")),
+                warehouse: WarehouseMapper.FromReader(r, "Warehouse", origin),
+                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null
             );
         }
     }

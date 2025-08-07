@@ -8,15 +8,15 @@ namespace BusinessLogic.Domain
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public List<Shelve> Shelves { get; set; } = new List<Shelve>();
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+        public AuditInfo? AuditInfo { get; set; } = new AuditInfo();
 
-        public Warehouse(int id, string name, string description, List<Shelve> shelves,AuditInfo auditInfo)
+        public Warehouse(int id, string name, string description, List<Shelve> shelves,AuditInfo? auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
-            Shelves = shelves ?? throw new ArgumentNullException(nameof(shelves));
-            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+            Shelves = shelves;
+            AuditInfo = auditInfo;
 
             Validate();
         }
@@ -25,7 +25,7 @@ namespace BusinessLogic.Domain
         {
             Name = name;
             Description = description;
-
+            AuditInfo = new AuditInfo();
             Validate();
         }
 

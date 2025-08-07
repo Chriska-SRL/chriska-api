@@ -32,6 +32,7 @@ namespace BusinessLogic.Domain
             Email = email;
             Observations = observations;
             BankAccounts = bankAccounts ?? new List<BankAccount>();
+            AuditInfo = new AuditInfo();
         }
         public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, string observations, List<BankAccount> bankAccounts, AuditInfo auditInfo)
         {
@@ -46,7 +47,7 @@ namespace BusinessLogic.Domain
             Email = email;
             Observations = observations;
             BankAccounts = bankAccounts ?? new List<BankAccount>();
-            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+            AuditInfo = auditInfo;
         }
         public Supplier(int id)
         {

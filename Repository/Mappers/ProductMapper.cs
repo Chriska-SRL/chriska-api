@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Common;
-using BusinessLogic.Common.Enums;
+﻿using BusinessLogic.Common.Enums;
 using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
@@ -7,89 +6,38 @@ namespace Repository.Mappers
 {
     public static class ProductMapper
     {
-        public static Product FromReader(SqlDataReader reader)
+        // prefix: columnas del producto (ej: "Product"); origin: prefijo de relaciones (ej: "P")
+        public static Product? FromReader(SqlDataReader r, string? prefix = null, string? origin = null)
         {
-            // Categoria (NOT NULL)
-            var category = new Category(
-                id: reader.GetInt32(reader.GetOrdinal("CategoryId")),
-                name: reader.GetString(reader.GetOrdinal("CategoryName")),
-                description: reader.GetString(reader.GetOrdinal("CategoryDescription")),
-                subCategories: new List<SubCategory>(),
-                auditInfo: new AuditInfo()
-            );
+            string Col(string c) => $"{prefix ?? ""}{c}";
+            string S(string c) => r.IsDBNull(r.GetOrdinal(c)) ? "" : r.GetString(r.GetOrdinal(c));
 
-            // Subcategoria (NOT NULL)
-            var subCategory = new SubCategory(
-                id: reader.GetInt32(reader.GetOrdinal("SubCategoryId")),
-                name: reader.GetString(reader.GetOrdinal("SubCategoryName")),
-                description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
-                category: category,
-                auditInfo: new AuditInfo()
-            );
-
-            // Marca (NOT NULL)
-            var brand = new Brand(
-                id: reader.GetInt32(reader.GetOrdinal("BrandId")),
-                name: reader.GetString(reader.GetOrdinal("BrandName")),
-                description: reader.GetString(reader.GetOrdinal("BrandDescription")),
-                auditInfo: new AuditInfo()
-            );
-            //Warehouse (NOT NULL)
-            var warehouse = new Warehouse(
-                id: reader.GetInt32(reader.GetOrdinal("WarehouseId")),
-                name: reader.GetString(reader.GetOrdinal("WarehouseName")),
-                description: reader.GetString(reader.GetOrdinal("WarehouseDescription")),
-                shelves: new List<Shelve>(),
-                auditInfo: new AuditInfo()
-            );
-
-            // Shelve (NOT NULL)
-            var shelve = new Shelve(
-                id: reader.GetInt32(reader.GetOrdinal("ShelveId")),
-                name: reader.GetString(reader.GetOrdinal("ShelveName")),
-                description: reader.GetString(reader.GetOrdinal("ShelveDescription")),
-                warehouse: warehouse,
-                auditInfo: new AuditInfo()
-            );
-
-            // UnitType (enum) - NOT NULL
-            string unitTypeStr = reader.GetString(reader.GetOrdinal("UnitType")).Trim();
-            UnitType unitType = unitTypeStr switch
+            if (prefix != null)
             {
-                "Unit" => UnitType.Unit,
-                "Kilo" => UnitType.Kilo,
-                _ => UnitType.None
-            };
+                try { var o = r.GetOrdinal(Col("Id")); if (r.IsDBNull(o)) return null; } catch { return null; }
+            }
 
-            // TemperatureCondition (enum) - NOT NULL
-            string tempStr = reader.GetString(reader.GetOrdinal("TemperatureCondition")).Trim();
-            TemperatureCondition tempCondition = tempStr switch
-            {
-                "Cold" => TemperatureCondition.Cold,
-                "Frozen" => TemperatureCondition.Frozen,
-                "Ambient" => TemperatureCondition.Ambient,
-                _ => TemperatureCondition.None
-            };
+            T Parse<T>(string c) where T : struct, Enum
+                => Enum.Parse<T>(S(Col(c)).Trim(), true);
 
-            // Producto
             return new Product(
-                id: reader.GetInt32(reader.GetOrdinal("Id")),
-                barcode: reader.GetString(reader.GetOrdinal("Barcode")),
-                name: reader.GetString(reader.GetOrdinal("Name")),
-                price: reader.GetDecimal(reader.GetOrdinal("Price")),
-                image: reader.GetString(reader.GetOrdinal("ImageUrl")),
-                stock: reader.GetInt32(reader.GetOrdinal("Stock")),
-                availableStocks: reader.GetInt32(reader.GetOrdinal("AvailableStock")),
-                description: reader.GetString(reader.GetOrdinal("Description")),
-                unitType: unitType,
-                temperatureCondition: tempCondition,
-                estimatedWeight: reader.GetInt32(reader.GetOrdinal("EstimatedWeight")),
-                observations: reader.GetString(reader.GetOrdinal("Observations")),
-                subCategory: subCategory,
-                brand: brand,
-                shelve: shelve,
+                id: r.GetInt32(r.GetOrdinal(Col("Id"))),
+                barcode: S(Col("Barcode")),
+                name: S(Col("Name")),
+                price: r.GetDecimal(r.GetOrdinal(Col("Price"))),
+                image: S(Col("ImageUrl")),
+                stock: r.IsDBNull(r.GetOrdinal(Col("Stock"))) ? 0 : r.GetInt32(r.GetOrdinal(Col("Stock"))),
+                availableStocks: r.IsDBNull(r.GetOrdinal(Col("AvailableStock"))) ? 0 : r.GetInt32(r.GetOrdinal(Col("AvailableStock"))),
+                description: S(Col("Description")),
+                unitType: Parse<UnitType>("UnitType"),
+                temperatureCondition: Parse<TemperatureCondition>("TemperatureCondition"),
+                estimatedWeight: r.IsDBNull(r.GetOrdinal(Col("EstimatedWeight"))) ? 0 : r.GetInt32(r.GetOrdinal(Col("EstimatedWeight"))),
+                observations: S(Col("Observations")),
+                subCategory: SubCategoryMapper.FromReader(r, "SubCategory", origin), // ej PSubCategory*
+                brand: BrandMapper.FromReader(r, "Brand", origin),       // ej PBrand*
+                shelve: ShelveMapper.FromReader(r, "Shelve", origin),       // ej PShelve* (+ PWarehouse*)
                 suppliers: new List<Supplier>(),
-                auditInfo: AuditInfoMapper.FromReader(reader)
+                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null
             );
         }
     }

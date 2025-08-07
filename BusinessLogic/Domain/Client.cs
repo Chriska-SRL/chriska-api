@@ -18,9 +18,9 @@ namespace BusinessLogic.Domain
         public string Observations { get; set; }
         public int LoanedCrates { get; set; }
         public string Qualification { get; set; } = "3/5";
-        public Zone Zone { get; set; }
+        public Zone? Zone { get; set; }
         public List<BankAccount> BankAccounts { get; set; } = new();
-        public AuditInfo AuditInfo { get; set; } = new();
+        public AuditInfo? AuditInfo { get; set; } = new();
 
         public Client(string name, string? rut, string razonSocial, string address, string mapsAddress,
                       string schedule, string phone, string contactName, string? email, string? observations,
@@ -39,11 +39,12 @@ namespace BusinessLogic.Domain
             BankAccounts = bankAccounts;
             LoanedCrates = loanedCrates;
             Zone = zone;
+            AuditInfo = new AuditInfo();
             Validate();
         }
         public Client(int id, string name, string rut, string razonSocial, string address, string mapsAddress,
                       string schedule, string phone, string contactName, string email, string observations,
-                      List<BankAccount> bankAccounts, int loanedCrates, string qualification, Zone zone,AuditInfo auditInfo)
+                      List<BankAccount> bankAccounts, int loanedCrates, string qualification, Zone? zone,AuditInfo? auditInfo)
         {
             Id = id;
             Name = name;

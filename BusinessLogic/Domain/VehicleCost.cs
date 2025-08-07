@@ -30,6 +30,7 @@ namespace BusinessLogic.Domain
             Description = description;
             Amount = amount;
             Date = date;
+            AuditInfo = new AuditInfo();
             Validate();
         }
 

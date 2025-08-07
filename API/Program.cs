@@ -143,9 +143,9 @@ namespace API
             builder.Services.AddScoped<IVehicleCostRepository, VehicleCostRepository>();
             builder.Services.AddScoped<IShelveRepository, ShelveRepository>();
             builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+            builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
 
             builder.Services.AddScoped<IAzureBlobService, AzureBlobService>();
-            builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
             builder.Services.AddScoped<RolesSubSystem>();
             builder.Services.AddScoped<UserSubSystem>();
@@ -159,6 +159,7 @@ namespace API
             builder.Services.AddScoped<ZonesSubSystem>();
             builder.Services.AddScoped<VehicleSubSystem>();
             builder.Services.AddScoped<BrandSubSystem>();
+            builder.Services.AddScoped<DiscountsSubSystem>();
 
 
             builder.Services.AddScoped<AuditLogger>();

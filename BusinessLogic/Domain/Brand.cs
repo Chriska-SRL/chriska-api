@@ -7,7 +7,7 @@ namespace BusinessLogic.Domain
         public int Id { get; set; } = 0;
         public string Name { get; set; }
         public string Description { get; set; }
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+        public AuditInfo? AuditInfo { get; set; }
 
         public Brand(string name, string description)
         {
@@ -15,7 +15,7 @@ namespace BusinessLogic.Domain
             Description = description;
             Validate();
         }
-        public Brand(int id, string name, string description, AuditInfo auditInfo)
+        public Brand(int id, string name, string description, AuditInfo? auditInfo)
         {
             Id = id;
             Name = name;
@@ -24,14 +24,6 @@ namespace BusinessLogic.Domain
             Validate();
         }
 
-        public Brand(int id)
-        {
-            Id = id;
-            Name = "Temporal0000";
-            Description = "TEMPORALMENTETEMPORALPARATEMPORAL";
-
-            Validate();
-        }
 
         public void Validate()
         {

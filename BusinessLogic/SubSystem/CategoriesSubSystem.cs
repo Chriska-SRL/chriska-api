@@ -86,7 +86,7 @@ namespace BusinessLogic.SubSystem
             if (await _subCategoryRepository.GetByNameAsync(request.Name) != null)
                 throw new ArgumentException("Ya existe una subcategoría con el mismo nombre.");
 
-            var subCategory = SubCategoryMapper.ToDomain(request);
+            var subCategory = SubCategoryMapper.ToDomain(request, existingCategory);
             subCategory.Validate();
 
             var added = await _subCategoryRepository.AddAsync(subCategory);

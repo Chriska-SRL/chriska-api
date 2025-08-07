@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsCategory;
+using BusinessLogic.DTOs.DTOsSubCategory;
 
 namespace BusinessLogic.Common.Mappers
 {
@@ -12,7 +13,7 @@ namespace BusinessLogic.Common.Mappers
                 request.Name,
                 request.Description
             );
-            category.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            category.AuditInfo?.SetCreated(request.getUserId(), request.Location);
 
             return category;
         }
@@ -28,15 +29,16 @@ namespace BusinessLogic.Common.Mappers
             };
         }
 
-        public static CategoryResponse ToResponse(Category category)
+        public static CategoryResponse? ToResponse(Category? category)
         {
+            if (category == null) return null;
             return new CategoryResponse
             {
                 Id = category.Id,
                 Name = category.Name,
                 Description = category.Description,
-                SubCategories = category.SubCategories.Select(SubCategoryMapper.ToResponse).ToList(),
-                AuditInfo = AuditMapper.ToResponse(category.AuditInfo)
+                SubCategories = category.SubCategories?.Select(SubCategoryMapper.ToResponse).OfType<SubCategoryResponse>().ToList() ?? null,
+                AuditInfo = AuditMapper.ToResponse(category?.AuditInfo)
             };
         }
     }

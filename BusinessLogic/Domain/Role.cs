@@ -17,7 +17,7 @@ namespace BusinessLogic.Domain
             Name = name;
             Description = description;
             Permissions = permissions ?? throw new ArgumentNullException(nameof(permissions));
-
+            AuditInfo = new AuditInfo();
             Validate();
         }
         public Role(int id, string name, string description, List<Permission> permissions, AuditInfo auditInfo)
@@ -25,8 +25,8 @@ namespace BusinessLogic.Domain
             Id = id;
             Name = name;
             Description = description;
-            Permissions = permissions ?? throw new ArgumentNullException(nameof(permissions));
-            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+            Permissions = permissions;
+            AuditInfo = auditInfo;
 
             Validate();
         }

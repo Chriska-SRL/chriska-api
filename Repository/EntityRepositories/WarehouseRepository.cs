@@ -112,7 +112,7 @@ namespace Repository.EntityRepositories
 
                         if (!reader.IsDBNull(reader.GetOrdinal("ShelveId")))
                         {
-                            var shelve = ShelveMapper.FromReaderForWarehouses(reader);
+                            var shelve = ShelveMapper.FromReader(reader, "Shelve");
                             warehouse.Shelves.Add(shelve);
                         }
                     }
@@ -147,7 +147,7 @@ namespace Repository.EntityRepositories
 
                         if (!reader.IsDBNull(reader.GetOrdinal("ShelveId")))
                         {
-                            var shelve = ShelveMapper.FromReaderForWarehouses(reader);
+                            var shelve = ShelveMapper.FromReader(reader, "Shelve");
                             if (shelve != null)
                                 warehouse.Shelves.Add(shelve);
                         }
@@ -179,7 +179,7 @@ namespace Repository.EntityRepositories
                         if (warehouse == null)
                             warehouse = WarehouseMapper.FromReader(reader);
 
-                        var shelve = ShelveMapper.FromReaderForWarehouses(reader);
+                        var shelve = ShelveMapper.FromReader(reader, "Shelve");
                         if (shelve != null)
                             warehouse.Shelves.Add(shelve);
                     }

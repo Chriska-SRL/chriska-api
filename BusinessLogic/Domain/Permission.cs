@@ -108,5 +108,11 @@
 
         // Additional permissions
         CREATE_PRODUCT_WITHDATE = 69,
+
+        //Discounts
+        CREATE_DISCOUNTS = 70,
+        DELETE_DISCOUNTS = 71,
+        EDIT_DISCOUNTS = 72,
+        VIEW_DISCOUNTS = 73,
     }
 }
