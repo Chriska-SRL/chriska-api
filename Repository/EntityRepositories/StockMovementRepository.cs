@@ -43,7 +43,7 @@ namespace Repository.EntityRepositories
 
         public async Task<List<StockMovement>> GetAllAsync(QueryOptions options)
         {
-            var allowedFilters = new[] { "Reason", "ProductId", "CreatedBy", "Type" };
+            var allowedFilters = new[] { "Date", "ProductId", "CreatedBy", "Type" };
 
             return await ExecuteReadAsync(
                 baseQuery: @"SELECT sm.*,  
