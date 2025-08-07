@@ -2,7 +2,6 @@
 using BusinessLogic;
 using BusinessLogic.Common;
 using BusinessLogic.Domain;
-using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsStockMovement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,10 +26,27 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.CREATE_STOCK_MOVEMENTS))]
         public async Task<ActionResult<StockMovementResponse>> AddStockMovementAsync([FromBody] AddStockMovementRequest request)
         {
-            request.setUserId(_tokenUtils.GetUserId());
+            var userId = _tokenUtils.GetUserId();
+            request.setUserId(userId);
+
+            if (request.Date == null)
+            {
+                request.Date = DateTime.Now;
+            }
+            else
+            {
+                var userPermissions = _tokenUtils.GetPermissions();
+
+                if (!userPermissions.Contains(Permission.CREATE_PRODUCT_WITHDATE))
+                {
+                    return StatusCode(403, "No tiene permiso para establecer la fecha del movimiento de stock manualmente.");
+                }
+            }
+
             var result = await _facade.AddStockMovementAsync(request);
-            return CreatedAtAction(nameof(GetStockMovementByIdAsync), new { id = result.Id }, result);
+            return Created(String.Empty, result);
         }
+
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_STOCK_MOVEMENTS))]
@@ -42,26 +58,11 @@ namespace API.Controllers
 
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_STOCK_MOVEMENTS))]
-        public async Task<ActionResult<List<StockMovementResponse>>> GetAllStockMovementsAsync([FromQuery] DateTime from, [FromQuery] DateTime to)
+        public async Task<ActionResult<List<StockMovementResponse>>> GetAllStockMovementsAsync([FromQuery] QueryOptions options)
         {
-            var result = await _facade.GetAllStockMovementsAsync(from, to);
+            var result = await _facade.GetAllStockMovementsAsync(options);
             return Ok(result);
         }
 
-        [HttpGet("shelve/{id}")]
-        [Authorize(Policy = nameof(Permission.VIEW_STOCK_MOVEMENTS))]
-        public async Task<ActionResult<List<StockMovementResponse>>> GetAllStockMovementsByShelveAsync(int id, [FromQuery] DateTime from, [FromQuery] DateTime to)
-        {
-            var result = await _facade.GetAllStockMovementsByShelveAsync(id, from, to);
-            return Ok(result);
-        }
-
-        [HttpGet("warehouse/{id}")]
-        [Authorize(Policy = nameof(Permission.VIEW_STOCK_MOVEMENTS))]
-        public async Task<ActionResult<List<StockMovementResponse>>> GetAllStockMovementsByWarehouseAsync(int id, [FromQuery] DateTime from, [FromQuery] DateTime to)
-        {
-            var result = await _facade.GetAllStockMovementsByWarehouseAsync(id, from, to);
-            return Ok(result);
-        }
     }
 }

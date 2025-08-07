@@ -20,11 +20,12 @@ namespace BusinessLogic.Domain
         public string Observation { get; set; }
         public SubCategory SubCategory { get; set; }
         public Brand Brand { get; set; }
+        public Shelve Shelve { get; set; }
         //public List<Discount> Discounts { get; set; } = new List<Discount>();
         public List<Supplier> Suppliers { get; set; } = new List<Supplier>();
         public AuditInfo AuditInfo { get; set ; } = new AuditInfo();
 
-        public Product( string? barcode, string name, decimal price, string description, UnitType unitType, TemperatureCondition temperatureCondition, int estimatedWeight, string observations, SubCategory subCategory, Brand brand, List<Supplier> suppliers)
+        public Product( string? barcode, string name, decimal price, string description, UnitType unitType, TemperatureCondition temperatureCondition, int estimatedWeight, string observations, SubCategory subCategory, Brand brand, List<Supplier> suppliers, Shelve shelve)
         {
             Barcode = barcode;
             Name = name;
@@ -40,9 +41,10 @@ namespace BusinessLogic.Domain
             SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
             Brand = brand ?? throw new ArgumentNullException(nameof(brand));
             Suppliers = suppliers ?? throw new ArgumentNullException(nameof(suppliers));
+            Shelve = shelve ?? throw new ArgumentNullException(nameof(suppliers));
             Validate();
         }
-        public Product(int id, string? barcode, string name, decimal price, string image, int stock, int availableStocks, string description, UnitType unitType, TemperatureCondition temperatureCondition, int estimatedWeight, string observations, SubCategory subCategory, Brand brand,List<Supplier> suppliers, AuditInfo auditInfo)
+        public Product(int id, string? barcode, string name, decimal price, string image, int stock, int availableStocks, string description, UnitType unitType, TemperatureCondition temperatureCondition, int estimatedWeight, string observations, SubCategory subCategory, Brand brand,List<Supplier> suppliers, Shelve shelve, AuditInfo auditInfo)
         {
             Id = id;
             Barcode = barcode;
@@ -59,6 +61,7 @@ namespace BusinessLogic.Domain
             SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
             Brand = brand ?? throw new ArgumentNullException(nameof(brand));
             Suppliers = suppliers ?? throw new ArgumentNullException(nameof(suppliers));
+            Shelve = shelve ?? throw new ArgumentNullException(nameof(shelve));
             AuditInfo = auditInfo;
             SetInternalCode();
             Validate();
@@ -124,6 +127,7 @@ namespace BusinessLogic.Domain
             SubCategory = data.SubCategory ?? SubCategory;
             Brand = data.Brand ?? Brand;
             Suppliers = data.Suppliers ?? Suppliers;
+            Shelve = data.Shelve ?? Shelve;
 
             AuditInfo.SetUpdated(data.UserId, data.Location);
 
@@ -143,6 +147,7 @@ namespace BusinessLogic.Domain
             public string? Observation { get; set; } = string.Empty;
             public SubCategory? SubCategory { get; set; } = null!;
             public Brand? Brand { get; set; } = null!;
+            public Shelve? Shelve { get; set; } = null!;
             public List<Supplier>? Suppliers { get; set; } = null!;
         }
 

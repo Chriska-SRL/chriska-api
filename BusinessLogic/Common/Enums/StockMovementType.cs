@@ -2,7 +2,7 @@
 {
     public enum StockMovementType
     {
-        Ingreso = 1,
-        Egreso = 2
+        Inbound = 1,
+        Outbound = 2
     }
 }

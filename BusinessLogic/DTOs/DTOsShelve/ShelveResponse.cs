@@ -10,6 +10,6 @@ namespace BusinessLogic.DTOs.DTOsShelve
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public WarehouseResponse Warehouse { get; set; }
+        public WarehouseResponse? Warehouse { get; set; }
     }
 }

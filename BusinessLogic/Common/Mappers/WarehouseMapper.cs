@@ -9,8 +9,7 @@ namespace BusinessLogic.Common.Mappers
         {
             var warehouse = new Warehouse(
                 name: request.Name,
-                description: request.Description,
-                address: request.Address
+                description: request.Description
             );
 
             warehouse.AuditInfo.SetCreated(request.getUserId(), request.Location);
@@ -23,7 +22,6 @@ namespace BusinessLogic.Common.Mappers
             {
                 Name = request.Name,
                 Description = request.Description,
-                Address = request.Address,
                 UserId = request.getUserId(),
                 Location = request.Location
             };
@@ -36,7 +34,6 @@ namespace BusinessLogic.Common.Mappers
                 Id = warehouse.Id,
                 Name = warehouse.Name,
                 Description = warehouse.Description,
-                Address = warehouse.Address,
                 Shelves = warehouse.Shelves.Select(ShelveMapper.ToResponse).ToList(),
                 AuditInfo = AuditMapper.ToResponse(warehouse.AuditInfo)
             };

@@ -12,7 +12,6 @@ namespace Repository.Mappers
                 id: reader.GetInt32(reader.GetOrdinal("Id")),
                 name: reader.GetString(reader.GetOrdinal("Name")),
                 description: reader.GetString(reader.GetOrdinal("Description")),
-                address: reader.GetString(reader.GetOrdinal("Address")),
                 shelves: new List<Shelve>(),
                 auditInfo: AuditInfoMapper.FromReader(reader)
             );
@@ -24,7 +23,6 @@ namespace Repository.Mappers
                 id: reader.GetInt32(reader.GetOrdinal("WarehouseId")),
                 name: reader.GetString(reader.GetOrdinal("WarehouseName")),
                 description: reader.GetString(reader.GetOrdinal("WarehouseDescription")),
-                address: reader.GetString(reader.GetOrdinal("WarehouseAddress")),
                 shelves: new List<Shelve>(),
                 auditInfo: new AuditInfo()
             );

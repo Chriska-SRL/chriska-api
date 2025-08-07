@@ -18,6 +18,7 @@
     [SubCategoryId] INT NOT NULL, 
     [BrandId] INT NOT NULL, 
     [ImageUrl] NVARCHAR(255) NOT NULL DEFAULT '',
+    [ShelveId] INT NOT NULL, 
 
     -- Campos de auditoría
     [CreatedAt] DATETIME2 NOT NULL,
@@ -35,6 +36,7 @@
 
     -- Restricciones
     CONSTRAINT [FK_Products_SubCategories] FOREIGN KEY ([SubCategoryId]) REFERENCES [SubCategories]([Id]),
+    CONSTRAINT [FK_Products_Shelves] FOREIGN KEY ([ShelveId]) REFERENCES [Shelves]([Id]),
     CONSTRAINT [FK_Products_Brands] FOREIGN KEY ([BrandId]) REFERENCES [Brands]([Id]),
     CONSTRAINT [FK_Products_CreatedBy] FOREIGN KEY ([CreatedBy]) REFERENCES [Users]([Id]),
     CONSTRAINT [FK_Products_UpdatedBy] FOREIGN KEY ([UpdatedBy]) REFERENCES [Users]([Id]),

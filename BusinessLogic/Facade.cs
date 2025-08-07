@@ -115,9 +115,7 @@ namespace BusinessLogic
         // --- Stock Movements ---
         public async Task<StockMovementResponse> AddStockMovementAsync(AddStockMovementRequest request) => await Stock.AddStockMovementAsync(request);
         public async Task<StockMovementResponse> GetStockMovementByIdAsync(int id) => await Stock.GetStockMovementByIdAsync(id);
-        public async Task<List<StockMovementResponse>> GetAllStockMovementsAsync(DateTime from, DateTime to) => await Stock.GetAllStockMovementsAsync(from, to);
-        public async Task<List<StockMovementResponse>> GetAllStockMovementsByShelveAsync(int shelveId, DateTime from, DateTime to) => await Stock.GetAllStockMovementsByShelveAsync(shelveId, from, to);
-        public async Task<List<StockMovementResponse>> GetAllStockMovementsByWarehouseAsync(int warehouseId, DateTime from, DateTime to) => await Stock.GetAllStockMovementsByWarehouseAsync(warehouseId, from, to);
+        public async Task<List<StockMovementResponse>> GetAllStockMovementsAsync(QueryOptions options) => await Stock.GetAllStockMovementsAsync(options);
 
         // --- Suppliers ---
         public async Task<SupplierResponse> AddSupplierAsync(AddSupplierRequest request) => await Suppliers.AddSupplierAsync(request);

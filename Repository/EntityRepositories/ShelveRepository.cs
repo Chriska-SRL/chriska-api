@@ -57,7 +57,7 @@ namespace Repository.EntityRepositories
 
             return await ExecuteReadAsync(
                 baseQuery: @"SELECT s.Id, s.Name, s.Description, s.WarehouseId,  
-                                    w.Name AS WarehouseName, w.Description AS WarehouseDescription, w.Address AS WarehouseAddress 
+                                    w.Name AS WarehouseName, w.Description AS WarehouseDescription
                              FROM Shelves s
                              INNER JOIN Warehouses w ON s.WarehouseId = w.Id",
                 map: reader =>
@@ -79,7 +79,7 @@ namespace Repository.EntityRepositories
         {
             return await ExecuteReadAsync(
                 baseQuery:  @"SELECT s.Id, s.Name, s.Description,  
-                                    w.Id AS WarehouseId, w.Name AS WarehouseName, w.Description AS WarehouseDescription, w.Address AS WarehouseAddress 
+                                    w.Id AS WarehouseId, w.Name AS WarehouseName, w.Description AS WarehouseDescription
                              FROM Shelves s
                              INNER JOIN Warehouses w ON s.WarehouseId = w.Id
                              WHERE s.Id = @Id",
@@ -102,7 +102,7 @@ namespace Repository.EntityRepositories
         {
             return await ExecuteReadAsync(
                 baseQuery: @"SELECT s.Id, s.Name, s.Description,  
-                                    w.Id AS WarehouseId, w.Name AS WarehouseName, w.Description AS WarehouseDescription, w.Address AS WarehouseAddress 
+                                    w.Id AS WarehouseId, w.Name AS WarehouseName, w.Description AS WarehouseDescription
                              FROM Shelves s
                              INNER JOIN Warehouses w ON s.WarehouseId = w.Id
                              WHERE s.Name = @Name",

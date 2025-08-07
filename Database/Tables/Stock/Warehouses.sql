@@ -6,7 +6,6 @@
     -- Campos de la entidad
     [Name] NVARCHAR(50) NOT NULL,
     [Description] NVARCHAR(255) NOT NULL,
-    [Address] NVARCHAR(255) NOT NULL,
 
     -- Campos de auditoría
     [CreatedAt] DATETIME2 NOT NULL,

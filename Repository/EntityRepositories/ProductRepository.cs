@@ -17,8 +17,8 @@ namespace Repository.EntityRepositories
         public async Task<Product> AddAsync(Product product)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-                "INSERT INTO Products (InternalCode, BarCode, Name, UnitType, Price, Description, TemperatureCondition, EstimatedWeight, Stock, AvailableStock, Observations, SubCategoryId, BrandId) " +
-                "VALUES (@InternalCode, @BarCode, @Name, @UnitType, @Price, @Description, @TemperatureCondition, @EstimatedWeight, @Stock, @AvailableStock, @Observations, @SubCategoryId, @BrandId); " +
+                "INSERT INTO Products (InternalCode, BarCode, Name, UnitType, Price, Description, TemperatureCondition, EstimatedWeight, Stock, AvailableStock, Observations, SubCategoryId, BrandId, ShelveId) " +
+                "VALUES (@InternalCode, @BarCode, @Name, @UnitType, @Price, @Description, @TemperatureCondition, @EstimatedWeight, @Stock, @AvailableStock, @Observations, @SubCategoryId, @BrandId, @ShelveId); " +
                 "SELECT CAST(SCOPE_IDENTITY() AS INT);",
                 product,
                 AuditAction.Insert,
@@ -37,6 +37,7 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Observations", product.Observation);
                     cmd.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
                     cmd.Parameters.AddWithValue("@BrandId", product.Brand.Id);
+                    cmd.Parameters.AddWithValue("@ShelveId", product.Shelve.Id);
                 },
                 async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
             );
@@ -56,7 +57,7 @@ namespace Repository.EntityRepositories
         public async Task<Product> UpdateAsync(Product product)
         {
             int rows = await ExecuteWriteWithAuditAsync(
-                "UPDATE Products SET InternalCode = @InternalCode, BarCode = @BarCode, Name = @Name, UnitType = @UnitType, Price = @Price, Description = @Description, TemperatureCondition = @TemperatureCondition, EstimatedWeight = @EstimatedWeight, Stock = @Stock, AvailableStock = @AvailableStock, Observations = @Observations, SubCategoryId = @SubCategoryId, BrandId = @BrandId " +
+                "UPDATE Products SET InternalCode = @InternalCode, BarCode = @BarCode, Name = @Name, UnitType = @UnitType, Price = @Price, Description = @Description, TemperatureCondition = @TemperatureCondition, EstimatedWeight = @EstimatedWeight, Stock = @Stock, AvailableStock = @AvailableStock, Observations = @Observations, SubCategoryId = @SubCategoryId, BrandId = @BrandId, ShelveId = @ShelveId " +
                 "WHERE Id = @Id",
                 product,
                 AuditAction.Update,
@@ -76,6 +77,7 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Observations", product.Observation);
                     cmd.Parameters.AddWithValue("@SubCategoryId", product.SubCategory.Id);
                     cmd.Parameters.AddWithValue("@BrandId", product.Brand.Id);
+                    cmd.Parameters.AddWithValue("@ShelveId", product.Shelve.Id);
                 }
             );
 
@@ -120,7 +122,7 @@ namespace Repository.EntityRepositories
         //no trae las cuentas bancarias de los proveedores
         public async Task<List<Product>> GetAllAsync(QueryOptions options)
         {
-            var allowedFilters = new[] { "Name", "InternalCode", "BarCode", "UnitType", "BrandId", "SubCategoryId"};
+            var allowedFilters = new[] { "Name", "InternalCode", "BarCode", "UnitType", "BrandId", "SubCategoryId", "ShelveId"};
             return await ExecuteReadAsync(
                 baseQuery: @"SELECT p.*, 
                                    sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, sc.Description AS SubCategoryDescription, 
@@ -128,11 +130,15 @@ namespace Repository.EntityRepositories
                                    c.Id AS CategoryId, c.Name AS CategoryName, c.Description AS CategoryDescription,
                                    s.Id AS SupplierId, s.Name AS SupplierName, s.RazonSocial AS SupplierRazonSocial, s.Address AS SupplierAddress, 
                                    s.Phone AS SupplierPhone, s.Email AS SupplierEmail, s.ContactName AS SupplierContactName, s.RUT AS SupplierRUT, 
-                                   s.MapsAddress AS SupplierMapsAddress, s.Observations AS SupplierObservations    
+                                   s.MapsAddress AS SupplierMapsAddress, s.Observations AS SupplierObservations,
+                                   sh.Id AS ShelveId, sh.Name AS ShelveName, sh.Description AS ShelveDescription,
+                                   w.Id AS WarehouseId, w.Name AS WarehouseName, w.Description AS WarehouseDescription
                             FROM Products p
                             INNER JOIN SubCategories sc ON p.SubCategoryId = sc.Id
                             INNER JOIN Categories c ON sc.CategoryId = c.Id
                             INNER JOIN Brands b ON p.BrandId = b.Id
+                            INNER JOIN Shelves sh ON p.ShelveId = sh.Id
+                            INNER JOIN Warehouses w ON sh.WarehouseId = w.Id
                             LEFT JOIN Products_Suppliers ps ON p.Id = ps.ProductId
                             LEFT JOIN Suppliers s ON ps.SupplierId = s.Id",
                 map: reader =>
@@ -173,21 +179,30 @@ namespace Repository.EntityRepositories
         //no trae las cuentas bancarias de los proveedores
         public async Task<Product?> GetByIdAsync(int id)
         {
+           return await GetByFieldAsync("Id", id.ToString());
+        }
+
+        private async Task<Product?> GetByFieldAsync(string fieldName, string value)
+        {
             return await ExecuteReadAsync(
-                baseQuery: @"SELECT p.*, 
+                baseQuery: $@"SELECT p.*, 
                                    sc.Id AS SubCategoryId, sc.Name AS SubCategoryName, sc.Description AS SubCategoryDescription, 
                                    b.Id AS BrandId, b.Name AS BrandName, b.description AS BrandDescription,
                                    c.Id AS CategoryId, c.Name AS CategoryName, c.Description AS CategoryDescription,
                                    s.Id AS SupplierId, s.Name AS SupplierName, s.RazonSocial AS SupplierRazonSocial, s.Address AS SupplierAddress, 
                                    s.Phone AS SupplierPhone, s.Email AS SupplierEmail, s.ContactName AS SupplierContactName, s.RUT AS SupplierRUT, 
-                                   s.MapsAddress AS SupplierMapsAddress, s.Observations AS SupplierObservations    
+                                   s.MapsAddress AS SupplierMapsAddress, s.Observations AS SupplierObservations,
+                                   sh.Id AS ShelveId, sh.Name AS ShelveName, sh.Description AS ShelveDescription,
+                                   w.Id AS WarehouseId, w.Name AS WarehouseName, w.Description AS WarehouseDescription
                             FROM Products p
                             INNER JOIN SubCategories sc ON p.SubCategoryId = sc.Id
                             INNER JOIN Categories c ON sc.CategoryId = c.Id
                             INNER JOIN Brands b ON p.BrandId = b.Id
+                            INNER JOIN Shelves sh ON p.ShelveId = sh.Id
+                            INNER JOIN Warehouses w ON sh.WarehouseId = w.Id
                             LEFT JOIN Products_Suppliers ps ON p.Id = ps.ProductId
                             LEFT JOIN Suppliers s ON ps.SupplierId = s.Id
-                            WHERE p.Id = @Id",
+                            WHERE p.{fieldName} = @Value",
                 map: reader =>
                 {
                     Product? product = null;
@@ -213,13 +228,8 @@ namespace Repository.EntityRepositories
                 },
                 options: new QueryOptions(),
                 tableAlias: "p",
-                configureCommand: cmd =>
-                {
-                    cmd.Parameters.AddWithValue("@Id", id);
-                }
-            );
+                configureCommand: cmd => cmd.Parameters.AddWithValue("@Value", value));
         }
-
 
         #endregion
         public async Task<string> UpdateImageUrlAsync(Product product, string imageUrl)

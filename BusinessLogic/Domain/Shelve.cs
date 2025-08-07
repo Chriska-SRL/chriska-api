@@ -7,7 +7,7 @@ namespace BusinessLogic.Domain
         public int Id { get; set; } = 0;
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public Warehouse Warehouse { get; set; }
+        public Warehouse? Warehouse { get; set; }
         public List<StockMovement> StockMovements { get; set; } = new List<StockMovement>();
         public List<Product> Products { get; set; } = new List<Product>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
@@ -20,12 +20,12 @@ namespace BusinessLogic.Domain
 
             Validate();
         }
-        public Shelve(int id,string name, string description, Warehouse warehouse,AuditInfo auditInfo)
+        public Shelve(int id,string name, string description, Warehouse? warehouse,AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
-            Warehouse = warehouse ?? throw new ArgumentNullException(nameof(warehouse));
+            Warehouse = warehouse;
             AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
 
             Validate();
@@ -43,17 +43,6 @@ namespace BusinessLogic.Domain
             Validate();
         }
 
-        public Shelve(int id)
-        {
-            if (id <= 0)
-                throw new ArgumentOutOfRangeException(nameof(id), "El ID del estante debe ser mayor a cero.");
-
-            Id = id;
-            Name = "Nombre Temporal";
-            Description = "Descripcion Temporal";
-            Warehouse = new Warehouse(9999);
-            StockMovements = new List<StockMovement>();
-        }
 
         public void Validate()
         {
@@ -69,8 +58,6 @@ namespace BusinessLogic.Domain
             if (Description.Length > 255)
                 throw new ArgumentOutOfRangeException(nameof(Description), "La descripción del estante no puede superar los 255 caracteres.");
 
-            if (Warehouse == null)
-                throw new ArgumentNullException(nameof(Warehouse), "El almacén es obligatorio.");
         }
 
         public void Update(UpdatableData data)
