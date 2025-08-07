@@ -1,6 +1,5 @@
 ﻿using BusinessLogic.Common;
 using BusinessLogic.Common.Enums;
-using BusinessLogic.Domain;
 
 namespace BusinessLogic.Domain
 {
@@ -11,20 +10,37 @@ namespace BusinessLogic.Domain
         public DateTime ExpirationDate { get; set; }
         public int ProductQuantity { get; set; }
         public int Percentage { get; set; }
-        public Product Product { get; set; }
+        public List<Product> Products { get; set; } = new List<Product>();
+        public List<Client> Clients { get; set; } = new List<Client>();
         public DiscountStatus Status { get; set; } = DiscountStatus.Available;
-        public AuditInfo AuditInfo { get ; set ; }
+        public AuditInfo? AuditInfo { get ; set ; }
 
-        public Discount(int id, string discription, DateTime expirationDate, int productQuantity, int percentage, Product product, DiscountStatus status)
+        //add constructor
+        public Discount(string discription, DateTime expirationDate, int productQuantity, int percentage, List<Product> products, List<Client> clients, DiscountStatus status)
+        {
+            Description = discription;
+            ExpirationDate = expirationDate;
+            ProductQuantity = productQuantity;
+            Percentage = percentage;
+            Products = products ?? throw new ArgumentNullException(nameof(products), "La lista de productos no puede ser nula.");
+            Clients = clients ?? throw new ArgumentNullException(nameof(clients), "La lista de clientes no puede ser nula.");
+            Status = status;
+            Validate();
+        }
+        //get constructor
+        public Discount(int id, string discription, DateTime expirationDate, int productQuantity, int percentage, List<Product> products, List<Client> clients, DiscountStatus status, AuditInfo? auditInfo)
         {
             Id = id;
             Description = discription;
             ExpirationDate = expirationDate;
             ProductQuantity = productQuantity;
             Percentage = percentage;
-            Product = product;
+            Products = products ?? throw new ArgumentNullException(nameof(products), "La lista de productos no puede ser nula.");
+            Clients = clients ?? throw new ArgumentNullException(nameof(clients), "La lista de clientes no puede ser nula.");
             Status = status;
+            AuditInfo = auditInfo ?? null;
         }
+
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Description))
@@ -35,35 +51,38 @@ namespace BusinessLogic.Domain
                 throw new ArgumentOutOfRangeException(nameof(ProductQuantity), "La cantidad de productos debe ser mayor a cero.");
             if (Percentage < 0 || Percentage > 100)
                 throw new ArgumentOutOfRangeException(nameof(Percentage), "El porcentaje debe estar entre 0 y 100.");
-            if (Product == null)
-                throw new ArgumentNullException(nameof(Product), "El producto es obligatorio.");
         }
 
         public void Update(UpdatableData data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "Los datos de actualización no pueden ser nulos.");
+
             Description = data.Description ?? Description;
             ExpirationDate = data.ExpirationDate ?? ExpirationDate;
             ProductQuantity = data.ProductQuantity ?? ProductQuantity;
             Percentage = data.Percentage ?? Percentage;
-            Product = data.Product ?? Product;
+            Products = data.Products ?? Products;
+            Clients = data.Clients ?? Clients;
             Status = data.Status ?? Status;
+
+            AuditInfo?.SetUpdated(data.UserId, data.Location);
             Validate();
         }
 
         public void MarkAsDeleted(int? userId, Location? location)
         {
-            throw new NotImplementedException();
+            AuditInfo?.SetDeleted(userId, location);
         }
 
-        public class UpdatableData
+        public class UpdatableData: AuditData
         {
-            public string? Description { get; set; } = string.Empty;
+            public string? Description { get; set; }
             public DateTime? ExpirationDate { get; set; }
             public int? ProductQuantity { get; set; }
             public int? Percentage { get; set; }
-            public Product? Product { get; set; }
+            public List<Product>? Products { get; set; }
+            public List<Client>? Clients { get; set; } 
             public DiscountStatus? Status { get; set; }
         }
 

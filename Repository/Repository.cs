@@ -123,6 +123,32 @@ namespace Repository
                 async cmd => await cmd.ExecuteNonQueryAsync());
         }
 
+        protected async Task<TResult> ExecuteWriteAsync<TResult>(
+        string query,
+        Action<SqlCommand> configureCommand,
+        Func<SqlCommand, Task<TResult>> resultHandler)
+            {
+                try
+                {
+                    await using var connection = CreateConnection();
+                    await connection.OpenAsync();
+
+                    using var command = new SqlCommand(query, connection);
+                    configureCommand(command);
+
+                    return await resultHandler(command);
+                }
+                catch (SqlException ex)
+                {
+                    throw new ApplicationException("Error de base de datos.", ex);
+                }
+                catch
+                {
+                    throw;
+                }
+        }
+
+
         #endregion
 
         #region Helpers
