@@ -80,7 +80,7 @@ namespace Repository.EntityRepositories
                     return list;
                 },
                 options: options,
-                tableAlias: "s",
+                tableAlias: "sm",
                 allowedFilterColumns: allowedFilters
             );
         }
