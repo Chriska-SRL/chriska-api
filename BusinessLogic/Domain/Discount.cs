@@ -10,8 +10,13 @@ namespace BusinessLogic.Domain
         public DateTime ExpirationDate { get; set; }
         public int ProductQuantity { get; set; }
         public int Percentage { get; set; }
-        public List<Product> Products { get; set; } = new List<Product>();
-        public List<Client> Clients { get; set; } = new List<Client>();
+        public DiscountProductType discountProductType { get; set; } = DiscountProductType.All;
+        public Brand? Brand { get; set; } = null;
+        public SubCategory? SubCategory { get; set; } = null;
+        public List<Product> Products { get; set; }
+        public DiscountClientType discountClientType { get; set; } = DiscountClientType.All;
+        public Zone? Zone { get; set; } = null;
+        public List<Client> Clients { get; set; }
         public DiscountStatus Status { get; set; } = DiscountStatus.Available;
         public AuditInfo? AuditInfo { get ; set ; }
 

@@ -147,6 +147,12 @@ namespace Repository
                     throw;
                 }
         }
+        protected Task<int> ExecuteWriteAsync(
+        string query,
+        Action<SqlCommand> configureCommand)
+            {
+                return ExecuteWriteAsync(query, configureCommand, async cmd => await cmd.ExecuteNonQueryAsync());
+            }
 
 
         #endregion
