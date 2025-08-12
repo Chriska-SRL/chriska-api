@@ -5,11 +5,12 @@ using BusinessLogic.DTOs.DTOsAudit;
 public static class AuditMapper
 {
 
-    public static AuditInfoResponse ToResponse(AuditInfo audit)
+    public static AuditInfoResponse? ToResponse(AuditInfo? audit)
     {
-
+        if(audit == null) return null;
         return new AuditInfoResponse
         {
+
             Created = audit.CreatedAt.HasValue ? new AuditAction
             {
                 At = audit.CreatedAt, 

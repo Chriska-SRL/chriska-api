@@ -10,23 +10,23 @@ namespace BusinessLogic.Domain
         public Warehouse? Warehouse { get; set; }
         public List<StockMovement> StockMovements { get; set; } = new List<StockMovement>();
         public List<Product> Products { get; set; } = new List<Product>();
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+        public AuditInfo? AuditInfo { get; set; } = new AuditInfo();
 
         public Shelve(string name, string description, Warehouse warehouse)
         {
             Name = name;
             Description = description;
             Warehouse = warehouse ?? throw new ArgumentNullException(nameof(warehouse));
-
+            AuditInfo = new AuditInfo();
             Validate();
         }
-        public Shelve(int id,string name, string description, Warehouse? warehouse,AuditInfo auditInfo)
+        public Shelve(int id,string name, string description, Warehouse? warehouse,AuditInfo? auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
             Warehouse = warehouse;
-            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+            AuditInfo = auditInfo;
 
             Validate();
         }

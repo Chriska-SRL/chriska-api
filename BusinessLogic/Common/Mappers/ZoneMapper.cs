@@ -31,8 +31,9 @@ namespace BusinessLogic.Common.Mappers
             };
         }
 
-        public static ZoneResponse ToResponse(Zone zone)
+        public static ZoneResponse? ToResponse(Zone? zone)
         {
+            if (zone == null) return null;
             return new ZoneResponse
             {
                 Id = zone.Id,

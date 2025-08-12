@@ -5,25 +5,33 @@ namespace Repository.Mappers
 {
     public static class ClientMapper
     {
-        public static Client FromReader(SqlDataReader reader)
+        public static Client? FromReader(SqlDataReader r, string? prefix = null, string? originForZone = null)
         {
+            string Col(string c) => $"{prefix ?? ""}{c}";
+            string S(string c) => r.IsDBNull(r.GetOrdinal(c)) ? "" : r.GetString(r.GetOrdinal(c));
+
+            if (prefix != null)
+            {
+                try { var o = r.GetOrdinal(Col("Id")); if (r.IsDBNull(o)) return null; } catch { return null; }
+            }
+
             return new Client(
-               reader.GetInt32(reader.GetOrdinal("Id")),
-               reader.GetString(reader.GetOrdinal("Name")),
-               reader.GetString(reader.GetOrdinal("RUT")),
-               reader.GetString(reader.GetOrdinal("RazonSocial")),
-               reader.GetString(reader.GetOrdinal("Address")),
-               reader.GetString(reader.GetOrdinal("MapsAddress")),
-               reader.GetString(reader.GetOrdinal("Schedule")),
-               reader.GetString(reader.GetOrdinal("Phone")),
-               reader.GetString(reader.GetOrdinal("ContactName")),
-               reader.GetString(reader.GetOrdinal("Email")),
-               reader.GetString(reader.GetOrdinal("Observations")),
-               new List<BankAccount>(), 
-               reader.GetInt32(reader.GetOrdinal("LoanedCrates")),
-               reader.GetString(reader.GetOrdinal("Qualification")),
-               ZoneMapper.FromReaderForClient(reader),
-               AuditInfoMapper.FromReader(reader)
+                r.GetInt32(r.GetOrdinal(Col("Id"))),
+                S(Col("Name")),
+                S(Col("RUT")),
+                S(Col("RazonSocial")),
+                S(Col("Address")),
+                S(Col("MapsAddress")),
+                S(Col("Schedule")),
+                S(Col("Phone")),
+                S(Col("ContactName")),
+                S(Col("Email")),
+                S(Col("Observations")),
+                new List<BankAccount>(),
+                r.IsDBNull(r.GetOrdinal(Col("LoanedCrates"))) ? 0 : r.GetInt32(r.GetOrdinal(Col("LoanedCrates"))),
+                S(Col("Qualification")),
+                zone: ZoneMapper.FromReader(r, "Zone", originForZone), // p.ej. CZone*
+                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null
             );
         }
     }

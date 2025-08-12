@@ -1,33 +1,27 @@
-﻿using BusinessLogic.Common;
-using BusinessLogic.Domain;
+﻿using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
-using System.Data;
 
 namespace Repository.Mappers
 {
     public static class SubCategoryMapper
     {
-        public static SubCategory FromReader(SqlDataReader reader)
+        public static SubCategory? FromReader(SqlDataReader r, string? prefix = null, string? origin = null)
         {
-            return new SubCategory(
-             id: reader.GetInt32(reader.GetOrdinal("Id")),
-             name: reader.GetString(reader.GetOrdinal("Name")),
-             description: reader.GetString(reader.GetOrdinal("Description")),
-             category: CategoryMapper.FromReaderForSubCategory(reader),
-             auditInfo: AuditInfoMapper.FromReader(reader)
+            string Col(string c) => $"{origin ?? ""}{prefix ?? ""}{c}";
+            string S(string c) => r.IsDBNull(r.GetOrdinal(c)) ? "" : r.GetString(r.GetOrdinal(c));
 
-         );
-        }
-        public static SubCategory FromReaderForCategory(SqlDataReader reader)
-        {
+            if (prefix != null)
+            {
+                try { var o = r.GetOrdinal(Col("Id")); if (r.IsDBNull(o)) return null; } catch { return null; }
+            }
+
             return new SubCategory(
-                id: reader.GetInt32(reader.GetOrdinal("SubCategoryId")),
-                name: reader.GetString(reader.GetOrdinal("SubCategoryName")),
-                description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
-                category: new Category(0),
-                auditInfo: new AuditInfo()
+                id: r.GetInt32(r.GetOrdinal(Col("Id"))),
+                name: S(Col("Name")),
+                description: S(Col("Description")),
+                category: CategoryMapper.FromReader(r, "Category", origin),
+                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null
             );
         }
-
     }
 }

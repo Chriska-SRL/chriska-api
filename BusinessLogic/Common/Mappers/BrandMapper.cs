@@ -12,7 +12,7 @@ namespace BusinessLogic.Common.Mappers
                 request.Name,
                 request.Description
             );
-            brand.AuditInfo.SetCreated(request.getUserId(),request.Location);
+            brand.AuditInfo?.SetCreated(request.getUserId(),request.Location);
 
             return brand;
         }
@@ -28,8 +28,9 @@ namespace BusinessLogic.Common.Mappers
             };
         }
 
-        public static BrandResponse ToResponse(Brand brand)
+        public static BrandResponse? ToResponse(Brand? brand)
         {
+            if(brand == null) return null;
             return new BrandResponse
             {
                 Id = brand.Id,

@@ -7,32 +7,26 @@ namespace BusinessLogic.Domain
         public int Id { get; set; } = 0;
         public string Name { get; set; } 
         public string Description { get; set; }
-        public List<SubCategory> SubCategories { get; set; } = new List<SubCategory>();
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+        public List<SubCategory>? SubCategories { get; set; }
+        public AuditInfo? AuditInfo { get; set; } 
         
         
         public Category(string name, string description)
         {
             Name = name;
             Description = description;
-
+            AuditInfo = new AuditInfo();
             Validate();
         }
-        public Category(int id, string name, string description,List<SubCategory> subCategories ,AuditInfo auditInfo)
+        public Category(int id, string name, string description,List<SubCategory>? subCategories ,AuditInfo? auditInfo)
         {
             Id = id;
             Name = name;
             Description = description;
-            SubCategories = subCategories ?? throw new ArgumentNullException(nameof(subCategories), "La lista de subcategorías no puede ser nula.");
+            SubCategories = subCategories;
             AuditInfo = auditInfo;
 
             Validate();
-        }
-        public Category(int id)
-        {
-            Id = id;
-            Name = "Nombre Temporal";
-            Description = "Descripcion Temporal";
         }
 
 

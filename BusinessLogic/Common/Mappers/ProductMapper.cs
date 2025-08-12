@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsProduct;
+using BusinessLogic.DTOs.DTOsSupplier;
 
 namespace BusinessLogic.Common.Mappers
 {
@@ -22,7 +23,7 @@ namespace BusinessLogic.Common.Mappers
                 shelve: shelve
             );
 
-            product.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            product.AuditInfo?.SetCreated(request.getUserId(), request.Location);
             return product;
         }
 
@@ -39,7 +40,7 @@ namespace BusinessLogic.Common.Mappers
                 EstimatedWeight = request.EstimatedWeight,
                 Observation = request.Observations,
                 SubCategory = subCategory,
-                Brand = new Brand(request.BrandId),
+                Brand = brand,
                 Suppliers = suppliers,
                 Shelve = shelve,
 
@@ -48,8 +49,9 @@ namespace BusinessLogic.Common.Mappers
             };
         }
 
-        public static ProductResponse ToResponse(Product product)
+        public static ProductResponse? ToResponse(Product? product)
         {
+            if (product == null) return null;
             return new ProductResponse
             {
                 Id = product.Id,
@@ -67,7 +69,7 @@ namespace BusinessLogic.Common.Mappers
                 Observations = product.Observation,
                 SubCategory = SubCategoryMapper.ToResponse(product.SubCategory),
                 Brand = BrandMapper.ToResponse(product.Brand),
-                Suppliers = product.Suppliers.Select(SupplierMapper.ToResponse).ToList(),
+                Suppliers = product.Suppliers?.Select(SupplierMapper.ToResponse).OfType<SupplierResponse>().ToList(),
                 Shelve = ShelveMapper.ToResponse(product.Shelve),
                 AuditInfo = AuditMapper.ToResponse(product.AuditInfo)
             };

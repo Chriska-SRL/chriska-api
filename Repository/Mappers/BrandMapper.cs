@@ -5,13 +5,21 @@ namespace Repository.Mappers
 {
     public static class BrandMapper
     {
-        public static Brand FromReader(SqlDataReader reader)
+        public static Brand? FromReader(SqlDataReader r, string? prefix = null, string? origin = null)
         {
+            string Col(string c) => $"{origin ?? ""}{prefix ?? ""}{c}";
+            string S(string c) => r.IsDBNull(r.GetOrdinal(c)) ? "" : r.GetString(r.GetOrdinal(c));
+
+            if (prefix != null)
+            {
+                try { var o = r.GetOrdinal(Col("Id")); if (r.IsDBNull(o)) return null; } catch { return null; }
+            }
+
             return new Brand(
-                id: reader.GetInt32(reader.GetOrdinal("Id")),
-                name: reader.GetString(reader.GetOrdinal("Name")),
-                description: reader.GetString(reader.GetOrdinal("Description")),
-                auditInfo: AuditInfoMapper.FromReader(reader)
+                id: r.GetInt32(r.GetOrdinal(Col("Id"))),
+                name: S(Col("Name")),
+                description: S(Col("Description")),
+                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null
             );
         }
     }

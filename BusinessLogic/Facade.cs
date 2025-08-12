@@ -5,6 +5,7 @@ using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsCost;
+using BusinessLogic.DTOs.DTOsDiscount;
 using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsRole;
@@ -35,6 +36,7 @@ namespace BusinessLogic
         private readonly RolesSubSystem Roles;
         private readonly VehicleSubSystem Vehicles;
         private readonly BrandSubSystem Brand;
+        private readonly DiscountsSubSystem Discounts;
 
         public Facade(
             AuthSubSystem auth,
@@ -48,7 +50,8 @@ namespace BusinessLogic
             ZonesSubSystem zones,
             RolesSubSystem roles,
             VehicleSubSystem vehicles,
-            BrandSubSystem brand)
+            BrandSubSystem brand,
+            DiscountsSubSystem discounts)
         {
             Auth = auth;
             Categories = categories;
@@ -62,6 +65,7 @@ namespace BusinessLogic
             Roles = roles;
             Vehicles = vehicles;
             Brand = brand;
+            Discounts = discounts;
         }
 
         // --- Auth ---
@@ -169,6 +173,13 @@ namespace BusinessLogic
         public async Task<VehicleCostResponse> GetVehicleCostByIdAsync(int id) => await Vehicles.GetVehicleCostByIdAsync(id);
         public async Task<List<VehicleCostResponse>> GetAllCosts(QueryOptions query) => await Vehicles.GetAllCosts(query);
 
-        
+        // --- Discounts ---
+        public async Task<DiscountResponse?> AddDiscountAsync(DiscountAddRequest request) => await Discounts.AddDiscountAsync(request);
+        public async Task<DiscountResponse?> UpdateDiscountAsync(DiscountUpdateRequest request) => await Discounts.UpdateDiscountAsync(request);
+        public async Task DeleteDiscountAsync(DeleteRequest request) => await Discounts.DeleteDiscountAsync(request);
+        public async Task<DiscountResponse?> GetDiscountByIdAsync(int id) => await Discounts.GetDiscountByIdAsync(id);
+        public async Task<List<DiscountResponse>?> GetAllDiscountsAsync(QueryOptions query) => await Discounts.GetAllDiscountsAsync(query);
+
+
     }
 }

@@ -113,7 +113,7 @@ namespace Repository.EntityRepositories
 
                         if (!reader.IsDBNull(reader.GetOrdinal("SubCategoryId")))
                         {
-                            var subCategory = SubCategoryMapper.FromReaderForCategory(reader);
+                            var subCategory = SubCategoryMapper.FromReader(reader, "SubCategory");
                             category.SubCategories.Add(subCategory);
                         }
                     }
@@ -154,7 +154,7 @@ namespace Repository.EntityRepositories
 
                         if (!reader.IsDBNull(reader.GetOrdinal("SubCategoryId")))
                         {
-                            var subCategory = SubCategoryMapper.FromReaderForCategory(reader);
+                            var subCategory = SubCategoryMapper.FromReader(reader, "SubCategory");
                             category.SubCategories.Add(subCategory);
                         }
                     }
@@ -196,7 +196,7 @@ namespace Repository.EntityRepositories
 
                         if (!reader.IsDBNull(reader.GetOrdinal("SubCategoryId")))
                         {
-                            var subCategory = SubCategoryMapper.FromReaderForCategory(reader);
+                            var subCategory = SubCategoryMapper.FromReader(reader, "SubCategory");
                             category.SubCategories.Add(subCategory);
                         }
                     }

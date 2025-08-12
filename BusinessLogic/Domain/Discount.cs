@@ -1,6 +1,5 @@
 ﻿using BusinessLogic.Common;
 using BusinessLogic.Common.Enums;
-using BusinessLogic.Domain;
 
 namespace BusinessLogic.Domain
 {
@@ -10,63 +9,133 @@ namespace BusinessLogic.Domain
         public string Description { get; set; } = string.Empty;
         public DateTime ExpirationDate { get; set; }
         public int ProductQuantity { get; set; }
-        public int Percentage { get; set; }
-        public Product Product { get; set; }
+        public decimal Percentage { get; set; }
+        public Brand? Brand { get; set; }
+        public SubCategory? SubCategory { get; set; }
+        public List<Product> Products { get; set; } = new();
+        public Zone? Zone { get; set; }
+        public List<Client> Clients { get; set; } = new();
         public DiscountStatus Status { get; set; } = DiscountStatus.Available;
-        public AuditInfo AuditInfo { get ; set ; }
+        public AuditInfo? AuditInfo { get; set; }
 
-        public Discount(int id, string discription, DateTime expirationDate, int productQuantity, int percentage, Product product, DiscountStatus status)
+        // Constructor para alta
+        public Discount(
+            string description,
+            DateTime expirationDate,
+            int productQuantity,
+            decimal percentage,
+            Brand? brand,
+            SubCategory? subCategory,
+            Zone? zone,
+            List<Product> products,
+            List<Client> clients,
+            DiscountStatus status)
         {
-            Id = id;
-            Description = discription;
+            Description = description;
             ExpirationDate = expirationDate;
             ProductQuantity = productQuantity;
             Percentage = percentage;
-            Product = product;
+            Brand = brand;
+            SubCategory = subCategory;
+            Zone = zone;
+            Products = products ?? new();
+            Clients = clients ?? new();
             Status = status;
+            AuditInfo = new AuditInfo();
+            Validate();
         }
+
+        // Constructor para lecturas
+        public Discount(
+            int id,
+            string description,
+            DateTime expirationDate,
+            int productQuantity,
+            decimal percentage,
+            List<Product> products,
+            List<Client> clients,
+            DiscountStatus status,
+            Brand? brand,
+            SubCategory? subCategory,
+            Zone? zone,
+            AuditInfo? auditInfo)
+        {
+            Id = id;
+            Description = description;
+            ExpirationDate = expirationDate;
+            ProductQuantity = productQuantity;
+            Percentage = percentage;
+            Products = products ?? new();
+            Clients = clients ?? new();
+            Status = status;
+            Brand = brand;
+            SubCategory = subCategory;
+            Zone = zone;
+            AuditInfo = auditInfo;
+        }
+
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Description))
                 throw new ArgumentNullException(nameof(Description), "La descripción es obligatoria.");
-            if (ExpirationDate < DateTime.Now)
-                throw new ArgumentOutOfRangeException(nameof(ExpirationDate), "La fecha de expiración no puede ser en el pasado.");
+            if (ExpirationDate <= DateTime.Now)
+                throw new ArgumentOutOfRangeException(nameof(ExpirationDate), "La fecha de expiración debe ser futura.");
             if (ProductQuantity <= 0)
                 throw new ArgumentOutOfRangeException(nameof(ProductQuantity), "La cantidad de productos debe ser mayor a cero.");
             if (Percentage < 0 || Percentage > 100)
                 throw new ArgumentOutOfRangeException(nameof(Percentage), "El porcentaje debe estar entre 0 y 100.");
-            if (Product == null)
-                throw new ArgumentNullException(nameof(Product), "El producto es obligatorio.");
+
+            // Integridad: cliente/zona
+            bool hasClients = Clients.Count > 0;
+            bool hasZone = Zone is not null;
+            if (!hasClients && !hasZone)
+                throw new ArgumentException("Debe asignar al menos un cliente o una zona.");
+            if (hasClients && hasZone)
+                throw new ArgumentException("No se puede asignar zona y clientes a la vez.");
+
+            // Integridad: productos/marca/subcategoría
+            bool hasProducts = Products.Count > 0;
+            bool hasBrand = Brand is not null;
+            bool hasSubCategory = SubCategory is not null;
+            if (!hasProducts && !hasBrand && !hasSubCategory)
+                throw new ArgumentException("Debe asignar al menos un producto, una marca o una subcategoría.");
+            if (hasProducts && (hasBrand || hasSubCategory))
+                throw new ArgumentException("No se puede asignar productos y marca/subcategoría a la vez.");
         }
 
         public void Update(UpdatableData data)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data), "Los datos de actualización no pueden ser nulos.");
+            if (data is null) throw new ArgumentNullException(nameof(data));
+
             Description = data.Description ?? Description;
             ExpirationDate = data.ExpirationDate ?? ExpirationDate;
             ProductQuantity = data.ProductQuantity ?? ProductQuantity;
             Percentage = data.Percentage ?? Percentage;
-            Product = data.Product ?? Product;
+            Brand = data.Brand ?? Brand;
+            SubCategory = data.SubCategory ?? SubCategory;
+            Zone = data.Zone ?? Zone;
+            Products = data.Products ?? Products;
+            Clients = data.Clients ?? Clients;
             Status = data.Status ?? Status;
+
+            AuditInfo?.SetUpdated(data.UserId, data.Location);
             Validate();
         }
 
-        public void MarkAsDeleted(int? userId, Location? location)
-        {
-            throw new NotImplementedException();
-        }
+        public void MarkAsDeleted(int? userId, Location? location) => AuditInfo?.SetDeleted(userId, location);
 
-        public class UpdatableData
+        public class UpdatableData : AuditData
         {
-            public string? Description { get; set; } = string.Empty;
+            public string? Description { get; set; }
             public DateTime? ExpirationDate { get; set; }
             public int? ProductQuantity { get; set; }
-            public int? Percentage { get; set; }
-            public Product? Product { get; set; }
+            public decimal? Percentage { get; set; }
+            public Brand? Brand { get; set; }
+            public SubCategory? SubCategory { get; set; }
+            public List<Product>? Products { get; set; }
+            public Zone? Zone { get; set; }
+            public List<Client>? Clients { get; set; }
             public DiscountStatus? Status { get; set; }
         }
-
     }
-
 }

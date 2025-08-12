@@ -22,9 +22,9 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public int AvailableStock { get; set; }
         public required string ImageUrl { get; set; }
         public required string Observations { get; set; }
-        public required SubCategoryResponse SubCategory { get; set; }
-        public required BrandResponse Brand { get; set; }
-        public required ShelveResponse Shelve { get; set; }
-        public required List<SupplierResponse> Suppliers { get; set; }
+        public required SubCategoryResponse? SubCategory { get; set; }
+        public required BrandResponse? Brand { get; set; }
+        public required ShelveResponse? Shelve { get; set; }
+        public required List<SupplierResponse>? Suppliers { get; set; }
     }
 }

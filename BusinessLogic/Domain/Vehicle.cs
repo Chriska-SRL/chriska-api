@@ -21,7 +21,7 @@ namespace BusinessLogic.Domain
             Model = model;
             CrateCapacity = crateCapacity;
             VehicleCosts = costs;
-            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+            AuditInfo = auditInfo;
             Validate();
         }
         public Vehicle(string plate, string brand, string model, int crateCapacity,List<VehicleCost> costs)
@@ -31,6 +31,7 @@ namespace BusinessLogic.Domain
             Model = model;
             CrateCapacity = crateCapacity;
             VehicleCosts = costs;
+            AuditInfo = new AuditInfo();
             Validate();
         }
 

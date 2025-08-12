@@ -169,6 +169,15 @@ namespace Repository.Utils
             return Sql.IndexOf(clause, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
+        static public string BuildBulkInsertQuery(string tableName, string col1, string col2, int count)
+        {
+            var values = new List<string>();
+            for (int i = 0; i < count; i++)
+                values.Add($"(@{col1}{i}, @{col2}{i})");
+
+            return $"INSERT INTO {tableName} ({col1}, {col2}) VALUES {string.Join(", ", values)}";
+        }
+
         #endregion
     }
 }
