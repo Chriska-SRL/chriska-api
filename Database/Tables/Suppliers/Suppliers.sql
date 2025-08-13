@@ -29,8 +29,6 @@
     [IsDeleted] BIT NOT NULL DEFAULT 0,
 
     -- Restricciones
-    CONSTRAINT [CHK_RUT_Format] CHECK ([RUT] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
-    CONSTRAINT [CHK_Email_Format] CHECK ([Email] LIKE '_%@_%._%'),
     CONSTRAINT [FK_Suppliers_CreatedBy] FOREIGN KEY ([CreatedBy]) REFERENCES [Users]([Id]),
     CONSTRAINT [FK_Suppliers_UpdatedBy] FOREIGN KEY ([UpdatedBy]) REFERENCES [Users]([Id]),
     CONSTRAINT [FK_Suppliers_DeletedBy] FOREIGN KEY ([DeletedBy]) REFERENCES [Users]([Id])
