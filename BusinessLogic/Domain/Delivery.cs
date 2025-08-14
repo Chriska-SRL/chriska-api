@@ -1,64 +1,45 @@
-﻿using BusinessLogic.Common;
+﻿
+using BusinessLogic.Common.Enums;
+using BusinessLogic.Common;
 
 namespace BusinessLogic.Domain
 {
-    public class Delivery:IEntity<Delivery.UpdatableData>, IAuditable
+    public class Delivery : ClientDocument
     {
-        public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public string DriverName { get; set; }
-        public string Observation { get; set; }
-        public List<Order> Orders { get; set; } = new List<Order>();
-        public Vehicle Vehicle { get; set; }
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
-
-        public Delivery(int id, DateTime date, string driverName, string observation, List<Order> orders, Vehicle vehicle)
+        public int Crates { get; set; }
+        public Order? Order { get; set; }
+        public Delivery(
+                  string observation,
+                  User user,
+                  int crates,
+                  Order order
+              ) : base(order.Client, observation, user, order.ProductItems)
         {
-            Id = id;
-            Date = date;
-            DriverName = driverName;
-            Observation = observation;
-            Orders = orders;
-            Vehicle = vehicle;
-        }
-        public Delivery(int id)
-        {
-            Id = id;
-          //Date = date;
-          // DriverName = driverName;
-          //  Observation = observation;
-          //  Orders = orders;
-           // Vehicle = vehicle;
+            Crates = crates;
+            Order = order;
         }
 
-        public void Validate()
+        public Delivery(
+            int id,
+            Client client,
+            Status status,
+            DateTime confirmedDate,
+            DateTime date,
+            string observation,
+            User user,
+            List<ProductItem> productItems,
+            AuditInfo auditInfo,
+            int crates,
+            Order order
+        ) : base(id, client, status, confirmedDate, date, observation, user, productItems, auditInfo)
         {
-            if (string.IsNullOrEmpty(DriverName)) throw new Exception("El nombre del conductor no puede estar vacío");
-            if (string.IsNullOrEmpty(Observation)) throw new Exception("La observación no puede estar vacía");
-            if (Vehicle == null) throw new Exception("El vehículo no puede estar vacío");
+            Crates = crates;
+            Order = order;
         }
-
-        public void Update(UpdatableData Data)
-        {
-            Date = Data.Date;
-            DriverName = Data.DriverName;
-            Observation = Data.Observation;
-            Vehicle = Data.Vehicle;
-            Validate();
-        }
-
-        public void MarkAsDeleted(int? userId, Location? location)
+        public override void Validate()
         {
             throw new NotImplementedException();
         }
 
-        public class UpdatableData
-        {
-            public DateTime Date { get; set; }
-            public string DriverName { get; set; }
-            public string Observation { get; set; }
-            public Vehicle Vehicle { get; set; }
-            public AuditInfo AuditInfo { get; set; }
-        }
     }
 }
