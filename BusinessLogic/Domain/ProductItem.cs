@@ -7,11 +7,11 @@
         public int Weight { get; set; } 
         public decimal UnitPrice { get; set; }
         public decimal Discount { get; set; }
-        public Product? Product { get; set; }
+        public Product Product { get; set; }
 
 
 
-        public ProductItem(int quantity, int weight, decimal unitPrice, decimal discount, Product? product)
+        public ProductItem(int quantity, int weight, decimal unitPrice, decimal discount, Product product)
         {
             Quantity = quantity;
             Weight = weight;
