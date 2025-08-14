@@ -6,6 +6,6 @@
         void Validate();
         public class UpdatableData;
         void Update(TData data);
-        
+        void Update(ProductDocument.UpdatableData data);
     }
 }

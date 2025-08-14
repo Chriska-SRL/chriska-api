@@ -8,20 +8,37 @@ namespace BusinessLogic.Domain
      
         public Client? Client { get; set; }
         public Status Status { get; set; } = Status.Pending;
-        public DateTime ConfirmedDate { get; set; }
+        public DateTime? ConfirmedDate { get; set; }
 
-        public ClientDocument(Client? client,Status status,DateTime confirmedDate,DateTime? date,string? observation,User? user,List<ProductItem> productItems,AuditInfo? auditInfo ) : base(date, observation, user, productItems, auditInfo)
+        public ClientDocument(Client client, string? observation,User user,List<ProductItem> productItems ) : 
+            base(observation, user, productItems)
         {
             Client = client;
-            Status = status;
-            ConfirmedDate = confirmedDate;
+            Status = Status.Pending;
+            ConfirmedDate = null;
         }
-        public ClientDocument(int id, Client? client, Status status, DateTime confirmedDate, DateTime? date, string? observation, User? user, List<ProductItem> productItems, AuditInfo? auditInfo)
+
+
+        public ClientDocument(int id, Client? client, Status status, DateTime confirmedDate, DateTime date, string observation, User? user, List<ProductItem> productItems, AuditInfo? auditInfo)
             : base(id, date, observation, user, productItems, auditInfo)
         {
             Client = client;
             Status = status;
             ConfirmedDate = confirmedDate;
+        }
+
+        public void ChangeStatus(Status status, int userId, Location? location)
+        {
+            Status = status;
+            if(status == Status.Confirmed)
+            {
+                ConfirmedDate = DateTime.Now;
+            }
+            AuditInfo?.SetUpdated(userId, location);
+        }
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            AuditInfo?.SetDeleted(userId, location);
         }
         public abstract void Validate();
     }
