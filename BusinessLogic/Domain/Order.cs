@@ -9,13 +9,12 @@ namespace BusinessLogic.Domain
         public OrderRequest? OrderRequest { get; set; }
         public Delivery? Delivery { get; set; }
         public Order(
-           Client client,
            string observations,
            User user,
            List<ProductItem> productItems,
            int crates,
            OrderRequest orderRequest
-       ) : base(client, observations, user, productItems)
+       ) : base(orderRequest.Client, observations, user, productItems)
         {
             Crates = crates;
             OrderRequest = orderRequest;

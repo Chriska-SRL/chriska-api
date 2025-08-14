@@ -6,25 +6,21 @@ namespace BusinessLogic.Domain
     public abstract class Request:ClientDocument
     {
         public Request(
-            Client? client,
-            Status status,
-            DateTime? date,
-            DateTime confirmedDate,
+            Client client,
             string? observation,
-            User? user,
-            List<ProductItem> productItems,
-            AuditInfo? auditInfo
-        ) : base(client, status, confirmedDate, date ,observation, user, productItems, auditInfo)
+            User user,
+            List<ProductItem> productItems
+        ) : base(client, observation, user, productItems)
         {
         }
 
         public Request(
             int id,
-            Client? client,
+            Client client,
             Status status,
-            DateTime? date,
-            DateTime confirmedDate,
-            string? observation,
+           DateTime? confirmedDate,
+           DateTime date,
+            string observation,
             User? user,
             List<ProductItem> productItems,
             AuditInfo? auditInfo
