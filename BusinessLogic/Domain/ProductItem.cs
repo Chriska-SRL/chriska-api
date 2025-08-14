@@ -1,15 +1,16 @@
-﻿namespace BusinessLogic.Domain
+﻿using BusinessLogic.Common;
+
+namespace BusinessLogic.Domain
 
 {
-    public class ProductItem
+    public class ProductItem:IAuditable
     {
         public int Quantity { get; set; }
         public int? Weight { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal Discount { get; set; }
         public Product Product { get; set; }
-
-
+        public AuditInfo? AuditInfo { get; set ; }
 
         public ProductItem(int quantity, int? weight, decimal unitPrice, decimal discount, Product product)
         {
@@ -20,5 +21,9 @@
             Product = product ?? throw new ArgumentNullException(nameof(product));
         }
 
+        public void MarkAsDeleted(int? userId, Location? location)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
