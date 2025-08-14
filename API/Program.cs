@@ -145,6 +145,9 @@ namespace API
             builder.Services.AddScoped<IBrandRepository, BrandRepository>();
             builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
             builder.Services.AddScoped<IOrderRequestRepository, OrderRequestRepository>();
+            builder.Services.AddScoped<IReturnRequestRepository, ReturnRequestRepository>();
+            builder.Services.AddScoped<IDeliveryRepository, DeliveryRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
             builder.Services.AddScoped<IAzureBlobService, AzureBlobService>();
 
@@ -162,6 +165,8 @@ namespace API
             builder.Services.AddScoped<BrandSubSystem>();
             builder.Services.AddScoped<DiscountsSubSystem>();
             builder.Services.AddScoped<OrderRequestSubSystem>();
+            builder.Services.AddScoped<ReturnRequestSubSystem>();
+            builder.Services.AddScoped<OrderSubSystem>();
 
             builder.Services.AddScoped<AuditLogger>();
             builder.Services.AddScoped<Facade>();

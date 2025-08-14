@@ -1,7 +1,5 @@
-﻿
-using BusinessLogic.Common.Enums;
+﻿using BusinessLogic.Common.Enums;
 using BusinessLogic.Common;
-
 namespace BusinessLogic.Domain
 {
     public class Delivery : ClientDocument
@@ -18,12 +16,11 @@ namespace BusinessLogic.Domain
             Crates = crates;
             Order = order;
         }
-
         public Delivery(
             int id,
             Client client,
             Status status,
-            DateTime confirmedDate,
+            DateTime? confirmedDate,
             DateTime date,
             string observation,
             User user,
@@ -38,7 +35,9 @@ namespace BusinessLogic.Domain
         }
         public override void Validate()
         {
-            throw new NotImplementedException();
+
+            if (Crates < 0)
+                throw new ArgumentException("La cantidad de cajones no puede ser negativa.");
         }
 
     }

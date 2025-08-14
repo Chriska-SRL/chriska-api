@@ -46,5 +46,15 @@ namespace BusinessLogic.Domain
             throw new NotImplementedException();
         }
 
+        internal void Confirm()
+        {
+            Status = Status.Confirmed;
+            ConfirmedDate = DateTime.Now;
+        }
+
+        internal void Cancel()
+        {
+            Status = Status.Canceled;
+        }
     }
 }

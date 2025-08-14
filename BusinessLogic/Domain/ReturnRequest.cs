@@ -34,7 +34,9 @@ namespace BusinessLogic.Domain
 
         public override void Validate()
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(Observations))
+                throw new InvalidOperationException("La observación es obligatoria.");
+
         }
 
     }

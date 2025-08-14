@@ -15,6 +15,7 @@ namespace BusinessLogic.SubSystem
         private readonly IClientRepository _clientRepository;
         private readonly IProductRepository _productRepository;
         private readonly IUserRepository _UserRepository;
+
         public OrderRequestSubSystem(IOrderRequestRepository orderRequestRepository, IClientRepository clientRepository, IProductRepository productRepository, IUserRepository userRepository)
         {
             _orderRequestRepository = orderRequestRepository;
