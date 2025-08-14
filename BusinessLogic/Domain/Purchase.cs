@@ -1,4 +1,7 @@
 ﻿using BusinessLogic.Common;
+using BusinessLogic.Domain;
+using System.Text.RegularExpressions;
+
 namespace BusinessLogic.Domain
 {
     public class Purchase:IEntity<Purchase.UpdatableData>, IAuditable
