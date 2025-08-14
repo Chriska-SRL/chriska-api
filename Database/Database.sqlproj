@@ -96,7 +96,6 @@
     <Build Include="Tables\Orders\Invoices.sql" />
     <Build Include="Tables\Stock\Relaciones\ProductsStock.sql" />
     <Build Include="Tables\Orders\Relations\Orders_Products.sql" />
-    <Build Include="Tables\Orders\Relations\Invoices_Products.sql" />
     <Build Include="Tables\Products\Brands.sql" />
     <Build Include="Tables\Clients\ClientBankAccounts.sql" />
     <Build Include="Tables\Suppliers\SupplierBankAccounts.sql" />
@@ -105,6 +104,8 @@
     <Build Include="Tables\Products\Discounts.sql" />
     <Build Include="Tables\Products\Relations\DiscountClients.sql" />
     <Build Include="Tables\Products\Relations\DiscountProducts.sql" />
+    <Build Include="Tables\Orders\Relations\OrderRequests_Products.sql" />
+    <Build Include="Tables\Orders\Relations\Deliveries_Products.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Database.refactorlog" />
