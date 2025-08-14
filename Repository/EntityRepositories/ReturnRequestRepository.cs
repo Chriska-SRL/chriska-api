@@ -1,12 +1,8 @@
 ﻿using BusinessLogic.Common;
-using BusinessLogic.Common.Enums;
-using BusinessLogic.Common.Mappers;
 using BusinessLogic.Domain;
 using BusinessLogic.Repository;
-using Microsoft.Data.SqlClient;
 using Repository.Logging;
 using Repository.Mappers;
-using System.Data;
 
 namespace Repository.EntityRepositories
 {
@@ -20,19 +16,16 @@ namespace Repository.EntityRepositories
         public async Task<ReturnRequest> AddAsync(ReturnRequest request)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-                @"INSERT INTO ReturnRequests (ClientId, Status, ConfirmedDate, Date, Observations, UserId, DeliveryId) 
-                  VALUES (@ClientId, @Status, @ConfirmedDate, @Date, @Observations, @UserId, @DeliveryId);
+                @"INSERT INTO ReturnRequests (ClientId, Date, Observations, DeliveryId) 
+                  VALUES (@ClientId, @Date, @Observations, @DeliveryId);
                   SELECT CAST(SCOPE_IDENTITY() AS INT);",
                 request,
                 AuditAction.Insert,
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@ClientId", request.Client.Id);
-                    cmd.Parameters.AddWithValue("@Status", request.Status.ToString());
-                    cmd.Parameters.AddWithValue("@ConfirmedDate", (object?)request.ConfirmedDate ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Date", request.Date);
                     cmd.Parameters.AddWithValue("@Observations", request.Observations ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@UserId", request.User?.Id ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@DeliveryId", request.Delivery.Id);
                 },
                 async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
@@ -116,7 +109,7 @@ namespace Repository.EntityRepositories
                                     d.Id AS DeliveryId, d.Address AS DeliveryAddress
                              FROM ReturnRequests rr
                              INNER JOIN Clients c ON rr.ClientId = c.Id
-                             LEFT JOIN Users u ON rr.UserId = u.Id
+                             INNER JOIN Users u ON rr.CreatedBy = u.Id
                              INNER JOIN Deliveries d ON rr.DeliveryId = d.Id",
                 map: reader =>
                 {

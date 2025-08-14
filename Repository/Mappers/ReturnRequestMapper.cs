@@ -1,4 +1,6 @@
-﻿using BusinessLogic.Domain;
+﻿using BusinessLogic.Common.Enums;
+using BusinessLogic.Common.Mappers;
+using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
@@ -20,23 +22,15 @@ namespace Repository.Mappers
 
             return new ReturnRequest(
                 id: r.GetInt32(r.GetOrdinal(Col("Id"))),
-                client: new Client(
-                    id: r.GetInt32(r.GetOrdinal(Col("ClientId"))),
-                    name: S(Col("ClientName"))
-                ),
+                client: ClientMapper.FromReader(r,"Client"),
                 status: Parse<Status>("Status"),
                 date: r.GetDateTime(r.GetOrdinal(Col("Date"))),
                 confirmedDate: r.IsDBNull(r.GetOrdinal(Col("ConfirmedDate"))) ? null : r.GetDateTime(r.GetOrdinal(Col("ConfirmedDate"))),
                 observation: S(Col("Observation")),
-                user: r.IsDBNull(r.GetOrdinal(Col("UserId"))) ? null : new User(
-                    id: r.GetInt32(r.GetOrdinal(Col("UserId"))),
-                    username: S(Col("UserUsername"))
-                ),
-                productItems: new List<ProductItem>(), // Assuming ProductItem mapping is handled elsewhere
-                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null,
-                delivery: new Delivery(
-                    id: r.GetInt32(r.GetOrdinal(Col("DeliveryId")))
-                )
+                user: UserMapper.FromReader(r,"User"),
+                productItems: new List<ProductItem>(),
+                delivery: DeliveryMapper.FromReader(r,""),
+                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null             
             );
         }
     }
