@@ -1,72 +1,66 @@
 ﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Enums;
 
 namespace BusinessLogic.Domain
 {
-    public class Order : IEntity<Order.UpdatableData>, IAuditable
+    public class Order : ClientDocument, IEntity<Order.UpdatableData>
     {
-        public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public string ClientName { get; set; }
         public int Crates { get; set; }
-        public string Status { get; set; }
-        public Delivery Delivery { get; set; }
-        public User PreparedBy { get; set; }
-        public User DeliveredBy { get; set; }
-        public OrderRequest OrderRequest { get; set; }
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
-
-        public Order(int id, DateTime date, string clientName, int crates, string status, Delivery delivery, User preparedBy, User deliveredBy, OrderRequest orderRequest)
+        public OrderRequest? OrderRequest { get; set; }
+        public Delivery? Delivery { get; set; }
+        public Order(
+           Client? client,
+           Status status,
+           DateTime? date,
+           DateTime confirmedDate,
+           string? observation,
+           User? user,
+           List<ProductItem> productItems,
+           AuditInfo? auditInfo,
+           int crates,
+           OrderRequest? orderRequest = null,
+           Delivery? delivery = null
+       ) : base(client, status, confirmedDate, date, observation, user, productItems, auditInfo)
         {
-            Id = id;
-            Date = date;
-            ClientName = clientName;
             Crates = crates;
-            Status = status;
-            Delivery = delivery;
-            PreparedBy = preparedBy;
-            DeliveredBy = deliveredBy;
             OrderRequest = orderRequest;
+            Delivery = delivery;
+        }
+        public Order(
+          int id,
+          Client? client,
+          Status status,
+          DateTime? date,
+          string? observation,
+          User? user,
+          List<ProductItem> productItems,
+          AuditInfo? auditInfo,
+          DateTime confirmedDate,
+          int crates,
+          OrderRequest? orderRequest = null,
+          Delivery? delivery = null
+      ) : base(id, client, status, confirmedDate, date, observation, user, productItems, auditInfo)
+        {
+            Crates = crates;
+            OrderRequest = orderRequest;
+            Delivery = delivery;
         }
 
-        public void Validate()
-        {
-            if (string.IsNullOrEmpty(ClientName)) throw new Exception("El nombre del cliente no puede estar vacío");
-            if (Crates <= 0) throw new Exception("La cantidad de cajas debe ser mayor a cero");
-            if (string.IsNullOrEmpty(Status)) throw new Exception("El estado no puede estar vacío");
-            if (Delivery == null) throw new Exception("La entrega no puede estar vacía");
-            if (PreparedBy == null) throw new Exception("El usuario que preparó la orden no puede estar vacío");
-            if (DeliveredBy == null) throw new Exception("El usuario que entregó la orden no puede estar vacío");
-        }
+
 
         public void Update(UpdatableData data)
         {
-            Date = data.Date;
-            ClientName = data.ClientName;
             Crates = data.Crates;
-            Status = data.Status;
-            Delivery = data.Delivery;
-            PreparedBy = data.PreparedBy;
-            DeliveredBy = data.DeliveredBy;
-            OrderRequest = data.OrderRequest;
-            Validate();
         }
 
-        public void MarkAsDeleted(int? userId, Location? location)
+        public override void Validate()
         {
             throw new NotImplementedException();
         }
 
         public class UpdatableData
         {
-            public DateTime Date { get; set; }
-            public string ClientName { get; set; }
             public int Crates { get; set; }
-            public string Status { get; set; }
-            public Delivery Delivery { get; set; }
-            public User PreparedBy { get; set; }
-            public User DeliveredBy { get; set; }
-            public OrderRequest OrderRequest { get; set; }
-            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
     }
 }
