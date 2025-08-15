@@ -1,33 +1,26 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsOrder;
+using BusinessLogic.DTOs.DTOsOrderRequest;
 
 namespace BusinessLogic.Common.Mappers
 {
-    public class OrderMapper
+    public static class OrderMapper
     {
-        public static Order ToDomain()
+        public static Order.UpdatableData ToUpdatableData(OrderUpdateRequest request, User user, List<ProductItem> productItems)
         {
-            // This method should be implemented to convert a request or DTO to an Order domain object.
-            throw new NotImplementedException("ToDomain method needs to be implemented.");
-        }
-        public static OrderResponse ToResponse(Order order)
-        {
-            return new OrderResponse
+            return new Order.UpdatableData
             {
-                Id = order.Id,
-                Client = ClientMapper.ToResponse(order.Client),
-                Status = order.Status,
-                ConfirmedDate = order.ConfirmedDate,
-                Date = order.Date,
-                Observation = order.Observations,
-                User = UserMapper.ToResponse(order.User),
-                ProductItems = order.ProductItems.Select(ProductItemMapper.ToResponse).ToList(),
-                Crates = order.Crates,
-                OrderRequest = order.OrderRequest != null ? OrderRequestMapper.ToResponse(order.OrderRequest) : null,
-                Delivery = order.Delivery != null ? DeliveryMapper.ToResponse(order.Delivery) : null,
-                AuditInfo = AuditMapper.ToResponse(order.AuditInfo)
+                Observations = request.Observations,
+                User = user,
+                ProductItems = productItems,
+                UserId = request.getUserId(),
+                Location = request.Location
             };
         }
 
+        public static OrderResponse? ToResponse(Order? order)
+        {
+            throw new NotImplementedException("ToResponse method is not implemented yet.");
+        }
     }
 }

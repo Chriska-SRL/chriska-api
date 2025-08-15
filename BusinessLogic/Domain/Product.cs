@@ -21,7 +21,7 @@ namespace BusinessLogic.Domain
         public SubCategory? SubCategory { get; set; }
         public Brand? Brand { get; set; }
         public Shelve? Shelve { get; set; }
-        //public List<Discount> Discounts { get; set; } = new List<Discount>();
+        public List<Discount> Discounts { get; set; } = new List<Discount>();
         public List<Supplier>? Suppliers { get; set; } = new List<Supplier>();
         public AuditInfo? AuditInfo { get; set ; } = new AuditInfo();
 
@@ -172,9 +172,26 @@ namespace BusinessLogic.Domain
             AuditInfo.SetDeleted(userId, location);
         }
 
-        internal decimal getDiscount(Client client)
+        internal Discount? GetBestDiscount(Client client)
         {
-            return 0;
+            if (client == null) throw new ArgumentNullException(nameof(client));
+            var now = DateTime.UtcNow;
+
+            bool AppliesToClient(Discount d)
+            {
+                var byClient = d.Clients?.Any(c => c.Id == client.Id) == true;
+                var byZone = d.Zone != null && client.Zone != null && d.Zone.Id == client.Zone.Id; // quítalo si no usás zona en Client
+                var global = (d.Clients == null || d.Clients.Count == 0) && d.Zone == null;
+                return byClient || byZone || global;
+            }
+
+            return Discounts
+                .Where(d => d.Status == DiscountStatus.Available && d.ExpirationDate >= now)
+                .Where(AppliesToClient)
+                .OrderByDescending(d => d.Percentage)   // mayor % primero
+                .ThenBy(d => d.ExpirationDate)          // desempate: vence antes
+                .FirstOrDefault();
         }
+
     }
 }

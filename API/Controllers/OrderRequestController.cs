@@ -3,6 +3,7 @@ using BusinessLogic;
 using BusinessLogic.Common;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsDocumentClient;
 using BusinessLogic.DTOs.DTOsOrderRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -70,7 +71,7 @@ namespace API.Controllers
 
         [HttpPut("changestatus/{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_ORDER_REQUESTS))]
-        public async Task<ActionResult<OrderRequestResponse>> ChangeStatusOrderRequestAsync(int id, OrderRequestChangeStatusRequest request)
+        public async Task<ActionResult<OrderRequestResponse>> ChangeStatusOrderRequestAsync(int id, DocumentClientChangeStatusRequest request)
         {
             var result = await _facade.ChangeStatusOrderRequestAsync(id, request);
             return Ok(result); // 200 OK
