@@ -1,5 +1,7 @@
-﻿using BusinessLogic.DTOs.DTOsAudit;
+﻿using BusinessLogic.Common.Enums;
+using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsClient;
+using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsProductItem;
 using BusinessLogic.DTOs.DTOsUser;
 
@@ -9,7 +11,7 @@ namespace BusinessLogic.DTOs.DTOsDelivery
     {
         public int Id { get; set; }
         public ClientResponse Client { get; set; } = default!;
-        public string? Status { get; set; } = default!;
+        public Status Status { get; set; } = default!;
         public DateTime? Date { get; set; }
         public DateTime? ConfirmedDate { get; set; }
         public string Observation { get; set; } = default!;
