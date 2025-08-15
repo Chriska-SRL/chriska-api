@@ -5,7 +5,7 @@ namespace BusinessLogic.Domain
     public abstract class ProductDocument : IEntity<ProductDocument.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
-        public DateTime? Date { get; set; }
+        public DateTime Date { get; set; }
         public string? Observations { get; set; }
         public User? User { get; set; }
         public List<ProductItem> ProductItems { get; set; } = new List<ProductItem>();
@@ -29,7 +29,6 @@ namespace BusinessLogic.Domain
             User = user;
             ProductItems = productItems;
             AuditInfo = auditInfo;
-            Validate();
         }
 
         public void MarkAsDeleted(int? userId, Location? location)
@@ -37,10 +36,7 @@ namespace BusinessLogic.Domain
             AuditInfo?.SetDeleted(userId, location);
         }
 
-        public void Validate()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void Validate();
 
         public void Update(UpdatableData data)
         {

@@ -114,5 +114,18 @@
         DELETE_DISCOUNTS = 71,
         EDIT_DISCOUNTS = 72,
         VIEW_DISCOUNTS = 73,
+
+        //Order Requests
+        CREATE_ORDER_REQUESTS = 74,
+        DELETE_ORDER_REQUESTS = 75,
+        EDIT_ORDER_REQUESTS = 76,
+        VIEW_ORDER_REQUESTS = 77,
+
+        //Return Requests
+        CREATE_RETURN_REQUESTS = 78,
+        DELETE_RETURN_REQUESTS = 79,
+        EDIT_RETURN_REQUESTS = 80,
+        VIEW_RETURN_REQUESTS = 81,
+
     }
 }

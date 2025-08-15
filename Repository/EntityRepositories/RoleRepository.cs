@@ -234,7 +234,7 @@ namespace Repository.EntityRepositories
 
                         if (!reader.IsDBNull(reader.GetOrdinal("UserId"))) // Asume que UserMapper espera esto
                         {
-                            var user = UserMapper.FromReaderForRole(reader);
+                            var user = UserMapper.FromReader(reader, "User");
                             if (!role.Users.Any(u => u.Id == user.Id))
                                 role.Users.Add(user);
                         }

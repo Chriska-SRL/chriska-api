@@ -111,7 +111,6 @@
     <RefactorLog Include="Database.refactorlog" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\testdata.sql" />
     <None Include="Data\cleardatabase.sql" />
     <None Include="Data\adminUser.sql" />
   </ItemGroup>
