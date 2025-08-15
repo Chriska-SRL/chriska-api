@@ -19,9 +19,16 @@ namespace BusinessLogic.Common.Mappers
             return orderRequest;
         }
 
-        public static OrderRequest.UpdatableData ToUpdatableData(OrderRequestUpdateRequest request)
+        public static OrderRequest.UpdatableData ToUpdatableData(OrderRequestUpdateRequest request, User user, List<ProductItem> productItems)
         {
-            throw new NotImplementedException("ToUpdatableData method is not implemented yet.");
+            return new OrderRequest.UpdatableData
+            {
+                Observations = request.Observations,
+                User = user,
+                ProductItems = productItems,
+                UserId = request.getUserId(),
+                Location = request.Location
+            };
         }
 
         public static OrderRequestResponse? ToResponse(OrderRequest? orderRequest)

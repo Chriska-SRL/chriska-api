@@ -33,5 +33,15 @@ namespace BusinessLogic.Domain
             Order = order;
         }
 
+        internal void Confirm()
+        {
+            Status = Status.Confirmed;
+            ConfirmedDate = DateTime.Now;
+        }
+
+        internal void Cancel()
+        {
+            Status = Status.Canceled;
+        }
     }
 }
