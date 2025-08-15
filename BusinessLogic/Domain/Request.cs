@@ -16,7 +16,7 @@ namespace BusinessLogic.Domain
 
         public Request(
             int id,
-            Client client,
+            Client? client,
             Status status,
            DateTime? confirmedDate,
            DateTime date,

@@ -18,23 +18,19 @@ namespace BusinessLogic.Domain
 
         public OrderRequest(
             int id,
-            Client client,
+            Client? client,
             Status status,
             DateTime? confirmedDate,
             DateTime date,
             string observation,
             User? user,
             List<ProductItem> productItems,
-            AuditInfo? auditInfo,
-            Order order
+            Order? order,
+            AuditInfo? auditInfo
+           
         ) : base(id, client, status, confirmedDate, date, observation, user, productItems, auditInfo)
         {
             Order = order;
-        }
-
-        public override void Validate()
-        {
-            throw new NotImplementedException();
         }
 
     }
