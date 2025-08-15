@@ -5,7 +5,8 @@ using Microsoft.Data.SqlClient;
 namespace Repository.Mappers
 {
     public static class OrderRequestMapper
-{
+    {
+
         public static OrderRequest? FromReader(SqlDataReader r, string? prefix = null, string? origin = null)
         {
             string Col(string c) => $"{prefix ?? ""}{c}";
@@ -14,7 +15,11 @@ namespace Repository.Mappers
             if (prefix != null)
             {
                 try { var o = r.GetOrdinal(Col("Id")); if (r.IsDBNull(o)) return null; } catch { return null; }
+                }
+                catch { return null; }
             }
+
+            // Parse genérico para enums
             T Parse<T>(string c) where T : struct, Enum
                 => Enum.Parse<T>(S(Col(c)).Trim(), true);
 

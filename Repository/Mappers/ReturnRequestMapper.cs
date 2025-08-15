@@ -1,5 +1,4 @@
 ﻿using BusinessLogic.Common.Enums;
-using BusinessLogic.Common.Mappers;
 using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
@@ -27,9 +26,9 @@ namespace Repository.Mappers
                 date: r.GetDateTime(r.GetOrdinal(Col("Date"))),
                 confirmedDate: r.IsDBNull(r.GetOrdinal(Col("ConfirmedDate"))) ? null : r.GetDateTime(r.GetOrdinal(Col("ConfirmedDate"))),
                 observation: S(Col("Observation")),
-                user: UserMapper.FromReader(r,"User"),
+                user: UserMapper.FromReader(r,"User",origin),
                 productItems: new List<ProductItem>(),
-                delivery: DeliveryMapper.FromReader(r,""),
+                delivery: DeliveryMapper.FromReader(r,"Delivery",origin),
                 auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null             
             );
         }
