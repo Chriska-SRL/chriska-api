@@ -39,12 +39,14 @@ namespace BusinessLogic.Domain
             Delivery = delivery;
         }
 
-
-
-        public override void Validate()
+        internal void Confirm()
         {
             throw new NotImplementedException();
         }
 
+        internal void Cancel()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

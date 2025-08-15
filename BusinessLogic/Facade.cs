@@ -7,6 +7,7 @@ using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsCost;
 using BusinessLogic.DTOs.DTOsDiscount;
 using BusinessLogic.DTOs.DTOsImage;
+using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsOrderRequest;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsRole;
@@ -39,6 +40,7 @@ namespace BusinessLogic
         private readonly BrandSubSystem Brand;
         private readonly DiscountsSubSystem Discounts;
         private readonly OrderRequestSubSystem OrderRequests;
+        private readonly OrderSubSystem Orders;
 
         public Facade(
             AuthSubSystem auth,
@@ -54,7 +56,8 @@ namespace BusinessLogic
             VehicleSubSystem vehicles,
             BrandSubSystem brand,
             DiscountsSubSystem discounts,
-            OrderRequestSubSystem orderRequests)
+            OrderRequestSubSystem orderRequests,
+            OrderSubSystem orders)
         {
             Auth = auth;
             Categories = categories;
@@ -70,6 +73,7 @@ namespace BusinessLogic
             Brand = brand;
             Discounts = discounts;
             OrderRequests = orderRequests;
+            Orders = orders;
         }
 
         // --- Auth ---
@@ -191,5 +195,14 @@ namespace BusinessLogic
         public async Task<OrderRequestResponse?> GetOrderRequestByIdAsync(int id) => await OrderRequests.GetOrderRequestByIdAsync(id);
         public async Task<List<OrderRequestResponse?>> GetAllOrderRequestsAsync(QueryOptions query) => await OrderRequests.GetAllOrderRequestsAsync(query);
         public async Task<OrderRequestResponse?> ChangeStatusOrderRequestAsync(int id, OrderRequestChangeStatusRequest request) => await OrderRequests.ChangeStatusOrderRequestAsync(id, request);
+       
+        // --- Orders ---
+        public async Task<OrderResponse?> AddOrderAsync(OrderAddRequest request) => await Orders.AddOrderAsync(request);
+        public async Task<OrderResponse?> UpdateOrderAsync(OrderUpdateRequest request) => await Orders.UpdateOrderAsync(request);
+        public async Task DeleteOrderAsync(DeleteRequest request) => await Orders.DeleteOrderAsync(request);
+        public async Task<OrderResponse?> GetOrderByIdAsync(int id) => await Orders.GetOrderByIdAsync(id);
+        public async Task<List<OrderResponse?>> GetAllOrdersAsync(QueryOptions query) => await Orders.GetAllOrdersAsync(query);
+        public async Task<OrderResponse?> ChangeStatusOrderAsync(int id, OrderChangeStatusRequest request) => await Orders.ChangeStatusOrderAsync(id, request);
+
     }
 }
