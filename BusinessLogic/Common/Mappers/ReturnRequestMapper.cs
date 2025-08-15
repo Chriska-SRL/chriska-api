@@ -5,7 +5,7 @@ namespace BusinessLogic.Common.Mappers
 {
     public class ReturnRequestMapper
     {
-        public static ReturnRequest ToDomain(ReturnRequestAddRequest request, Client client, User user, List<ProductItem> productItems, Delivery delivery)
+        public static ReturnRequest ToDomain(ReturnRequestAddRequest request,Delivery delivery, User user)
         {
             ReturnRequest returnRequest = new ReturnRequest(
                 observation: request.Observation,

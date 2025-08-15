@@ -1,4 +1,5 @@
-﻿using BusinessLogic.DTOs.DTOsAudit;
+﻿using BusinessLogic.Domain;
+using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsProductItem;
 
 namespace BusinessLogic.DTOs.DTOsOrderRequest

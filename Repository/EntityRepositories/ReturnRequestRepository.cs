@@ -162,12 +162,11 @@ namespace Repository.EntityRepositories
                 configureCommand: cmd => cmd.Parameters.AddWithValue("@Id", id)
             );
         }
-
+        #endregion
         public Task<ReturnRequest> UpdateAsync(ReturnRequest entity)
         {
             throw new NotImplementedException();
         }
 
-        #endregion
     }
 }

@@ -1,7 +1,5 @@
-﻿
-using BusinessLogic.Common.Enums;
+﻿using BusinessLogic.Common.Enums;
 using BusinessLogic.Common;
-
 namespace BusinessLogic.Domain
 {
     public class Delivery : ClientDocument
@@ -18,7 +16,6 @@ namespace BusinessLogic.Domain
             Crates = crates;
             Order = order;
         }
-
         public Delivery(
             int id,
             Client client,

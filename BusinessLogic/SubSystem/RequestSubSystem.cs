@@ -13,6 +13,7 @@ namespace BusinessLogic.SubSystem
         private readonly IClientRepository _clientRepository;
         private readonly IUserRepository _userRepository;
         private readonly IDeliveryRepository _deliveryRepository;
+        private readonly IProductRepository _productRepository;
 
         public RequestSubSystem(
             IReturnRequestRepository returnRequestRepository,
@@ -25,31 +26,18 @@ namespace BusinessLogic.SubSystem
             _clientRepository = clientRepository;
             _userRepository = userRepository;
             _deliveryRepository = deliveryRepository;
+            _productRepository = productRepository;
         }
 
         public async Task<ReturnRequestResponse> AddReturnRequestAsync(ReturnRequestAddRequest request)
         {
-            // Entidades relacionadas
-            Client client = await _clientRepository.GetByIdAsync(request.ClientId)
-                ?? throw new ArgumentException("No se encontró el cliente asociado.");
-
             User user = await _userRepository.GetByIdAsync(request.UserId)
                 ?? throw new ArgumentException("No se encontró el usuario asociado.");
 
             Delivery delivery = await _deliveryRepository.GetByIdAsync(request.DeliveryId)
                 ?? throw new ArgumentException("No se encontró la entrega asociada.");
 
-            // ProductItems: resolvemos productos y mapeamos a domain
-            var productItems = new List<ProductItem>();
-            foreach (var ProductId in request.ProductItemsId)
-            {
-                var productItems = await _productItemsRepository.GetByIdAsync(ProductId)
-                    ?? throw new ArgumentException($"No se encontró el producto con ID {ProductId}.");
-                productItems.Add(productItems);
-            }
-
-            // Domain
-            var entity = ReturnRequestMapper.ToDomain(request, client, user, productItems, delivery);
+            var entity = ReturnRequestMapper.ToDomain(request, delivery, user);
             entity.Validate();
 
             var added = await _returnRequestRepository.AddAsync(entity);

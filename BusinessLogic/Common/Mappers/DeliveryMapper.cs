@@ -5,11 +5,35 @@ namespace BusinessLogic.Common.Mappers
 {
     public class DeliveryMapper
     {
-        public static DeliveryResponse ToResponse(Delivery request)
+        public static Delivery ToDomain(DeliveryAddRequest request, User user, Order order)
         {
-            // This method should convert a Delivery object to a response DTO.
-            // Implementation will depend on the structure of the Delivery class and the expected response format.
-            throw new NotImplementedException("ToResponse method needs to be implemented.");
+            var delivery = new Delivery(
+                observation: request.Observation,
+                user: user,
+                crates: request.Crates,
+                order: order
+            );
+
+            delivery.AuditInfo?.SetCreated(request.getUserId(), request.Location);
+
+            return delivery;
+        }
+        public static DeliveryResponse ToResponse(Delivery delivery)
+        {
+            return new DeliveryResponse
+            {
+                Id = delivery.Id,
+                Client = ClientMapper.ToResponse(delivery.Client),
+                Status = delivery.Status,
+                ConfirmedDate = delivery.ConfirmedDate,
+                Date = delivery.Date,
+                Observation = delivery.Observations,
+                User = UserMapper.ToResponse(delivery.User),
+                ProductItems = delivery.ProductItems.Select(ProductItemMapper.ToResponse).ToList(),
+                Crates = delivery.Crates,
+                Order = delivery.Order != null ? OrderMapper.ToResponse(delivery.Order) : null,
+                AuditInfo = AuditMapper.ToResponse(delivery.AuditInfo)
+            };
         }
     }
 }
