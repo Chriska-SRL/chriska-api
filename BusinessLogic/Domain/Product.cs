@@ -171,5 +171,10 @@ namespace BusinessLogic.Domain
         {
             AuditInfo.SetDeleted(userId, location);
         }
+
+        internal decimal getDiscount(Client client)
+        {
+            return 0;
+        }
     }
 }

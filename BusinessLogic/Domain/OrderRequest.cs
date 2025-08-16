@@ -1,49 +1,47 @@
-﻿namespace BusinessLogic.Domain
+﻿using BusinessLogic.Common.Enums;
+using BusinessLogic.Common;
+
+namespace BusinessLogic.Domain
 {
-    public class OrderRequest : Request, IEntity<OrderRequest.UpdatableData>
+    public class OrderRequest : Request
     {
-        public Order Order { get; set; }
+        public Order? Order { get; set; }
 
-        public override void Validate()
+        public OrderRequest(
+          Client client,
+          string? observation,
+          User user,
+          List<ProductItem> productItems
+      ) : base(client, observation, user, productItems)
         {
-            if (Order == null) throw new Exception("El pedido es obligatorio para una solicitud de devolucion");
-            if (RequestDate == null) throw new Exception("La fecha de solicitud es obligatoria para una solicitud de devolucion");
-            if (DeliveryDate == null) throw new Exception("La fecha de entrega es obligatoria para una solicitud de devolucion");
-            if (string.IsNullOrEmpty(Status)) throw new Exception("El estado es obligatorio para una solicitud de devolucion");
         }
 
-        public OrderRequest(int id,Order order, DateTime requestDate, DateTime deliveryDate, string status, string observation)
+        public OrderRequest(
+            int id,
+            Client? client,
+            Status status,
+            DateTime? confirmedDate,
+            DateTime date,
+            string observation,
+            User? user,
+            List<ProductItem> productItems,
+            Order? order,
+            AuditInfo? auditInfo
+           
+        ) : base(id, client, status, confirmedDate, date, observation, user, productItems, auditInfo)
         {
-            Id = id;
             Order = order;
-            RequestDate = requestDate;
-            DeliveryDate = deliveryDate;
-            Status = status;
-            Observation = observation;
         }
-        public OrderRequest(int id)
+
+        internal void Confirm()
         {
-            Id = id;
-            //Order = order;
-            //RequestDate = requestDate;
-           // DeliveryDate = deliveryDate;
-           // Status = status;
-            //Observation = observation;
+            Status = Status.Confirmed;
+            ConfirmedDate = DateTime.Now;
         }
-        public void Update(UpdatableData data)
+
+        internal void Cancel()
         {
-            RequestDate = data.RequestDate;
-            DeliveryDate = data.DeliveryDate;
-            Status = data.Status;
-            Observation = data.Observation;
-            Validate();
-        }
-        public class UpdatableData
-        {
-            public DateTime RequestDate { get; set; }
-            public DateTime DeliveryDate { get; set; }
-            public string Status { get; set; }
-            public string Observation { get; set; }
+            Status = Status.Canceled;
         }
     }
 }

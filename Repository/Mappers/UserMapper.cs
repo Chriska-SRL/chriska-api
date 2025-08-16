@@ -1,63 +1,84 @@
-﻿using BusinessLogic.Domain;
+﻿using BusinessLogic.Common.Enums;
+using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
-using Repository.Mappers;
 using System.Data.Common;
 
-public static class UserMapper
+namespace Repository.Mappers
 {
-    public static User FromReader(SqlDataReader reader, bool includePermissions)
+    public static class UserMapper
     {
-        var role = new Role(
-            id: reader.GetInt32(reader.GetOrdinal("RoleId")),
-            name: reader.GetString(reader.GetOrdinal("RoleName")),
-            description: reader.GetString(reader.GetOrdinal("RoleDescription")),
-            permissions: includePermissions ? ParsePermissions(reader) : new List<Permission>(),
-            auditInfo: new BusinessLogic.Common.AuditInfo()
-        );
-
-        var user = new User(
-            id: reader.GetInt32(reader.GetOrdinal("Id")),
-            name: reader.GetString(reader.GetOrdinal("Name")),
-            username: reader.GetString(reader.GetOrdinal("Username")),
-            password: reader.GetString(reader.GetOrdinal("Password")),
-            isEnabled: reader.GetString(reader.GetOrdinal("IsEnabled")) == "T",
-            needsPasswordChange: reader.GetString(reader.GetOrdinal("NeedsPasswordChange")) == "T",
-            role: role,
-            auditInfo: AuditInfoMapper.FromReader(reader)
-        );
-
-        return user;
-    }
-
-    private static List<Permission> ParsePermissions(SqlDataReader reader)
-    {
-        var permissions = new List<Permission>();
-
-        if (!reader.IsDBNull(reader.GetOrdinal("Permissions")))
+        public static User? FromReader(SqlDataReader r, string? prefix = null, bool includePermissions = false)
         {
-            var raw = reader.GetString(reader.GetOrdinal("Permissions"));
-            foreach (var idStr in raw.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            string Col(string c) => $"{prefix ?? ""}{c}";
+            string S(string c) => r.IsDBNull(r.GetOrdinal(c)) ? "" : r.GetString(r.GetOrdinal(c));
+
+            if (prefix != null)
             {
-                if (int.TryParse(idStr, out int id) && Enum.IsDefined(typeof(Permission), id))
-                    permissions.Add((Permission)id);
+                try { var o = r.GetOrdinal(Col("Id")); if (r.IsDBNull(o)) return null; } catch { return null; }
             }
+
+            var role = new Role(
+                id: r.GetInt32(r.GetOrdinal(Col("RoleId"))),
+                name: S(Col("RoleName")),
+                description: S(Col("RoleDescription")),
+                permissions: includePermissions ? ParsePermissions(r, Col("Permissions")) : new List<Permission>(),
+                auditInfo: new BusinessLogic.Common.AuditInfo()
+            );
+
+            return new User(
+                id: r.GetInt32(r.GetOrdinal(Col("Id"))),
+                name: S(Col("Name")),
+                username: S(Col("Username")),
+                password: S(Col("Password")),
+                isEnabled: S(Col("IsEnabled")) == "T",
+                needsPasswordChange: S(Col("NeedsPasswordChange")) == "T",
+                role: role,
+                auditInfo: AuditInfoMapper.FromReader(r)
+            );
         }
 
-        return permissions;
-    }
+        private static List<Permission> ParsePermissions(SqlDataReader r, string colName)
+        {
+            var permissions = new List<Permission>();
 
-    public static User FromReaderForRole(DbDataReader reader)
-    {
-        return new User(
-            id: reader.GetInt32(reader.GetOrdinal("UserId")),
-            name: reader.GetString(reader.GetOrdinal("UserName")),
-            username: reader.GetString(reader.GetOrdinal("UserUsername")),
-            password: null,
-            isEnabled: reader.GetString(reader.GetOrdinal("UserIsEnabled")) == "T",
-            needsPasswordChange: reader.GetString(reader.GetOrdinal("UserNeedsPasswordChange")) == "T",
-            role: null,
-            auditInfo: null
-        );
-    }
+            if (!r.IsDBNull(r.GetOrdinal(colName)))
+            {
+                var raw = r.GetString(r.GetOrdinal(colName));
+                foreach (var idStr in raw.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (int.TryParse(idStr, out int id) && Enum.IsDefined(typeof(Permission), id))
+                        permissions.Add((Permission)id);
+                }
+            }
 
+            return permissions;
+        }
+
+        public static User? FromReaderForRole(DbDataReader r, string? prefix = null)
+        {
+            string Col(string c) => $"{prefix ?? ""}{c}";
+            string S(string c) => r.IsDBNull(r.GetOrdinal(c)) ? "" : r.GetString(r.GetOrdinal(c));
+
+            try
+            {
+                var o = r.GetOrdinal(Col("UserId"));
+                if (r.IsDBNull(o)) return null;
+            }
+            catch
+            {
+                return null;
+            }
+
+            return new User(
+                id: r.GetInt32(r.GetOrdinal(Col("UserId"))),
+                name: S(Col("UserName")),
+                username: S(Col("UserUsername")),
+                password: null,
+                isEnabled: S(Col("UserIsEnabled")) == "T",
+                needsPasswordChange: S(Col("UserNeedsPasswordChange")) == "T",
+                role: null,
+                auditInfo: null
+            );
+        }
+    }
 }
