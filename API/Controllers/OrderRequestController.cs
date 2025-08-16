@@ -12,7 +12,7 @@ namespace API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class OrderRequestController: ControllerBase
+    public class OrderRequestController : ControllerBase
     {
         private readonly Facade _facade;
         private readonly TokenUtils _tokenUtils;
@@ -65,6 +65,14 @@ namespace API.Controllers
         public async Task<ActionResult<List<OrderRequestResponse>>> GetAllOrderRequestsAsync([FromQuery] QueryOptions options)
         {
             var result = await _facade.GetAllOrderRequestsAsync(options);
+            return Ok(result); // 200 OK
+        }
+
+        [HttpPut("changestatus/{id}")]
+        [Authorize(Policy = nameof(Permission.EDIT_ORDER_REQUESTS))]
+        public async Task<ActionResult<OrderRequestResponse>> ChangeStatusOrderRequestAsync(int id, OrderRequestChangeStatusRequest request)
+        {
+            var result = await _facade.ChangeStatusOrderRequestAsync(id, request);
             return Ok(result); // 200 OK
         }
     }

@@ -189,8 +189,7 @@ namespace BusinessLogic
         public async Task<OrderRequestResponse?> UpdateOrderRequestAsync(OrderRequestUpdateRequest request) => await OrderRequests.UpdateOrderRequestAsync(request);
         public async Task DeleteOrderRequestAsync(DeleteRequest request) => await OrderRequests.DeleteOrderRequestAsync(request);
         public async Task<OrderRequestResponse?> GetOrderRequestByIdAsync(int id) => await OrderRequests.GetOrderRequestByIdAsync(id);
-        public async Task<List<OrderRequestResponse>?> GetAllOrderRequestsAsync(QueryOptions query) => await OrderRequests.GetAllOrderRequestsAsync(query);
-
-
+        public async Task<List<OrderRequestResponse?>> GetAllOrderRequestsAsync(QueryOptions query) => await OrderRequests.GetAllOrderRequestsAsync(query);
+        public async Task<OrderRequestResponse?> ChangeStatusOrderRequestAsync(int id, OrderRequestChangeStatusRequest request) => await OrderRequests.ChangeStatusOrderRequestAsync(id, request);
     }
 }
