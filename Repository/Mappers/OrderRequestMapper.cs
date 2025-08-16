@@ -14,10 +14,17 @@ namespace Repository.Mappers
 
             if (prefix != null)
             {
-                try { var o = r.GetOrdinal(Col("Id")); if (r.IsDBNull(o)) return null; } catch { return null; }
+                try
+                {
+                    var o = r.GetOrdinal(Col("Id"));
+                    if (r.IsDBNull(o)) return null;
                 }
-                catch { return null; }
+                catch
+                {
+                    return null;
+                }
             }
+
 
             // Parse genérico para enums
             T Parse<T>(string c) where T : struct, Enum

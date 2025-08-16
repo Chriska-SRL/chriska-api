@@ -31,7 +31,7 @@ namespace Repository.Mappers
                 status: Parse<Status>("Status"),
                 date: r.GetDateTime(r.GetOrdinal(Col("Date"))),
                 observations: S(Col("Observation")),
-                user: UserMapper.FromReader(r, "User", origin),
+                user: UserMapper.FromReader(r, "User"),
                 productItems: new List<ProductItem>(), // Se carga en otra query si aplica
                 auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null,
                 confirmedDate: r.GetDateTime(r.GetOrdinal(Col("ConfirmedDate"))),

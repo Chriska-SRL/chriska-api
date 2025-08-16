@@ -9,6 +9,7 @@ using BusinessLogic.DTOs.DTOsDiscount;
 using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.DTOs.DTOsOrderRequest;
 using BusinessLogic.DTOs.DTOsProduct;
+using BusinessLogic.DTOs.DTOsReturnRequest;
 using BusinessLogic.DTOs.DTOsRole;
 using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsStockMovement;
@@ -19,7 +20,6 @@ using BusinessLogic.DTOs.DTOsVehicle;
 using BusinessLogic.DTOs.DTOsWarehouse;
 using BusinessLogic.DTOs.DTOsZone;
 using BusinessLogic.SubSystem;
-using Microsoft.AspNetCore.Http;
 
 namespace BusinessLogic
 {
@@ -39,6 +39,7 @@ namespace BusinessLogic
         private readonly BrandSubSystem Brand;
         private readonly DiscountsSubSystem Discounts;
         private readonly OrderRequestSubSystem OrderRequests;
+        private readonly ReturnRequestSubSystem ReturnRequest;
 
         public Facade(
             AuthSubSystem auth,
@@ -54,7 +55,8 @@ namespace BusinessLogic
             VehicleSubSystem vehicles,
             BrandSubSystem brand,
             DiscountsSubSystem discounts,
-            OrderRequestSubSystem orderRequests)
+            OrderRequestSubSystem orderRequests,
+            ReturnRequestSubSystem returnRequest)
         {
             Auth = auth;
             Categories = categories;
@@ -70,6 +72,7 @@ namespace BusinessLogic
             Brand = brand;
             Discounts = discounts;
             OrderRequests = orderRequests;
+            ReturnRequest = returnRequest;
         }
 
         // --- Auth ---
@@ -190,6 +193,13 @@ namespace BusinessLogic
         public async Task DeleteOrderRequestAsync(DeleteRequest request) => await OrderRequests.DeleteOrderRequestAsync(request);
         public async Task<OrderRequestResponse?> GetOrderRequestByIdAsync(int id) => await OrderRequests.GetOrderRequestByIdAsync(id);
         public async Task<List<OrderRequestResponse>?> GetAllOrderRequestsAsync(QueryOptions query) => await OrderRequests.GetAllOrderRequestsAsync(query);
+
+        // --- ReturnRequests ---
+        public async Task<ReturnRequestResponse?> AddReturnRequestAsync(ReturnRequestAddRequest request) => await ReturnRequest.AddReturnRequestAsync(request);
+        public async Task<ReturnRequestResponse?> UpdateReturnRequestAsync(ReturnRequestUpdateRequest request) => await ReturnRequest.UpdateReturnRequestAsync(request);
+        public async Task DeleteReturnRequestAsync(DeleteRequest request) => await ReturnRequest.DeleteReturnRequestAsync(request);
+        public async Task<ReturnRequestResponse?> AddReturnRequestAsync(int id) => await ReturnRequest.GetReturnRequestByIdAsync(id);
+        public async Task<List<ReturnRequestResponse>?> GetAllReturnRequestsAsync(QueryOptions query) => await ReturnRequest.GetAllReturnRequestsAsync(query);
 
 
     }

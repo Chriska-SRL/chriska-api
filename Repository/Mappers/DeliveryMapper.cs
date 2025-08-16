@@ -32,7 +32,7 @@ namespace Repository.Mappers
                 confirmedDate: r.GetDateTime(r.GetOrdinal(Col("ConfirmedDate"))),
                 date: r.GetDateTime(r.GetOrdinal(Col("Date"))),
                 observation: S(Col("Observation")),
-                user: UserMapper.FromReader(r, "User", origin),
+                user: UserMapper.FromReader(r, "User"),
                 productItems: new List<ProductItem>(), // si vienen en otra query/mapper se setean después
                 auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null,
                 crates: r.GetInt32(r.GetOrdinal(Col("Crates"))),

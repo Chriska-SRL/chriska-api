@@ -26,7 +26,7 @@ namespace Repository.Mappers
                 date: r.GetDateTime(r.GetOrdinal(Col("Date"))),
                 confirmedDate: r.IsDBNull(r.GetOrdinal(Col("ConfirmedDate"))) ? null : r.GetDateTime(r.GetOrdinal(Col("ConfirmedDate"))),
                 observation: S(Col("Observation")),
-                user: UserMapper.FromReader(r,"User",origin),
+                user: UserMapper.FromReader(r,"User"),
                 productItems: new List<ProductItem>(),
                 delivery: DeliveryMapper.FromReader(r,"Delivery",origin),
                 auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null             

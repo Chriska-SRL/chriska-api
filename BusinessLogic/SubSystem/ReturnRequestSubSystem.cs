@@ -7,7 +7,7 @@ using BusinessLogic.Repository;
 
 namespace BusinessLogic.SubSystem
 {
-    public class RequestSubSystem
+    public class ReturnRequestSubSystem
     {
         private readonly IReturnRequestRepository _returnRequestRepository;
         private readonly IClientRepository _clientRepository;
@@ -15,7 +15,7 @@ namespace BusinessLogic.SubSystem
         private readonly IDeliveryRepository _deliveryRepository;
         private readonly IProductRepository _productRepository;
 
-        public RequestSubSystem(
+        public ReturnRequestSubSystem(
             IReturnRequestRepository returnRequestRepository,
             IClientRepository clientRepository,
             IUserRepository userRepository,
