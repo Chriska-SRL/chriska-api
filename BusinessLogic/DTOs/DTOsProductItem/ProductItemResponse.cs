@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.DTOs.DTOsProduct;
 
+
 namespace BusinessLogic.DTOs.DTOsProductItem
 {
     public class ProductItemResponse

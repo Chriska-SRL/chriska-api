@@ -6,9 +6,12 @@ using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsCost;
 using BusinessLogic.DTOs.DTOsDiscount;
+using BusinessLogic.DTOs.DTOsDocumentClient;
 using BusinessLogic.DTOs.DTOsImage;
+using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsOrderRequest;
 using BusinessLogic.DTOs.DTOsProduct;
+using BusinessLogic.DTOs.DTOsReturnRequest;
 using BusinessLogic.DTOs.DTOsRole;
 using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsStockMovement;
@@ -19,7 +22,6 @@ using BusinessLogic.DTOs.DTOsVehicle;
 using BusinessLogic.DTOs.DTOsWarehouse;
 using BusinessLogic.DTOs.DTOsZone;
 using BusinessLogic.SubSystem;
-using Microsoft.AspNetCore.Http;
 
 namespace BusinessLogic
 {
@@ -39,6 +41,8 @@ namespace BusinessLogic
         private readonly BrandSubSystem Brand;
         private readonly DiscountsSubSystem Discounts;
         private readonly OrderRequestSubSystem OrderRequests;
+        private readonly ReturnRequestSubSystem ReturnRequest;
+        private readonly OrderSubSystem Orders;
 
         public Facade(
             AuthSubSystem auth,
@@ -54,7 +58,9 @@ namespace BusinessLogic
             VehicleSubSystem vehicles,
             BrandSubSystem brand,
             DiscountsSubSystem discounts,
-            OrderRequestSubSystem orderRequests)
+            OrderRequestSubSystem orderRequests,
+            ReturnRequestSubSystem returnRequest,
+            OrderSubSystem orderSubSystem)
         {
             Auth = auth;
             Categories = categories;
@@ -70,6 +76,8 @@ namespace BusinessLogic
             Brand = brand;
             Discounts = discounts;
             OrderRequests = orderRequests;
+            ReturnRequest = returnRequest;
+            Orders = orderSubSystem;
         }
 
         // --- Auth ---
@@ -189,7 +197,19 @@ namespace BusinessLogic
         public async Task<OrderRequestResponse?> UpdateOrderRequestAsync(OrderRequestUpdateRequest request) => await OrderRequests.UpdateOrderRequestAsync(request);
         public async Task DeleteOrderRequestAsync(DeleteRequest request) => await OrderRequests.DeleteOrderRequestAsync(request);
         public async Task<OrderRequestResponse?> GetOrderRequestByIdAsync(int id) => await OrderRequests.GetOrderRequestByIdAsync(id);
-        public async Task<List<OrderRequestResponse?>> GetAllOrderRequestsAsync(QueryOptions query) => await OrderRequests.GetAllOrderRequestsAsync(query);
+        public async Task<List<OrderRequestResponse>?> GetAllOrderRequestsAsync(QueryOptions query) => await OrderRequests.GetAllOrderRequestsAsync(query);
         public async Task<OrderRequestResponse?> ChangeStatusOrderRequestAsync(int id, OrderRequestChangeStatusRequest request) => await OrderRequests.ChangeStatusOrderRequestAsync(id, request);
+
+
+        // --- ReturnRequests ---
+        public async Task<ReturnRequestResponse?> AddReturnRequestAsync(ReturnRequestAddRequest request) => await ReturnRequest.AddReturnRequestAsync(request);
+        public async Task<ReturnRequestResponse?> UpdateReturnRequestAsync(ReturnRequestUpdateRequest request) => await ReturnRequest.UpdateReturnRequestAsync(request);
+        public async Task DeleteReturnRequestAsync(DeleteRequest request) => await ReturnRequest.DeleteReturnRequestAsync(request);
+        public async Task<ReturnRequestResponse?> GetReturnRequestByIdAsync(int id) => await ReturnRequest.GetReturnRequestByIdAsync(id);
+        public async Task<List<ReturnRequestResponse>?> GetAllReturnRequestsAsync(QueryOptions query) => await ReturnRequest.GetAllReturnRequestsAsync(query);
+
+        // --- Orders ---
+        public async Task<OrderResponse?> ChangeStatusOrderAsync(int id, DocumentClientChangeStatusRequest request) => await Orders.ChangeStatusOrderAsync(id, request);
+
     }
 }
