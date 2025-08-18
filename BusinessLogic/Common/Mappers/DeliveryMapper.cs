@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsDelivery;
+using BusinessLogic.DTOs.DTOsReturnRequest;
 
 namespace BusinessLogic.Common.Mappers
 {
@@ -17,6 +18,15 @@ namespace BusinessLogic.Common.Mappers
             delivery.AuditInfo?.SetCreated(request.getUserId(), request.Location);
 
             return delivery;
+        }
+        public static Delivery.UpdatableData ToUpdatableData(DeliveryUpdateRequest request, User user, Order order)
+        {
+            return new ReturnRequest.UpdatableData
+            {
+                User = user,
+                UserId = request.getUserId(),
+                Location = request.Location
+            };
         }
         public static DeliveryResponse ToResponse(Delivery delivery)
         {

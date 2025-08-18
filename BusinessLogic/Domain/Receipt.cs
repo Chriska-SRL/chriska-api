@@ -9,17 +9,17 @@ namespace BusinessLogic.Domain
         public decimal Amount { get; set; }
         public string PaymentMethod { get; set; }
         public string Notes { get; set; }
-        public Client Client { get; set; }
+        public Delivery Delivery { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Receipt(int id,DateTime date, decimal amount, string paymentMethod, string notes, Client client,AuditInfo auditInfo)
+        public Receipt(int id,DateTime date, decimal amount, string paymentMethod, string notes, Delivery delivery, AuditInfo auditInfo)
         {
             Id = id;
             Date = date;
             Amount = amount;
             PaymentMethod = paymentMethod;
             Notes = notes;
-            Client = client;
+            Delivery = delivery;
             AuditInfo = auditInfo ?? new AuditInfo();
             Validate();
         }
@@ -47,7 +47,7 @@ namespace BusinessLogic.Domain
             Amount = updatableData.Amount;
             PaymentMethod = updatableData.PaymentMethod;
             Notes = updatableData.Notes;
-            Client = updatableData.Client;
+            Delivery = updatableData.Delivery;
             AuditInfo = updatableData.AuditInfo ?? new AuditInfo();
             Validate();
         }
@@ -63,7 +63,7 @@ namespace BusinessLogic.Domain
             public decimal Amount { get; set; }
             public string PaymentMethod { get; set; }
             public string Notes { get; set; }
-            public Client Client{ get; set; }
+            public Delivery Delivery { get; set; }
             public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
     }

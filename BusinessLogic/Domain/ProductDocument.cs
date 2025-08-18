@@ -52,6 +52,8 @@ namespace BusinessLogic.Domain
             public string? Observations { get; set; }
             public User? User { get; set; }
             public List<ProductItem>? ProductItems { get; set; }
+
+
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Common;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsCategory;
@@ -208,14 +209,19 @@ namespace BusinessLogic
         public async Task DeleteReturnRequestAsync(DeleteRequest request) => await ReturnRequest.DeleteReturnRequestAsync(request);
         public async Task<ReturnRequestResponse?> GetReturnRequestByIdAsync(int id) => await ReturnRequest.GetReturnRequestByIdAsync(id);
         public async Task<List<ReturnRequestResponse>?> GetAllReturnRequestsAsync(QueryOptions query) => await ReturnRequest.GetAllReturnRequestsAsync(query);
+        public async Task<ReturnRequestResponse?> ChangeStatusReturnRequestAsync(int id, DocumentClientChangeStatusRequest request) => await ReturnRequest.ChangeStatusReturnRequestAsync(id, request);
 
        
+
         // --- Orders ---
         public async Task<OrderResponse?> UpdateOrderAsync(OrderUpdateRequest request) => await Orders.UpdateOrderAsync(request);
         public async Task<OrderResponse?> GetOrderByIdAsync(int id) => await Orders.GetOrderByIdAsync(id);
         public async Task<List<OrderResponse?>> GetAllOrdersAsync(QueryOptions query) => await Orders.GetAllOrdersAsync(query);
         public async Task<OrderResponse?> ChangeStatusOrderAsync(int id, DocumentClientChangeStatusRequest request) => await Orders.ChangeStatusOrderAsync(id, request);
 
+        
+
+        
        
     }
 }

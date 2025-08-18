@@ -1,8 +1,7 @@
-﻿using BusinessLogic.DTOs.DTOsAudit;
-
+﻿
 namespace BusinessLogic.DTOs.DTOsProductItem
 {
-    public class ProductItemRequest 
+    public class ProductItemRequest
     { 
         public int Quantity { get; set; }
         public int ProductId { get; set; }

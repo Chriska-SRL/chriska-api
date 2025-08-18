@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Domain;
+using BusinessLogic.DTOs.DTOsOrderRequest;
 using BusinessLogic.DTOs.DTOsReturnRequest;
 
 namespace BusinessLogic.Common.Mappers
@@ -8,13 +9,23 @@ namespace BusinessLogic.Common.Mappers
         public static ReturnRequest ToDomain(ReturnRequestAddRequest request,Delivery delivery, User user)
         {
             ReturnRequest returnRequest = new ReturnRequest(
-                observation: request.Observation,
                 user: user,
                 delivery: delivery
             );
 
             returnRequest.AuditInfo?.SetCreated(request.getUserId(), request.Location);
             return returnRequest;
+        }
+        public static ReturnRequest.UpdatableData ToUpdatableData(ReturnRequestUpdateRequest request, User user, List<ProductItem> productItems)
+        {
+            return new ReturnRequest.UpdatableData
+            {
+                Observations = request.Observations,
+                User = user,
+                ProductItems = productItems,
+                UserId = request.getUserId(),
+                Location = request.Location
+            };
         }
         public static ReturnRequestResponse ToResponse(ReturnRequest request)
         {

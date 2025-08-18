@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Common;
 using BusinessLogic.Domain;
 using BusinessLogic.Repository;
+using Microsoft.Data.SqlClient;
 using Repository.Logging;
 using Repository.Mappers;
 
@@ -171,11 +172,105 @@ namespace Repository.EntityRepositories
             );
         }
 
+
         #endregion
 
-        public Task<Delivery> UpdateAsync(Delivery entity)
+        #region Update
+
+        public async Task<Delivery> UpdateAsync(Delivery delivery)
         {
-            throw new NotImplementedException();
+
+            int rows = await ExecuteWriteWithAuditAsync(
+                @"UPDATE Deliveries SET 
+                        Status = @Status,
+                        Description = @Description
+                  WHERE Id = @Id",
+                delivery,
+                AuditAction.Update,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", delivery.Id);
+                    cmd.Parameters.AddWithValue("@Status", delivery.Status.ToString());
+                    cmd.Parameters.AddWithValue("@Description", delivery.Crates);
+                }
+            );
+
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo actualizar el delivery con Id {delivery.Id}");
+
+            return delivery;
         }
+
+        #endregion
+
+        public async Task<Delivery?> ChangeStatusDeliveryAsync(Delivery delivery)
+        {
+            int rows = await ExecuteWriteWithAuditAsync(
+                @"UPDATE OrderRequests SET 
+                    Status = @Status,
+                    ConfirmedDate = @ConfirmedDate
+                WHERE Id = @Id",
+                delivery,
+                AuditAction.Update,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", delivery.Id);
+                    cmd.Parameters.AddWithValue("@Status", delivery.Status.ToString());
+
+                    var p = cmd.Parameters.Add("@ConfirmedDate", System.Data.SqlDbType.DateTime2);
+                    p.Value = (object?)delivery.ConfirmedDate ?? DBNull.Value; 
+                }
+            );
+
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo actualizar la solicitud con Id {delivery.Id}");
+
+            return delivery;
+        }
+
+        #region Private helpers (items)
+
+        public async Task AddDeliveryItems(int deliveryId, List<ProductItem> productItems)
+        {
+            if (productItems == null || !productItems.Any())
+                return;
+
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                var values = new List<string>();
+                var parameters = new List<SqlParameter>();
+                int i = 0;
+
+                foreach (var item in productItems)
+                {
+                    values.Add($"(@OrderId, @Quantity{i}, @UnitPrice{i}, @Discount{i}, @ProductId{i}, @Weight{i})");
+
+                    parameters.Add(new SqlParameter($"@Quantity{i}", item.Quantity));
+                    parameters.Add(new SqlParameter($"@UnitPrice{i}", item.UnitPrice));
+                    parameters.Add(new SqlParameter($"@Discount{i}", item.Discount));
+                    parameters.Add(new SqlParameter($"@ProductId{i}", item.Product.Id));
+                    parameters.Add(new SqlParameter($"@Weight{i}", (object?)item.Weight ?? DBNull.Value));
+                    i++;
+                }
+
+                string sql = $@"INSERT INTO DeliveryItems (DeliveryId, Quantity, UnitPrice, Discount, ProductId, Weight)
+                                VALUES {string.Join(", ", values)}";
+
+                using var cmd = new SqlCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@DeliveryId", deliveryId);
+                foreach (var p in parameters) cmd.Parameters.Add(p);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al agregar los delivery items", ex);
+            }
+        }
+        #endregion
+    
     }
 }
