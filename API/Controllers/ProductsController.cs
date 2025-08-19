@@ -61,6 +61,14 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("withdiscounts/{id}")]
+        [Authorize(Policy = nameof(Permission.VIEW_PRODUCTS))]
+        public async Task<ActionResult<ProductResponse>> GetProductByIdWithDiscountsAsync(int id)
+        {
+            var result = await _facade.GetProductByIdWithDiscountsAsync(id);
+            return Ok(result);
+        }
+
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_PRODUCTS))]
         public async Task<ActionResult<List<ProductResponse>>> GetAllProductsAsync([FromQuery] QueryOptions options)

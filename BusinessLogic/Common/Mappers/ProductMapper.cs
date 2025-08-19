@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Domain;
+using BusinessLogic.DTOs.DTOsDiscount;
 using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsSupplier;
 
@@ -71,7 +72,8 @@ namespace BusinessLogic.Common.Mappers
                 Brand = BrandMapper.ToResponse(product.Brand),
                 Suppliers = product.Suppliers?.Select(SupplierMapper.ToResponse).OfType<SupplierResponse>().ToList(),
                 Shelve = ShelveMapper.ToResponse(product.Shelve),
-                AuditInfo = AuditMapper.ToResponse(product.AuditInfo)
+                AuditInfo = AuditMapper.ToResponse(product.AuditInfo),
+                Discounts = product.Discounts?.Select(DiscountMapper.ToResponse).OfType<DiscountResponse>().ToList()
             };
         }
     }

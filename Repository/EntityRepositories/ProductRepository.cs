@@ -319,10 +319,11 @@ namespace Repository.EntityRepositories
                 baseQuery: @"
                             SELECT
                     d.*,
-                    db.Id  AS DBrandId, db.Name AS DBrandName, db.Description AS DBrandDescription,
-                    dsc.Id AS DSubCategoryId, dsc.Name AS DSubCategoryName, dsc.Description AS DSubCategoryDescription,
-                    dcat.Id AS DCategoryId, dcat.Name AS DCategoryName, dcat.Description AS DCategoryDescription,
-                    dz.Id  AS DZoneId, dz.Name AS DZoneName, dz.Description AS DZoneDescription,
+                    db.Id   AS DBrandId,       db.Name AS DBrandName,       db.Description AS DBrandDescription,
+                    dsc.Id  AS DSubCategoryId, dsc.Name AS DSubCategoryName, dsc.Description AS DSubCategoryDescription,
+                    dcat.Id AS DCategoryId,    dcat.Name AS DCategoryName,  dcat.Description AS DCategoryDescription,
+                    dz.Id   AS DZoneId,        dz.Name AS DZoneName,        dz.Description AS DZoneDescription,
+                    dz.ImageUrl AS DZoneImageUrl, dz.DeliveryDays AS DZoneDeliveryDays, dz.RequestDays AS DZoneRequestDays,
 
                     cl.Id  AS ClientId, cl.Name AS ClientName, cl.RUT AS ClientRUT, cl.RazonSocial AS ClientRazonSocial,
                     cl.Address AS ClientAddress, cl.MapsAddress AS ClientMapsAddress, cl.Schedule AS ClientSchedule,
