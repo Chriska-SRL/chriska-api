@@ -1,7 +1,9 @@
 ﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Enums;
 using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 using Repository.Logging;
 using Repository.Mappers;
 
@@ -308,6 +310,70 @@ namespace Repository.EntityRepositories
             }
         }
 
+        public async Task<Product?> GetByIdWithDiscountsAsync(int productId)
+        {
+            var product = await GetByFieldAsync("Id", productId.ToString());
+            if (product is null) return null;
 
+            var discounts = await ExecuteReadAsync(
+                baseQuery: @"
+                            SELECT
+                    d.*,
+                    db.Id  AS DBrandId, db.Name AS DBrandName, db.Description AS DBrandDescription,
+                    dsc.Id AS DSubCategoryId, dsc.Name AS DSubCategoryName, dsc.Description AS DSubCategoryDescription,
+                    dcat.Id AS DCategoryId, dcat.Name AS DCategoryName, dcat.Description AS DCategoryDescription,
+                    dz.Id  AS DZoneId, dz.Name AS DZoneName, dz.Description AS DZoneDescription,
+
+                    cl.Id  AS ClientId, cl.Name AS ClientName, cl.RUT AS ClientRUT, cl.RazonSocial AS ClientRazonSocial,
+                    cl.Address AS ClientAddress, cl.MapsAddress AS ClientMapsAddress, cl.Schedule AS ClientSchedule,
+                    cl.Phone AS ClientPhone, cl.ContactName AS ClientContactName, cl.Email AS ClientEmail,
+                    cl.Observations AS ClientObservations, cl.LoanedCrates AS ClientLoanedCrates, cl.Qualification AS ClientQualification
+                FROM Discounts d
+                LEFT JOIN Brands        db   ON d.BrandId       = db.Id
+                LEFT JOIN SubCategories dsc  ON d.SubCategoryId = dsc.Id
+                LEFT JOIN Categories    dcat ON dsc.CategoryId  = dcat.Id
+                LEFT JOIN Zones         dz   ON d.ZoneId        = dz.Id
+                LEFT JOIN DiscountClients dcl ON d.Id = dcl.DiscountId
+                LEFT JOIN Clients         cl  ON dcl.ClientId = cl.Id
+                WHERE
+                      (EXISTS (SELECT 1 FROM DiscountProducts dp WHERE dp.DiscountId = d.Id AND dp.ProductId = @ProductId)  -- por producto
+                   OR d.BrandId = @BrandId                                                                                  -- por marca
+                   OR d.SubCategoryId = @SubCategoryId                                                                      -- por subcat
+                   OR (d.BrandId IS NULL AND d.SubCategoryId IS NULL
+                       AND NOT EXISTS (SELECT 1 FROM DiscountProducts dp2 WHERE dp2.DiscountId = d.Id)))                  -- global
+                AND d.Status = @Active AND d.ExpirationDate >= SYSUTCDATETIME()
+                ",
+                               map: r =>
+                               {
+                                   var dict = new Dictionary<int, Discount>();
+                                   while (r.Read())
+                                   {
+                                       var id = (int)r["Id"]; 
+                                       if (!dict.TryGetValue(id, out var d))
+                                       {
+                                           d = DiscountMapper.FromReader(r);
+                                           dict[id] = d;
+                                       }
+                                       if (r["ClientId"] != DBNull.Value)
+                                       {
+                                           var client = ClientMapper.FromReader(r, "Client"); 
+                                           if (!d.Clients.Any(c => c.Id == client.Id)) d.Clients.Add(client);
+                                       }
+                                   }
+                                   return dict.Values.ToList();
+                               },
+                    options: new QueryOptions(),
+                    tableAlias: "d",
+                    configureCommand: cmd =>
+                    {
+                        cmd.Parameters.AddWithValue("@ProductId", productId);
+                        cmd.Parameters.AddWithValue("@BrandId", (object?)product.Brand?.Id ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@SubCategoryId", (object?)product.SubCategory?.Id ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@Active", DiscountStatus.Available.ToString()); 
+                    });
+
+            product.Discounts = discounts;
+            return product;
+        }
     }
 }

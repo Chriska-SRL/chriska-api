@@ -41,7 +41,7 @@ namespace BusinessLogic.Domain
 
         internal void Cancel()
         {
-            Status = Status.Canceled;
+            Status = Status.Cancelled;
         }
     }
 }

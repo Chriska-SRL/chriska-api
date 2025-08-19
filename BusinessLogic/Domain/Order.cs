@@ -9,14 +9,10 @@ namespace BusinessLogic.Domain
         public OrderRequest? OrderRequest { get; set; }
         public Delivery? Delivery { get; set; }
         public Order(
-           string observations,
-           User user,
-           List<ProductItem> productItems,
-           int crates,
            OrderRequest orderRequest
-       ) : base(orderRequest.Client, observations, user, productItems)
+       ) : base(orderRequest.Client, "", orderRequest.User, orderRequest.ProductItems)
         {
-            Crates = crates;
+            Crates = 0;
             OrderRequest = orderRequest;
         }
         public Order(
@@ -54,7 +50,7 @@ namespace BusinessLogic.Domain
 
         internal void Cancel()
         {
-            Status = Status.Canceled;
+            Status = Status.Cancelled;
         }
     }
 }

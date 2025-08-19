@@ -9,21 +9,20 @@ namespace Repository.EntityRepositories
 {
     public class OrderRepository : Repository<Order, Order.UpdatableData>, IOrderRepository
     {
-        public OrderRepository(string connectionString, AuditLogger auditLogger) : base(connectionString, auditLogger)
-        {
-        }
+        public OrderRepository(string connectionString, AuditLogger auditLogger) : base(connectionString, auditLogger) { }
 
         #region Add
 
         public async Task<Order> AddAsync(Order order)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-                "INSERT INTO Orders (Date, Observations, Status, ClientId, Crates, OrderRequestId) " +
-                "OUTPUT INSERTED.Id VALUES (@Date, @Observations, @Status, @ClientId, @Crates, @OrderRequestId)",
+                "INSERT INTO Orders (Id, Date, Observations, Status, ClientId, Crates, OrderRequestId) " +
+                "OUTPUT INSERTED.Id VALUES (@Id, @Date, @Observations, @Status, @ClientId, @Crates, @OrderRequestId)",
                 order,
                 AuditAction.Insert,
                 configureCommand: cmd =>
                 {
+                    cmd.Parameters.AddWithValue("@Id", order.Id);
                     cmd.Parameters.AddWithValue("@Date", order.Date);
                     cmd.Parameters.AddWithValue("@Observations", (object?)order.Observations ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Status", order.Status.ToString());
@@ -43,16 +42,55 @@ namespace Repository.EntityRepositories
 
         #endregion
 
+        #region Update
 
-        public Task<Order> DeleteAsync(Order entity)
+        public async Task<Order> UpdateAsync(Order order)
         {
-            throw new NotImplementedException();
+            await DeleteProductItems(order.Id);
+            await AddProductItems(order.Id, order.ProductItems);
+
+            int rows = await ExecuteWriteWithAuditAsync(
+                @"UPDATE Orders SET 
+                        Observations = @Observations,
+                        Crates = @Crates
+                  WHERE Id = @Id",
+                order,
+                AuditAction.Update,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", order.Id);
+                    cmd.Parameters.AddWithValue("@Observations", (object?)order.Observations ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Crates", order.Crates);
+                }
+            );
+
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo actualizar la orden con Id {order.Id}");
+
+            return order;
         }
 
-        public Task<List<Order>> GetAllAsync(QueryOptions options)
+        #endregion
+
+        #region Delete
+
+        public async Task<Order> DeleteAsync(Order entity)
         {
-            throw new NotImplementedException();
+            int rows = await ExecuteWriteWithAuditAsync(
+                "UPDATE Orders SET IsDeleted = 1 WHERE Id = @Id",
+                entity,
+                AuditAction.Delete,
+                configureCommand: cmd => cmd.Parameters.AddWithValue("@Id", entity.Id)
+            );
+
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo eliminar la orden con Id {entity.Id}");
+
+            return entity;
         }
+
+        #endregion
+
         #region Query (base)
 
         private readonly string baseQuery = @"
@@ -147,6 +185,41 @@ namespace Repository.EntityRepositories
         ";
 
         #endregion
+
+        #region GetAll
+
+        public async Task<List<Order>> GetAllAsync(QueryOptions options)
+        {
+            var allowedFilters = new[] { "Date", "Observations", "Status", "ConfirmedDate", "ClientId", "OrderRequestId", "Crates" };
+            var dict = new Dictionary<int, Order>();
+
+            return await ExecuteReadAsync(
+                baseQuery: baseQuery,
+                map: reader =>
+                {
+                    while (reader.Read())
+                    {
+                        int id = reader.GetInt32(reader.GetOrdinal("Id"));
+
+                        if (!dict.TryGetValue(id, out var order))
+                        {
+                            order = OrderMapper.FromReader(reader);
+                            dict.Add(id, order);
+                        }
+
+                        var item = ProductItemMapper.FromReader(reader, "OP_");
+                        if (item is not null) order!.ProductItems.Add(item);
+                    }
+                    return dict.Values.ToList();
+                },
+                options: options,
+                tableAlias: "o",
+                allowedFilterColumns: allowedFilters
+            );
+        }
+
+        #endregion
+
         #region GetById
 
         public async Task<Order?> GetByIdAsync(int id)
@@ -181,10 +254,6 @@ namespace Repository.EntityRepositories
 
         #endregion
 
-        public Task<Order> UpdateAsync(Order entity)
-        {
-            throw new NotImplementedException();
-        }
         #region Private helpers (items)
 
         private async Task AddProductItems(int orderId, List<ProductItem> productItems)
@@ -225,6 +294,26 @@ namespace Repository.EntityRepositories
             catch (Exception ex)
             {
                 throw new Exception("Error al agregar los product items de la orden", ex);
+            }
+        }
+
+        private async Task DeleteProductItems(int orderId)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                const string sql = @"DELETE FROM Orders_Products WHERE OrderId = @OrderId";
+
+                using var cmd = new SqlCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@OrderId", orderId);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar los product items de la orden", ex);
             }
         }
 

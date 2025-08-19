@@ -2,8 +2,8 @@
 
 namespace BusinessLogic.Repository
 {
-    public interface IOrderRepository:IRepository<Order>
+    public interface IOrderRepository : IRepository<Order>
     {
-        public Task<Order> ChangeStatusOrder(Order order);
+        Task<Order?> ChangeStatusOrder(Order order);
     }
 }
