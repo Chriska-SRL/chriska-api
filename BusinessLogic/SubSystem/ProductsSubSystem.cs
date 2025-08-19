@@ -106,6 +106,14 @@ namespace BusinessLogic.SubSystem
             return ProductMapper.ToResponse(product);
         }
 
+        public async Task<ProductResponse> GetProductByIdWithDiscountsAsync(int id)
+        {
+            var product = await _productRepository.GetByIdWithDiscountsAsync(id)
+                ?? throw new ArgumentException("No se encontró el producto seleccionado.");
+
+            return ProductMapper.ToResponse(product);
+        }
+
         public async Task<List<ProductResponse>> GetAllProductsAsync(QueryOptions options)
         {
             var products = await _productRepository.GetAllAsync(options);

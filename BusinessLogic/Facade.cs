@@ -126,6 +126,7 @@ namespace BusinessLogic
         public async Task<List<ProductResponse>> GetAllProductsAsync(QueryOptions options) => await Products.GetAllProductsAsync(options);
         public async Task<string> UploadProductImageAsync(AddImageRequest request) => await Products.UploadProductImageAsync(request);
         public async Task DeleteProductImageAsync(int id) => await Products.DeleteProductImageAsync(id);
+        public async Task<ProductResponse> GetProductByIdWithDiscountsAsync(int id) => await Products.GetProductByIdWithDiscountsAsync(id);
 
         // --- Stock Movements ---
         public async Task<StockMovementResponse> AddStockMovementAsync(AddStockMovementRequest request) => await Stock.AddStockMovementAsync(request);
@@ -214,5 +215,6 @@ namespace BusinessLogic
         public async Task<List<OrderResponse?>> GetAllOrdersAsync(QueryOptions query) => await Orders.GetAllOrdersAsync(query);
         public async Task<OrderResponse?> ChangeStatusOrderAsync(int id, DocumentClientChangeStatusRequest request) => await Orders.ChangeStatusOrderAsync(id, request);
 
+        
     }
 }

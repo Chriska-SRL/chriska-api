@@ -33,7 +33,7 @@ namespace Repository.Mappers
                 isEnabled: S(Col("IsEnabled")) == "T",
                 needsPasswordChange: S(Col("NeedsPasswordChange")) == "T",
                 role: role,
-                auditInfo: AuditInfoMapper.FromReader(r)
+                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null
             );
         }
 

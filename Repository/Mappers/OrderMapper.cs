@@ -32,7 +32,7 @@ namespace Repository.Mappers
                 S(Col("Observations")),
                 UserMapper.FromReader(r, "User"),
                 new List<ProductItem>(),
-                AuditInfoMapper.FromReader(r),
+                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null,
                 confirmedDate,
                 r.IsDBNull(r.GetOrdinal(Col("Crates"))) ? 0 : r.GetInt32(r.GetOrdinal(Col("Crates"))),
                 null,
