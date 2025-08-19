@@ -67,5 +67,14 @@ namespace API.Controllers
             var result = await _facade.GetAllDiscountsAsync(options);
             return Ok(result); // 200 OK
         }
+
+        [HttpGet("best")]
+        [Authorize(Policy = nameof(Permission.VIEW_DISCOUNTS))]
+        public async Task<ActionResult<DiscountResponse?>> GetBestDiscountAsync([FromQuery] int productId, [FromQuery] int clientId)
+        {
+            var result = await _facade.GetBestDiscountAsync(productId, clientId);
+            if (result == null) return NotFound("No se encontró un descuento aplicable.");
+            return Ok(result); // 200 OK
+        }
     }
 }

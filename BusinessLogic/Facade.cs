@@ -191,6 +191,7 @@ namespace BusinessLogic
         public async Task DeleteDiscountAsync(DeleteRequest request) => await Discounts.DeleteDiscountAsync(request);
         public async Task<DiscountResponse?> GetDiscountByIdAsync(int id) => await Discounts.GetDiscountByIdAsync(id);
         public async Task<List<DiscountResponse>?> GetAllDiscountsAsync(QueryOptions query) => await Discounts.GetAllDiscountsAsync(query);
+        public async Task<DiscountResponse?> GetBestDiscountAsync(int productId, int clientId) => await Discounts.GetBestDiscountAsync(productId, clientId);
 
         // --- OrderRequests ---
         public async Task<OrderRequestResponse?> AddOrderRequestAsync(OrderRequestAddRequest request) => await OrderRequests.AddOrderRequestAsync(request);
@@ -215,6 +216,6 @@ namespace BusinessLogic
         public async Task<List<OrderResponse?>> GetAllOrdersAsync(QueryOptions query) => await Orders.GetAllOrdersAsync(query);
         public async Task<OrderResponse?> ChangeStatusOrderAsync(int id, DocumentClientChangeStatusRequest request) => await Orders.ChangeStatusOrderAsync(id, request);
 
-        
+       
     }
 }
