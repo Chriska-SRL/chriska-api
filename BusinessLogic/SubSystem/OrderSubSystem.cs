@@ -14,13 +14,15 @@ namespace BusinessLogic.SubSystem
         private readonly IClientRepository _clientRepository;
         private readonly IProductRepository _productRepository;
         private readonly IUserRepository _userRepository;
+        private readonly DeliveriesSubSystem _deliveriesSubSystem;
 
-        public OrderSubSystem(IOrderRepository orderRepository, IClientRepository clientRepository, IProductRepository productRepository, IUserRepository userRepository)
+        public OrderSubSystem(IOrderRepository orderRepository, IClientRepository clientRepository, IProductRepository productRepository, IUserRepository userRepository, DeliveriesSubSystem deliveriesSubSystem)
         {
             _orderRepository = orderRepository;
             _clientRepository = clientRepository;
             _productRepository = productRepository;
             _userRepository = userRepository;
+            _deliveriesSubSystem = deliveriesSubSystem;
         }
 
         public async Task<Order?> AddOrderAsync(OrderRequest orderRequest)
@@ -91,12 +93,16 @@ namespace BusinessLogic.SubSystem
             if(order.Status != Status.Pending)
                 throw new ArgumentException("La orden no se puede cambiar de estado porque no está en estado pendiente.");
 
-            order.AuditInfo.SetUpdated(request.getUserId(), request.Location);
+            int userId = request.getUserId() ?? 0;
+            User? user = await _userRepository.GetByIdAsync(userId)
+                ?? throw new ArgumentException("El usuario que realiza el cambio de estado no existe.");
+            order.AuditInfo.SetUpdated(userId, request.Location);
+            order.User = user;
 
             if (request.Status == Status.Confirmed)
             {
                 order.Confirm();
-                //TODO: Crear Delivery
+                 await _deliveriesSubSystem.AddDeliveryAsync(order);
             }
             else if (request.Status == Status.Cancelled)
             {

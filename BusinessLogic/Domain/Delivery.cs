@@ -7,13 +7,11 @@ namespace BusinessLogic.Domain
         public int Crates { get; set; }
         public Order? Order { get; set; }
         public Delivery(
-                  string observation,
-                  User user,
-                  int crates,
                   Order order
-              ) : base(order.Client, observation, user, order.ProductItems)
+              ) : base(order.Client, "", order.User, order.ProductItems)
         {
-            Crates = crates;
+            Id = order.Id;
+            Crates = 0;
             Order = order;
         }
         public Delivery(

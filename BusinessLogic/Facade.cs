@@ -5,6 +5,7 @@ using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsCost;
+using BusinessLogic.DTOs.DTOsDelivery;
 using BusinessLogic.DTOs.DTOsDiscount;
 using BusinessLogic.DTOs.DTOsDocumentClient;
 using BusinessLogic.DTOs.DTOsImage;
@@ -43,6 +44,7 @@ namespace BusinessLogic
         private readonly OrderRequestSubSystem OrderRequests;
         private readonly ReturnRequestSubSystem ReturnRequest;
         private readonly OrderSubSystem Orders;
+        private readonly DeliveriesSubSystem Deliveries;
 
         public Facade(
             AuthSubSystem auth,
@@ -60,7 +62,8 @@ namespace BusinessLogic
             DiscountsSubSystem discounts,
             OrderSubSystem orders,
             OrderRequestSubSystem orderRequests,
-            ReturnRequestSubSystem returnRequest)
+            ReturnRequestSubSystem returnRequest,
+            DeliveriesSubSystem deliveries)
         {
             Auth = auth;
             Categories = categories;
@@ -78,6 +81,7 @@ namespace BusinessLogic
             OrderRequests = orderRequests;
             ReturnRequest = returnRequest;
             Orders = orders;
+            Deliveries = deliveries;
         }
 
         // --- Auth ---
@@ -219,9 +223,14 @@ namespace BusinessLogic
         public async Task<List<OrderResponse?>> GetAllOrdersAsync(QueryOptions query) => await Orders.GetAllOrdersAsync(query);
         public async Task<OrderResponse?> ChangeStatusOrderAsync(int id, DocumentClientChangeStatusRequest request) => await Orders.ChangeStatusOrderAsync(id, request);
 
-        
+        //Deliveries
+        public async Task<DeliveryResponse?> UpdateDeliveryAsync(DeliveryUpdateRequest request) => await Deliveries.UpdateDeliveryAsync(request);
 
-        
-       
+        public async Task<DeliveryResponse?> GetDeliveryByIdAsync(int id) => await Deliveries.GetDeliveryByIdAsync(id);
+
+        public async Task<List<DeliveryResponse?>> GetAllDeliveriesAsync(QueryOptions query) => await Deliveries.GetAllDeliveriesAsync(query);
+
+        public async Task<DeliveryResponse?> ChangeStatusDeliveryAsync(int id, DocumentClientChangeStatusRequest request)  => await Deliveries.ChangeStatusDeliveryAsync(id, request);
+
     }
 }

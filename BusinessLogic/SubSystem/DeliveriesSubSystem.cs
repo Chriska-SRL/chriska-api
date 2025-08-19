@@ -5,6 +5,7 @@ using BusinessLogic.DTOs.DTOsDelivery;
 using BusinessLogic.DTOs.DTOsDocumentClient;
 using BusinessLogic.DTOs;
 using BusinessLogic.Repository;
+using BusinessLogic.Domain;
 
 namespace BusinessLogic.SubSystem
 {
@@ -21,19 +22,13 @@ namespace BusinessLogic.SubSystem
             _orderRepository = orderRepository;
         }
 
-        // DELIVERY
-        public async Task<DeliveryResponse> AddDeliveryAsync(DeliveryAddRequest request)
+        public async Task<Delivery> AddDeliveryAsync(Order order)
         {
-            var user = await _userRepository.GetByIdAsync(request.UserId)
-                ?? throw new ArgumentException("No se encontró el usuario asociado.");
-
-            var order = await _orderRepository.GetByIdAsync(request.OrderId)
-                ?? throw new ArgumentException("No se encontró la orden asociada.");
-
-            var delivery = DeliveryMapper.ToDomain(request, user, order);
-
-            var added = await _deliveryRepository.AddAsync(delivery);
-            return DeliveryMapper.ToResponse(added);
+            order.Validate();
+            Delivery delivery = new Delivery(order);
+            delivery.AuditInfo.SetCreated(order.AuditInfo.UpdatedBy, null);
+            await _deliveryRepository.AddAsync(delivery);
+            return delivery;
         }
 
         public async Task<DeliveryResponse> UpdateDeliveryAsync(DeliveryUpdateRequest request)
@@ -44,13 +39,8 @@ namespace BusinessLogic.SubSystem
             if (existing.Status != Status.Pending)
                 throw new ArgumentException("La entrega no se puede modificar porque no está en estado pendiente.");
 
-            var user = await _userRepository.GetByIdAsync(request.UserId)
-                ?? throw new ArgumentException("El usuario que realiza la modificación no existe.");
 
-            var order = await _orderRepository.GetByIdAsync(request.OrderId)
-                ?? throw new ArgumentException("La orden asociada a la entrega no existe.");
-
-            var updatedData = DeliveryMapper.ToUpdatableData(request, user, order);
+            var updatedData = DeliveryMapper.ToUpdatableData(request);
             existing.Update(updatedData);
 
             var updated = await _deliveryRepository.UpdateAsync(existing);
@@ -100,7 +90,7 @@ namespace BusinessLogic.SubSystem
             if (request.Status == Status.Confirmed)
             {
                 delivery.Confirm();
-                //new receipt
+                //TODO: Implementar creacion de Receipt
 
             }
             else if (request.Status == Status.Cancelled)
