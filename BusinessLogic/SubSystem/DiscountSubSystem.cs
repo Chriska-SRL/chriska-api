@@ -163,5 +163,17 @@ namespace BusinessLogic.SubSystem
             var discounts = await _discountRepository.GetAllAsync(options);
             return discounts.Select(DiscountMapper.ToResponse).OfType<DiscountResponse>().ToList();
         }
+        public async Task<DiscountResponse?> GetBestDiscountAsync(int productId, int clientId)
+        {
+            var product = await _productRepository.GetByIdAsync(productId)
+                ?? throw new ArgumentException($"No se encontró el producto con ID {productId}.");
+
+            var client = await _clientRepository.GetByIdAsync(clientId)
+                ?? throw new ArgumentException($"No se encontró el cliente con ID {clientId}.");
+
+            var bestDiscount = await _discountRepository.GetBestByProductAndClientAsync(product, client);
+
+            return bestDiscount != null ? DiscountMapper.ToResponse(bestDiscount) : null;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Enums;
 using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using Microsoft.Data.SqlClient;
@@ -180,6 +181,52 @@ namespace Repository.EntityRepositories
                 tableAlias: "d",
                 configureCommand: cmd => cmd.Parameters.AddWithValue("@Value", value)
             );
+        }
+        public async Task<Discount?> GetBestByProductAndClientAsync(Product product, Client client)
+        {
+            if (product == null) throw new ArgumentNullException(nameof(product));
+            if (client == null) throw new ArgumentNullException(nameof(client));
+
+            int? bestDiscountId = null;
+
+            using (var connection = new SqlConnection(_connectionString))
+            using (var command = new SqlCommand(@"
+        SELECT TOP 1 d.Id
+        FROM Discounts d
+        WHERE
+            ISNULL(d.IsDeleted, 0) = 0
+            AND d.Status = @Active
+            AND d.ExpirationDate >= SYSUTCDATETIME()
+            AND (
+                    EXISTS (SELECT 1 FROM DiscountProducts dp WHERE dp.DiscountId = d.Id AND dp.ProductId = @ProductId)
+                 OR (@BrandId IS NOT NULL AND d.BrandId = @BrandId)
+                 OR (@SubCategoryId IS NOT NULL AND d.SubCategoryId = @SubCategoryId)
+                 OR (d.BrandId IS NULL AND d.SubCategoryId IS NULL
+                     AND NOT EXISTS (SELECT 1 FROM DiscountProducts dp2 WHERE dp2.DiscountId = d.Id))
+            )
+            AND (
+                    EXISTS (SELECT 1 FROM DiscountClients dc WHERE dc.DiscountId = d.Id AND dc.ClientId = @ClientId)
+                 OR (@ClientZoneId IS NOT NULL AND d.ZoneId = @ClientZoneId)
+                 OR (d.ZoneId IS NULL AND NOT EXISTS (SELECT 1 FROM DiscountClients dc2 WHERE dc2.DiscountId = d.Id))
+            )
+        ORDER BY d.Percentage DESC, d.ExpirationDate ASC", connection))
+            {
+                command.Parameters.AddWithValue("@Active", DiscountStatus.Available.ToString());
+                command.Parameters.AddWithValue("@ProductId", product.Id);
+                command.Parameters.AddWithValue("@BrandId", (object?)product.Brand?.Id ?? DBNull.Value);
+                command.Parameters.AddWithValue("@SubCategoryId", (object?)product.SubCategory?.Id ?? DBNull.Value);
+                command.Parameters.AddWithValue("@ClientId", client.Id);
+                command.Parameters.AddWithValue("@ClientZoneId", (object?)client.Zone?.Id ?? DBNull.Value);
+
+                await connection.OpenAsync();
+                var result = await command.ExecuteScalarAsync();
+                if (result != null && result != DBNull.Value)
+                    bestDiscountId = Convert.ToInt32(result);
+            }
+
+            if (bestDiscountId is null) return null;
+
+            return await GetByIdAsync(bestDiscountId.Value);
         }
 
 
