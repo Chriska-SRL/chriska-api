@@ -28,6 +28,7 @@ namespace BusinessLogic.SubSystem
             orderRequest.Validate();
             Order order = new Order(orderRequest);
             order.AuditInfo.SetCreated(orderRequest.AuditInfo.UpdatedBy, null);
+            await _orderRepository.AddAsync(order);
             return order;
         }
 
@@ -55,7 +56,7 @@ namespace BusinessLogic.SubSystem
                 //TODO: ajustar esta logica
                 Discount? discount = product.GetBestDiscount(client);
                 decimal discountPercentage = discount?.Percentage ?? 0;
-                productItems.Add(new ProductItem(item.Quantity, item.Weight, product.Price, discountPercentage, product));
+                productItems.Add(new ProductItem(item.Quantity, item.Weight ?? 0, product.Price, discountPercentage, product));
             }
 
             Order.UpdatableData updatedData = OrderMapper.ToUpdatableData(request, user, productItems);

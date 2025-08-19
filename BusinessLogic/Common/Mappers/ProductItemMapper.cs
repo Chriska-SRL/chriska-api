@@ -8,16 +8,7 @@ namespace BusinessLogic.Common.Mappers
     {
         public static ProductItem ToDomain(ProductItemRequest request,Product product)
         {
-            ProductItem productItem = new ProductItem(
-                quantity: request.Quantity,
-                weight: request.Weight,
-                unitPrice: request.UnitPrice,
-                discount: request.Discount,
-                product:product
-            );
-
-            productItem.AuditInfo?.SetCreated(request.getUserId(), request.Location);
-            return productItem;
+           throw new NotImplementedException();
         }
 
         public static ProductItemResponse ToResponse(ProductItem request)

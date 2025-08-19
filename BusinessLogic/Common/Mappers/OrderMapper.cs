@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsOrderRequest;
+using BusinessLogic.DTOs.DTOsProductItem;
 
 namespace BusinessLogic.Common.Mappers
 {
@@ -20,7 +21,35 @@ namespace BusinessLogic.Common.Mappers
 
         public static OrderResponse? ToResponse(Order? order)
         {
-            throw new NotImplementedException("ToResponse method is not implemented yet.");
+            if (order == null)
+            {
+                return null;
+            }
+
+            OrderResponse response = new OrderResponse
+            {
+                Id = order.Id,
+                Date = order.Date,
+                ConfirmedDate = order.ConfirmedDate,
+                Observation = order.Observations ?? "",
+                Status = order.Status,
+                Client = ClientMapper.ToResponse(order.Client),
+                User = UserMapper.ToResponse(order.User),
+                ProductItems = order.ProductItems.Select(pi => new ProductItemResponse
+                {
+                    Product = ProductMapper.ToResponse(pi.Product),
+                    Quantity = pi.Quantity,
+                    Weight = pi.Weight,
+                    UnitPrice = pi.UnitPrice,
+                    Discount = pi.Discount
+                }).ToList(),
+                //Delivery = DeliveryMapper.ToResponse(order.Delivery),
+                Crates = order.Crates,
+                //OrderRequest = OrderRequestMapper.ToResponse(order.OrderRequest),
+                AuditInfo = AuditMapper.ToResponse(order.AuditInfo)
+            };
+
+            return response;
         }
     }
 }

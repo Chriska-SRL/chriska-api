@@ -8,6 +8,6 @@ namespace BusinessLogic.DTOs.DTOsOrder
         public int Id { get; set; }
         public string Observations { get; set; }
         public int Crates { get; set; }
-        public List<ProductItemRequest> ProductItems { get; set; } = new List<ProductItemRequest>();
+        public List<ProductItemRequestForOrder> ProductItems { get; set; } = new List<ProductItemRequestForOrder>();
     }
 }

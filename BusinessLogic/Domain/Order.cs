@@ -12,6 +12,7 @@ namespace BusinessLogic.Domain
            OrderRequest orderRequest
        ) : base(orderRequest.Client, "", orderRequest.User, orderRequest.ProductItems)
         {
+            Id = orderRequest.Id;
             Crates = 0;
             OrderRequest = orderRequest;
         }
@@ -35,12 +36,6 @@ namespace BusinessLogic.Domain
             Delivery = delivery;
         }
 
-
-
-        public override void Validate()
-        {
-            throw new NotImplementedException();
-        }
 
         internal void Confirm()
         {

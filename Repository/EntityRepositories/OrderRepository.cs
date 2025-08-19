@@ -278,7 +278,7 @@ namespace Repository.EntityRepositories
                     parameters.Add(new SqlParameter($"@UnitPrice{i}", productItem.UnitPrice));
                     parameters.Add(new SqlParameter($"@Discount{i}", productItem.Discount));
                     parameters.Add(new SqlParameter($"@ProductId{i}", productItem.Product.Id));
-                    parameters.Add(new SqlParameter($"@Weight{i}", productItem.Weight));
+                    parameters.Add(new SqlParameter($"@Weight{i}",(object?)productItem.Weight ?? DBNull.Value));
                     i++;
                 }
 

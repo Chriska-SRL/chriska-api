@@ -3,7 +3,7 @@
 namespace BusinessLogic.Domain
 
 {
-    public class ProductItem:IAuditable
+    public class ProductItem
     {
         public int Quantity { get; set; }
         public int? Weight { get; set; }
@@ -19,11 +19,6 @@ namespace BusinessLogic.Domain
             UnitPrice = unitPrice;
             Discount = discount;
             Product = product ?? throw new ArgumentNullException(nameof(product));
-        }
-
-        public void MarkAsDeleted(int? userId, Location? location)
-        {
-            throw new NotImplementedException();
         }
     }
 }

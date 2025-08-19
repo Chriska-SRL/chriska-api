@@ -42,7 +42,7 @@ namespace BusinessLogic.SubSystem
                 Discount? discount = product.GetBestDiscount(client);
                 decimal discountPercentage = discount?.Percentage ?? 0;
 
-                productItems.Add(new ProductItem(item.Quantity, item.Weight, product.Price, discountPercentage, product));
+                productItems.Add(new ProductItem(item.Quantity, 0, product.Price, discountPercentage, product));
             }
 
 
@@ -74,7 +74,7 @@ namespace BusinessLogic.SubSystem
 
                 Discount? discount = product.GetBestDiscount(client);
                 decimal discountPercentage = discount?.Percentage ?? 0;
-                productItems.Add(new ProductItem(item.Quantity, item.Weight, product.Price, discountPercentage, product));
+                productItems.Add(new ProductItem(item.Quantity, 0, product.Price, discountPercentage, product));
             }
 
             OrderRequest.UpdatableData updatedData = OrderRequestMapper.ToUpdatableData(request, user, productItems);
@@ -122,7 +122,7 @@ namespace BusinessLogic.SubSystem
                 ?? throw new ArgumentException($"No se encontró una solicitud de pedido con el ID {id}.");
 
             if (orderRequest.Status != Status.Pending)
-                throw new ArgumentException("La orden no se puede cambiar de estado porque no está en estado pendiente.");
+                throw new ArgumentException("La solicitud de pedido no se puede modificar porque no está en estado pendiente.");
 
             int userId = request.getUserId() ?? 0;
             User? user = await _UserRepository.GetByIdAsync(userId)

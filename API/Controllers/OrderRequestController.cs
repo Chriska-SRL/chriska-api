@@ -73,6 +73,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.EDIT_ORDER_REQUESTS))]
         public async Task<ActionResult<OrderRequestResponse>> ChangeStatusOrderRequestAsync(int id, DocumentClientChangeStatusRequest request)
         {
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.ChangeStatusOrderRequestAsync(id, request);
             return Ok(result); // 200 OK
         }
