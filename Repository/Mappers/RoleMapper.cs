@@ -5,41 +5,41 @@ namespace Repository.Mappers
 {
     public static class RoleMapper
     {
-        public static Role FromReader(SqlDataReader reader)
+        public static Role? FromReader(SqlDataReader r, string? prefix = null, string? origin = null)
         {
-            var permissions = new List<Permission>();
+            string Col(string c) => $"{prefix ?? ""}{c}";
+            string S(string c) => r.IsDBNull(r.GetOrdinal(c)) ? "" : r.GetString(r.GetOrdinal(c));
+            bool HasCol(string c) { try { r.GetOrdinal(c); return true; } catch { return false; } }
 
-            if (ColumnExists(reader, "Permissions"))
+            if (prefix != null)
             {
-                var permissionsCsv = reader["Permissions"] as string;
-                if (!string.IsNullOrEmpty(permissionsCsv))
+                try { var o = r.GetOrdinal(Col("Id")); if (r.IsDBNull(o)) return null; } catch { return null; }
+            }
+
+            var permissions = new List<Permission>();
+            if (HasCol(Col("Permissions")))
+            {
+                var raw = S(Col("Permissions"));
+                if (!string.IsNullOrWhiteSpace(raw))
                 {
-                    permissions = permissionsCsv
-                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                        .Select(id => Enum.Parse<Permission>(id))
-                        .ToList();
+                    foreach (var idStr in raw.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        if (int.TryParse(idStr, out int id) && Enum.IsDefined(typeof(Permission), id))
+                            permissions.Add((Permission)id);
+                    }
                 }
             }
 
             return new Role(
-                id: reader.GetInt32(reader.GetOrdinal("Id")),
-                name: reader.GetString(reader.GetOrdinal("Name")),
-                description: reader.GetString(reader.GetOrdinal("Description")),
+                id: r.GetInt32(r.GetOrdinal(Col("Id"))),
+                name: S(Col("Name")),
+                description: S(Col("Description")),
                 permissions: permissions,
-                auditInfo: AuditInfoMapper.FromReader(reader)
+                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null
             );
         }
-
-        private static bool ColumnExists(SqlDataReader reader, string columnName)
-        {
-            for (int i = 0; i < reader.FieldCount; i++)
-            {
-                if (reader.GetName(i).Equals(columnName, StringComparison.OrdinalIgnoreCase))
-                    return true;
-            }
-            return false;
-        }
-
-
     }
+
+
 }
+

@@ -9,14 +9,11 @@ namespace BusinessLogic.Domain
         public OrderRequest? OrderRequest { get; set; }
         public Delivery? Delivery { get; set; }
         public Order(
-           string observations,
-           User user,
-           List<ProductItem> productItems,
-           int crates,
            OrderRequest orderRequest
-       ) : base(orderRequest.Client, observations, user, productItems)
+       ) : base(orderRequest.Client, "", orderRequest.User, orderRequest.ProductItems)
         {
-            Crates = crates;
+            Id = orderRequest.Id;
+            Crates = 0;
             OrderRequest = orderRequest;
         }
         public Order(
@@ -40,11 +37,15 @@ namespace BusinessLogic.Domain
         }
 
 
-
-        public override void Validate()
+        internal void Confirm()
         {
-            throw new NotImplementedException();
+            Status = Status.Confirmed;
+            ConfirmedDate = DateTime.Now;
         }
 
+        internal void Cancel()
+        {
+            Status = Status.Cancelled;
+        }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using BusinessLogic.Common.Enums;
 using BusinessLogic.DTOs.DTOsAudit;
 
-namespace BusinessLogic.DTOs.DTOsOrderRequest
+namespace BusinessLogic.DTOs.DTOsDocumentClient
 {
-    public class OrderRequestChangeStatusRequest:AuditableRequest
+    public class DocumentClientChangeStatusRequest:AuditableRequest
     {
         public Status Status { get; set; }
     }

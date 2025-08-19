@@ -4,15 +4,23 @@ using BusinessLogic.DTOs.DTOsProductItem;
 
 namespace BusinessLogic.Common.Mappers
 {
-    public static class ProductItemMapper
+    public class ProductItemMapper
     {
-        public static ProductItem ToDomain(ProductItemRequest request, Product product, decimal unitPrice)
+        public static ProductItem ToDomain(ProductItemRequest request,Product product)
         {
-            throw new NotImplementedException();
+           throw new NotImplementedException();
         }
-        public static ProductItemResponse? ToResponse(ProductItem? brand)
+
+        public static ProductItemResponse ToResponse(ProductItem request)
         {
-            throw new NotImplementedException();
+            return new ProductItemResponse
+            {
+                Quantity = request.Quantity,
+                Weight = request.Weight??0,
+                UnitPrice = request.UnitPrice,
+                Discount = request.Discount,
+                Product = ProductMapper.ToResponse(request.Product)
+            };
         }
     }
 }

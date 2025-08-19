@@ -4,48 +4,42 @@ using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
 {
-    public static class OrderRequestMapper
+    public static class OrderMapper
     {
-
-        public static OrderRequest? FromReader(SqlDataReader r, string? prefix = null, string? origin = null)
+        public static Order? FromReader(SqlDataReader r, string? prefix = null, string? origin = null)
         {
             string Col(string c) => $"{prefix ?? ""}{c}";
             string S(string c) => r.IsDBNull(r.GetOrdinal(c)) ? "" : r.GetString(r.GetOrdinal(c));
 
             if (prefix != null)
             {
-                try
-                {
-                    var o = r.GetOrdinal(Col("Id"));
-                    if (r.IsDBNull(o)) return null;
-                }
-                catch
-                {
-                    return null;
-                }
+                try { var o = r.GetOrdinal(Col("Id")); if (r.IsDBNull(o)) return null; } catch { return null; }
             }
 
-
-            // Parse genérico para enums
             T Parse<T>(string c) where T : struct, Enum
                 => Enum.Parse<T>(S(Col(c)).Trim(), true);
 
-            var order = new OrderRequest
+            var confirmedDate = r.IsDBNull(r.GetOrdinal(Col("ConfirmedDate")))
+                ? default(DateTime)
+                : r.GetDateTime(r.GetOrdinal(Col("ConfirmedDate")));
+
+            var order = new Order
             (
                 r.GetInt32(r.GetOrdinal(Col("Id"))),
                 ClientMapper.FromReader(r, "Client"),
                 Parse<Status>("Status"),
-                r.IsDBNull(r.GetOrdinal(Col("ConfirmedDate"))) ? (DateTime?)null : r.GetDateTime(r.GetOrdinal(Col("ConfirmedDate"))),
                 r.GetDateTime(r.GetOrdinal(Col("Date"))),
                 S(Col("Observations")),
                 UserMapper.FromReader(r, "User"),
                 new List<ProductItem>(),
+                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null,
+                confirmedDate,
+                r.IsDBNull(r.GetOrdinal(Col("Crates"))) ? 0 : r.GetInt32(r.GetOrdinal(Col("Crates"))),
                 null,
-                AuditInfoMapper.FromReader(r)
+                null
             );
 
             return order;
         }
     }
-    
 }

@@ -10,7 +10,7 @@
     [Status] NVARCHAR(20) NOT NULL, 
     [ConfirmedDate] DATETIME NULL,
 
-    [Creates] INT NOT NULL, 
+    [Crates] INT NOT NULL, 
 
     [DeliveryId] INT NULL,
     [ClientId] INT NOT NULL,
