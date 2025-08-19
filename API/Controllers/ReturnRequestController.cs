@@ -3,6 +3,8 @@ using BusinessLogic;
 using BusinessLogic.Common;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsDocumentClient;
+using BusinessLogic.DTOs.DTOsOrderRequest;
 using BusinessLogic.DTOs.DTOsReturnRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -65,6 +67,13 @@ namespace API.Controllers
         public async Task<ActionResult<List<ReturnRequestResponse>>> GetAllReturnRequestsAsync([FromQuery] QueryOptions options)
         {
             var result = await _facade.GetAllReturnRequestsAsync(options);
+            return Ok(result); // 200 OK
+        }
+        [HttpPut("changestatus/{id}")]
+        [Authorize(Policy = nameof(Permission.EDIT_RETURN_REQUESTS))]
+        public async Task<ActionResult<ReturnRequestResponse>> ChangeStatusReturnRequestAsync(int id, DocumentClientChangeStatusRequest request)
+        {
+            var result = await _facade.ChangeStatusReturnRequestAsync(id, request);
             return Ok(result); // 200 OK
         }
     }

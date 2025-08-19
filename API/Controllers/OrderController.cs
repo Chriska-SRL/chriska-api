@@ -2,10 +2,8 @@
 using BusinessLogic;
 using BusinessLogic.Common;
 using BusinessLogic.Domain;
-using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsDocumentClient;
 using BusinessLogic.DTOs.DTOsOrder;
-using BusinessLogic.DTOs.DTOsOrderRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

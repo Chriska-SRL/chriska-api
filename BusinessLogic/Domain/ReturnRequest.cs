@@ -8,10 +8,9 @@ namespace BusinessLogic.Domain
         public Delivery Delivery { get; set; }
 
         public ReturnRequest(
-             string observation,
              User user,
              Delivery delivery
-         ) : base(delivery.Client, observation, user, delivery.ProductItems)
+         ) : base(delivery.Client, "", user, delivery.ProductItems)
         {
             Delivery = delivery;
         }
@@ -39,6 +38,16 @@ namespace BusinessLogic.Domain
 
         }
 
+        internal void Confirm()
+        {
+            Status = Status.Confirmed;
+            ConfirmedDate = DateTime.Now;
+        }
+
+        internal void Cancel()
+        {
+            Status = Status.Cancelled;
+        }
     }
 
 }

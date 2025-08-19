@@ -1,5 +1,4 @@
 ﻿using BusinessLogic.Domain;
-using BusinessLogic.DTOs.DTOsProduct;
 using BusinessLogic.DTOs.DTOsProductItem;
 
 namespace BusinessLogic.Common.Mappers
