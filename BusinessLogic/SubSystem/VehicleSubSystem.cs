@@ -1,8 +1,10 @@
 ﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Enums;
 using BusinessLogic.Common.Mappers;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsCost;
 using BusinessLogic.DTOs.DTOsDelivery;
+using BusinessLogic.DTOs.DTOsDocumentClient;
 using BusinessLogic.DTOs.DTOsVehicle;
 using BusinessLogic.Repository;
 
@@ -12,17 +14,11 @@ public class VehicleSubSystem
 {
     private readonly IVehicleRepository _vehicleRepository;
     private readonly IVehicleCostRepository _costRepository;
-    private readonly IDeliveryRepository _deliveryRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IOrderRepository _orderRepository;
 
-    public VehicleSubSystem(IVehicleRepository vehicleRepository, IVehicleCostRepository costRepository,IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository)
+    public VehicleSubSystem(IVehicleRepository vehicleRepository, IVehicleCostRepository costRepository)
     {
         _vehicleRepository = vehicleRepository;
         _costRepository = costRepository;
-        _deliveryRepository = deliveryRepository;
-        _userRepository = userRepository;
-        _orderRepository = orderRepository;
     }
 
     // VEHICLE
@@ -123,57 +119,5 @@ public class VehicleSubSystem
         return costs.Select(VehicleCostMapper.ToResponse).ToList();
     }
 
-    // DELIVERY
-    public async Task<DeliveryResponse> AddDeliveryAsync(DeliveryAddRequest request)
-    {
-        var user = await _userRepository.GetByIdAsync(request.UserId)
-            ?? throw new ArgumentException("No se encontró el usuario asociado.");
-
-        var order = await _orderRepository.GetByIdAsync(request.OrderId)
-            ?? throw new ArgumentException("No se encontró la orden asociada.");
-
-        var delivery = DeliveryMapper.ToDomain(request, user, order);
-        delivery.Validate();
-
-        var added = await _deliveryRepository.AddAsync(delivery);
-        return DeliveryMapper.ToResponse(added);
-    }
-
-    //public async Task<DeliveryResponse> UpdateDeliveryAsync(DeliveryUpdateRequest request)
-    //{
-    //    var existing = await _deliveryRepository.GetByIdAsync(request.Id)
-    //        ?? throw new ArgumentException("No se encontró la entrega seleccionada.");
-
-    //    var updatedData = DeliveryMapper.ToUpdatableData(request);
-    //    existing.Update(updatedData);
-
-    //    var saved = await _deliveryRepository.UpdateAsync(existing);
-    //    return DeliveryMapper.ToResponse(saved);
-    //}
-
-    public async Task<DeliveryResponse> DeleteDeliveryAsync(DeleteRequest request)
-    {
-        var delivery = await _deliveryRepository.GetByIdAsync(request.Id)
-            ?? throw new ArgumentException("No se encontró la entrega seleccionada.");
-
-        delivery.MarkAsDeleted(request.getUserId(), request.Location);
-        await _deliveryRepository.DeleteAsync(delivery);
-
-        return DeliveryMapper.ToResponse(delivery);
-    }
-
-    public async Task<DeliveryResponse> GetDeliveryByIdAsync(int id)
-    {
-        var delivery = await _deliveryRepository.GetByIdAsync(id)
-            ?? throw new ArgumentException("No se encontró la entrega seleccionada.");
-
-        return DeliveryMapper.ToResponse(delivery);
-    }
-
-    public async Task<List<DeliveryResponse>> GetAllDeliveriesAsync(QueryOptions options)
-    {
-        var deliveries = await _deliveryRepository.GetAllAsync(options);
-        return deliveries.Select(DeliveryMapper.ToResponse).ToList();
-    }
 
 }

@@ -3,7 +3,8 @@ using BusinessLogic.Domain;
 
 namespace BusinessLogic.Repository
 {
-    public interface IDeliveryRepository:IRepository<Delivery>
+    public interface IDeliveryRepository : IRepository<Delivery>
     {
+        Task<Delivery> ChangeStatusDeliveryAsync(Delivery delivery);
     }
 }

@@ -310,6 +310,26 @@ namespace Repository.EntityRepositories
             }
         }
 
+        public async Task UpdateStockAsync(int id, int stock, int availableStock)
+        {
+            int rows = await ExecuteWriteAsync(
+                "UPDATE Products " +
+                "SET Stock = Stock + @QuantityChange, " +
+                "    AvailableStock = AvailableStock + @QuantityChange " +
+                "WHERE Id = @Id",
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id",id);
+                    cmd.Parameters.AddWithValue("@quantityChange", stock);
+                    cmd.Parameters.AddWithValue("@availableStock", availableStock);
+                }
+            );
+
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo actualizar el stock del producto con Id {id}");
+
+
+        }
         public async Task<Product?> GetByIdWithDiscountsAsync(int productId)
         {
             var product = await GetByFieldAsync("Id", productId.ToString());

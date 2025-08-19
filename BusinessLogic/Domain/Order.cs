@@ -35,8 +35,6 @@ namespace BusinessLogic.Domain
             OrderRequest = orderRequest;
             Delivery = delivery;
         }
-
-
         internal void Confirm()
         {
             Status = Status.Confirmed;

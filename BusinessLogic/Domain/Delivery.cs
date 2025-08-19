@@ -35,10 +35,17 @@ namespace BusinessLogic.Domain
         }
         public override void Validate()
         {
-
             if (Crates < 0)
                 throw new ArgumentException("La cantidad de cajones no puede ser negativa.");
+       }
+       internal void Confirm()
+        {
+            Status = Status.Confirmed;
+            ConfirmedDate = DateTime.Now;
         }
-
+        internal void Cancel()
+        {
+            Status = Status.Cancelled;
+        }
     }
 }
