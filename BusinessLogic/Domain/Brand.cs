@@ -13,6 +13,7 @@ namespace BusinessLogic.Domain
         {
             Name = name;
             Description = description;
+            AuditInfo = new AuditInfo();
             Validate();
         }
         public Brand(int id, string name, string description, AuditInfo? auditInfo)
@@ -21,7 +22,6 @@ namespace BusinessLogic.Domain
             Name = name;
             Description = description;
             AuditInfo = auditInfo;
-            Validate();
         }
 
 
