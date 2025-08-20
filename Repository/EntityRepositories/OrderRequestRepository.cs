@@ -4,6 +4,7 @@ using BusinessLogic.Repository;
 using Microsoft.Data.SqlClient;
 using Repository.Logging;
 using Repository.Mappers;
+using System.Data;
 
 namespace Repository.EntityRepositories
 {
@@ -325,9 +326,8 @@ namespace Repository.EntityRepositories
                 {
                     cmd.Parameters.AddWithValue("@Id", orderRequest.Id);
                     cmd.Parameters.AddWithValue("@Status", orderRequest.Status.ToString());
-
                     var p = cmd.Parameters.Add("@ConfirmedDate", System.Data.SqlDbType.DateTime2);
-                    p.Value = (object?)orderRequest.ConfirmedDate ?? DBNull.Value; // <— clave
+                    p.Value = (object?)orderRequest.ConfirmedDate ?? DBNull.Value;
                 }
             );
 
