@@ -167,6 +167,7 @@ namespace API
             builder.Services.AddScoped<OrderRequestSubSystem>();
             builder.Services.AddScoped<ReturnRequestSubSystem>();
             builder.Services.AddScoped<OrderSubSystem>();
+            builder.Services.AddScoped<DeliveriesSubSystem>();
 
             builder.Services.AddScoped<AuditLogger>();
             builder.Services.AddScoped<Facade>();

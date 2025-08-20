@@ -93,6 +93,7 @@ namespace Repository.EntityRepositories
                 async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
             );
 
+            await AddDeliveryItems(newId, delivery.ProductItems);
             delivery.Id = newId;
             return delivery;
         }
@@ -182,16 +183,14 @@ namespace Repository.EntityRepositories
 
             int rows = await ExecuteWriteWithAuditAsync(
                 @"UPDATE Deliveries SET 
-                        Status = @Status,
-                        Description = @Description
+                        Observations = @Observations
                   WHERE Id = @Id",
                 delivery,
                 AuditAction.Update,
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Id", delivery.Id);
-                    cmd.Parameters.AddWithValue("@Status", delivery.Status.ToString());
-                    cmd.Parameters.AddWithValue("@Description", delivery.Crates);
+                    cmd.Parameters.AddWithValue("@Observations", delivery.Observations);
                 }
             );
 
@@ -206,7 +205,7 @@ namespace Repository.EntityRepositories
         public async Task<Delivery?> ChangeStatusDeliveryAsync(Delivery delivery)
         {
             int rows = await ExecuteWriteWithAuditAsync(
-                @"UPDATE OrderRequests SET 
+                @"UPDATE Deliveries SET 
                     Status = @Status,
                     ConfirmedDate = @ConfirmedDate
                 WHERE Id = @Id",
@@ -246,7 +245,7 @@ namespace Repository.EntityRepositories
 
                 foreach (var item in productItems)
                 {
-                    values.Add($"(@OrderId, @Quantity{i}, @UnitPrice{i}, @Discount{i}, @ProductId{i}, @Weight{i})");
+                    values.Add($"(@DeliveryId, @Quantity{i}, @UnitPrice{i}, @Discount{i}, @ProductId{i}, @Weight{i})");
 
                     parameters.Add(new SqlParameter($"@Quantity{i}", item.Quantity));
                     parameters.Add(new SqlParameter($"@UnitPrice{i}", item.UnitPrice));
@@ -256,7 +255,7 @@ namespace Repository.EntityRepositories
                     i++;
                 }
 
-                string sql = $@"INSERT INTO DeliveryItems (DeliveryId, Quantity, UnitPrice, Discount, ProductId, Weight)
+                string sql = $@"INSERT INTO Deliveries_Products (DeliveryId, Quantity, UnitPrice, Discount, ProductId, Weight)
                                 VALUES {string.Join(", ", values)}";
 
                 using var cmd = new SqlCommand(sql, connection);

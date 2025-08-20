@@ -8,22 +8,13 @@ namespace BusinessLogic.Common.Mappers
     {
         public static Delivery ToDomain(DeliveryAddRequest request, User user, Order order)
         {
-            var delivery = new Delivery(
-                observation: request.Observation,
-                user: user,
-                crates: request.Crates,
-                order: order
-            );
-
-            delivery.AuditInfo?.SetCreated(request.getUserId(), request.Location);
-
-            return delivery;
+            throw new NotImplementedException("This method is not implemented yet.");
         }
-        public static Delivery.UpdatableData ToUpdatableData(DeliveryUpdateRequest request, User user, Order order)
+        public static Delivery.UpdatableData ToUpdatableData(DeliveryUpdateRequest request)
         {
-            return new ReturnRequest.UpdatableData
+            return new Delivery.UpdatableData
             {
-                User = user,
+                Observations = request.Observations,
                 UserId = request.getUserId(),
                 Location = request.Location
             };
