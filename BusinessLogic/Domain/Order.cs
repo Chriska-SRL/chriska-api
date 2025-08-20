@@ -25,7 +25,7 @@ namespace BusinessLogic.Domain
           User? user,
           List<ProductItem> productItems,
           AuditInfo? auditInfo,
-          DateTime confirmedDate,
+          DateTime? confirmedDate,
           int crates,
           OrderRequest? orderRequest = null,
           Delivery? delivery = null

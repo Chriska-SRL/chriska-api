@@ -20,7 +20,7 @@ namespace Repository.Mappers
                 => Enum.Parse<T>(S(Col(c)).Trim(), true);
 
             var confirmedDate = r.IsDBNull(r.GetOrdinal(Col("ConfirmedDate")))
-                ? default(DateTime)
+                ? (DateTime?)null
                 : r.GetDateTime(r.GetOrdinal(Col("ConfirmedDate")));
 
             var order = new Order

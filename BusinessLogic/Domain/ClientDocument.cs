@@ -25,7 +25,7 @@ namespace BusinessLogic.Domain
         {
             Client = client;
             Status = status;
-            ConfirmedDate = confirmedDate;
+            ConfirmedDate = confirmedDate ?? null;
         }
 
         public void ChangeStatus(Status status, int userId, Location? location)

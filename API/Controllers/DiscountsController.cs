@@ -73,7 +73,6 @@ namespace API.Controllers
         public async Task<ActionResult<DiscountResponse?>> GetBestDiscountAsync([FromQuery] int productId, [FromQuery] int clientId)
         {
             var result = await _facade.GetBestDiscountAsync(productId, clientId);
-            if (result == null) return NotFound("No se encontró un descuento aplicable.");
             return Ok(result); // 200 OK
         }
     }
