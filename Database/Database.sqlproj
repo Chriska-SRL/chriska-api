@@ -114,5 +114,6 @@
   <ItemGroup>
     <None Include="Data\cleardatabase.sql" />
     <None Include="Data\adminUser.sql" />
+    <None Include="Data\Script1.sql" />
   </ItemGroup>
 </Project>

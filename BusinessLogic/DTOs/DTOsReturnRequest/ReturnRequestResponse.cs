@@ -11,7 +11,7 @@ namespace BusinessLogic.DTOs.DTOsReturnRequest
     {
         public int Id { get; set; }
         public ClientResponse? Client { get; set; }
-        public string? Observation { get; set; } 
+        public string? Observations { get; set; } 
         public Status Status { get; set; }
         public DateTime? Date { get; set; }
         public DateTime? ConfirmedDate { get; set; }

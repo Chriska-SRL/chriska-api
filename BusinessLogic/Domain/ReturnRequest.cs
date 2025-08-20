@@ -8,8 +8,9 @@ namespace BusinessLogic.Domain
         public Delivery Delivery { get; set; }
 
         public ReturnRequest(
-             User user,
-             Delivery delivery
+
+             Delivery delivery,
+             User user
          ) : base(delivery.Client, "", user, delivery.ProductItems)
         {
             Delivery = delivery;
@@ -33,8 +34,7 @@ namespace BusinessLogic.Domain
 
         public override void Validate()
         {
-            if (string.IsNullOrWhiteSpace(Observations))
-                throw new InvalidOperationException("La observación es obligatoria.");
+            
 
         }
 

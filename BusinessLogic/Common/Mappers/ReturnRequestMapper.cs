@@ -8,9 +8,9 @@ namespace BusinessLogic.Common.Mappers
     {
         public static ReturnRequest ToDomain(ReturnRequestAddRequest request,Delivery delivery, User user)
         {
-            ReturnRequest returnRequest = new ReturnRequest(
-                user: user,
-                delivery: delivery
+            ReturnRequest returnRequest = new ReturnRequest(                
+                delivery: delivery,
+                user: user
             );
 
             returnRequest.AuditInfo?.SetCreated(request.getUserId(), request.Location);
@@ -36,7 +36,7 @@ namespace BusinessLogic.Common.Mappers
                 Status = request.Status,
                 Date = request.Date,
                 ConfirmedDate = request.ConfirmedDate,
-                Observation = request.Observations,
+                Observations = request.Observations,
                 User = UserMapper.ToResponse(request.User),
                 ProductItems = request.ProductItems.Select(ProductItemMapper.ToResponse).ToList(),
                 Delivery = DeliveryMapper.ToResponse(request.Delivery),

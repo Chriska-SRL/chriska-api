@@ -17,7 +17,6 @@ namespace BusinessLogic.Domain
             Description = description;
             Category = category;
             AuditInfo = auditInfo;
-            AuditInfo = new AuditInfo();
             Validate();
         }
         public SubCategory(string name, string description, Category category)
@@ -25,6 +24,7 @@ namespace BusinessLogic.Domain
             Name = name;
             Description = description;
             Category = category ?? throw new ArgumentNullException(nameof(category));
+            AuditInfo = new AuditInfo();
 
             Validate();
         }

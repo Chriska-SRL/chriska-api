@@ -31,7 +31,7 @@ namespace BusinessLogic.Common.Mappers
                 Id = order.Id,
                 Date = order.Date,
                 ConfirmedDate = order.ConfirmedDate,
-                Observation = order.Observations ?? "",
+                Observations = order.Observations ?? "",
                 Status = order.Status,
                 Client = ClientMapper.ToResponse(order.Client),
                 User = UserMapper.ToResponse(order.User),

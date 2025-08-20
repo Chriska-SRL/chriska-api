@@ -14,7 +14,7 @@ namespace BusinessLogic.DTOs.DTOsDelivery
         public Status Status { get; set; } = default!;
         public DateTime? Date { get; set; }
         public DateTime? ConfirmedDate { get; set; }
-        public string Observation { get; set; } = default!;
+        public string Observations { get; set; } = default!;
         public UserResponse User { get; set; } = default!;
         public List<ProductItemResponse> ProductItems { get; set; } = new();
         public int Crates { get; set; }
