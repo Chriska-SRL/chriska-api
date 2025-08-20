@@ -68,16 +68,60 @@ namespace Repository.EntityRepositories
     o.ConfirmedDate  AS OrderConfirmedDate,
     o.Status         AS OrderStatus,
     o.Crates         AS OrderCrates,
-    o.Observations   AS OrderObservations
+    o.Observations   AS OrderObservations,
+
+            -- Items (prefijo RR_)
+                rrp.ReturnRequestId     AS RR_ReturnRequestId,
+                rrp.Quantity       AS RR_Quantity,
+                rrp.UnitPrice      AS RR_UnitPrice,
+                rrp.Discount       AS RR_Discount,
+                rrp.Weight AS RR_Weight,
+
+            -- Product (prefijo P_)
+                p.Id               AS ProductId,
+                p.Name             AS ProductName,
+                p.Description      AS ProductDescription,
+                p.InternalCode     AS ProductInternalCode,
+                p.Barcode          AS ProductBarcode,
+                p.UnitType         AS ProductUnitType,
+                p.Price            AS ProductPrice,
+                p.TemperatureCondition AS ProductTemperatureCondition,
+                p.EstimatedWeight  AS ProductEstimatedWeight,
+                p.Stock            AS ProductStock,
+                p.AvailableStock   AS ProductAvailableStock,
+                p.Observations     AS ProductObservations,
+                p.ImageUrl         AS ProductImageUrl,
+                p.SubCategoryId    AS SubCategoryId,
+                p.BrandId          AS BrandId,
+                p.ShelveId         AS ProductShelveId,
+
+                -- Brand (prefijo Brand)
+                b.Name             AS BrandName,
+                b.Description      AS BrandDescription,
+
+                -- SubCategory (prefijo SubCategory)
+                sb.Name            AS SubCategoryName,
+                sb.Description     AS SubCategoryDescription,
+                sb.CategoryId      AS SubCategoryCategoryId,
+
+                -- Category (prefijo Category)
+                cat.Name           AS CategoryName,
+                cat.Description    AS CategoryDescription
     
 
-FROM ReturnRequests rr
-LEFT JOIN Clients c  ON c.Id = rr.ClientId
-LEFT JOIN Zones z    ON z.Id = c.ZoneId
-LEFT JOIN Users u    ON u.Id = rr.CreatedBy
-LEFT JOIN Roles r    ON r.Id = u.RoleId
-LEFT JOIN Deliveries d ON d.Id = rr.DeliveryId
-LEFT JOIN Orders o ON o.Id = d.OrderId
+        FROM ReturnRequests rr
+        LEFT JOIN Clients c  ON c.Id = rr.ClientId
+        LEFT JOIN Zones z    ON z.Id = c.ZoneId
+        LEFT JOIN Users u    ON u.Id = rr.CreatedBy
+        LEFT JOIN Roles r    ON r.Id = u.RoleId
+        LEFT JOIN Deliveries d ON d.Id = rr.DeliveryId
+        LEFT JOIN Orders o ON o.Id = d.OrderId
+        LEFT JOIN ReturnRequests_Products rrp ON rrp.ReturnRequestId = rr.Id
+        LEFT JOIN Products p ON rrp.ProductId = p.Id  
+        LEFT JOIN Brands b        ON b.Id = p.BrandId
+        LEFT JOIN SubCategories sb ON sb.Id = p.SubCategoryId
+        LEFT JOIN Categories cat   ON cat.Id = sb.CategoryId
+
     ";
         #endregion
         #region Add
@@ -148,9 +192,10 @@ LEFT JOIN Orders o ON o.Id = d.OrderId
                         {
                             rr = ReturnRequestMapper.FromReader(reader);
                             dict.Add(id, rr);
-                            var item = ProductItemMapper.FromReader(reader, "OP_");
-                            if (item is not null) rr!.ProductItems.Add(item);
                         }
+
+                        var item = ProductItemMapper.FromReader(reader, "RR_");
+                        if (item is not null) rr!.ProductItems.Add(item);
 
                     }
                     return dict.Values.ToList();
@@ -205,7 +250,7 @@ LEFT JOIN Orders o ON o.Id = d.OrderId
             await AddProductItems(returnRequest.Id, returnRequest.ProductItems);
 
             int rows = await ExecuteWriteWithAuditAsync(
-                @"UPDATE ReturnRequest SET 
+                @"UPDATE ReturnRequests SET 
                         Observations = @Observations
                   WHERE Id = @Id",
                 returnRequest,
@@ -253,7 +298,7 @@ LEFT JOIN Orders o ON o.Id = d.OrderId
                     i++;
                 }
 
-                string sql = $@"INSERT INTO ReturnRequest_Product (ReturnRequestId, Quantity, UnitPrice, Discount, ProductId)
+                string sql = $@"INSERT INTO ReturnRequests_Products (ReturnRequestId, Quantity, UnitPrice, Discount, ProductId)
                                 VALUES {string.Join(", ", values)}";
 
                 using var cmd = new SqlCommand(sql, connection);
@@ -275,10 +320,10 @@ LEFT JOIN Orders o ON o.Id = d.OrderId
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
 
-                const string sql = @"DELETE FROM OrderRequests_Products WHERE OrderRequestId = @OrderRequestId";
+                const string sql = @"DELETE FROM ReturnRequests_Products WHERE ReturnRequestId = @ReturnRequestId";
 
                 using var cmd = new SqlCommand(sql, connection);
-                cmd.Parameters.AddWithValue("@OrderRequestId", returnRequestId);
+                cmd.Parameters.AddWithValue("@ReturnRequestId", returnRequestId);
 
                 await cmd.ExecuteNonQueryAsync();
             }
