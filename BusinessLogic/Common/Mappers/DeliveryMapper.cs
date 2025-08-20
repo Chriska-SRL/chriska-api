@@ -28,7 +28,7 @@ namespace BusinessLogic.Common.Mappers
                 Status = delivery.Status,
                 ConfirmedDate = delivery.ConfirmedDate,
                 Date = delivery.Date,
-                Observation = delivery.Observations,
+                Observations = delivery.Observations,
                 User = UserMapper.ToResponse(delivery.User),
                 ProductItems = delivery.ProductItems.Select(ProductItemMapper.ToResponse).ToList(),
                 Crates = delivery.Crates,

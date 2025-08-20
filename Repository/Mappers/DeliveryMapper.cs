@@ -22,7 +22,7 @@ namespace Repository.Mappers
 
             var delivery = new Delivery(
              id: r.GetInt32(r.GetOrdinal(Col("Id"))),
-             client: ClientMapper.FromReader(r, "Client", origin),
+             client: ClientMapper.FromReader(r, "Client"),
              status: Parse<Status>("Status"),
              confirmedDate: r.IsDBNull(r.GetOrdinal(Col("ConfirmedDate"))) ? (DateTime?)null : r.GetDateTime(r.GetOrdinal(Col("ConfirmedDate"))),
              date: r.GetDateTime(r.GetOrdinal(Col("Date"))),
@@ -31,7 +31,7 @@ namespace Repository.Mappers
              productItems: new List<ProductItem>(),
              auditInfo: AuditInfoMapper.FromReader(r),
              crates: r.IsDBNull(r.GetOrdinal(Col("Crates"))) ? 0 : r.GetInt32(r.GetOrdinal(Col("Crates"))),
-             order: OrderMapper.FromReader(r, "Order", origin)
+             order: OrderMapper.FromReader(r, "Order")
          );
 
             return delivery;

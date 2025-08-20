@@ -148,7 +148,10 @@ LEFT JOIN Orders o ON o.Id = d.OrderId
                         {
                             rr = ReturnRequestMapper.FromReader(reader);
                             dict.Add(id, rr);
+                            var item = ProductItemMapper.FromReader(reader, "OP_");
+                            if (item is not null) rr!.ProductItems.Add(item);
                         }
+
                     }
                     return dict.Values.ToList();
                 },
@@ -162,24 +165,38 @@ LEFT JOIN Orders o ON o.Id = d.OrderId
 
         public async Task<ReturnRequest?> GetByIdAsync(int id)
         {
+            var dict = new Dictionary<int, ReturnRequest>();
+
+
             return await ExecuteReadAsync(
                 baseQuery: baseQuery + " WHERE rr.Id = @Id",
                 map: reader =>
                 {
-                    ReturnRequest? request = null;
+
                     while (reader.Read())
                     {
-                        if (request == null)
+                        int rrId = reader.GetInt32(reader.GetOrdinal("Id"));
+
+                        if (!dict.TryGetValue(rrId, out var request))
+                        {
                             request = ReturnRequestMapper.FromReader(reader);
+                            dict.Add(rrId, request);
+                        }
+
+                        var item = ProductItemMapper.FromReader(reader, "RR_");
+                        if (item is not null) request!.ProductItems.Add(item);
                     }
-                    return request;
+
+                    return dict.Values.FirstOrDefault();
                 },
                 options: new QueryOptions(),
                 tableAlias: "rr",
                 configureCommand: cmd => cmd.Parameters.AddWithValue("@Id", id)
             );
         }
+
         #endregion
+
         #region Update
 
         public async Task<ReturnRequest> UpdateAsync(ReturnRequest returnRequest)

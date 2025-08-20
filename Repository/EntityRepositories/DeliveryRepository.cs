@@ -4,7 +4,6 @@ using BusinessLogic.Repository;
 using Microsoft.Data.SqlClient;
 using Repository.Logging;
 using Repository.Mappers;
-using System.Data;
 
 namespace Repository.EntityRepositories
 {
@@ -60,7 +59,44 @@ namespace Repository.EntityRepositories
             o.ConfirmedDate   AS OrderConfirmedDate,
             o.Status          AS OrderStatus,
             o.Observations    AS OrderObservations,
-            o.Crates        AS OrderCrates
+            o.Crates        AS OrderCrates,
+
+            -- Items (prefijo DP_)
+                dp.DeliveryId        AS DP_DeliveryId,
+                dp.Quantity       AS DP_Quantity,
+                dp.UnitPrice      AS DP_UnitPrice,
+                dp.Discount       AS DP_Discount,
+                dp.Weight         AS DP_Weight,
+
+            -- Product (prefijo P_)
+                p.Id               AS ProductId,
+                p.Name             AS ProductName,
+                p.Description      AS ProductDescription,
+                p.InternalCode     AS ProductInternalCode,
+                p.Barcode          AS ProductBarcode,
+                p.UnitType         AS ProductUnitType,
+                p.Price            AS ProductPrice,
+                p.TemperatureCondition AS ProductTemperatureCondition,
+                p.EstimatedWeight  AS ProductEstimatedWeight,
+                p.Stock            AS ProductStock,
+                p.AvailableStock   AS ProductAvailableStock,
+                p.Observations     AS ProductObservations,
+                p.ImageUrl         AS ProductImageUrl,
+                p.SubCategoryId    AS SubCategoryId,
+                p.BrandId          AS BrandId,
+                p.ShelveId         AS ProductShelveId,
+-- Brand (prefijo Brand)
+                b.Name             AS BrandName,
+                b.Description      AS BrandDescription,
+
+                -- SubCategory (prefijo SubCategory)
+                sb.Name            AS SubCategoryName,
+                sb.Description     AS SubCategoryDescription,
+                sb.CategoryId      AS SubCategoryCategoryId,
+
+                -- Category (prefijo Category)
+                cat.Name           AS CategoryName,
+                cat.Description    AS CategoryDescription
 
         FROM Deliveries d
         LEFT JOIN Clients c  ON c.Id = d.ClientId
@@ -68,6 +104,13 @@ namespace Repository.EntityRepositories
         LEFT JOIN Users u    ON u.Id = d.CreatedBy
         LEFT JOIN Roles r    ON r.Id = u.RoleId
         LEFT JOIN Orders o   ON o.Id = d.OrderId
+        LEFT JOIN Deliveries_Products dp ON dp.DeliveryId = d.Id
+        LEFT JOIN Products p ON dp.ProductId = p.Id  
+        LEFT JOIN Brands b        ON b.Id = p.BrandId
+        LEFT JOIN SubCategories sb ON sb.Id = p.SubCategoryId
+        LEFT JOIN Categories cat   ON cat.Id = sb.CategoryId
+        
+
     ";
 
         #region Add
@@ -95,6 +138,7 @@ namespace Repository.EntityRepositories
             );
 
             await AddDeliveryItems(newId, delivery.ProductItems);
+
             delivery.Id = newId;
             return delivery;
         }
@@ -143,6 +187,9 @@ namespace Repository.EntityRepositories
                             delivery = DeliveryMapper.FromReader(reader);
                             dict.Add(id, delivery);
                         }
+
+                        var item = ProductItemMapper.FromReader(reader, "DP_");
+                        if (item is not null) delivery!.ProductItems.Add(item);
                     }
                     return dict.Values.ToList();
                 },
@@ -156,17 +203,28 @@ namespace Repository.EntityRepositories
 
         public async Task<Delivery?> GetByIdAsync(int id)
         {
+            var dict = new Dictionary<int, Delivery>();
+
             return await ExecuteReadAsync(
                 baseQuery: baseQuery + " WHERE d.Id = @Id",
                 map: reader =>
                 {
-                    Delivery? delivery = null;
+                    
                     while (reader.Read())
                     {
-                        if (delivery == null)
+                        int delId = reader.GetInt32(reader.GetOrdinal("Id"));
+
+                        if (!dict.TryGetValue(delId, out var delivery))
+                        {
                             delivery = DeliveryMapper.FromReader(reader);
+                            dict.Add(delId, delivery);
+                        }
+
+                        var item = ProductItemMapper.FromReader(reader, "DP_");
+                        if (item is not null) delivery!.ProductItems.Add(item);
                     }
-                    return delivery;
+
+                    return dict.Values.FirstOrDefault();
                 },
                 options: new QueryOptions(),
                 tableAlias: "d",

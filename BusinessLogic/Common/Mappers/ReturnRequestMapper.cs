@@ -8,9 +8,9 @@ namespace BusinessLogic.Common.Mappers
     {
         public static ReturnRequest ToDomain(ReturnRequestAddRequest request,Delivery delivery, User user)
         {
-            ReturnRequest returnRequest = new ReturnRequest(
-                user: user,
-                delivery: delivery
+            ReturnRequest returnRequest = new ReturnRequest(                
+                delivery: delivery,
+                user: user
             );
 
             returnRequest.AuditInfo?.SetCreated(request.getUserId(), request.Location);
