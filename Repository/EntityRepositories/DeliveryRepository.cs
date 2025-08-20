@@ -85,7 +85,7 @@ namespace Repository.EntityRepositories
                 p.SubCategoryId    AS SubCategoryId,
                 p.BrandId          AS BrandId,
                 p.ShelveId         AS ProductShelveId,
--- Brand (prefijo Brand)
+                -- Brand (prefijo Brand)
                 b.Name             AS BrandName,
                 b.Description      AS BrandDescription,
 

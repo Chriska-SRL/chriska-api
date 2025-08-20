@@ -58,7 +58,7 @@ namespace BusinessLogic.SubSystem
             var user = await _userRepository.GetByIdAsync(userId)
                 ?? throw new ArgumentException("El usuario que realiza la modificación no existe.");
 
-            var delivery = await _deliveryRepository.GetByIdAsync(request.DeliveryId)
+            var delivery = await _deliveryRepository.GetByIdAsync(existing.Delivery.Id)
                 ?? throw new ArgumentException("El delivery seleccionado no existe.");
 
             var productItems = new List<ProductItem>();
