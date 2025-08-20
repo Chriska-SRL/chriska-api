@@ -72,7 +72,6 @@ namespace BusinessLogic.SubSystem
         {
             var deliveries = await _deliveryRepository.GetAllAsync(options);
             return deliveries.Select(DeliveryMapper.ToResponse).ToList();
-            //TODO: El delivery no devuelve todos los prooductitem
         }
         internal async Task<DeliveryResponse?> ChangeStatusDeliveryAsync(int id, DocumentClientChangeStatusRequest request)
         {
