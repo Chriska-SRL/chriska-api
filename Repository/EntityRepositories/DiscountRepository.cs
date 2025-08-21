@@ -127,7 +127,7 @@ namespace Repository.EntityRepositories
         {
             var allowedFilters = new[]
             {
-                "Description", "Status", "BrandId", "SubCategoryId", "ZoneId", "ExpirationDate"
+                "Description", "Status", "BrandId", "SubCategoryId", "ZoneId", "ExpirationDate" , "ProductQuantity" 
             };
 
             return await ExecuteReadAsync(
