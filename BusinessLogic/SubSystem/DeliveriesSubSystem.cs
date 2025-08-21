@@ -26,7 +26,7 @@ namespace BusinessLogic.SubSystem
         {
             order.Validate();
             Delivery delivery = new Delivery(order);
-            delivery.AuditInfo.SetCreated(order.AuditInfo.UpdatedBy, null);
+            delivery.AuditInfo.SetCreated(order.AuditInfo.UpdatedBy, order.AuditInfo.UpdatedLocation);
             await _deliveryRepository.AddAsync(delivery);
             return delivery;
      
@@ -71,7 +71,7 @@ namespace BusinessLogic.SubSystem
         public async Task<List<DeliveryResponse>> GetAllDeliveriesAsync(QueryOptions options)
         {
             var deliveries = await _deliveryRepository.GetAllAsync(options);
-            return deliveries.Select(DeliveryMapper.ToResponse).ToList();
+            return deliveries.Select(d => DeliveryMapper.ToResponse(d)).ToList();
         }
         internal async Task<DeliveryResponse?> ChangeStatusDeliveryAsync(int id, DocumentClientChangeStatusRequest request)
         {
