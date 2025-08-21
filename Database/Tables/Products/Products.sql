@@ -6,7 +6,7 @@
     -- Campos de la entidad
     [Name] NVARCHAR(50) NOT NULL,
     [InternalCode] NCHAR(10) NOT NULL,
-    [BarCode] NCHAR(13) NOT NULL,
+    [BarCode] NCHAR(13) NULL,
     [UnitType] NCHAR(10) NOT NULL,
     [Price] MONEY NOT NULL, 
     [Description] NVARCHAR(255) NOT NULL, 
