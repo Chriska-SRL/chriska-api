@@ -19,7 +19,7 @@ namespace BusinessLogic.Common.Mappers
             };
         }
 
-        public static OrderResponse? ToResponse(Order? order)
+        public static OrderResponse? ToResponse(Order? order, Boolean notBucle = false)
         {
             if (order == null)
             {
@@ -43,9 +43,9 @@ namespace BusinessLogic.Common.Mappers
                     UnitPrice = pi.UnitPrice,
                     Discount = pi.Discount
                 }).ToList(),
-                //Delivery = DeliveryMapper.ToResponse(order.Delivery),
+                Delivery = order.Delivery != null ? DeliveryMapper.ToResponse(order.Delivery, true) : null,
                 Crates = order.Crates,
-                OrderRequest = OrderRequestMapper.ToResponse(order.OrderRequest),
+                OrderRequest = notBucle ? null : (order.OrderRequest != null ? OrderRequestMapper.ToResponse(order.OrderRequest, true) : null),
                 AuditInfo = AuditMapper.ToResponse(order.AuditInfo)
             };
 

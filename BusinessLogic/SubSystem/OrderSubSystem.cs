@@ -11,25 +11,29 @@ namespace BusinessLogic.SubSystem
     public class OrderSubSystem
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IOrderRequestRepository _orderRequestRepository;
         private readonly IClientRepository _clientRepository;
         private readonly IProductRepository _productRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IDeliveryRepository _deliveriesRepository;
         private readonly DeliveriesSubSystem _deliveriesSubSystem;
 
-        public OrderSubSystem(IOrderRepository orderRepository, IClientRepository clientRepository, IProductRepository productRepository, IUserRepository userRepository, DeliveriesSubSystem deliveriesSubSystem)
+        public OrderSubSystem(IOrderRepository orderRepository, IClientRepository clientRepository, IProductRepository productRepository, IUserRepository userRepository, DeliveriesSubSystem deliveriesSubSystem, IOrderRequestRepository orderRequestRepository, IDeliveryRepository deliveriesRepository)
         {
             _orderRepository = orderRepository;
+            _orderRequestRepository = orderRequestRepository;
             _clientRepository = clientRepository;
             _productRepository = productRepository;
             _userRepository = userRepository;
             _deliveriesSubSystem = deliveriesSubSystem;
+            _deliveriesRepository = deliveriesRepository;
         }
 
         public async Task<Order?> AddOrderAsync(OrderRequest orderRequest)
         {
             orderRequest.Validate();
             Order order = new Order(orderRequest);
-            order.AuditInfo.SetCreated(orderRequest.AuditInfo.UpdatedBy, null);
+            order.AuditInfo.SetCreated(orderRequest.AuditInfo.UpdatedBy, orderRequest.AuditInfo.UpdatedLocation);
             await _orderRepository.AddAsync(order);
             return order;
         }
@@ -38,12 +42,11 @@ namespace BusinessLogic.SubSystem
         {
             var existing = await _orderRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException($"No se encontró una orden con el ID {request.Id}.");
+            existing.OrderRequest = await _orderRequestRepository.GetByIdAsync(existing.Id)
+               ?? throw new ArgumentException("No se encontró la solicitud de pedido asociada a la orden.");
 
-            if(existing.Status != Status.Pending)
+            if (existing.Status != Status.Pending)
                 throw new ArgumentException("La orden no se puede modificar porque no está en estado pendiente.");
-
-            var client = await _clientRepository.GetByIdAsync(existing.Client.Id)
-                ?? throw new ArgumentException("El cliente seleccionado no existe.");
 
             var userId = request.getUserId() ?? 0;
             var user = await _userRepository.GetByIdAsync(userId)
@@ -52,19 +55,27 @@ namespace BusinessLogic.SubSystem
             var productItems = new List<ProductItem>();
             foreach (var item in request.ProductItems)
             {
-                var product = await _productRepository.GetByIdAsync(item.ProductId)
-                    ?? throw new ArgumentException($"El producto con ID {item.ProductId} no existe.");
-
-                //TODO: ajustar esta logica
-                Discount? discount = product.GetBestDiscount(client);
-                decimal discountPercentage = discount?.Percentage ?? 0;
-                productItems.Add(new ProductItem(item.Quantity, item.Weight ?? 0, product.Price, discountPercentage, product));
+                ProductItem? productitem = existing.OrderRequest.ProductItems.FirstOrDefault(p => p.Product.Id == item.ProductId);
+                if (productitem != null)
+                {
+                    // Si el producto ya existe, actualizamos la cantidad y peso
+                    productitem.Quantity = item.Quantity;
+                    productitem.Weight = item.Weight ?? 0;
+                    productItems.Add(productitem);
+                }
+                else
+                {
+                    var product = await _productRepository.GetByIdAsync(item.ProductId)
+                                           ?? throw new ArgumentException($"El producto con ID {item.ProductId} no existe.");
+                    Discount? discount = product.GetBestDiscount(existing.Client);
+                    decimal discountPercentage = discount?.Percentage ?? 0;
+                    productItems.Add(new ProductItem(item.Quantity, item.Weight ?? 0, product.Price, discountPercentage, product));
+                }
             }
 
             Order.UpdatableData updatedData = OrderMapper.ToUpdatableData(request, user, productItems);
             existing.Update(updatedData);
             existing.Crates = request.Crates;
-            existing.Client = client;
 
             var updated = await _orderRepository.UpdateAsync(existing);
             return OrderMapper.ToResponse(updated);
@@ -74,6 +85,9 @@ namespace BusinessLogic.SubSystem
         {
             Order? order = await _orderRepository.GetByIdAsync(id)
                 ?? throw new ArgumentException($"No se encontró una orden con el ID {id}.");
+            order.OrderRequest = await _orderRequestRepository.GetByIdAsync(order.Id)
+              ?? throw new ArgumentException("No se encontró la solicitud de pedido asociada a la orden.");
+            order.Delivery = await _deliveriesRepository.GetByIdAsync(order.Id);
             return OrderMapper.ToResponse(order);
         }
 
@@ -82,15 +96,18 @@ namespace BusinessLogic.SubSystem
             List<Order> orders = await _orderRepository.GetAllAsync(options);
             if (orders == null || orders.Count == 0)
                 throw new ArgumentException("No se encontraron órdenes.");
-            return orders.Select(OrderMapper.ToResponse).ToList();
+            return orders.Select(o => OrderMapper.ToResponse(o)).ToList();
         }
 
         internal async Task<OrderResponse?> ChangeStatusOrderAsync(int id, DocumentClientChangeStatusRequest request)
         {
             Order? order = await _orderRepository.GetByIdAsync(id)
                 ?? throw new ArgumentException($"No se encontró una orden con el ID {id}.");
-
-            if(order.Status != Status.Pending)
+            order.OrderRequest = await _orderRequestRepository.GetByIdAsync(order.Id)
+                ?? throw new ArgumentException("No se encontró la solicitud de pedido asociada a la orden.");
+            if (request.Status == Status.Pending)
+                throw new ArgumentException("no se puede cambiar a Pending");
+            if (order.Status != Status.Pending)
                 throw new ArgumentException("La orden no se puede cambiar de estado porque no está en estado pendiente.");
 
             int userId = request.getUserId() ?? 0;
@@ -99,10 +116,11 @@ namespace BusinessLogic.SubSystem
             order.AuditInfo.SetUpdated(userId, request.Location);
             order.User = user;
 
+            Delivery delivery = null;
             if (request.Status == Status.Confirmed)
             {
                 order.Confirm();
-                 await _deliveriesSubSystem.AddDeliveryAsync(order);
+                delivery = await _deliveriesSubSystem.AddDeliveryAsync(order);
             }
             else if (request.Status == Status.Cancelled)
             {
@@ -113,6 +131,7 @@ namespace BusinessLogic.SubSystem
                 throw new ArgumentException("El estado de la orden no es válido para cambiar.");
             }
 
+            order.Delivery = delivery;
             order = await _orderRepository.ChangeStatusOrder(order);
             return OrderMapper.ToResponse(order);
         }

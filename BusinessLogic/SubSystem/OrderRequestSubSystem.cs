@@ -14,14 +14,16 @@ namespace BusinessLogic.SubSystem
         private readonly IOrderRequestRepository _orderRequestRepository;
         private readonly IClientRepository _clientRepository;
         private readonly IProductRepository _productRepository;
-        private readonly IUserRepository _UserRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IDiscountRepository _discountRepository;
         private readonly OrderSubSystem _orderSubSystem;
-        public OrderRequestSubSystem(IOrderRequestRepository orderRequestRepository, IClientRepository clientRepository, IProductRepository productRepository, IUserRepository userRepository, OrderSubSystem orderSubSystem)
+        public OrderRequestSubSystem(IOrderRequestRepository orderRequestRepository, IClientRepository clientRepository, IProductRepository productRepository, IUserRepository userRepository, OrderSubSystem orderSubSystem, IDiscountRepository discountRepository)
         {
             _orderRequestRepository = orderRequestRepository;
             _clientRepository = clientRepository;
             _productRepository = productRepository;
-            _UserRepository = userRepository;
+            _userRepository = userRepository;
+            _discountRepository = discountRepository;
             _orderSubSystem = orderSubSystem;
         }
         public async Task<OrderRequestResponse?> AddOrderRequestAsync(OrderRequestAddRequest request)
@@ -30,18 +32,21 @@ namespace BusinessLogic.SubSystem
                 ?? throw new ArgumentException("El cliente seleccionado no existe.");
 
             int userId = request.getUserId() ?? 0;
-            User user = await _UserRepository.GetByIdAsync(userId)
+            User user = await _userRepository.GetByIdAsync(userId)
                 ?? throw new ArgumentException("El usuario que realiza la solicitud no existe.");
 
-            List<ProductItem> productItems = new List<ProductItem>();
+            var productItems = new List<ProductItem>();
             foreach (var item in request.ProductItems)
             {
-                Product product = await _productRepository.GetByIdWithDiscountsAsync(item.ProductId)
+                Product product = await _productRepository.GetByIdAsync(item.ProductId)
                     ?? throw new ArgumentException($"El producto con ID {item.ProductId} no existe.");
 
-                Discount? discount = product.GetBestDiscount(client);
-                decimal discountPercentage = discount?.Percentage ?? 0;
-
+                Discount? discount = await _discountRepository.GetBestByProductAndClientAsync(product, client);
+                decimal discountPercentage = 0;
+                if (discount != null && item.Quantity >= discount.ProductQuantity)
+                {
+                    discountPercentage = discount.Percentage;
+                }
                 productItems.Add(new ProductItem(item.Quantity, 0, product.Price, discountPercentage, product));
             }
 
@@ -63,17 +68,21 @@ namespace BusinessLogic.SubSystem
                 ?? throw new ArgumentException("El cliente seleccionado no existe.");
 
             var userId = request.getUserId() ?? 0;
-            var user = await _UserRepository.GetByIdAsync(userId)
+            var user = await _userRepository.GetByIdAsync(userId)
                 ?? throw new ArgumentException("El usuario que realiza la modificación no existe.");
 
             var productItems = new List<ProductItem>();
             foreach (var item in request.ProductItems)
             {
-                Product product = await _productRepository.GetByIdWithDiscountsAsync(item.ProductId)
+                Product product = await _productRepository.GetByIdAsync(item.ProductId)
                     ?? throw new ArgumentException($"El producto con ID {item.ProductId} no existe.");
 
-                Discount? discount = product.GetBestDiscount(client);
-                decimal discountPercentage = discount?.Percentage ?? 0;
+                Discount? discount = await _discountRepository.GetBestByProductAndClientAsync(product, client);
+                decimal discountPercentage = 0;
+                if(discount != null && item.Quantity >= discount.ProductQuantity)
+                {
+                    discountPercentage = discount.Percentage;
+                }
                 productItems.Add(new ProductItem(item.Quantity, 0, product.Price, discountPercentage, product));
             }
 
@@ -113,26 +122,27 @@ namespace BusinessLogic.SubSystem
             {
                 throw new ArgumentException("No se encontraron solicitudes de pedido.");
             }
-            return orderRequests.Select(OrderRequestMapper.ToResponse).ToList();
+            return orderRequests.Select(or => OrderRequestMapper.ToResponse(or)).ToList();
         }
 
         internal async Task<OrderRequestResponse?> ChangeStatusOrderRequestAsync(int id, DocumentClientChangeStatusRequest request)
         {
-            OrderRequest? orderRequest = await _orderRequestRepository.GetByIdAsync(id)
+            OrderRequest orderRequest = await _orderRequestRepository.GetByIdAsync(id)
                 ?? throw new ArgumentException($"No se encontró una solicitud de pedido con el ID {id}.");
 
             if (orderRequest.Status != Status.Pending)
                 throw new ArgumentException("La solicitud de pedido no se puede modificar porque no está en estado pendiente.");
 
             int userId = request.getUserId() ?? 0;
-            User? user = await _UserRepository.GetByIdAsync(userId)
+            User? user = await _userRepository.GetByIdAsync(userId)
                 ?? throw new ArgumentException("El usuario que realiza el cambio de estado no existe.");
             orderRequest.AuditInfo.SetUpdated(userId, request.Location);
             orderRequest.User = user;
+            Order order = null;
             if (request.Status == Status.Confirmed)
             {
                 orderRequest.Confirm();
-                await _orderSubSystem.AddOrderAsync(orderRequest);
+                order = await _orderSubSystem.AddOrderAsync(orderRequest);
             }
             else if (request.Status == Status.Cancelled)
             {
@@ -143,6 +153,7 @@ namespace BusinessLogic.SubSystem
                 throw new ArgumentException("El estado de la solicitud de pedido no es válido para cambiar.");
             }
             
+            orderRequest.Order = order;
             orderRequest = await _orderRequestRepository.ChangeStatusOrderRequest(orderRequest);
             return OrderRequestMapper.ToResponse(orderRequest);
         }
