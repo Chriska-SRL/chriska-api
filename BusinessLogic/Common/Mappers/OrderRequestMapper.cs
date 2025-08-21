@@ -31,7 +31,7 @@ namespace BusinessLogic.Common.Mappers
             };
         }
 
-        public static OrderRequestResponse? ToResponse(OrderRequest? orderRequest)
+        public static OrderRequestResponse? ToResponse(OrderRequest? orderRequest, Boolean notBucle = false)
         {
             if (orderRequest == null)
             {
@@ -45,6 +45,7 @@ namespace BusinessLogic.Common.Mappers
                 Observations = orderRequest.Observations ?? "",
                 Status = orderRequest.Status,
                 Client = ClientMapper.ToResponse(orderRequest.Client),
+                Order = notBucle ? null : (orderRequest.Order != null ? OrderMapper.ToResponse(orderRequest.Order, true) : null),
                 User = UserMapper.ToResponse(orderRequest.User),
                 ProductItems = orderRequest.ProductItems.Select(pi => new ProductItemResponse
                 {

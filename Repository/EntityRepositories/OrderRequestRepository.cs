@@ -317,6 +317,7 @@ namespace Repository.EntityRepositories
         {
             int rows = await ExecuteWriteWithAuditAsync(
                 @"UPDATE OrderRequests SET 
+                    OrderId = @OrderId,
                     Status = @Status,
                     ConfirmedDate = @ConfirmedDate
                 WHERE Id = @Id",
@@ -325,6 +326,7 @@ namespace Repository.EntityRepositories
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Id", orderRequest.Id);
+                    cmd.Parameters.AddWithValue("@OrderId", (object?)orderRequest.Order?.Id ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Status", orderRequest.Status.ToString());
                     var p = cmd.Parameters.Add("@ConfirmedDate", System.Data.SqlDbType.DateTime2);
                     p.Value = (object?)orderRequest.ConfirmedDate ?? DBNull.Value;
