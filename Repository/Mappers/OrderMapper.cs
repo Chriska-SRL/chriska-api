@@ -35,7 +35,7 @@ namespace Repository.Mappers
                 auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null,
                 confirmedDate,
                 r.IsDBNull(r.GetOrdinal(Col("Crates"))) ? 0 : r.GetInt32(r.GetOrdinal(Col("Crates"))),
-                null,
+                OrderRequestMapper.FromReader(r,"OrderRequest"),
                 null
             );
 
