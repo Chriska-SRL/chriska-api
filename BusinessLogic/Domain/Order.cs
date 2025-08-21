@@ -27,7 +27,7 @@ namespace BusinessLogic.Domain
           AuditInfo? auditInfo,
           DateTime? confirmedDate,
           int crates,
-          OrderRequest? orderRequest = null,
+          OrderRequest? orderRequest,
           Delivery? delivery = null
       ) : base(id, client, status, confirmedDate, date, observations, user, productItems, auditInfo)
         {

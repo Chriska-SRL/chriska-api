@@ -4,7 +4,6 @@ using BusinessLogic.Repository;
 using Microsoft.Data.SqlClient;
 using Repository.Logging;
 using Repository.Mappers;
-using System.Data;
 
 namespace Repository.EntityRepositories
 {
@@ -171,7 +170,16 @@ namespace Repository.EntityRepositories
 
                 -- Category (prefijo Category)
                 cat.Name           AS CategoryName,
-                cat.Description    AS CategoryDescription
+                cat.Description    AS CategoryDescription,
+
+                -- OrderRequest (prefijo ORq_)
+                orq.Id             AS OrderRequestId,
+                orq.Date           AS OrderRequestDate,
+                orq.Observations   AS OrderRequestObservations,
+                orq.Status         AS OrderRequestStatus,
+                orq.ClientId       AS OrderRequestClientId,
+                orq.ConfirmedDate AS OrderRequestConfirmedDate
+
 
             FROM Orders o
             LEFT JOIN Clients c       ON c.Id = o.ClientId
@@ -183,12 +191,12 @@ namespace Repository.EntityRepositories
             LEFT JOIN Brands b        ON b.Id = p.BrandId
             LEFT JOIN SubCategories sb ON sb.Id = p.SubCategoryId
             LEFT JOIN Categories cat   ON cat.Id = sb.CategoryId
+            LEFT JOIN OrderRequests orq ON orq.Id = o.OrderRequestId
         ";
 
         #endregion
 
         #region GetAll
-
         public async Task<List<Order>> GetAllAsync(QueryOptions options)
         {
             var allowedFilters = new[] { "Date", "Observations", "Status", "ConfirmedDate", "ClientId", "OrderRequestId", "Crates" };
@@ -218,7 +226,6 @@ namespace Repository.EntityRepositories
                 allowedFilterColumns: allowedFilters
             );
         }
-
         #endregion
 
         #region GetById

@@ -45,7 +45,7 @@ namespace BusinessLogic.Common.Mappers
                 }).ToList(),
                 //Delivery = DeliveryMapper.ToResponse(order.Delivery),
                 Crates = order.Crates,
-                //OrderRequest = OrderRequestMapper.ToResponse(order.OrderRequest),
+                OrderRequest = OrderRequestMapper.ToResponse(order.OrderRequest),
                 AuditInfo = AuditMapper.ToResponse(order.AuditInfo)
             };
 
