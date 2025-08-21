@@ -85,6 +85,7 @@ namespace Repository.EntityRepositories
                 p.SubCategoryId    AS SubCategoryId,
                 p.BrandId          AS BrandId,
                 p.ShelveId         AS ProductShelveId,
+
                 -- Brand (prefijo Brand)
                 b.Name             AS BrandName,
                 b.Description      AS BrandDescription,
@@ -109,8 +110,6 @@ namespace Repository.EntityRepositories
         LEFT JOIN Brands b        ON b.Id = p.BrandId
         LEFT JOIN SubCategories sb ON sb.Id = p.SubCategoryId
         LEFT JOIN Categories cat   ON cat.Id = sb.CategoryId
-        
-
     ";
 
         #region Add
@@ -131,8 +130,6 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@OrderId", delivery.Order?.Id ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Date", delivery.Date);
                     cmd.Parameters.AddWithValue("@ClientId", delivery.Client?.Id ?? throw new Exception("Cliente nulo"));
-
-
                 },
                 async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
             );
