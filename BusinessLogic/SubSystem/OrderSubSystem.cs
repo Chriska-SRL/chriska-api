@@ -94,6 +94,11 @@ namespace BusinessLogic.SubSystem
         public async Task<List<OrderResponse?>> GetAllOrdersAsync(QueryOptions options)
         {
             List<Order> orders = await _orderRepository.GetAllAsync(options);
+            foreach (var order in orders)
+            {
+                order.OrderRequest = await _orderRequestRepository.GetByIdAsync(order.Id)
+                    ?? throw new ArgumentException("No se encontró la solicitud de pedido asociada a la orden.");
+            }
             return orders.Select(o => OrderMapper.ToResponse(o)).ToList();
         }
 
