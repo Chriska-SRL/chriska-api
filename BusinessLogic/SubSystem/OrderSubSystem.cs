@@ -94,8 +94,6 @@ namespace BusinessLogic.SubSystem
         public async Task<List<OrderResponse?>> GetAllOrdersAsync(QueryOptions options)
         {
             List<Order> orders = await _orderRepository.GetAllAsync(options);
-            if (orders == null || orders.Count == 0)
-                throw new ArgumentException("No se encontraron órdenes.");
             return orders.Select(o => OrderMapper.ToResponse(o)).ToList();
         }
 
