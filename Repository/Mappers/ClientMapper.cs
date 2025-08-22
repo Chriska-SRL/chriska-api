@@ -1,5 +1,7 @@
-﻿using BusinessLogic.Domain;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
+using System.Reflection.PortableExecutable;
 
 namespace Repository.Mappers
 {
@@ -16,21 +18,21 @@ namespace Repository.Mappers
             }
 
             return new Client(
-                r.GetInt32(r.GetOrdinal(Col("Id"))),
-                S(Col("Name")),
-                S(Col("RUT")),
-                S(Col("RazonSocial")),
-                S(Col("Address")),
-                S(Col("MapsAddress")),
-                S(Col("Schedule")),
-                S(Col("Phone")),
-                S(Col("ContactName")),
-                S(Col("Email")),
-                S(Col("Observations")),
-                new List<BankAccount>(),
-                r.IsDBNull(r.GetOrdinal(Col("LoanedCrates"))) ? 0 : r.GetInt32(r.GetOrdinal(Col("LoanedCrates"))),
-                S(Col("Qualification")),
-                zone: ZoneMapper.FromReader(r, "Zone", originForZone), // p.ej. CZone*
+            r.GetInt32(r.GetOrdinal(Col("Id"))),
+            S(Col("Name")),
+            S(Col("RUT")),
+            S(Col("RazonSocial")),
+            S(Col("Address")),
+            location : Location.FromString(r.IsDBNull(r.GetOrdinal("Location")) ? null : r.GetString(r.GetOrdinal("Location"))),
+            S(Col("Schedule")),
+            S(Col("Phone")),
+            S(Col("ContactName")),
+            S(Col("Email")),
+            S(Col("Observations")),
+            new List<BankAccount>(),
+            r.IsDBNull(r.GetOrdinal(Col("LoanedCrates"))) ? 0 : r.GetInt32(r.GetOrdinal(Col("LoanedCrates"))),
+            S(Col("Qualification")),
+            zone: ZoneMapper.FromReader(r, "Zone", originForZone), // p.ej. CZone*
                 auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null
             );
         }
