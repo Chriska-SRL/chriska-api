@@ -328,6 +328,47 @@ namespace Repository.EntityRepositories
             }
         }
         #endregion
-    
+
+        #region GetConfirmedByClientId
+
+        public async Task<List<Delivery>> GetConfirmedByClientIdAsync(int clientId, QueryOptions? options)
+        {
+            var dict = new Dictionary<int, Delivery>();
+
+            return await ExecuteReadAsync(
+                baseQuery: baseQuery + " WHERE d.ClientId = @ClientId AND d.Status = @Status",
+                map: reader =>
+                {
+                    while (reader.Read())
+                    {
+                        int delId = reader.GetInt32(reader.GetOrdinal("Id"));
+
+                        if (!dict.TryGetValue(delId, out var delivery))
+                        {
+                            delivery = DeliveryMapper.FromReader(reader);
+                            dict.Add(delId, delivery);
+                        }
+
+                        var item = ProductItemMapper.FromReader(reader, "DP_");
+                        if (item is not null) delivery!.ProductItems.Add(item);
+                    }
+
+                    return dict.Values.ToList();
+                },
+                options: options ?? new QueryOptions(),
+                tableAlias: "d",
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@ClientId", clientId);
+                    cmd.Parameters.AddWithValue("@Status", "Confirmed");
+                }
+            );
+        }
+
+        #endregion
+
+
+
+
     }
 }
