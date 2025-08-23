@@ -48,8 +48,8 @@ namespace BusinessLogic.SubSystem
             var existing = await _returnRequestRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException($"No se encontró una solicitud de devolución con el ID {request.Id}.");
 
-            if (existing.Status != Status.Pending)
-                throw new ArgumentException("La solicitud de devolución no se puede modificar porque no está en estado pendiente.");
+          //  if (existing.Status != Status.Pending)
+            //    throw new ArgumentException("La solicitud de devolución no se puede modificar porque no está en estado pendiente.");
 
             var userId = request.getUserId() ?? 0;
             var user = await _userRepository.GetByIdAsync(userId)

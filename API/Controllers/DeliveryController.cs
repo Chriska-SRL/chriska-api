@@ -57,5 +57,14 @@ namespace API.Controllers
             var result = await _facade.ChangeStatusDeliveryAsync(id, request);
             return Ok(result); // 200 OK
         }
+
+        [HttpGet("client/{clientId}/confirmed")]
+        [Authorize(Policy = nameof(Permission.VIEW_DELIVERIES))]
+        public async Task<ActionResult<List<DeliveryResponse>>> GetConfirmedDeliveriesByClientIdAsync(int clientId, [FromQuery] QueryOptions? options)
+        {
+            var result = await _facade.GetConfirmedDeliveriesByClientIdAsync(clientId, options);
+            return Ok(result); // 200 OK
+        }
+
     }
 }
