@@ -15,20 +15,17 @@ namespace BusinessLogic.SubSystem
         private readonly IUserRepository _userRepository;
         private readonly IDeliveryRepository _deliveryRepository;
         private readonly IProductRepository _productRepository;
-        private readonly IClientRepository _clientRepository;
 
         public ReturnRequestSubSystem(
             IReturnRequestRepository returnRequestRepository,
             IUserRepository userRepository,
             IDeliveryRepository deliveryRepository,
-            IProductRepository productRepository,
-            IClientRepository clientRepository)
+            IProductRepository productRepository)
         {
             _returnRequestRepository = returnRequestRepository;
             _userRepository = userRepository;
             _deliveryRepository = deliveryRepository;
             _productRepository = productRepository;
-            _clientRepository = clientRepository;
         }
 
         public async Task<ReturnRequestResponse> AddReturnRequestAsync(ReturnRequestAddRequest request)
@@ -64,21 +61,22 @@ namespace BusinessLogic.SubSystem
             var productItems = new List<ProductItem>();
             foreach (var item in request.ProductItems)
             {
-                Product product = await _productRepository.GetByIdWithDiscountsAsync(item.ProductId)
-                    ?? throw new ArgumentException($"El producto con ID {item.ProductId} no existe.");
-
-                decimal discountPercentage = delivery.ProductItems
-                    .FirstOrDefault(pi => pi.Product.Id == product.Id)?.Discount ?? throw new InvalidOperationException("El producto seleccionado no se encuentra en la entrega");
-                //TODO: Validar quantity
-
-                productItems.Add(new ProductItem(item.Quantity, 0, product.Price, discountPercentage, product));
+                ProductItem? existingItem = existing.ProductItems.FirstOrDefault(p => p.Product.Id == item.ProductId);
+                if (existingItem != null)
+                {
+                    if (item.Quantity > existingItem.Quantity)
+                        throw new ArgumentException($"La cantidad solicitada para la devolucion del producto {item.ProductId} no puede ser mayor que la cantidad entregada.");
+                    if (item.Quantity <= 0)
+                        throw new ArgumentException($"La cantidad solicitada para la devolucion del producto {item.ProductId} debe ser mayor que cero.");
+                    existingItem.Quantity = item.Quantity;
+                    productItems.Add(existingItem);
+                }
             }
 
             ReturnRequest.UpdatableData updatedData = ReturnRequestMapper.ToUpdatableData(request, user, productItems);
 
             
             existing.Update(updatedData);
-
 
             var updated = await _returnRequestRepository.UpdateAsync(existing);
             return ReturnRequestMapper.ToResponse(updated);

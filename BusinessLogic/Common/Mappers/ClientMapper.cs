@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Common.Mappers;
-using BusinessLogic.Domain;
+﻿using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsClient;
 
 namespace BusinessLogic.Common.Mappers
@@ -14,7 +13,7 @@ namespace BusinessLogic.Common.Mappers
                 request.RUT,
                 request.RazonSocial,
                 request.Address,
-                request.MapsAddress,
+                request.ClientLocation,
                 request.Schedule,
                 request.Phone,
                 contactName: request.ContactName,
@@ -37,7 +36,7 @@ namespace BusinessLogic.Common.Mappers
                 RUT = request.RUT,
                 RazonSocial = request.RazonSocial,
                 Address = request.Address,
-                MapsAddress = request.MapsAddress,
+                Location = request.ClientLocation,
                 Schedule = request.Schedule,
                 Phone = request.Phone,
                 ContactName = request.ContactName,
@@ -47,8 +46,7 @@ namespace BusinessLogic.Common.Mappers
                 Qualification = request.Qualification,
                 Zone = zone,
                 BankAccounts = request.BankAccounts?.Select(BankAccountMapper.ToDomain).ToList(),
-                UserId = request.getUserId(),
-                Location = request.Location
+                UserId = request.getUserId()
             };
         }
 
@@ -61,7 +59,7 @@ namespace BusinessLogic.Common.Mappers
                 RUT = client.RUT,
                 RazonSocial = client.RazonSocial,
                 Address = client.Address,
-                MapsAddress = client.MapsAddress,
+                Location = client.ClientLocation,
                 Schedule = client.Schedule,
                 Phone = client.Phone,
                 ContactName = client.ContactName,

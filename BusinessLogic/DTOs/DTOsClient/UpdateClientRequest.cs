@@ -1,4 +1,5 @@
-﻿using BusinessLogic.DTOs.DTOsAudit;
+﻿using BusinessLogic.Common;
+using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsBankAccount;
 
 namespace BusinessLogic.DTOs.DTOsClient
@@ -8,9 +9,9 @@ namespace BusinessLogic.DTOs.DTOsClient
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? RazonSocial { get; set; }
+        public Location? ClientLocation { get; set; } 
         public string? RUT { get; set; }
         public string? Address { get; set; }
-        public string? MapsAddress { get; set; }
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public string? ContactName { get; set; }

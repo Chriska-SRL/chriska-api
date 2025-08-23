@@ -10,7 +10,7 @@ namespace BusinessLogic.Domain
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
         public string Address { get; set; }
-        public string MapsAddress { get; set; }
+        public Location ClientLocation { get; set; }
         public string Schedule { get; set; }
         public string Phone { get; set; }
         public string ContactName { get; set; }
@@ -22,7 +22,7 @@ namespace BusinessLogic.Domain
         public List<BankAccount> BankAccounts { get; set; } = new();
         public AuditInfo? AuditInfo { get; set; } = new();
 
-        public Client(string name, string? rut, string razonSocial, string address, string mapsAddress,
+        public Client(string name, string? rut, string razonSocial, string address, Location clientLocation,
                       string schedule, string phone, string contactName, string? email, string? observations,
                       List<BankAccount> bankAccounts, int loanedCrates, Zone zone)
         {
@@ -30,7 +30,7 @@ namespace BusinessLogic.Domain
             RUT = rut ?? "";
             RazonSocial = razonSocial;
             Address = address;
-            MapsAddress = mapsAddress;
+            ClientLocation = clientLocation;
             Schedule = schedule;
             Phone = phone;
             ContactName = contactName;
@@ -42,7 +42,7 @@ namespace BusinessLogic.Domain
             AuditInfo = new AuditInfo();
             Validate();
         }
-        public Client(int id, string name, string rut, string razonSocial, string address, string mapsAddress,
+        public Client(int id, string name, string rut, string razonSocial, string address, Location location,
                       string schedule, string phone, string contactName, string email, string observations,
                       List<BankAccount> bankAccounts, int loanedCrates, string qualification, Zone? zone,AuditInfo? auditInfo)
         {
@@ -51,7 +51,7 @@ namespace BusinessLogic.Domain
             RUT = rut;
             RazonSocial = razonSocial;
             Address = address;
-            MapsAddress = mapsAddress;
+            ClientLocation = location;
             Schedule = schedule;
             Phone = phone;
             ContactName = contactName;
@@ -78,7 +78,7 @@ namespace BusinessLogic.Domain
             if (string.IsNullOrWhiteSpace(Address) || Address.Length > 50)
                 throw new ArgumentException("La dirección es obligatoria y no puede superar los 50 caracteres.");
 
-            if (string.IsNullOrWhiteSpace(MapsAddress))
+            if (ClientLocation == null)
                 throw new ArgumentException("La dirección de Maps es obligatoria.");
 
             if (string.IsNullOrWhiteSpace(Schedule))
@@ -111,7 +111,7 @@ namespace BusinessLogic.Domain
             RUT = data.RUT ?? RUT;
             RazonSocial = data.RazonSocial ?? RazonSocial;
             Address = data.Address ?? Address;
-            MapsAddress = data.MapsAddress ?? MapsAddress;
+            ClientLocation = data.ClientLocation;
             Schedule = data.Schedule ?? Schedule;
             Phone = data.Phone ?? Phone;
             ContactName = data.ContactName ?? ContactName;
@@ -136,7 +136,7 @@ namespace BusinessLogic.Domain
             public string? RUT;
             public string? RazonSocial;
             public string? Address;
-            public string? MapsAddress;
+            public Location? ClientLocation;
             public string? Schedule;
             public string? Phone;
             public string? ContactName;
