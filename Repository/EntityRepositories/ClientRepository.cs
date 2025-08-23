@@ -17,8 +17,8 @@ namespace Repository.EntityRepositories
         public async Task<Client> AddAsync(Client client)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-            "INSERT INTO Clients (Name, RUT, RazonSocial, Address, MapsAddress, Schedule, Phone, ContactName, Email, Observations, LoanedCrates, Qualification, ZoneId) " +
-            "OUTPUT INSERTED.Id VALUES (@Name, @RUT, @RazonSocial, @Address, @MapsAddress, @Schedule, @Phone, @ContactName, @Email, @Observations, @LoanedCrates, @Qualification, @ZoneId)",
+            "INSERT INTO Clients (Name, RUT, RazonSocial, Address, Location, Schedule, Phone, ContactName, Email, Observations, LoanedCrates, Qualification, ZoneId) " +
+            "OUTPUT INSERTED.Id VALUES (@Name, @RUT, @RazonSocial, @Address, @Location, @Schedule, @Phone, @ContactName, @Email, @Observations, @LoanedCrates, @Qualification, @ZoneId)",
             client,
             AuditAction.Insert,
             configureCommand: cmd =>
@@ -27,7 +27,7 @@ namespace Repository.EntityRepositories
                 cmd.Parameters.AddWithValue("@RUT", client.RUT);
                 cmd.Parameters.AddWithValue("@RazonSocial", client.RazonSocial);
                 cmd.Parameters.AddWithValue("@Address", client.Address);
-                cmd.Parameters.AddWithValue("@MapsAddress", client.MapsAddress);
+                cmd.Parameters.AddWithValue("@Location", (object?)client.ClientLocation?.ToString() ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Schedule", client.Schedule);
                 cmd.Parameters.AddWithValue("@Phone", client.Phone);
                 cmd.Parameters.AddWithValue("@ContactName", client.ContactName);
@@ -42,7 +42,7 @@ namespace Repository.EntityRepositories
 
             await AddClientBankAccountsAsync(newId, client.BankAccounts);
 
-            return new Client(newId, client.Name, client.RUT, client.RazonSocial, client.Address, client.MapsAddress,
+            return new Client(newId, client.Name, client.RUT, client.RazonSocial, client.Address, client.ClientLocation,
                               client.Schedule, client.Phone, client.ContactName, client.Email, client.Observations,
                               client.BankAccounts, client.LoanedCrates, client.Qualification, client.Zone, client.AuditInfo);
         }
@@ -57,7 +57,7 @@ namespace Repository.EntityRepositories
             await AddClientBankAccountsAsync(client.Id, client.BankAccounts);
 
             int rows = await ExecuteWriteWithAuditAsync(
-                "UPDATE Clients SET Name = @Name, RUT = @RUT, RazonSocial = @RazonSocial, Address = @Address, MapsAddress = @MapsAddress, " +
+                "UPDATE Clients SET Name = @Name, RUT = @RUT, RazonSocial = @RazonSocial, Address = @Address, Location = @Location, " +
                 "Schedule = @Schedule, Phone = @Phone, ContactName = @ContactName, Email = @Email, Observations = @Observations, " +
                 "LoanedCrates = @LoanedCrates, Qualification = @Qualification, ZoneId = @ZoneId WHERE Id = @Id",
                 client,
@@ -69,7 +69,7 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@RUT", client.RUT);
                     cmd.Parameters.AddWithValue("@RazonSocial", client.RazonSocial);
                     cmd.Parameters.AddWithValue("@Address", client.Address);
-                    cmd.Parameters.AddWithValue("@MapsAddress", client.MapsAddress);
+                    cmd.Parameters.AddWithValue("@Location", (object?)client.ClientLocation?.ToString() ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Schedule", client.Schedule);
                     cmd.Parameters.AddWithValue("@Phone", client.Phone);
                     cmd.Parameters.AddWithValue("@ContactName", client.ContactName);

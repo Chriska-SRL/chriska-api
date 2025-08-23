@@ -86,7 +86,7 @@ namespace Repository.EntityRepositories
 
                                 -- Cliente (prefijo Client*) + Zona del cliente (prefijo CZone*)
                                 cl.Id  AS ClientId, cl.Name AS ClientName, cl.RUT AS ClientRUT, cl.RazonSocial AS ClientRazonSocial,
-                                cl.Address AS ClientAddress, cl.MapsAddress AS ClientMapsAddress, cl.Schedule AS ClientSchedule,
+                                cl.Address AS ClientAddress, cl.Location AS ClientLocation, cl.Schedule AS ClientSchedule,
                                 cl.Phone AS ClientPhone, cl.ContactName AS ClientContactName, cl.Email AS ClientEmail,
                                 cl.Observations AS ClientObservations, cl.LoanedCrates AS ClientLoanedCrates, cl.Qualification AS ClientQualification,
                                 cz.Id AS CZoneId, cz.Name AS CZoneName, cz.Description AS CZoneDescription,

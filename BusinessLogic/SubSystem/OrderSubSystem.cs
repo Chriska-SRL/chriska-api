@@ -12,17 +12,15 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderRequestRepository _orderRequestRepository;
-        private readonly IClientRepository _clientRepository;
         private readonly IProductRepository _productRepository;
         private readonly IUserRepository _userRepository;
         private readonly IDeliveryRepository _deliveriesRepository;
         private readonly DeliveriesSubSystem _deliveriesSubSystem;
 
-        public OrderSubSystem(IOrderRepository orderRepository, IClientRepository clientRepository, IProductRepository productRepository, IUserRepository userRepository, DeliveriesSubSystem deliveriesSubSystem, IOrderRequestRepository orderRequestRepository, IDeliveryRepository deliveriesRepository)
+        public OrderSubSystem(IOrderRepository orderRepository, IProductRepository productRepository, IUserRepository userRepository, DeliveriesSubSystem deliveriesSubSystem, IOrderRequestRepository orderRequestRepository, IDeliveryRepository deliveriesRepository)
         {
             _orderRepository = orderRepository;
             _orderRequestRepository = orderRequestRepository;
-            _clientRepository = clientRepository;
             _productRepository = productRepository;
             _userRepository = userRepository;
             _deliveriesSubSystem = deliveriesSubSystem;

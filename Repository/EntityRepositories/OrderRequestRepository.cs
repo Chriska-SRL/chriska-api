@@ -101,7 +101,7 @@ namespace Repository.EntityRepositories
                 c.RUT             AS ClientRUT,
                 c.RazonSocial     AS ClientRazonSocial,
                 c.Address         AS ClientAddress,
-                c.MapsAddress     AS ClientMapsAddress,
+                c.Location     AS ClientLocation,
                 c.Schedule        AS ClientSchedule,
                 c.Phone           AS ClientPhone,
                 c.ContactName     AS ClientContactName,
