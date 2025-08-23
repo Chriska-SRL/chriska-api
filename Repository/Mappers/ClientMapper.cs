@@ -23,7 +23,7 @@ namespace Repository.Mappers
             S(Col("RUT")),
             S(Col("RazonSocial")),
             S(Col("Address")),
-            location : Location.FromString(r.IsDBNull(r.GetOrdinal("Location")) ? null : r.GetString(r.GetOrdinal("Location"))),
+            location: Location.FromString(r.IsDBNull(r.GetOrdinal(Col("Location"))) ? null : r.GetString(r.GetOrdinal(Col("Location")))),
             S(Col("Schedule")),
             S(Col("Phone")),
             S(Col("ContactName")),
