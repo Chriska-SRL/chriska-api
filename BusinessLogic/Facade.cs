@@ -231,6 +231,8 @@ namespace BusinessLogic
         public async Task<List<DeliveryResponse?>> GetAllDeliveriesAsync(QueryOptions query) => await Deliveries.GetAllDeliveriesAsync(query);
 
         public async Task<DeliveryResponse?> ChangeStatusDeliveryAsync(int id, DocumentClientChangeStatusRequest request)  => await Deliveries.ChangeStatusDeliveryAsync(id, request);
+        public async Task<List<DeliveryResponse?>> GetConfirmedDeliveriesByClientIdAsync(int ClientId,QueryOptions query) => await Deliveries.GetConfirmedDeliveriesByClientIdAsync(ClientId,query);
 
+        
     }
 }

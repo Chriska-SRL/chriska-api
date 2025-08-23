@@ -107,5 +107,13 @@ namespace BusinessLogic.SubSystem
             return DeliveryMapper.ToResponse(delivery);
         }
 
+        public async Task<List<DeliveryResponse>> GetConfirmedDeliveriesByClientIdAsync(int clientId, QueryOptions? options = null)
+        {
+
+            var deliveries = await _deliveryRepository.GetConfirmedByClientIdAsync(clientId, options);
+            if(deliveries == null)throw new ArgumentException($"No se encontró las entregas del client con el ID {clientId}.");
+            return deliveries.Select(d => DeliveryMapper.ToResponse(d)).ToList();
+        }
+
     }
 }
