@@ -113,8 +113,7 @@ namespace Repository.EntityRepositories
 
     ";
 
-        #region Add
-
+  
         public async Task<Delivery> AddAsync(Delivery delivery)
         {
             int newId = await ExecuteWriteWithAuditAsync(
@@ -143,9 +142,6 @@ namespace Repository.EntityRepositories
             return delivery;
         }
 
-        #endregion
-
-        #region Delete
 
         public async Task<Delivery> DeleteAsync(Delivery delivery)
         {
@@ -168,11 +164,10 @@ namespace Repository.EntityRepositories
             return delivery;
         }
 
-        #endregion
 
         public async Task<List<Delivery>> GetAllAsync(QueryOptions options)
         {
-            var allowedFilters = new[] { "ClientId", "Status", "Date" };
+            var allowedFilters = new[] { "ClientId", "Status", "Date", };
             var dict = new Dictionary<int, Delivery>();
 
             return await ExecuteReadAsync(
@@ -199,7 +194,7 @@ namespace Repository.EntityRepositories
             );
         }
 
-        #region GetById
+    
 
         public async Task<Delivery?> GetByIdAsync(int id)
         {
@@ -233,10 +228,6 @@ namespace Repository.EntityRepositories
         }
 
 
-        #endregion
-
-        #region Update
-
         public async Task<Delivery> UpdateAsync(Delivery delivery)
         {
 
@@ -259,7 +250,6 @@ namespace Repository.EntityRepositories
             return delivery;
         }
 
-        #endregion
 
         public async Task<Delivery?> ChangeStatusDeliveryAsync(Delivery delivery)
         {
@@ -284,8 +274,6 @@ namespace Repository.EntityRepositories
 
             return delivery;
         }
-
-        #region Private helpers (items)
 
         public async Task AddDeliveryItems(int deliveryId, List<ProductItem> productItems)
         {
@@ -327,7 +315,108 @@ namespace Repository.EntityRepositories
                 throw new Exception("Error al agregar los delivery items", ex);
             }
         }
-        #endregion
+
+        public async Task<List<Delivery>> GetDeliveriesPendingByClientIdsAsync(List<int> clientIds)
+        {
+            if (clientIds == null || clientIds.Count == 0) return new List<Delivery>();
+
+            var inClause = string.Join(", ", clientIds.Select((_, i) => $"@C{i}"));
+            var sql = baseQuery + $" WHERE d.Status = @Status AND c.Id IN ({inClause})";
+
+            var dict = new Dictionary<int, Delivery>();
+            return await ExecuteReadAsync(
+                baseQuery: sql,
+                map: reader =>
+                {
+                    while (reader.Read())
+                    {
+                        int id = reader.GetInt32(reader.GetOrdinal("Id"));
+                        if (!dict.TryGetValue(id, out var delivery))
+                        {
+                            delivery = DeliveryMapper.FromReader(reader);
+                            dict.Add(id, delivery);
+                        }
+
+                        var item = ProductItemMapper.FromReader(reader, "DP_");
+                        if (item is not null) delivery!.ProductItems.Add(item);
+                    }
+                    return dict.Values.ToList();
+                },
+                options: new QueryOptions(),
+                tableAlias: "d",
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Status", "Pending");
+                    for (int i = 0; i < clientIds.Count; i++)
+                        cmd.Parameters.AddWithValue($"@C{i}", clientIds[i]);
+                }
+            );
+        }
+
+        public async Task<List<Delivery>> GetDeliveriesPendingByZoneIdsAsync(List<int> zoneIds)
+        {
+            if (zoneIds == null || zoneIds.Count == 0) return new List<Delivery>();
+
+            var inClause = string.Join(", ", zoneIds.Select((_, i) => $"@Z{i}"));
+            var sql = baseQuery + $" WHERE d.Status = @Status AND z.Id IN ({inClause})";
+
+            var dict = new Dictionary<int, Delivery>();
+            return await ExecuteReadAsync(
+                baseQuery: sql,
+                map: reader =>
+                {
+                    while (reader.Read())
+                    {
+                        int id = reader.GetInt32(reader.GetOrdinal("Id"));
+                        if (!dict.TryGetValue(id, out var delivery))
+                        {
+                            delivery = DeliveryMapper.FromReader(reader);
+                            dict.Add(id, delivery);
+                        }
+
+                        var item = ProductItemMapper.FromReader(reader, "DP_");
+                        if (item is not null) delivery!.ProductItems.Add(item);
+                    }
+                    return dict.Values.ToList();
+                },
+                options: new QueryOptions(),
+                tableAlias: "d",
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Status", "Pending");
+                    for (int i = 0; i < zoneIds.Count; i++)
+                        cmd.Parameters.AddWithValue($"@Z{i}", zoneIds[i]);
+                }
+            );
+        }
+
+        public async Task<List<Delivery>> GetDeliveriesByDistributionIdAsync(int id)
+        {
+            var dict = new Dictionary<int, Delivery>();
+
+            return await ExecuteReadAsync(
+                baseQuery: baseQuery + " JOIN Distributions_Deliveries dd ON dd.DeliveryId = d.Id WHERE dd.DistributionId = @DistributionId",
+                map: reader =>
+                {
+                    while (reader.Read())
+                    {
+                        int delId = reader.GetInt32(reader.GetOrdinal("Id"));
+                        if (!dict.TryGetValue(delId, out var delivery))
+                        {
+                            delivery = DeliveryMapper.FromReader(reader);
+                            dict.Add(delId, delivery);
+                        }
+
+                        var item = ProductItemMapper.FromReader(reader, "DP_");
+                        if (item is not null) delivery!.ProductItems.Add(item);
+                    }
+                    return dict.Values.ToList();
+                },
+                options: new QueryOptions(),
+                tableAlias: "d",
+                configureCommand: cmd => cmd.Parameters.AddWithValue("@DistributionId", id)
+            );
+        }
 
         #region GetConfirmedByClientId
 

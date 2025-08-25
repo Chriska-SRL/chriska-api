@@ -29,7 +29,7 @@ namespace Repository.Mappers
                 id: r.GetInt32(r.GetOrdinal(Col("Id"))),
                 name: S(Col("Name")),
                 username: S(Col("Username")),
-                password: S(Col("Password")),
+                password: prefix is null ? S(Col("Password")):"",
                 isEnabled: S(Col("IsEnabled")) == "T",
                 needsPasswordChange: S(Col("NeedsPasswordChange")) == "T",
                 role: role,

@@ -127,5 +127,11 @@
         EDIT_RETURN_REQUESTS = 80,
         VIEW_RETURN_REQUESTS = 81,
 
+        //Distributions
+        CREATE_DISTRIBUTIONS = 82,
+        DELETE_DISTRIBUTIONS = 83,
+        EDIT_DISTRIBUTIONS = 84,
+        VIEW_DISTRIBUTIONS = 85,
+
     }
 }
