@@ -33,6 +33,12 @@ namespace BusinessLogic.SubSystem
             Delivery delivery = await _deliveryRepository.GetByIdAsync(request.DeliveryId)
                 ?? throw new ArgumentException("No se encontró la entrega asociada.");
 
+            if (delivery.Status != Status.Confirmed)
+                throw new ArgumentException("La entrega asociada debe estar en estado confirmado para crear una solicitud de devolución.");
+
+            if (!delivery.ProductItems.Any())
+                throw new ArgumentException("La entrega no tiene productos para devolver.");
+
             int userId = request.getUserId() ?? 0;
             User user = await _userRepository.GetByIdAsync(userId)
                 ?? throw new ArgumentException("El usuario que realiza la solicitud no existe.");
@@ -48,8 +54,8 @@ namespace BusinessLogic.SubSystem
             var existing = await _returnRequestRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException($"No se encontró una solicitud de devolución con el ID {request.Id}.");
 
-          //  if (existing.Status != Status.Pending)
-            //    throw new ArgumentException("La solicitud de devolución no se puede modificar porque no está en estado pendiente.");
+            if (existing.Status != Status.Pending)
+              throw new ArgumentException("La solicitud de devolución no se puede modificar porque no está en estado pendiente.");
 
             var userId = request.getUserId() ?? 0;
             var user = await _userRepository.GetByIdAsync(userId)
@@ -62,9 +68,10 @@ namespace BusinessLogic.SubSystem
             foreach (var item in request.ProductItems)
             {
                 ProductItem? existingItem = existing.ProductItems.FirstOrDefault(p => p.Product.Id == item.ProductId);
+                ProductItem? deliveryItem = delivery.ProductItems.FirstOrDefault(p => p.Product.Id == item.ProductId);
                 if (existingItem != null)
                 {
-                    if (item.Quantity > existingItem.Quantity)
+                    if (item.Quantity > deliveryItem.Quantity)
                         throw new ArgumentException($"La cantidad solicitada para la devolucion del producto {item.ProductId} no puede ser mayor que la cantidad entregada.");
                     if (item.Quantity <= 0)
                         throw new ArgumentException($"La cantidad solicitada para la devolucion del producto {item.ProductId} debe ser mayor que cero.");
@@ -81,8 +88,6 @@ namespace BusinessLogic.SubSystem
             var updated = await _returnRequestRepository.UpdateAsync(existing);
             return ReturnRequestMapper.ToResponse(updated);
         }
-
-
 
         public async Task DeleteReturnRequestAsync(DeleteRequest request)
         {
@@ -120,9 +125,9 @@ namespace BusinessLogic.SubSystem
                 Delivery delivery = await _deliveryRepository.GetByIdAsync(returnRequest.Delivery.Id)
              ?? throw new ArgumentException("No se encontró la entrega asociada a la devolución.");
 
-                foreach (var item in delivery.ProductItems)
+                foreach (var item in returnRequest.ProductItems)
                 {
-                    await _productRepository.UpdateStockAsync(item.Product.Id, item.Quantity,item.Quantity);
+                    await _productRepository.UpdateStockAsync(item.Product.Id, item.Quantity, item.Quantity);
                 }
 
             }
