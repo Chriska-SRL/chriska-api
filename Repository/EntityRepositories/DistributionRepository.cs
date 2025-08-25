@@ -40,8 +40,41 @@ namespace Repository.EntityRepositories
 
         public async Task<Distribution> UpdateAsync(Distribution distribution)
         {
-            throw new NotImplementedException("El método UpdateAsync no está implementado en DistributionRepository.");
+            if (distribution == null)
+                throw new ArgumentNullException(nameof(distribution), "La distribución no puede ser nula.");
+
+            int rows = await ExecuteWriteWithAuditAsync(
+                @"UPDATE Distributions SET
+                    Observations = @Observations,
+                    Date         = @Date,
+                    UserId       = @UserId,
+                    VehicleId    = @VehicleId
+                  WHERE Id = @Id",
+                distribution,
+                AuditAction.Update,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", distribution.Id);
+                    cmd.Parameters.AddWithValue("@Observations", distribution.Observations);
+                    cmd.Parameters.AddWithValue("@Date", distribution.Date);
+                    cmd.Parameters.AddWithValue("@UserId", distribution.User.Id);
+                    cmd.Parameters.AddWithValue("@VehicleId", distribution.Vehicle.Id);
+                }
+            );
+
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo actualizar la distribución con Id {distribution.Id}");
+
+            // Reemplazar relaciones
+            await DeleteDistributionZonesAsync(distribution.Id);
+            await AddDistributionZonesAsync(distribution.Id, distribution.Zones ?? new List<Zone>());
+
+            await DeleteDistributionDeliveriesAsync(distribution.Id);
+            await AddDistributionDeliveriesAsync(distribution.Id, distribution.distributionDeliveries ?? new List<DistributionDelivery>());
+
+            return distribution;
         }
+
 
         public async Task<Distribution> DeleteAsync(Distribution distribution)
         {
