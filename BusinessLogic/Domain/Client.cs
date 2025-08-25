@@ -62,7 +62,6 @@ namespace BusinessLogic.Domain
             Qualification = qualification;
             Zone = zone;
             AuditInfo = auditInfo;
-            Validate();
         }
         public void Validate()
         {
