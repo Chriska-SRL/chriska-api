@@ -62,13 +62,65 @@ namespace BusinessLogic.SubSystem
 
         public async Task<DistributionResponse> UpdateDistributionAsync(DistributionUpdateRequest request)
         {
-            throw new NotImplementedException("El método UpdateDistributionAsync aún no está implementado.");
+            var existing = await _distributionRepository.GetByIdAsync(request.Id)
+                ?? throw new ArgumentException("No se encontró la distribución seleccionada.");
+
+            var user = request.UserId.HasValue
+                ? await _userRepository.GetByIdAsync(request.UserId.Value)
+                    ?? throw new ArgumentException("No se encontró el usuario seleccionado.")
+                : existing.User;
+
+            var vehicle = request.VehicleId.HasValue
+                ? await _vehicleRepository.GetByIdAsync(request.VehicleId.Value)
+                    ?? throw new ArgumentException("No se encontró el vehículo seleccionado.")
+                : existing.Vehicle;
+
+            List<Delivery> deliveries;
+            if (request.deliveryIds is null)
+            {
+                deliveries = await _deliveryRepository.GetDeliveriesByDistributionIdAsync(existing.Id);
+            }
+            else
+            {
+                deliveries = new List<Delivery>(request.deliveryIds.Count);
+                foreach (var delId in request.deliveryIds)
+                {
+                    var delivery = await _deliveryRepository.GetByIdAsync(delId)
+                        ?? throw new ArgumentException($"No se encontró la entrega con ID {delId}.");
+                    deliveries.Add(delivery);
+                }
+            }
+
+            var distributionDeliveries = deliveries
+                .Select((d, idx) => new DistributionDelivery(d, idx + 1))
+                .ToList();
+
+            var updatedData = DistributionMapper.ToUpdatableData(
+                request,
+                user,
+                vehicle,
+                distributionDeliveries
+            );
+
+            existing.Update(updatedData);
+            existing.Validate();
+
+            var updated = await _distributionRepository.UpdateAsync(existing);
+            return DistributionMapper.ToResponse(updated);
         }
+
 
         public async Task<DistributionResponse> DeleteDistributionAsync(DeleteRequest request)
         {
-            throw new NotImplementedException("El método DeleteDistributionAsync aún no está implementado.");
+            var distribution = await _distributionRepository.GetByIdAsync(request.Id)
+                ?? throw new ArgumentException("No se encontró la distribución seleccionada.");
+
+            distribution.MarkAsDeleted(request.getUserId(), request.Location);
+            var deleted = await _distributionRepository.DeleteAsync(distribution);
+
+            return DistributionMapper.ToResponse(deleted);
         }
+
 
 
         public async Task<DistributionResponse> GetDistributionByIdAsync(int id)
