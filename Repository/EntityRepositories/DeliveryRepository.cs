@@ -418,8 +418,6 @@ namespace Repository.EntityRepositories
             );
         }
 
-        #endregion
-
         #region GetConfirmedByClientId
 
         public async Task<List<Delivery>> GetConfirmedByClientIdAsync(int clientId, QueryOptions? options)
