@@ -7,6 +7,7 @@ using BusinessLogic.DTOs.DTOsClient;
 using BusinessLogic.DTOs.DTOsCost;
 using BusinessLogic.DTOs.DTOsDelivery;
 using BusinessLogic.DTOs.DTOsDiscount;
+using BusinessLogic.DTOs.DTOsDistribution;
 using BusinessLogic.DTOs.DTOsDocumentClient;
 using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.DTOs.DTOsOrder;
@@ -45,6 +46,7 @@ namespace BusinessLogic
         private readonly ReturnRequestSubSystem ReturnRequest;
         private readonly OrderSubSystem Orders;
         private readonly DeliveriesSubSystem Deliveries;
+        private readonly DistributionSubSystem Distributions;
 
         public Facade(
             AuthSubSystem auth,
@@ -63,7 +65,8 @@ namespace BusinessLogic
             OrderSubSystem orders,
             OrderRequestSubSystem orderRequests,
             ReturnRequestSubSystem returnRequest,
-            DeliveriesSubSystem deliveries)
+            DeliveriesSubSystem deliveries,
+            DistributionSubSystem distributions)
         {
             Auth = auth;
             Categories = categories;
@@ -82,6 +85,7 @@ namespace BusinessLogic
             ReturnRequest = returnRequest;
             Orders = orders;
             Deliveries = deliveries;
+            Distributions = distributions;
         }
 
         // --- Auth ---
@@ -231,6 +235,14 @@ namespace BusinessLogic
         public async Task<List<DeliveryResponse?>> GetAllDeliveriesAsync(QueryOptions query) => await Deliveries.GetAllDeliveriesAsync(query);
 
         public async Task<DeliveryResponse?> ChangeStatusDeliveryAsync(int id, DocumentClientChangeStatusRequest request)  => await Deliveries.ChangeStatusDeliveryAsync(id, request);
+
+        // --- Distribution ---
+        public async Task<DistributionResponse?> AddDistributionAsync(DistributionAddRequest request) => await Distributions.AddDistributionAsync(request);
+        public async Task<DistributionResponse?> UpdateDistributionAsync(DistributionUpdateRequest request) => await Distributions.UpdateDistributionAsync(request);
+        public async Task DeleteDistributionAsync(DeleteRequest request) => await Distributions.DeleteDistributionAsync(request);
+        public async Task<DistributionResponse?> GetDistributionByIdAsync(int id) => await Distributions.GetDistributionByIdAsync(id);
+        public async Task<List<DistributionResponse>?> GetAllDistributionsAsync(QueryOptions query) => await Distributions.GetAllDistributionsAsync(query);
+
         public async Task<List<DeliveryResponse?>> GetConfirmedDeliveriesByClientIdAsync(int ClientId,QueryOptions query) => await Deliveries.GetConfirmedDeliveriesByClientIdAsync(ClientId,query);
 
         

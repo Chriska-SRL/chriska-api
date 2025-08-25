@@ -12,9 +12,9 @@ namespace BusinessLogic.Domain
         public bool IsEnabled { get; set; }
         public bool NeedsPasswordChange { get; set; }
         public Role Role { get; set; }
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+        public AuditInfo? AuditInfo { get; set; }
 
-        public User(int id, string name, string username, string password, bool isEnabled, bool needsPasswordChange, Role role, AuditInfo auditInfo)
+        public User(int id, string name, string username, string password, bool isEnabled, bool needsPasswordChange, Role role, AuditInfo? auditInfo)
         {
             Id = id;
             Name = name;
@@ -23,7 +23,7 @@ namespace BusinessLogic.Domain
             IsEnabled = isEnabled;
             NeedsPasswordChange = needsPasswordChange;
             Role = role;
-            AuditInfo = auditInfo ?? new AuditInfo();
+            AuditInfo = auditInfo;
         }
 
         public User(string name, string username, string password, bool isEnabled, bool needsPasswordChange, Role role)

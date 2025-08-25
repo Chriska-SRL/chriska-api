@@ -11,9 +11,9 @@ namespace BusinessLogic.Domain
         public string Model { get; private set; }
         public int CrateCapacity { get; private set; }
         public List<VehicleCost> VehicleCosts { get; private set; }
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+        public AuditInfo? AuditInfo { get; set; } = new AuditInfo();
 
-        public Vehicle(int id, string plate, string brand, string model, int crateCapacity, List<VehicleCost> costs,AuditInfo auditInfo)
+        public Vehicle(int id, string plate, string brand, string model, int crateCapacity, List<VehicleCost> costs, AuditInfo? auditInfo)
         {
             Id = id;
             Plate = plate;
@@ -22,7 +22,6 @@ namespace BusinessLogic.Domain
             CrateCapacity = crateCapacity;
             VehicleCosts = costs;
             AuditInfo = auditInfo;
-            Validate();
         }
         public Vehicle(string plate, string brand, string model, int crateCapacity,List<VehicleCost> costs)
         {

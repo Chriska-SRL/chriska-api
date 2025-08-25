@@ -1,21 +1,37 @@
-﻿using BusinessLogic.Common;
-using BusinessLogic.Domain;
+﻿using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
 {
     public static class VehicleMapper
     {
-        public static Vehicle FromReader(SqlDataReader reader)
+        public static Vehicle? FromReader(SqlDataReader r, string? prefix = null, string? origin = null)
         {
+            string Col(string c) => $"{origin ?? ""}{prefix ?? ""}{c}";
+            string S(string c) => r.IsDBNull(r.GetOrdinal(c)) ? "" : r.GetString(r.GetOrdinal(c));
+
+            // Si viene con prefijo pero no hay fila/columna válida, no mapeamos
+            if (prefix != null)
+            {
+                try
+                {
+                    int o = r.GetOrdinal(Col("Id"));
+                    if (r.IsDBNull(o)) return null;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
             return new Vehicle(
-                id: reader.GetInt32(reader.GetOrdinal("Id")),
-                plate: reader.GetString(reader.GetOrdinal("Plate")),
-                brand: reader.GetString(reader.GetOrdinal("Brand")),
-                model: reader.GetString(reader.GetOrdinal("Model")),
-                crateCapacity: reader.GetInt32(reader.GetOrdinal("CrateCapacity")),
+                id: r.GetInt32(r.GetOrdinal(Col("Id"))),
+                plate: S(Col("Plate")),
+                brand: S(Col("Brand")),
+                model: S(Col("Model")),
+                crateCapacity: r.GetInt32(r.GetOrdinal(Col("CrateCapacity"))),
                 costs: new List<VehicleCost>(),
-                auditInfo: AuditInfoMapper.FromReader(reader)
+                auditInfo: prefix is null ? AuditInfoMapper.FromReader(r) : null
             );
         }
     }

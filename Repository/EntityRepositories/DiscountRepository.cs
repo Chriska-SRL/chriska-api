@@ -278,7 +278,7 @@ namespace Repository.EntityRepositories
             if (clients?.Any() != true) return;
 
             await ExecuteWriteAsync(
-                QueryBuilder.BuildBulkInsertQuery("DiscountClients", "DiscountId", "ClientId", clients.Count),
+                QueryBuilder.BuildBulkInsertQuery("DiscountClients", clients.Count, "DiscountId", "ClientId"),
                 cmd =>
                 {
                     for (int i = 0; i < clients.Count; i++)
@@ -301,7 +301,7 @@ namespace Repository.EntityRepositories
             if (products?.Any() != true) return;
 
             await ExecuteWriteAsync(
-                QueryBuilder.BuildBulkInsertQuery("DiscountProducts", "DiscountId", "ProductId", products.Count),
+                QueryBuilder.BuildBulkInsertQuery("DiscountProducts", products.Count, "DiscountId", "ProductId"),
                 cmd =>
                 {
                     for (int i = 0; i < products.Count; i++)
