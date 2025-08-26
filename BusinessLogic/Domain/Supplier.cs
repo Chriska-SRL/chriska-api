@@ -10,7 +10,7 @@ namespace BusinessLogic.Domain
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
         public string Address { get; set; }
-        public string MapsAddress { get; set; }
+        public Location SupplierLocation { get; set; }
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
@@ -20,13 +20,13 @@ namespace BusinessLogic.Domain
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Supplier(string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email,string observations, List<BankAccount> bankAccounts)
+        public Supplier(string name, string rut, string razonSocial, string address, Location location, string phone, string contactName, string email,string observations, List<BankAccount> bankAccounts)
         {
             Name = name;
             RUT = rut;
             RazonSocial = razonSocial;
             Address = address;
-            MapsAddress = mapsAddress;
+            SupplierLocation = location;
             Phone = phone;
             ContactName = contactName;
             Email = email;
@@ -34,14 +34,14 @@ namespace BusinessLogic.Domain
             BankAccounts = bankAccounts ?? new List<BankAccount>();
             AuditInfo = new AuditInfo();
         }
-        public Supplier(int id, string name, string rut, string razonSocial, string address, string mapsAddress, string phone, string contactName, string email, string observations, List<BankAccount> bankAccounts, AuditInfo auditInfo)
+        public Supplier(int id, string name, string rut, string razonSocial, string address, Location location, string phone, string contactName, string email, string observations, List<BankAccount> bankAccounts, AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
             RUT = rut;
             RazonSocial = razonSocial;
             Address = address;
-            MapsAddress = mapsAddress;
+            SupplierLocation = location;
             Phone = phone;
             ContactName = contactName;
             Email = email;
@@ -56,7 +56,7 @@ namespace BusinessLogic.Domain
             RUT = "000000000000";
             RazonSocial = "Razón Social Temporal";
             Address = "Dirección Temporal";
-            MapsAddress = "Maps Temporal";
+            SupplierLocation = new Location(0,0);
             Phone = "099000000";
             ContactName = "Contacto Temporal";
             Email = "email@temporal.com";
@@ -87,12 +87,6 @@ namespace BusinessLogic.Domain
                 throw new ArgumentNullException(nameof(Address), "La dirección es obligatoria"); ;
             if (RazonSocial.Length > 50)
                 throw new ArgumentOutOfRangeException(nameof(Address), "La dirección no puede superar los 50 caracteres.");
-
-            if (string.IsNullOrWhiteSpace(MapsAddress))
-                throw new ArgumentNullException(nameof(MapsAddress), "La dirección del mapa es obligatoria"); ;
-            if (RazonSocial.Length > 50)
-                throw new ArgumentOutOfRangeException(nameof(MapsAddress), "La dirección del mapa no puede superar los 50 caracteres.");
-
             if (string.IsNullOrWhiteSpace(Phone))
                 throw new ArgumentNullException(nameof(Phone), "El teléfono es obligatorio.");
             if (!Phone.All(char.IsDigit))
@@ -118,7 +112,7 @@ namespace BusinessLogic.Domain
             RUT = data.RUT ?? RUT;
             RazonSocial = data.RazonSocial ?? RazonSocial;
             Address = data.Address ?? Address;
-            MapsAddress = data.MapsAddress ?? MapsAddress;
+            SupplierLocation = data.SupplierLocation;
             Phone = data.Phone ?? Phone;
             ContactName = data.ContactName ?? ContactName;
             Email = data.Email ?? Email;
@@ -139,7 +133,7 @@ namespace BusinessLogic.Domain
             public string? RUT { get; set; }
             public string? RazonSocial { get; set; }
             public string? Address { get; set; }
-            public string? MapsAddress { get; set; }
+            public Location? SupplierLocation { get; set; }
             public string? Phone { get; set; }
             public string? ContactName { get; set; }
             public string? Email { get; set; }
