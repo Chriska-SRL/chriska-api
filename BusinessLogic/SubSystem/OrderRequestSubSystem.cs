@@ -138,11 +138,21 @@ namespace BusinessLogic.SubSystem
             if (request.Status == Status.Confirmed)
             {
                 orderRequest.Confirm();
+
+                foreach (var item in orderRequest.ProductItems)
+                {
+                    await _productRepository.UpdateStockAsync(item.Product.Id, 0,-item.Quantity);
+                }
+
                 order = await _orderSubSystem.AddOrderAsync(orderRequest);
             }
             else if (request.Status == Status.Cancelled)
             {
                 orderRequest.Cancel();
+                foreach (var item in orderRequest.ProductItems)
+                {
+                    await _productRepository.UpdateStockAsync(item.Product.Id, 0, item.Quantity);
+                }
             }
             else
             {
