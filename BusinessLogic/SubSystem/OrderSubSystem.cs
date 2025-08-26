@@ -116,11 +116,22 @@ namespace BusinessLogic.SubSystem
             if (request.Status == Status.Confirmed)
             {
                 order.Confirm();
+
+                foreach (var item in order.ProductItems)
+                {
+                    await _productRepository.UpdateStockAsync(item.Product.Id, -item.Quantity, 0);
+                }
+
                 delivery = await _deliveriesSubSystem.AddDeliveryAsync(order);
             }
             else if (request.Status == Status.Cancelled)
             {
                 order.Cancel();
+                foreach (var item in order.ProductItems)
+                {
+                    await _productRepository.UpdateStockAsync(item.Product.Id, item.Quantity, 0);
+                }
+
             }
             else
             {

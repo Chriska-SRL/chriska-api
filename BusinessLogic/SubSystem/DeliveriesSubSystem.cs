@@ -13,13 +13,14 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IDeliveryRepository _deliveryRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IOrderRepository _orderRepository;
+        private readonly  IProductRepository _productRepository;
 
-        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository)
+        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository,IProductRepository productRepository)
         {
             _deliveryRepository = deliveryRepository;
             _userRepository = userRepository;
-            _orderRepository = orderRepository;
+            _productRepository = productRepository;
+
         }
 
         public async Task<Delivery> AddDeliveryAsync(Order order)
@@ -91,12 +92,17 @@ namespace BusinessLogic.SubSystem
             if (request.Status == Status.Confirmed)
             {
                 delivery.Confirm();
+
                 //TODO: Implementar creacion de Receipt
 
             }
             else if (request.Status == Status.Cancelled)
             {
                 delivery.Cancel();
+                foreach (var item in delivery.ProductItems)
+                {
+                    await _productRepository.UpdateStockAsync(item.Product.Id, item.Quantity, item.Quantity);
+                }
             }
             else
             {
