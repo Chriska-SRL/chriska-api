@@ -107,7 +107,7 @@ namespace BusinessLogic.Domain
             RUT = data.RUT ?? RUT;
             RazonSocial = data.RazonSocial ?? RazonSocial;
             Address = data.Address ?? Address;
-            ClientLocation = data.ClientLocation;
+            ClientLocation = data.ClientLocation ?? ClientLocation;
             Schedule = data.Schedule ?? Schedule;
             Phone = data.Phone ?? Phone;
             ContactName = data.ContactName ?? ContactName;
