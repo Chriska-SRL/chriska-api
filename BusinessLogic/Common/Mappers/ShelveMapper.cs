@@ -17,13 +17,12 @@ namespace BusinessLogic.Common.Mappers
             return shelve;
         }
 
-        public static Shelve.UpdatableData ToUpdatableData(UpdateShelveRequest request, Warehouse warehouse)
+        public static Shelve.UpdatableData ToUpdatableData(UpdateShelveRequest request)
         {
             return new Shelve.UpdatableData
             {
                 Name = request.Name,
                 Description = request.Description,
-                Warehouse = warehouse,
                 UserId = request.getUserId(),
                 Location = request.Location
             };
@@ -37,7 +36,7 @@ namespace BusinessLogic.Common.Mappers
                 Id = shelve.Id,
                 Name = shelve.Name,
                 Description = shelve.Description,
-                Warehouse = shelve.Warehouse != null ? WarehouseMapper.ToResponse(shelve.Warehouse) : null,
+                Warehouse = WarehouseMapper.ToResponse(shelve.Warehouse),
                 AuditInfo = AuditMapper.ToResponse(shelve.AuditInfo)
             };
         }
