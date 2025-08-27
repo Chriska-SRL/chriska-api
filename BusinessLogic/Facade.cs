@@ -1,5 +1,4 @@
 ﻿using BusinessLogic.Common;
-using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsCategory;
@@ -218,8 +217,7 @@ namespace BusinessLogic
         public async Task<ReturnRequestResponse?> GetReturnRequestByIdAsync(int id) => await ReturnRequest.GetReturnRequestByIdAsync(id);
         public async Task<List<ReturnRequestResponse>?> GetAllReturnRequestsAsync(QueryOptions query) => await ReturnRequest.GetAllReturnRequestsAsync(query);
         public async Task<ReturnRequestResponse?> ChangeStatusReturnRequestAsync(int id, DocumentClientChangeStatusRequest request) => await ReturnRequest.ChangeStatusReturnRequestAsync(id, request);
-
-       
+        
 
         // --- Orders ---
         public async Task<OrderResponse?> UpdateOrderAsync(OrderUpdateRequest request) => await Orders.UpdateOrderAsync(request);
@@ -229,11 +227,8 @@ namespace BusinessLogic
 
         //Deliveries
         public async Task<DeliveryResponse?> UpdateDeliveryAsync(DeliveryUpdateRequest request) => await Deliveries.UpdateDeliveryAsync(request);
-
         public async Task<DeliveryResponse?> GetDeliveryByIdAsync(int id) => await Deliveries.GetDeliveryByIdAsync(id);
-
         public async Task<List<DeliveryResponse?>> GetAllDeliveriesAsync(QueryOptions query) => await Deliveries.GetAllDeliveriesAsync(query);
-
         public async Task<DeliveryResponse?> ChangeStatusDeliveryAsync(int id, DocumentClientChangeStatusRequest request)  => await Deliveries.ChangeStatusDeliveryAsync(id, request);
 
         // --- Distribution ---
@@ -242,9 +237,7 @@ namespace BusinessLogic
         public async Task DeleteDistributionAsync(DeleteRequest request) => await Distributions.DeleteDistributionAsync(request);
         public async Task<DistributionResponse?> GetDistributionByIdAsync(int id) => await Distributions.GetDistributionByIdAsync(id);
         public async Task<List<DistributionResponse>?> GetAllDistributionsAsync(QueryOptions query) => await Distributions.GetAllDistributionsAsync(query);
-
         public async Task<List<DeliveryResponse?>> GetConfirmedDeliveriesByClientIdAsync(int ClientId,QueryOptions query) => await Deliveries.GetConfirmedDeliveriesByClientIdAsync(ClientId,query);
 
-        
     }
 }
