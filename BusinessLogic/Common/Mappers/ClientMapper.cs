@@ -36,7 +36,7 @@ namespace BusinessLogic.Common.Mappers
                 RUT = request.RUT,
                 RazonSocial = request.RazonSocial,
                 Address = request.Address,
-                Location = request.ClientLocation,
+                ClientLocation = request.ClientLocation,
                 Schedule = request.Schedule,
                 Phone = request.Phone,
                 ContactName = request.ContactName,
