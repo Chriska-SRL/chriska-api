@@ -77,9 +77,6 @@ namespace BusinessLogic.Domain
             if (string.IsNullOrWhiteSpace(Address) || Address.Length > 50)
                 throw new ArgumentException("La dirección es obligatoria y no puede superar los 50 caracteres.");
 
-            if (ClientLocation == null)
-                throw new ArgumentException("La dirección de Maps es obligatoria.");
-
             if (string.IsNullOrWhiteSpace(Schedule))
                 throw new ArgumentException("El horario es obligatorio.");
 
