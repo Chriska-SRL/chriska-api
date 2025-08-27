@@ -31,7 +31,7 @@ namespace Repository.Mappers
             string rut = reader.GetString(reader.GetOrdinal("SupplierRUT"));
             string razonSocial = reader.GetString(reader.GetOrdinal("SupplierRazonSocial"));
             string address = reader.GetString(reader.GetOrdinal("SupplierAddress"));
-            Location location = Location.FromString(reader.IsDBNull(reader.GetOrdinal("Location")) ? null : reader.GetString(reader.GetOrdinal("Location")));
+            Location location = Location.FromString(reader.IsDBNull(reader.GetOrdinal("SupplierLocation")) ? null : reader.GetString(reader.GetOrdinal("SupplierLocation")));
             string phone = reader.IsDBNull(reader.GetOrdinal("SupplierPhone")) ? string.Empty : reader.GetString(reader.GetOrdinal("SupplierPhone"));
             string contactName = reader.IsDBNull(reader.GetOrdinal("SupplierContactName")) ? string.Empty : reader.GetString(reader.GetOrdinal("SupplierContactName"));
             string email = reader.IsDBNull(reader.GetOrdinal("SupplierEmail")) ? string.Empty : reader.GetString(reader.GetOrdinal("SupplierEmail"));
