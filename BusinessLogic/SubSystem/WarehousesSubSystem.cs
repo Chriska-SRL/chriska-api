@@ -95,17 +95,16 @@ namespace BusinessLogic.SubSystem
 
         public async Task<ShelveResponse> UpdateShelveAsync(UpdateShelveRequest request)
         {
-            var existingShelve = await _shelveRepository.GetByIdAsync(request.Id)
+            var existing = await _shelveRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la estantería seleccionada.");
 
-            var warehouse = await _warehouseRepository.GetByIdAsync(request.WarehouseId);
-            if (warehouse == null)
-                throw new ArgumentException("El almacén seleccionado no existe.");
+            if (existing.Name != request.Name && await _shelveRepository.GetByNameAsync(request.Name) != null)
+                throw new ArgumentException("Ya existe una estantería con el mismo nombre.");
 
-            var updatedData = ShelveMapper.ToUpdatableData(request, warehouse);
-            existingShelve.Update(updatedData);
+            var updatedData = ShelveMapper.ToUpdatableData(request);
+            existing.Update(updatedData);
 
-            var updated = await _shelveRepository.UpdateAsync(existingShelve);
+            var updated = await _shelveRepository.UpdateAsync(existing);
             return ShelveMapper.ToResponse(updated);
         }
 
