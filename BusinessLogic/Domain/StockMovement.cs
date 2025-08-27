@@ -7,7 +7,7 @@ namespace BusinessLogic.Domain
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public int Quantity { get; set; }
+        public decimal Quantity { get; set; }
         public StockMovementType Type { get; set; }
         public string Reason { get; set; } = string.Empty;
         public User User { get; set; }
@@ -15,7 +15,7 @@ namespace BusinessLogic.Domain
         public StockMovementType StockMovementType { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public StockMovement(DateTime date, int quantity, StockMovementType type, string reason, User user, Product product)
+        public StockMovement(DateTime date, decimal quantity, StockMovementType type, string reason, User user, Product product)
         {
             Date = date;
             Quantity = quantity;
@@ -26,7 +26,7 @@ namespace BusinessLogic.Domain
             AuditInfo = new AuditInfo();
             Validate();
         }
-        public StockMovement(int id, DateTime date, int quantity, StockMovementType type, string reason, User user, Product product,AuditInfo auditInfo)
+        public StockMovement(int id, DateTime date, decimal quantity, StockMovementType type, string reason, User user, Product product,AuditInfo auditInfo)
         {
             Id = id;
             Date = date;
@@ -47,6 +47,9 @@ namespace BusinessLogic.Domain
 
             if (!Enum.IsDefined(typeof(StockMovementType), Type))
                 throw new ArgumentOutOfRangeException(nameof(Type), "Tipo de unidad inválido.");
+
+            if (Quantity % 0.5m != 0)
+                throw new ArgumentOutOfRangeException(nameof(Quantity), "La cantidad debe ser múltiplo de 0.5 (ej: 0.5, 1, 1.5, 2...).");
 
             if (string.IsNullOrWhiteSpace(Reason))
                 throw new ArgumentNullException(nameof(Reason), "El motivo del movimiento no puede estar vacío.");
