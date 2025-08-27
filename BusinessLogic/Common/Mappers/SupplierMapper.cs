@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Domain;
+﻿using BusinessLogic.Common.Mappers;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsSupplier;
 
 namespace BusinessLogic.Common.Mappers
@@ -12,7 +13,7 @@ namespace BusinessLogic.Common.Mappers
                 rut: request.RUT,
                 razonSocial: request.RazonSocial,
                 address: request.Address,
-                location: request.SupplierLocation,
+                mapsAddress: request.MapsAddress,
                 phone: request.Phone,
                 contactName: request.ContactName,
                 email: request.Email,
@@ -32,7 +33,7 @@ namespace BusinessLogic.Common.Mappers
                 RUT = request.RUT,
                 RazonSocial = request.RazonSocial,
                 Address = request.Address,
-                SupplierLocation = request.SupplierLocation,
+                MapsAddress = request.MapsAddress,
                 Phone = request.Phone,
                 ContactName = request.ContactName,
                 Email = request.Email,
@@ -52,7 +53,7 @@ namespace BusinessLogic.Common.Mappers
                 RUT = supplier.RUT,
                 RazonSocial = supplier.RazonSocial,
                 Address = supplier.Address,
-                SupplierLocation = supplier.SupplierLocation,
+                MapsAddress = supplier.MapsAddress,
                 Phone = supplier.Phone,
                 ContactName = supplier.ContactName,
                 Email = supplier.Email,

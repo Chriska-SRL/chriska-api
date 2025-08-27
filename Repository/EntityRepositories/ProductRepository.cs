@@ -132,7 +132,7 @@ namespace Repository.EntityRepositories
                                    c.Id AS CategoryId, c.Name AS CategoryName, c.Description AS CategoryDescription,
                                    s.Id AS SupplierId, s.Name AS SupplierName, s.RazonSocial AS SupplierRazonSocial, s.Address AS SupplierAddress, 
                                    s.Phone AS SupplierPhone, s.Email AS SupplierEmail, s.ContactName AS SupplierContactName, s.RUT AS SupplierRUT, 
-                                   s.Location AS SupplierLocation, s.Observations AS SupplierObservations,
+                                   s.MapsAddress AS SupplierMapsAddress, s.Observations AS SupplierObservations,
                                    sh.Id AS ShelveId, sh.Name AS ShelveName, sh.Description AS ShelveDescription,
                                    w.Id AS WarehouseId, w.Name AS WarehouseName, w.Description AS WarehouseDescription
                             FROM Products p
@@ -193,7 +193,7 @@ namespace Repository.EntityRepositories
                                    c.Id AS CategoryId, c.Name AS CategoryName, c.Description AS CategoryDescription,
                                    s.Id AS SupplierId, s.Name AS SupplierName, s.RazonSocial AS SupplierRazonSocial, s.Address AS SupplierAddress, 
                                    s.Phone AS SupplierPhone, s.Email AS SupplierEmail, s.ContactName AS SupplierContactName, s.RUT AS SupplierRUT, 
-                                   s.Location AS SupplierLocation, s.Observations AS SupplierObservations,
+                                   s.MapsAddress AS SupplierMapsAddress, s.Observations AS SupplierObservations,
                                    sh.Id AS ShelveId, sh.Name AS ShelveName, sh.Description AS ShelveDescription,
                                    w.Id AS WarehouseId, w.Name AS WarehouseName, w.Description AS WarehouseDescription
                             FROM Products p

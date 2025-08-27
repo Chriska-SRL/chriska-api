@@ -15,8 +15,8 @@ namespace Repository.EntityRepositories
         public async Task<Supplier> AddAsync(Supplier supplier)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-            "INSERT INTO Suppliers (Name, RUT, RazonSocial, Address, Location, Phone, ContactName, Email, Observations) " +
-            "OUTPUT INSERTED.Id VALUES (@Name, @RUT, @RazonSocial, @Address, @Location, @Phone, @ContactName, @Email, @Observations)",
+            "INSERT INTO Suppliers (Name, RUT, RazonSocial, Address, MapsAddress, Phone, ContactName, Email, Observations) " +
+            "OUTPUT INSERTED.Id VALUES (@Name, @RUT, @RazonSocial, @Address, @MapsAddress, @Phone, @ContactName, @Email, @Observations)",
             supplier,
             AuditAction.Insert,
             configureCommand: cmd =>
@@ -25,7 +25,7 @@ namespace Repository.EntityRepositories
                 cmd.Parameters.AddWithValue("@RUT", supplier.RUT);
                 cmd.Parameters.AddWithValue("@RazonSocial", supplier.RazonSocial);
                 cmd.Parameters.AddWithValue("@Address", supplier.Address);
-                cmd.Parameters.AddWithValue("@Location", (object?)supplier.SupplierLocation?.ToString() ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@MapsAddress", supplier.MapsAddress);
                 cmd.Parameters.AddWithValue("@Phone", supplier.Phone);
                 cmd.Parameters.AddWithValue("@ContactName", supplier.ContactName);
                 cmd.Parameters.AddWithValue("@Email", supplier.Email);
@@ -36,7 +36,7 @@ namespace Repository.EntityRepositories
 
             await AddSupplierBankAccountsAsync(newId, supplier.BankAccounts);
 
-            return new Supplier(newId, supplier.Name, supplier.RUT, supplier.RazonSocial, supplier.Address, supplier.SupplierLocation, supplier.Phone,
+            return new Supplier(newId, supplier.Name, supplier.RUT, supplier.RazonSocial, supplier.Address, supplier.MapsAddress, supplier.Phone,
                                 supplier.ContactName, supplier.Email, supplier.Observations, supplier.BankAccounts, supplier.AuditInfo);
         }
 
@@ -167,7 +167,7 @@ namespace Repository.EntityRepositories
             await ExecuteWriteWithAuditAsync(
                 baseQuery: @"UPDATE Suppliers 
                             SET Name = @Name, RUT = @RUT, RazonSocial = @RazonSocial, Address = @Address, 
-                                Location = @Location, Phone = @Phone, ContactName = @ContactName, 
+                                MapsAddress = @MapsAddress, Phone = @Phone, ContactName = @ContactName, 
                                 Email = @Email, Observations = @Observations
                             WHERE Id = @Id",
                 supplier,
@@ -179,7 +179,7 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@RUT", supplier.RUT);
                     cmd.Parameters.AddWithValue("@RazonSocial", supplier.RazonSocial);
                     cmd.Parameters.AddWithValue("@Address", supplier.Address);
-                    cmd.Parameters.AddWithValue("@Location", (object?)supplier.SupplierLocation?.ToString() ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@MapsAddress", supplier.MapsAddress);
                     cmd.Parameters.AddWithValue("@Phone", supplier.Phone);
                     cmd.Parameters.AddWithValue("@ContactName", supplier.ContactName);
                     cmd.Parameters.AddWithValue("@Email", supplier.Email);
