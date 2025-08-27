@@ -310,7 +310,7 @@ namespace Repository.EntityRepositories
             }
         }
 
-        public async Task UpdateStockAsync(int id, int stock, int availableStock)
+        public async Task UpdateStockAsync(int id, decimal stock, decimal availableStock)
         {
             int rows = await ExecuteWriteAsync(
                 "UPDATE Products " +

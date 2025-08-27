@@ -9,7 +9,7 @@ namespace BusinessLogic.DTOs.DTOsStockMovement
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public int Quantity { get; set; }
+        public decimal Quantity { get; set; }
         public StockMovementType Type { get; set; }
         public string Reason { get; set; }
         public UserResponse User { get; set; }

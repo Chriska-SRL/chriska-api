@@ -6,6 +6,6 @@ namespace BusinessLogic.Repository
     {
         Task<Product?> GetByIdWithDiscountsAsync(int productId);
         Task<string> UpdateImageUrlAsync(Product product, string imageUrl);
-        Task UpdateStockAsync(int productId, int stock,int availableStock);
+        Task UpdateStockAsync(int productId, decimal stock, decimal availableStock);
     }
 }

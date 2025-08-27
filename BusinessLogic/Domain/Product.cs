@@ -14,8 +14,8 @@ namespace BusinessLogic.Domain
         public string Description { get; set; }
         public TemperatureCondition TemperatureCondition { get; set; }
         public int EstimatedWeight { get; set; } //Peso estimado en gramos
-        public int Stock { get; set; }
-        public int AvailableStocks { get; set; }
+        public decimal Stock { get; set; }
+        public decimal AvailableStocks { get; set; }
         public string ImageUrl { get; set; } = ""; //url de la imagen
         public string Observation { get; set; }
         public SubCategory? SubCategory { get; set; }
@@ -45,7 +45,7 @@ namespace BusinessLogic.Domain
             AuditInfo = new AuditInfo();
             Validate();
         }
-        public Product(int id, string? barcode, string name, decimal price, string image, int stock, int availableStocks, string description, UnitType unitType, TemperatureCondition temperatureCondition, int estimatedWeight, string observations, SubCategory? subCategory, Brand? brand,List<Supplier>? suppliers, Shelve? shelve, AuditInfo? auditInfo)
+        public Product(int id, string? barcode, string name, decimal price, string image, decimal stock, decimal availableStocks, string description, UnitType unitType, TemperatureCondition temperatureCondition, int estimatedWeight, string observations, SubCategory? subCategory, Brand? brand,List<Supplier>? suppliers, Shelve? shelve, AuditInfo? auditInfo)
         {
             Id = id;
             Barcode = barcode;
@@ -102,6 +102,9 @@ namespace BusinessLogic.Domain
 
             if (EstimatedWeight < 0)
                 throw new ArgumentOutOfRangeException(nameof(EstimatedWeight), "El peso estimado no puede ser negativo.");
+
+            if (UnitType == UnitType.Kilo)
+                throw new ArgumentOutOfRangeException(nameof(EstimatedWeight), "El peso estimado es obligatorio para productos por kilo.");
 
             if (!string.IsNullOrWhiteSpace(ImageUrl) && ImageUrl.Length > 255)
                 throw new ArgumentOutOfRangeException(nameof(ImageUrl), "La ruta de imagen no puede superar los 255 caracteres.");

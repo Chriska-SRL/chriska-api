@@ -5,11 +5,7 @@ namespace BusinessLogic.Common.Mappers
 {
     public class ProductItemMapper
     {
-        public static ProductItem ToDomain(ProductItemRequest request,Product product)
-        {
-           throw new NotImplementedException();
-        }
-
+       
         public static ProductItemResponse ToResponse(ProductItem request)
         {
             return new ProductItemResponse
