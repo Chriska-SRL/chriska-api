@@ -47,9 +47,9 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentNullException(nameof(Name), "El nombre  del estante no puede estar vacía.");
+                throw new ArgumentNullException(nameof(Name), "El nombre del estante no puede estar vacío.");
 
-            if (Description.Length > 50)
+            if (Name.Length > 50)
                 throw new ArgumentOutOfRangeException(nameof(Name), "El nombre del estante no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(Description))
