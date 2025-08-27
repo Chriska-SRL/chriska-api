@@ -28,7 +28,7 @@ namespace Repository.Mappers
             if (vehicle == null) return null;
 
             return new Distribution(
-                id: r.GetInt32(r.GetOrdinal(Col("Id"))),
+                id: r.GetInt32(r.GetOrdinal(Col("DistributionId"))),
                 observations: S(Col("Observations")),
                 date: r.GetDateTime(r.GetOrdinal(Col("Date"))),
                 user: user,

@@ -16,15 +16,15 @@ namespace Repository.EntityRepositories
         public async Task<Distribution> AddAsync(Distribution distribution)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-                "INSERT INTO Distributions (Observations, Date, UserId, VehicleId) OUTPUT INSERTED.Id VALUES (@Observations, @Date, @VehicleId, @UserId)",
+                "INSERT INTO Distributions (Observations, Date, UserId, VehicleId) OUTPUT INSERTED.Id VALUES (@Observations, @Date, @UserId, @VehicleId)",
                 distribution,
                 AuditAction.Insert,
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@Observations", distribution.Observations);
                     cmd.Parameters.AddWithValue("@Date", distribution.Date);
-                    cmd.Parameters.AddWithValue("@VehicleId", distribution.Vehicle.Id);
                     cmd.Parameters.AddWithValue("@UserId", distribution.User.Id);
+                    cmd.Parameters.AddWithValue("@VehicleId", distribution.Vehicle.Id);
                 },
                 async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
             );
@@ -99,7 +99,7 @@ namespace Repository.EntityRepositories
         string baseQuery = @"
                             SELECT
                                 -- Distribution
-                                d.Id,
+                                d.Id AS DistributionId,
                                 d.Observations,
                                 d.Date,
                                 d.UserId ,
@@ -112,11 +112,12 @@ namespace Repository.EntityRepositories
                                 u.NeedsPasswordChange AS UserNeedsPasswordChange,
                                 u.RoleId        AS UserRoleId,
 
-                                r.Id            AS UserRoleId,
-                                r.Name        AS UserRoleName,
-                                r.Description AS UserRoleDescription,
+                                r.Id            AS RoleId,
+                                r.Name          AS UserRoleName,
+                                r.Description   AS UserRoleDescription,
 
                                 -- Vehicle
+                                v.Id            AS VehicleId,
                                 v.Plate         AS VehiclePlate,
                                 v.CrateCapacity AS VehicleCrateCapacity,
                                 v.Brand         AS VehicleBrand,
@@ -141,7 +142,7 @@ namespace Repository.EntityRepositories
 
         public async Task<List<Distribution>> GetAllAsync(QueryOptions options)
         {
-            var allowedFilters = new[] { "Observations", "Date", "UserId", "VehicleId", "Id" };
+            var allowedFilters = new[] { "Observations", "Date", "UserId", "VehicleId", "DistributionId" };
 
             return await ExecuteReadAsync(
                 baseQuery: baseQuery,
@@ -152,7 +153,7 @@ namespace Repository.EntityRepositories
 
                     while (reader.Read())
                     {
-                        int distId = reader.GetInt32(reader.GetOrdinal("Id"));
+                        int distId = reader.GetInt32(reader.GetOrdinal("DistributionId"));
 
                         if (!dict.TryGetValue(distId, out var dist))
                         {
