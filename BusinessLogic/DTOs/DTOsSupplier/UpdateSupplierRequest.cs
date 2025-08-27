@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Common.Enums;
+﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Enums;
 using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsBankAccount;
 using System;
@@ -16,7 +17,7 @@ namespace BusinessLogic.DTOs.DTOsSupplier
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
         public string Address { get; set; }
-        public string MapsAddress { get; set; }
+        public Location SupplierLocation { get; set; }
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
