@@ -7,17 +7,15 @@ namespace BusinessLogic.Domain
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
-        public string PaymentMethod { get; set; }
         public string Notes { get; set; }
         public Delivery Delivery { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Receipt(int id,DateTime date, decimal amount, string paymentMethod, string notes, Delivery delivery, AuditInfo auditInfo)
+        public Receipt(int id,DateTime date, decimal amount, string notes, Delivery delivery, AuditInfo auditInfo)
         {
             Id = id;
             Date = date;
             Amount = amount;
-            PaymentMethod = paymentMethod;
             Notes = notes;
             Delivery = delivery;
             AuditInfo = auditInfo ?? new AuditInfo();
@@ -32,11 +30,6 @@ namespace BusinessLogic.Domain
             if (Amount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(Amount), "El monto debe ser mayor a cero.");
 
-            if (string.IsNullOrWhiteSpace(PaymentMethod))
-                throw new ArgumentNullException(nameof(PaymentMethod), "El método de pago es obligatorio.");
-            if (PaymentMethod.Length > 30)
-                throw new ArgumentOutOfRangeException(nameof(PaymentMethod), "El método de pago no puede superar los 30 caracteres.");
-
             if (!string.IsNullOrWhiteSpace(Notes) && Notes.Length > 250)
                 throw new ArgumentOutOfRangeException(nameof(Notes), "Las notas no pueden superar los 250 caracteres.");
 
@@ -45,7 +38,6 @@ namespace BusinessLogic.Domain
         {
             Date = updatableData.Date;
             Amount = updatableData.Amount;
-            PaymentMethod = updatableData.PaymentMethod;
             Notes = updatableData.Notes;
             Delivery = updatableData.Delivery;
             AuditInfo = updatableData.AuditInfo ?? new AuditInfo();
@@ -61,7 +53,6 @@ namespace BusinessLogic.Domain
         {
             public DateTime Date { get; set; }
             public decimal Amount { get; set; }
-            public string PaymentMethod { get; set; }
             public string Notes { get; set; }
             public Delivery Delivery { get; set; }
             public AuditInfo AuditInfo { get; set; } = new AuditInfo();
