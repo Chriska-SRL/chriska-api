@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[OrderRequests_Products]
 (
-	[Quantity] DECIMAL NOT NULL,
+	[Quantity] DECIMAL(18, 2) NOT NULL,
     [UnitPrice] DECIMAL(18, 2) NOT NULL,
     [Discount] DECIMAL(5, 2) NOT NULL,
     [Weight] INT NULL,
