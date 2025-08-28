@@ -12,7 +12,7 @@ namespace BusinessLogic.Common.Mappers
                 rut: request.RUT,
                 razonSocial: request.RazonSocial,
                 address: request.Address,
-                location: request.SupplierLocation,
+                location: request.Location,
                 phone: request.Phone,
                 contactName: request.ContactName,
                 email: request.Email,
@@ -20,7 +20,7 @@ namespace BusinessLogic.Common.Mappers
                 bankAccounts: request.BankAccounts.Select(BankAccountMapper.ToDomain).ToList()
             );
 
-            supplier.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            supplier.AuditInfo.SetCreated(request.getUserId(), request.AuditLocation);
             return supplier;
         }
 
@@ -32,14 +32,13 @@ namespace BusinessLogic.Common.Mappers
                 RUT = request.RUT,
                 RazonSocial = request.RazonSocial,
                 Address = request.Address,
-                SupplierLocation = request.SupplierLocation,
+                Location = request.Location,
                 Phone = request.Phone,
                 ContactName = request.ContactName,
                 Email = request.Email,
                 Observations = request.Observations,
                 BankAccounts = request.BankAccounts.Select(BankAccountMapper.ToDomain).ToList(),
-                UserId = request.getUserId(),
-                Location = request.Location
+                UserId = request.getUserId()
             };
         }
 
@@ -52,7 +51,7 @@ namespace BusinessLogic.Common.Mappers
                 RUT = supplier.RUT,
                 RazonSocial = supplier.RazonSocial,
                 Address = supplier.Address,
-                SupplierLocation = supplier.SupplierLocation,
+                Location = supplier.Location,
                 Phone = supplier.Phone,
                 ContactName = supplier.ContactName,
                 Email = supplier.Email,

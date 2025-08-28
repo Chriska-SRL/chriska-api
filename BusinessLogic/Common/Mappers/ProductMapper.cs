@@ -24,7 +24,7 @@ namespace BusinessLogic.Common.Mappers
                 shelve: shelve
             );
 
-            product.AuditInfo?.SetCreated(request.getUserId(), request.Location);
+            product.AuditInfo?.SetCreated(request.getUserId(), request.AuditLocation);
             return product;
         }
 
@@ -46,7 +46,7 @@ namespace BusinessLogic.Common.Mappers
                 Shelve = shelve,
 
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
 

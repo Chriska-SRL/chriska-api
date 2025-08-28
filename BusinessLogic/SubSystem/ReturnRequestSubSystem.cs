@@ -94,7 +94,7 @@ namespace BusinessLogic.SubSystem
             var entity = await _returnRequestRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la solicitud de devolución seleccionada.");
 
-            entity.MarkAsDeleted(request.getUserId(), request.Location);
+            entity.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _returnRequestRepository.DeleteAsync(entity);
         }
 
@@ -116,7 +116,7 @@ namespace BusinessLogic.SubSystem
             ReturnRequest? returnRequest = await _returnRequestRepository.GetByIdAsync(id)
                 ?? throw new ArgumentException($"No se encontró una solicitud de pedido con el ID {id}.");
 
-            returnRequest.AuditInfo.SetUpdated(request.getUserId(), request.Location);
+            returnRequest.AuditInfo.SetUpdated(request.getUserId(), request.AuditLocation);
 
             if (request.Status == Status.Confirmed)
             {

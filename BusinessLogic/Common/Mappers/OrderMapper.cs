@@ -15,7 +15,7 @@ namespace BusinessLogic.Common.Mappers
                 User = user,
                 ProductItems = productItems,
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
 

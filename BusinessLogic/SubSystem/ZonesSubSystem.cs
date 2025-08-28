@@ -54,7 +54,7 @@ namespace BusinessLogic.SubSystem
             var zone = await _zoneRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la zona seleccionada.");
 
-            zone.MarkAsDeleted(request.getUserId(), request.Location);
+            zone.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _zoneRepository.DeleteAsync(zone);
             return ZoneMapper.ToResponse(zone);
         }
@@ -78,7 +78,7 @@ namespace BusinessLogic.SubSystem
         {
             Zone zone = await _zoneRepository.GetByIdAsync(request.EntityId)
                 ?? throw new ArgumentException("No se encontró la zona seleccionada.");
-            zone.AuditInfo.SetUpdated(request.getUserId(), request.Location);
+            zone.AuditInfo.SetUpdated(request.getUserId(), request.AuditLocation);
 
             var url = await _blobService.UploadFileAsync(request.File, "zones", $"zone{zone.Id}");
             return await _zoneRepository.UpdateImageUrlAsync(zone, url);

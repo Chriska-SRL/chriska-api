@@ -16,7 +16,7 @@ namespace BusinessLogic.Common.Mappers
                 product: product
             );
 
-            movement.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            movement.AuditInfo.SetCreated(request.getUserId(), request.AuditLocation);
             return movement;
         }
 

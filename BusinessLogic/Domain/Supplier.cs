@@ -10,7 +10,7 @@ namespace BusinessLogic.Domain
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
         public string Address { get; set; }
-        public Location SupplierLocation { get; set; }
+        public Location Location { get; set; }
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
@@ -26,7 +26,7 @@ namespace BusinessLogic.Domain
             RUT = rut;
             RazonSocial = razonSocial;
             Address = address;
-            SupplierLocation = location;
+            Location = location;
             Phone = phone;
             ContactName = contactName;
             Email = email;
@@ -41,7 +41,7 @@ namespace BusinessLogic.Domain
             RUT = rut;
             RazonSocial = razonSocial;
             Address = address;
-            SupplierLocation = location;
+            Location = location;
             Phone = phone;
             ContactName = contactName;
             Email = email;
@@ -56,7 +56,7 @@ namespace BusinessLogic.Domain
             RUT = "000000000000";
             RazonSocial = "Razón Social Temporal";
             Address = "Dirección Temporal";
-            SupplierLocation = new Location(0,0);
+            Location = new Location(0,0);
             Phone = "099000000";
             ContactName = "Contacto Temporal";
             Email = "email@temporal.com";
@@ -112,7 +112,7 @@ namespace BusinessLogic.Domain
             RUT = data.RUT ?? RUT;
             RazonSocial = data.RazonSocial ?? RazonSocial;
             Address = data.Address ?? Address;
-            SupplierLocation = data.SupplierLocation;
+            Location = data.Location;
             Phone = data.Phone ?? Phone;
             ContactName = data.ContactName ?? ContactName;
             Email = data.Email ?? Email;
@@ -133,7 +133,7 @@ namespace BusinessLogic.Domain
             public string? RUT { get; set; }
             public string? RazonSocial { get; set; }
             public string? Address { get; set; }
-            public Location? SupplierLocation { get; set; }
+            public Location? Location { get; set; }
             public string? Phone { get; set; }
             public string? ContactName { get; set; }
             public string? Email { get; set; }

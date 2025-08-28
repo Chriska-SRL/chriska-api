@@ -55,7 +55,7 @@ namespace BusinessLogic.SubSystem
             var delivery = await _deliveryRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la entrega seleccionada.");
 
-            delivery.MarkAsDeleted(request.getUserId(), request.Location);
+            delivery.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _deliveryRepository.DeleteAsync(delivery);
 
             return DeliveryMapper.ToResponse(delivery);
@@ -86,7 +86,7 @@ namespace BusinessLogic.SubSystem
             var user = await _userRepository.GetByIdAsync(userId)
                 ?? throw new ArgumentException("El usuario que realiza el cambio de estado no existe.");
 
-            delivery.AuditInfo.SetUpdated(userId, request.Location);
+            delivery.AuditInfo.SetUpdated(userId, request.AuditLocation);
             delivery.User = user;
 
             if (request.Status == Status.Confirmed)

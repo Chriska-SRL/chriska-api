@@ -15,7 +15,7 @@ namespace BusinessLogic.Common.Mappers
                 date: request.Date
             );
 
-            cost.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            cost.AuditInfo.SetCreated(request.getUserId(), request.AuditLocation);
             return cost;
         }
 
@@ -28,7 +28,7 @@ namespace BusinessLogic.Common.Mappers
                 Amount = request.Amount,
                 Date = request.Date,
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
 

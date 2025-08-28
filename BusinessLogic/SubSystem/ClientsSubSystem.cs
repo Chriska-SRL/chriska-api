@@ -60,7 +60,7 @@ namespace BusinessLogic.SubSystem
             var client = await _clientRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró el cliente seleccionado.", nameof(request.Id));
 
-            client.MarkAsDeleted(request.getUserId(), request.Location);
+            client.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _clientRepository.DeleteAsync(client);
         }
 

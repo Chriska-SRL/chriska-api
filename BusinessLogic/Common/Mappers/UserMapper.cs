@@ -16,7 +16,7 @@ namespace BusinessLogic.Common.Mappers
                 role: new Role(request.RoleId)
             );
 
-            user.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            user.AuditInfo.SetCreated(request.getUserId(), request.AuditLocation);
             return user;
         }
 
@@ -30,7 +30,7 @@ namespace BusinessLogic.Common.Mappers
                 Role = new Role(request.RoleId),
 
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
 

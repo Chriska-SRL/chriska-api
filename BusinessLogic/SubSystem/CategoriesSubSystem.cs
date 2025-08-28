@@ -57,7 +57,7 @@ namespace BusinessLogic.SubSystem
             var deleted = await _categoryRepository.GetByIdAsync(request.Id)
                           ?? throw new ArgumentException("Categoría no encontrada.");
 
-            deleted.MarkAsDeleted(request.getUserId(), request.Location);
+            deleted.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _categoryRepository.DeleteAsync(deleted);
             return CategoryMapper.ToResponse(deleted);
         }
@@ -117,7 +117,7 @@ namespace BusinessLogic.SubSystem
             //if (associatedProducts.Any())
                 //throw new InvalidOperationException("No se puede eliminar una subcategoría que tiene productos asociados.");
 
-            deleted.MarkAsDeleted(request.getUserId(), request.Location);
+            deleted.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _subCategoryRepository.DeleteAsync(deleted);
 
             return SubCategoryMapper.ToResponse(deleted);

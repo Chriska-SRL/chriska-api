@@ -12,8 +12,8 @@
     [Description] NVARCHAR(255) NOT NULL, 
     [TemperatureCondition] NVARCHAR(10) NOT NULL, 
     [EstimatedWeight] INT NULL DEFAULT 0, -- Peso estimado en gramos
-    [Stock] DECIMAL NOT NULL, 
-    [AvailableStock] DECIMAL NOT NULL, 
+    [Stock] DECIMAL (18, 2) NOT NULL, 
+    [AvailableStock] DECIMAL (18, 2) NOT NULL, 
     [Observations] NVARCHAR(255) NOT NULL, 
     [SubCategoryId] INT NOT NULL, 
     [BrandId] INT NOT NULL, 
