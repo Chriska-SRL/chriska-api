@@ -103,8 +103,11 @@ namespace BusinessLogic.Domain
             if (EstimatedWeight < 0)
                 throw new ArgumentOutOfRangeException(nameof(EstimatedWeight), "El peso estimado no puede ser negativo.");
 
-            if (UnitType == UnitType.Kilo)
+            if (UnitType == UnitType.Kilo && EstimatedWeight == 0)
                 throw new ArgumentOutOfRangeException(nameof(EstimatedWeight), "El peso estimado es obligatorio para productos por kilo.");
+
+            if (UnitType == UnitType.Unit &&  EstimatedWeight != 0)
+                throw new ArgumentOutOfRangeException(nameof(EstimatedWeight), "Los productos por unidad no se les puede ingresar el peso.");
 
             if (!string.IsNullOrWhiteSpace(ImageUrl) && ImageUrl.Length > 255)
                 throw new ArgumentOutOfRangeException(nameof(ImageUrl), "La ruta de imagen no puede superar los 255 caracteres.");
