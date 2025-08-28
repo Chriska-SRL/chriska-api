@@ -44,7 +44,8 @@ namespace BusinessLogic.SubSystem
             deliveriesFromZones = await _deliveryRepository.GetDeliveriesPendingByZoneIdsAsync(request.ZoneIds);
             deliveriesFromClients = await _deliveryRepository.GetDeliveriesPendingByClientIdsAsync(request.ClientIds);
 
-            List<Delivery> deliveriesAll = deliveriesFromZones.Concat(deliveriesFromClients).ToList();
+            List<Delivery> deliveriesAll = deliveriesFromZones.Concat(deliveriesFromClients).GroupBy(d => d.Id) .Select(g => g.First()) 
+    .ToList();
             List<DistributionDelivery> distributionDeliveries = new List<DistributionDelivery>();
             int i = 1;
             foreach (var delivery in deliveriesAll)
