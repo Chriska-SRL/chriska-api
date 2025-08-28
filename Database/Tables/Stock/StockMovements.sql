@@ -3,7 +3,7 @@
 	  -- Clave primaria de la entidad
     [Id] INT NOT NULL PRIMARY KEY IDENTITY, 
 
-    [Quantity] INT NOT NULL, 
+    [Quantity] DECIMAL NOT NULL, 
     [Type]  NVARCHAR(50) NOT NULL, 
     [Reason] NVARCHAR(255) NOT NULL, 
     [Date] DATETIME NOT NULL, 
