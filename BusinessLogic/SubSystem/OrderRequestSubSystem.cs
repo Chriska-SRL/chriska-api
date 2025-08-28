@@ -99,7 +99,7 @@ namespace BusinessLogic.SubSystem
             var existing = await _orderRequestRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException($"No se encontró una solicitud de pedido con el ID {request.Id}.");
 
-            existing.MarkAsDeleted(request.getUserId(), request.Location);
+            existing.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             var deleted = await _orderRequestRepository.DeleteAsync(existing);
             return OrderRequestMapper.ToResponse(deleted);
         }
@@ -132,7 +132,7 @@ namespace BusinessLogic.SubSystem
             int userId = request.getUserId() ?? 0;
             User? user = await _userRepository.GetByIdAsync(userId)
                 ?? throw new ArgumentException("El usuario que realiza el cambio de estado no existe.");
-            orderRequest.AuditInfo.SetUpdated(userId, request.Location);
+            orderRequest.AuditInfo.SetUpdated(userId, request.AuditLocation);
             orderRequest.User = user;
             Order order = null;
             if (request.Status == Status.Confirmed)

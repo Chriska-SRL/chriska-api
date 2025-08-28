@@ -46,7 +46,7 @@ namespace BusinessLogic.SubSystem
                 product.Stock -= stockMovement.Quantity;
                 product.AvailableStocks -= stockMovement.Quantity;
             }
-            product.AuditInfo.SetUpdated(request.getUserId(), request.Location);
+            product.AuditInfo.SetUpdated(request.getUserId(), request.AuditLocation);
 
             await _productRepository.UpdateAsync(product);
             added.Product = product;

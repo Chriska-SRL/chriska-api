@@ -66,7 +66,7 @@ namespace BusinessLogic.SubSystem
                 throw new InvalidOperationException("No se puede eliminar la marca porque tiene productos asociados.");
             }
 
-            brand.MarkAsDeleted(request.getUserId(), request.Location);
+            brand.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _brandRepository.DeleteAsync(brand);
             return BrandMapper.ToResponse(brand);
         }

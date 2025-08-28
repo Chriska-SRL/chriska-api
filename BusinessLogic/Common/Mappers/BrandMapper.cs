@@ -12,7 +12,7 @@ namespace BusinessLogic.Common.Mappers
                 request.Name,
                 request.Description
             );
-            brand.AuditInfo?.SetCreated(request.getUserId(),request.Location);
+            brand.AuditInfo?.SetCreated(request.getUserId(),request.AuditLocation);
 
             return brand;
         }
@@ -24,7 +24,7 @@ namespace BusinessLogic.Common.Mappers
                 Name = request.Name,
                 Description = request.Description,
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
 

@@ -146,7 +146,7 @@ namespace BusinessLogic.SubSystem
             var discount = await _discountRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró el descuento seleccionado.");
 
-            discount.MarkAsDeleted(request.getUserId(), request.Location);
+            discount.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _discountRepository.DeleteAsync(discount);
         }
 

@@ -13,7 +13,7 @@ namespace BusinessLogic.Common.Mappers
                 permissions: request.Permissions.Select(p => (Permission)p).ToList()
             );
 
-            role.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            role.AuditInfo.SetCreated(request.getUserId(), request.AuditLocation);
             return role;
         }
 
@@ -25,7 +25,7 @@ namespace BusinessLogic.Common.Mappers
                 Description = request.Description,
                 Permissions = request.Permissions.Select(p => (Permission)p).ToList(),
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
 

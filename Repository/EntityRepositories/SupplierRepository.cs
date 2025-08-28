@@ -25,7 +25,7 @@ namespace Repository.EntityRepositories
                 cmd.Parameters.AddWithValue("@RUT", supplier.RUT);
                 cmd.Parameters.AddWithValue("@RazonSocial", supplier.RazonSocial);
                 cmd.Parameters.AddWithValue("@Address", supplier.Address);
-                cmd.Parameters.AddWithValue("@Location", (object?)supplier.SupplierLocation?.ToString() ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Location", (object?)supplier.Location?.ToString() ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Phone", supplier.Phone);
                 cmd.Parameters.AddWithValue("@ContactName", supplier.ContactName);
                 cmd.Parameters.AddWithValue("@Email", supplier.Email);
@@ -36,7 +36,7 @@ namespace Repository.EntityRepositories
 
             await AddSupplierBankAccountsAsync(newId, supplier.BankAccounts);
 
-            return new Supplier(newId, supplier.Name, supplier.RUT, supplier.RazonSocial, supplier.Address, supplier.SupplierLocation, supplier.Phone,
+            return new Supplier(newId, supplier.Name, supplier.RUT, supplier.RazonSocial, supplier.Address, supplier.Location, supplier.Phone,
                                 supplier.ContactName, supplier.Email, supplier.Observations, supplier.BankAccounts, supplier.AuditInfo);
         }
 
@@ -179,7 +179,7 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@RUT", supplier.RUT);
                     cmd.Parameters.AddWithValue("@RazonSocial", supplier.RazonSocial);
                     cmd.Parameters.AddWithValue("@Address", supplier.Address);
-                    cmd.Parameters.AddWithValue("@Location", (object?)supplier.SupplierLocation?.ToString() ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Location", (object?)supplier.Location?.ToString() ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Phone", supplier.Phone);
                     cmd.Parameters.AddWithValue("@ContactName", supplier.ContactName);
                     cmd.Parameters.AddWithValue("@Email", supplier.Email);

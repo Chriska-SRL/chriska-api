@@ -27,7 +27,7 @@ namespace Repository.EntityRepositories
                 cmd.Parameters.AddWithValue("@RUT", client.RUT);
                 cmd.Parameters.AddWithValue("@RazonSocial", client.RazonSocial);
                 cmd.Parameters.AddWithValue("@Address", client.Address);
-                cmd.Parameters.AddWithValue("@Location", (object?)client.ClientLocation?.ToString() ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Location", (object?)client.Location?.ToString() ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Schedule", client.Schedule);
                 cmd.Parameters.AddWithValue("@Phone", client.Phone);
                 cmd.Parameters.AddWithValue("@ContactName", client.ContactName);
@@ -42,7 +42,7 @@ namespace Repository.EntityRepositories
 
             await AddClientBankAccountsAsync(newId, client.BankAccounts);
 
-            return new Client(newId, client.Name, client.RUT, client.RazonSocial, client.Address, client.ClientLocation,
+            return new Client(newId, client.Name, client.RUT, client.RazonSocial, client.Address, client.Location,
                               client.Schedule, client.Phone, client.ContactName, client.Email, client.Observations,
                               client.BankAccounts, client.LoanedCrates, client.Qualification, client.Zone, client.AuditInfo);
         }
@@ -69,7 +69,7 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@RUT", client.RUT);
                     cmd.Parameters.AddWithValue("@RazonSocial", client.RazonSocial);
                     cmd.Parameters.AddWithValue("@Address", client.Address);
-                    cmd.Parameters.AddWithValue("@Location", (object?)client.ClientLocation?.ToString() ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Location", (object?)client.Location?.ToString() ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Schedule", client.Schedule);
                     cmd.Parameters.AddWithValue("@Phone", client.Phone);
                     cmd.Parameters.AddWithValue("@ContactName", client.ContactName);

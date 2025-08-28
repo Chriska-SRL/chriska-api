@@ -19,7 +19,7 @@ public static class AuditMapper
                     Id = audit.CreatedBy ?? 0,
                     User = "implementar nombre"
                 },
-                Location = audit.CreatedLocation
+                AuditLocation = audit.CreatedLocation
             }: null,
 
             Updated = audit.UpdatedAt.HasValue ? new AuditAction
@@ -30,7 +30,7 @@ public static class AuditMapper
                     Id = audit.UpdatedBy ?? 0,
                     User = "implementar nombre"
                 },
-                Location = audit.UpdatedLocation
+                AuditLocation = audit.UpdatedLocation
             } : null,
 
             Deleted = audit.DeletedAt.HasValue ? new AuditAction
@@ -41,7 +41,7 @@ public static class AuditMapper
                     Id = audit.DeletedBy ?? 0,
                     User = "implementar nombre"
                 },
-                Location = audit.DeletedLocation
+                AuditLocation = audit.DeletedLocation
             } : null
         };
     }

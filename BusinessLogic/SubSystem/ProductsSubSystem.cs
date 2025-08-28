@@ -94,7 +94,7 @@ namespace BusinessLogic.SubSystem
             var product = await _productRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró el producto seleccionado.");
 
-            product.MarkAsDeleted(request.getUserId(), request.Location);
+            product.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _productRepository.DeleteAsync(product);
         }
 
@@ -124,7 +124,7 @@ namespace BusinessLogic.SubSystem
         {
             Product product = await _productRepository.GetByIdAsync(request.EntityId)
                 ?? throw new ArgumentException("No se encontró el producto seleccionado.");
-            product.AuditInfo.SetUpdated(request.getUserId(), request.Location);
+            product.AuditInfo.SetUpdated(request.getUserId(), request.AuditLocation);
 
             var url = await _blobService.UploadFileAsync(request.File, "products", $"product{product.Id}");
             return await _productRepository.UpdateImageUrlAsync(product, url);

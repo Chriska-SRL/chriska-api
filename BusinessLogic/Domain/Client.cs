@@ -10,7 +10,7 @@ namespace BusinessLogic.Domain
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
         public string Address { get; set; }
-        public Location ClientLocation { get; set; }
+        public Location Location { get; set; }
         public string Schedule { get; set; }
         public string Phone { get; set; }
         public string ContactName { get; set; }
@@ -22,7 +22,7 @@ namespace BusinessLogic.Domain
         public List<BankAccount> BankAccounts { get; set; } = new();
         public AuditInfo? AuditInfo { get; set; } = new();
 
-        public Client(string name, string? rut, string razonSocial, string address, Location clientLocation,
+        public Client(string name, string? rut, string razonSocial, string address, Location location,
                       string schedule, string phone, string contactName, string? email, string? observations,
                       List<BankAccount> bankAccounts, int loanedCrates, Zone zone)
         {
@@ -30,7 +30,7 @@ namespace BusinessLogic.Domain
             RUT = rut ?? "";
             RazonSocial = razonSocial;
             Address = address;
-            ClientLocation = clientLocation;
+            Location = location;
             Schedule = schedule;
             Phone = phone;
             ContactName = contactName;
@@ -51,7 +51,7 @@ namespace BusinessLogic.Domain
             RUT = rut;
             RazonSocial = razonSocial;
             Address = address;
-            ClientLocation = location;
+            Location = location;
             Schedule = schedule;
             Phone = phone;
             ContactName = contactName;
@@ -107,7 +107,7 @@ namespace BusinessLogic.Domain
             RUT = data.RUT ?? RUT;
             RazonSocial = data.RazonSocial ?? RazonSocial;
             Address = data.Address ?? Address;
-            ClientLocation = data.ClientLocation ?? ClientLocation;
+            Location = data.Location ?? Location;
             Schedule = data.Schedule ?? Schedule;
             Phone = data.Phone ?? Phone;
             ContactName = data.ContactName ?? ContactName;
@@ -132,7 +132,7 @@ namespace BusinessLogic.Domain
             public string? RUT;
             public string? RazonSocial;
             public string? Address;
-            public Location? ClientLocation;
+            public Location? Location;
             public string? Schedule;
             public string? Phone;
             public string? ContactName;

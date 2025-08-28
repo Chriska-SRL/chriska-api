@@ -22,7 +22,7 @@ namespace BusinessLogic.Common.Mappers
                 distributionDeliveries: distributionDeliveries ?? new List<DistributionDelivery>()
             );
 
-            dist.AuditInfo?.SetCreated(request.getUserId(), request.Location);
+            dist.AuditInfo?.SetCreated(request.getUserId(), request.AuditLocation);
             return dist;
         }
 
@@ -55,7 +55,7 @@ namespace BusinessLogic.Common.Mappers
                 DistributionDeliveries = distributionDeliveries,
 
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
     }

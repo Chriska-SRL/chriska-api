@@ -57,7 +57,7 @@ namespace BusinessLogic.SubSystem
             if (warehouse.Shelves.Any())
                 throw new InvalidOperationException("No se puede eliminar el almacén porque tiene estanterías asociadas.");
 
-            warehouse.MarkAsDeleted(request.getUserId(), request.Location);
+            warehouse.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _warehouseRepository.DeleteAsync(warehouse);
         }
 
@@ -113,7 +113,7 @@ namespace BusinessLogic.SubSystem
             var shelve = await _shelveRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la estantería seleccionada.");
 
-            shelve.MarkAsDeleted(request.getUserId(), request.Location);
+            shelve.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _shelveRepository.DeleteAsync(shelve);
         }
 

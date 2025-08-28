@@ -13,7 +13,7 @@ namespace BusinessLogic.Common.Mappers
                 category: category
             );
 
-            subCategory.AuditInfo?.SetCreated(request.getUserId(), request.Location);
+            subCategory.AuditInfo?.SetCreated(request.getUserId(), request.AuditLocation);
             return subCategory;
         }
 
@@ -24,7 +24,7 @@ namespace BusinessLogic.Common.Mappers
                 Name = request.Name,
                 Description = request.Description,
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
 

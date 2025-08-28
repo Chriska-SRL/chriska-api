@@ -52,7 +52,7 @@ namespace BusinessLogic.SubSystem
             }
 
             user.SetPassword(password);
-            user.AuditInfo.SetUpdated(request.getUserId(), request.Location);
+            user.AuditInfo.SetUpdated(request.getUserId(), request.AuditLocation);
             await _userRepository.UpdateAsync(user);
             return password;
         }
@@ -83,7 +83,7 @@ namespace BusinessLogic.SubSystem
             var user = await _userRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró el usuario seleccionado.");
 
-            user.MarkAsDeleted(request.getUserId(), request.Location);
+            user.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _userRepository.DeleteAsync(user);
         }
 

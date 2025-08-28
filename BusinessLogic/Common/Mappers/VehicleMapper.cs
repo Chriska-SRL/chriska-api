@@ -15,7 +15,7 @@ namespace BusinessLogic.Common.Mappers
                 costs:new List<VehicleCost>()
             );
 
-            vehicle.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            vehicle.AuditInfo.SetCreated(request.getUserId(), request.AuditLocation);
             return vehicle;
         }
 
@@ -28,7 +28,7 @@ namespace BusinessLogic.Common.Mappers
                 Model = request.Model,
                 CrateCapacity = request.CrateCapacity,
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
 

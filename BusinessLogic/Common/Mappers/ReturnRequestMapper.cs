@@ -13,7 +13,7 @@ namespace BusinessLogic.Common.Mappers
                 user: user
             );
 
-            returnRequest.AuditInfo?.SetCreated(request.getUserId(), request.Location);
+            returnRequest.AuditInfo?.SetCreated(request.getUserId(), request.AuditLocation);
             return returnRequest;
         }
         public static ReturnRequest.UpdatableData ToUpdatableData(ReturnRequestUpdateRequest request, User user, List<ProductItem> productItems)
@@ -24,7 +24,7 @@ namespace BusinessLogic.Common.Mappers
                 User = user,
                 ProductItems = productItems,
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
         public static ReturnRequestResponse ToResponse(ReturnRequest request)
