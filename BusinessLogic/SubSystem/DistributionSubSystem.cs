@@ -54,7 +54,7 @@ namespace BusinessLogic.SubSystem
             }
 
             Distribution newDistribution = new Distribution(request.Observations, user, vehicle, zones, distributionDeliveries);
-            newDistribution.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            newDistribution.AuditInfo.SetCreated(request.getUserId(), request.AuditLocation);
             newDistribution.Validate();
 
             var added = await _distributionRepository.AddAsync(newDistribution);
@@ -116,7 +116,7 @@ namespace BusinessLogic.SubSystem
             var distribution = await _distributionRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la distribución seleccionada.");
 
-            distribution.MarkAsDeleted(request.getUserId(), request.Location);
+            distribution.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             var deleted = await _distributionRepository.DeleteAsync(distribution);
 
             return DistributionMapper.ToResponse(deleted);

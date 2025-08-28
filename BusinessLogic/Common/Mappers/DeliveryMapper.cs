@@ -16,7 +16,7 @@ namespace BusinessLogic.Common.Mappers
             {
                 Observations = request.Observations,
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
         public static DeliveryResponse ToResponse(Delivery delivery, Boolean notBucle = false)

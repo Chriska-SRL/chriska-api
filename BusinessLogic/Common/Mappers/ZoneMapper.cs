@@ -14,7 +14,7 @@ namespace BusinessLogic.Common.Mappers
                 requestDays: request.RequestDays.Select(d => (Day)Enum.Parse(typeof(Day), d)).ToList()
             );
 
-            zone.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            zone.AuditInfo.SetCreated(request.getUserId(), request.AuditLocation);
             return zone;
         }
 
@@ -27,7 +27,7 @@ namespace BusinessLogic.Common.Mappers
                 DeliveryDays = request.DeliveryDays.Select(d => (Day)Enum.Parse(typeof(Day), d)).ToList(),
                 RequestDays = request.RequestDays.Select(d => (Day)Enum.Parse(typeof(Day), d)).ToList(),
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
 

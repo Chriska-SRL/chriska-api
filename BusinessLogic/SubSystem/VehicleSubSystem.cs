@@ -50,7 +50,7 @@ public class VehicleSubSystem
         var vehicle = await _vehicleRepository.GetByIdAsync(request.Id)
             ?? throw new ArgumentException("No se encontró el vehículo seleccionado.");
 
-        vehicle.MarkAsDeleted(request.getUserId(), request.Location);
+        vehicle.MarkAsDeleted(request.getUserId(), request.AuditLocation);
         await _vehicleRepository.DeleteAsync(vehicle);
         return VehicleMapper.ToResponse(vehicle);
     }
@@ -98,7 +98,7 @@ public class VehicleSubSystem
         var cost = await _costRepository.GetByIdAsync(request.Id)
             ?? throw new ArgumentException("No se encontró el costo seleccionado.");
 
-        cost.MarkAsDeleted(request.getUserId(), request.Location);
+        cost.MarkAsDeleted(request.getUserId(), request.AuditLocation);
         await _costRepository.DeleteAsync(cost);
 
         return VehicleCostMapper.ToResponse(cost);

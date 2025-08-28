@@ -15,7 +15,7 @@ namespace BusinessLogic.Common.Mappers
                 user,
                 productItems
             );
-            orderRequest.AuditInfo?.SetCreated(request.getUserId(), request.Location);
+            orderRequest.AuditInfo?.SetCreated(request.getUserId(), request.AuditLocation);
             return orderRequest;
         }
 
@@ -27,7 +27,7 @@ namespace BusinessLogic.Common.Mappers
                 User = user,
                 ProductItems = productItems,
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
 

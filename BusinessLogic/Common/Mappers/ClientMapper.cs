@@ -13,7 +13,7 @@ namespace BusinessLogic.Common.Mappers
                 request.RUT,
                 request.RazonSocial,
                 request.Address,
-                request.ClientLocation,
+                request.Location,
                 request.Schedule,
                 request.Phone,
                 contactName: request.ContactName,
@@ -23,7 +23,7 @@ namespace BusinessLogic.Common.Mappers
                 loanedCrates: 0,
                 new Zone(request.ZoneId)
             );
-            client.AuditInfo.SetCreated(request.getUserId(), request.Location);
+            client.AuditInfo.SetCreated(request.getUserId(), request.AuditLocation);
 
             return client;
         }
@@ -36,7 +36,7 @@ namespace BusinessLogic.Common.Mappers
                 RUT = request.RUT,
                 RazonSocial = request.RazonSocial,
                 Address = request.Address,
-                ClientLocation = request.ClientLocation,
+                Location = request.Location,
                 Schedule = request.Schedule,
                 Phone = request.Phone,
                 ContactName = request.ContactName,
@@ -59,7 +59,7 @@ namespace BusinessLogic.Common.Mappers
                 RUT = client.RUT,
                 RazonSocial = client.RazonSocial,
                 Address = client.Address,
-                Location = client.ClientLocation,
+                Location = client.Location,
                 Schedule = client.Schedule,
                 Phone = client.Phone,
                 ContactName = client.ContactName,

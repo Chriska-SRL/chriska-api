@@ -109,7 +109,7 @@ namespace BusinessLogic.SubSystem
             int userId = request.getUserId() ?? 0;
             User? user = await _userRepository.GetByIdAsync(userId)
                 ?? throw new ArgumentException("El usuario que realiza el cambio de estado no existe.");
-            order.AuditInfo.SetUpdated(userId, request.Location);
+            order.AuditInfo.SetUpdated(userId, request.AuditLocation);
             order.User = user;
 
             Delivery delivery = null;

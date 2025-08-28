@@ -10,7 +10,7 @@ namespace BusinessLogic.DTOs.DTOsClient
         public string RazonSocial { get; set; }
         public string? RUT { get; set; }
         public string Address { get; set; }
-        public Location ClientLocation { get; set; }
+        public Location Location { get; set; }
         public string Phone { get; set; }
         public string? Email { get; set; }
         public string ContactName { get; set; }

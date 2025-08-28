@@ -54,7 +54,7 @@ namespace BusinessLogic.SubSystem
             var supplier = await _supplierRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró el proveedor seleccionado.");
 
-            supplier.MarkAsDeleted(request.getUserId(), request.Location);
+            supplier.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _supplierRepository.DeleteAsync(supplier);
         }
 

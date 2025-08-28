@@ -67,7 +67,7 @@ namespace BusinessLogic.SubSystem
                 throw new InvalidOperationException("No se puede eliminar el rol porque tiene usuarios asociados.");
             }
 
-            role.MarkAsDeleted(request.getUserId(),request.Location);
+            role.MarkAsDeleted(request.getUserId(),request.AuditLocation);
             await _roleRepository.DeleteAsync(role);
             return RoleMapper.ToResponse(role);
         }

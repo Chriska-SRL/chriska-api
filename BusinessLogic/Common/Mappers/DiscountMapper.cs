@@ -28,7 +28,7 @@ namespace BusinessLogic.Common.Mappers
                 clients: clients
             );
 
-            discount.AuditInfo?.SetCreated(request.getUserId(), request.Location);
+            discount.AuditInfo?.SetCreated(request.getUserId(), request.AuditLocation);
             return discount;
         }
 
@@ -54,7 +54,7 @@ namespace BusinessLogic.Common.Mappers
                 Products = products,
 
                 UserId = request.getUserId(),
-                Location = request.Location
+                Location = request.AuditLocation
             };
         }
 

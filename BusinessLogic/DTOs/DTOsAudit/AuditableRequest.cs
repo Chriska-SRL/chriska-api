@@ -3,7 +3,7 @@ namespace BusinessLogic.DTOs.DTOsAudit
 {
     public abstract class AuditableRequest
     {
-        public Location Location { get; set; }
+        public Location AuditLocation { get; set; }
         private int? userId;
         public void setUserId (int userId)
         {
