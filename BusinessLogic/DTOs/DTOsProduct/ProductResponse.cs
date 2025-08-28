@@ -19,8 +19,8 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public required string Description { get; set; }
         public TemperatureCondition TemperatureCondition { get; set; }
         public int EstimatedWeight { get; set; }
-        public int Stock { get; set; }
-        public int AvailableStock { get; set; }
+        public decimal Stock { get; set; }
+        public decimal AvailableStock { get; set; }
         public required string ImageUrl { get; set; }
         public required string Observations { get; set; }
         public required SubCategoryResponse? SubCategory { get; set; }

@@ -13,7 +13,7 @@ namespace BusinessLogic.DTOs.DTOsDiscount
         public int Id { get; set; }
         public required string Description { get; set; }
         public DateTime ExpirationDate { get; set; }
-        public int ProductQuantity { get; set; }
+        public decimal ProductQuantity { get; set; }
         public decimal Percentage { get; set; }
         public List<ProductResponse>? Products{ get; set; } 
         public List<ClientResponse>? Clients { get; set; }
