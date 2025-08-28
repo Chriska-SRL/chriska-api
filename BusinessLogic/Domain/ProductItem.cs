@@ -22,13 +22,20 @@ namespace BusinessLogic.Domain
         }
         internal void Validate()
         {
-                if (Quantity % 0.5m != 0)
-                {
-                    throw new InvalidOperationException(
-                        $"El producto '{Product.Name}' tiene una cantidad inválida ({Quantity}). " +
-                        "Solo se permiten múltiplos de 0.5 al preparar una orden."
-                    );
-                }
+            if (Product.UnitType == Common.Enums.UnitType.Kilo && Quantity % 0.5m != 0)
+            {
+                throw new InvalidOperationException(
+                    $"El producto '{Product.Name}' tiene una cantidad inválida ({Quantity}). " +
+                    "Solo se permiten múltiplos de 0.5 al preparar una orden por peso."
+                );
+            }
+            if (Product.UnitType == Common.Enums.UnitType.Unit && Quantity % 1 != 0)
+            {
+                throw new InvalidOperationException(
+                    $"El producto '{Product.Name}' tiene una cantidad inválida ({Quantity}). " +
+                    "Solo se permiten numeros enteros al preparar una orden de unidades."
+                );
+            }
 
         }
     }

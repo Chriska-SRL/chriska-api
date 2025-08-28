@@ -21,7 +21,7 @@ namespace Repository.Mappers
 
             var item = new ProductItem
                 (
-                    r.GetInt32(r.GetOrdinal(Col("Quantity"))),
+                    r.GetDecimal(r.GetOrdinal(Col("Quantity"))),
                     r.IsDBNull(r.GetOrdinal(Col("Weight"))) ? (int?)null : r.GetInt32(r.GetOrdinal(Col("Weight"))),
                     r.GetDecimal(r.GetOrdinal(Col("UnitPrice"))),
                     r.GetDecimal(r.GetOrdinal(Col("Discount"))),

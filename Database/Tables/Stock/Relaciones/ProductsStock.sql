@@ -3,7 +3,7 @@
     [Id] INT NOT NULL PRIMARY KEY IDENTITY,
     [ProductId] INT NOT NULL,
     [ShelveId] INT NOT NULL,
-    [Quantity] INT NOT NULL,
+    [Quantity] DECIMAL (18, 2) NOT NULL,
     
     CONSTRAINT [UQ_ProductsStock_Shelve_Product] UNIQUE ([ShelveId], [ProductId]),
     CONSTRAINT [FK_ProductsStock_Shelves] FOREIGN KEY ([ShelveId]) REFERENCES [Shelves]([Id]),
