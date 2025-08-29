@@ -52,7 +52,6 @@ namespace BusinessLogic.Domain
         public void MarkAsDeleted(int? userId, Location? location)
         {
             AuditInfo.SetDeleted(userId, location);
-            Validate();
         }
         public class UpdatableData:AuditData
         {

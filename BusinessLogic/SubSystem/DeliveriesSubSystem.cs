@@ -6,6 +6,7 @@ using BusinessLogic.DTOs.DTOsDocumentClient;
 using BusinessLogic.DTOs;
 using BusinessLogic.Repository;
 using BusinessLogic.Domain;
+using BusinessLogic.DTOs.DTOsReceipt;
 
 namespace BusinessLogic.SubSystem
 {
@@ -14,13 +15,14 @@ namespace BusinessLogic.SubSystem
         private readonly IDeliveryRepository _deliveryRepository;
         private readonly IUserRepository _userRepository;
         private readonly  IProductRepository _productRepository;
+        private readonly ReceiptSubSystem _receiptSubSystem;
 
-        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository,IProductRepository productRepository)
+        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository,IProductRepository productRepository, ReceiptSubSystem receiptSubSystem)
         {
             _deliveryRepository = deliveryRepository;
             _userRepository = userRepository;
             _productRepository = productRepository;
-
+            _receiptSubSystem = receiptSubSystem;
         }
 
         public async Task<Delivery> AddDeliveryAsync(Order order)
@@ -93,12 +95,26 @@ namespace BusinessLogic.SubSystem
             {
                 delivery.Confirm();
 
-                //TODO: Implementar creacion de Receipt
+                // Crear el recibo (Receipt) asociado a la entrega confirmada
+                var totalAmount = delivery.ProductItems.Sum(item => item.Quantity * item.UnitPrice);
 
+                var receiptAddRequest = new ReceiptAddRequest
+                {
+                    Date = DateTime.UtcNow,
+                    Amount = totalAmount,
+                    Notes = $"Recibo generado automáticamente al confirmar la entrega {delivery.Id}",
+                    ClientId = delivery.Client.Id
+                };
+                receiptAddRequest.setUserId(userId);
+                receiptAddRequest.AuditLocation = request.AuditLocation;
+
+                _receiptSubSystem.AddReceiptAsync(receiptAddRequest).Wait();
             }
             else if (request.Status == Status.Cancelled)
             {
                 delivery.Cancel();
+
+                // Devolver el stock a los productos
                 foreach (var item in delivery.ProductItems)
                 {
                     await _productRepository.UpdateStockAsync(item.Product.Id, item.Quantity, item.Quantity);
@@ -112,6 +128,7 @@ namespace BusinessLogic.SubSystem
             delivery = await _deliveryRepository.ChangeStatusDeliveryAsync(delivery);
             return DeliveryMapper.ToResponse(delivery);
         }
+
 
         public async Task<List<DeliveryResponse>> GetConfirmedDeliveriesByClientIdAsync(int clientId, QueryOptions? options = null)
         {

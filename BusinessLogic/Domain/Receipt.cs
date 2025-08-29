@@ -8,18 +8,28 @@ namespace BusinessLogic.Domain
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public string Notes { get; set; }
-        public Delivery Delivery { get; set; }
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+        public AuditInfo? AuditInfo { get; set; }
+        public Client? Client { get; set; }
 
-        public Receipt(int id,DateTime date, decimal amount, string notes, Delivery delivery, AuditInfo auditInfo)
+
+        //Constructor de creacion
+        public Receipt(DateTime date, decimal amount, string notes, Client client)
         {
-            Id = id;
             Date = date;
             Amount = amount;
             Notes = notes;
-            Delivery = delivery;
-            AuditInfo = auditInfo ?? new AuditInfo();
+            Client = client;
+            AuditInfo =  new AuditInfo();
             Validate();
+        }
+        //Constructor de lectura
+        public Receipt(int id, DateTime date, decimal amount, string notes, Client? client, AuditInfo? auditInfo)
+        {
+            Date = date;
+            Amount = amount;
+            Notes = notes;
+            Client = client;
+            AuditInfo = auditInfo;
         }
 
         public void Validate()
@@ -34,28 +44,20 @@ namespace BusinessLogic.Domain
                 throw new ArgumentOutOfRangeException(nameof(Notes), "Las notas no pueden superar los 250 caracteres.");
 
         }
-        public void Update(UpdatableData updatableData)
+        public void Update(UpdatableData data)
         {
-            Date = updatableData.Date;
-            Amount = updatableData.Amount;
-            Notes = updatableData.Notes;
-            Delivery = updatableData.Delivery;
-            AuditInfo = updatableData.AuditInfo ?? new AuditInfo();
+            Notes = data.Notes ?? Notes;
             Validate();
         }
 
         public void MarkAsDeleted(int? userId, Location? location)
         {
-            throw new NotImplementedException();
+            AuditInfo.SetDeleted(userId, location);
         }
 
-        public class UpdatableData
+        public class UpdatableData: AuditData
         {
-            public DateTime Date { get; set; }
-            public decimal Amount { get; set; }
-            public string Notes { get; set; }
-            public Delivery Delivery { get; set; }
-            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+            public string? Notes { get; set; }
         }
     }
 }

@@ -133,5 +133,11 @@
         EDIT_DISTRIBUTIONS = 84,
         VIEW_DISTRIBUTIONS = 85,
 
+        //Receipts
+        CREATE_RECEIPTS = 86,
+        DELETE_RECEIPTS = 87,
+        EDIT_RECEIPTS = 88,
+        VIEW_RECEIPTS = 89
+
     }
 }
