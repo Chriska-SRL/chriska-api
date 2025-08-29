@@ -1,4 +1,5 @@
-﻿using BusinessLogic.DTOs.DTOsAudit;
+﻿using BusinessLogic.Common.Enums;
+using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsClient;
 
 namespace BusinessLogic.DTOs.DTOsReceipt
@@ -9,6 +10,7 @@ namespace BusinessLogic.DTOs.DTOsReceipt
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public string? Notes { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
         public ClientResponse? Client { get; set; }
     }
 }

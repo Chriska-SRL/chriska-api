@@ -15,14 +15,16 @@ namespace BusinessLogic.SubSystem
         private readonly IDeliveryRepository _deliveryRepository;
         private readonly IUserRepository _userRepository;
         private readonly  IProductRepository _productRepository;
+        private readonly IClientRepository _clientRepository;
         private readonly ReceiptSubSystem _receiptSubSystem;
 
-        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository,IProductRepository productRepository, ReceiptSubSystem receiptSubSystem)
+        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository,IProductRepository productRepository, ReceiptSubSystem receiptSubSystem, IClientRepository clientRepository)
         {
             _deliveryRepository = deliveryRepository;
             _userRepository = userRepository;
             _productRepository = productRepository;
             _receiptSubSystem = receiptSubSystem;
+            _clientRepository = clientRepository;
         }
 
         public async Task<Delivery> AddDeliveryAsync(Order order)
@@ -76,7 +78,7 @@ namespace BusinessLogic.SubSystem
             var deliveries = await _deliveryRepository.GetAllAsync(options);
             return deliveries.Select(d => DeliveryMapper.ToResponse(d)).ToList();
         }
-        internal async Task<DeliveryResponse?> ChangeStatusDeliveryAsync(int id, DocumentClientChangeStatusRequest request)
+        internal async Task<DeliveryResponse?> ChangeStatusDeliveryAsync(int id, DeliveryChangeStatusRequest request)
         {
             var delivery = await _deliveryRepository.GetByIdAsync(id)
                 ?? throw new ArgumentException($"No se encontró la entrega con el ID {id}.");
@@ -95,20 +97,37 @@ namespace BusinessLogic.SubSystem
             {
                 delivery.Confirm();
 
-                // Crear el recibo (Receipt) asociado a la entrega confirmada
-                var totalAmount = delivery.ProductItems.Sum(item => item.Quantity * item.UnitPrice);
-
-                var receiptAddRequest = new ReceiptAddRequest
+                int crates = request.Crates;
+                if (crates != 0)
                 {
-                    Date = DateTime.UtcNow,
-                    Amount = totalAmount,
-                    Notes = $"Recibo generado automáticamente al confirmar la entrega {delivery.Id}",
-                    ClientId = delivery.Client.Id
-                };
-                receiptAddRequest.setUserId(userId);
-                receiptAddRequest.AuditLocation = request.AuditLocation;
+                    int clientId = delivery.Client?.Id ?? throw new ArgumentException("No se pudo obtener el idel cliente asociado a la entrega para ajustar los cajones.");
+                    Client client = await _clientRepository.GetByIdAsync(clientId) ?? throw new ArgumentException($"no se encontro el cliente de id {clientId}");
+                    client.LoanedCrates -= crates;
+                    client.AuditInfo.SetUpdated(userId, request.AuditLocation);
+                    _clientRepository.UpdateAsync(client).Wait();
 
-                _receiptSubSystem.AddReceiptAsync(receiptAddRequest).Wait();
+                }
+
+                // Crear el recibo (Receipt) asociado a la entrega confirmada
+                PaymentMethod? paymentMethod = request.PaymentMethod;
+                decimal amount = request.Amount ?? 0;
+
+
+                if (paymentMethod != null) { 
+
+                    var receiptAddRequest = new ReceiptAddRequest
+                    {
+                        Date = DateTime.Now,
+                        Amount = amount,
+                        Notes = $"Recibo generado automáticamente al confirmar la entrega {delivery.Id}",
+                        PaymentMethod = paymentMethod ?? PaymentMethod.Cash,
+                        ClientId = delivery.Client.Id
+                    };
+                    receiptAddRequest.setUserId(userId);
+                    receiptAddRequest.AuditLocation = request.AuditLocation;
+
+                    _receiptSubSystem.AddReceiptAsync(receiptAddRequest).Wait();
+                }
             }
             else if (request.Status == Status.Cancelled)
             {

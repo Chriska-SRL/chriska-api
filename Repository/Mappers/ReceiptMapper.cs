@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Domain;
+using BusinessLogic.Common.Enums;
 using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
@@ -8,18 +9,33 @@ namespace Repository.Mappers
         public static Receipt? FromReader(SqlDataReader r, string? prefix = null)
         {
             string Col(string c) => $"{prefix ?? ""}{c}";
-            string? S(string c) => r.IsDBNull(r.GetOrdinal(c)) ? null : r.GetString(r.GetOrdinal(c));
+            string? GetStringOrNull(string c) => r.IsDBNull(r.GetOrdinal(c)) ? null : r.GetString(r.GetOrdinal(c));
 
-            // Si usamos prefix (cuando viene de joins), validamos que haya Id
             if (prefix != null)
             {
-                try { var o = r.GetOrdinal(Col("Id")); if (r.IsDBNull(o)) return null; } catch { return null; }
+                try
+                {
+                    int o = r.GetOrdinal(Col("Id"));
+                    if (r.IsDBNull(o)) return null;
+                }
+                catch
+                {
+                    return null;
+                }
             }
 
-            var id = r.GetInt32(r.GetOrdinal(Col("Id")));
-            var date = r.GetDateTime(r.GetOrdinal(Col("Date")));
-            var amount = r.GetDecimal(r.GetOrdinal(Col("Amount")));
-            var notes = S(Col("Notes"));
+            int id = r.GetInt32(r.GetOrdinal(Col("Id")));
+            DateTime date = r.GetDateTime(r.GetOrdinal(Col("Date")));
+            decimal amount = r.GetDecimal(r.GetOrdinal(Col("Amount")));
+            string notes = GetStringOrNull(Col("Notes")) ?? string.Empty;
+
+            int ordPm = r.GetOrdinal(Col("PaymentMethod"));
+            if (r.IsDBNull(ordPm))
+                throw new InvalidOperationException("PaymentMethod no puede ser null.");
+
+            string pmStr = r.GetString(ordPm);
+            if (!Enum.TryParse(pmStr.Trim(), true, out PaymentMethod paymentMethod))
+                throw new InvalidOperationException($"Valor inválido de PaymentMethod: '{pmStr}'.");
 
             var client = ClientMapper.FromReader(r, "Client");
 
@@ -27,7 +43,8 @@ namespace Repository.Mappers
                 id,
                 date,
                 amount,
-                notes ?? string.Empty,
+                notes,
+                paymentMethod,
                 client,
                 prefix is null ? AuditInfoMapper.FromReader(r) : null
             );

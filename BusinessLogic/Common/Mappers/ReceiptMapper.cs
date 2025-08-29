@@ -12,6 +12,7 @@ namespace BusinessLogic.Common.Mappers
                 request.Date,
                 request.Amount,
                 request.Notes ?? string.Empty,
+                request.PaymentMethod,
                 client
             );
             receipt.AuditInfo?.SetCreated(request.getUserId(), request.AuditLocation);
@@ -39,6 +40,7 @@ namespace BusinessLogic.Common.Mappers
                 Date = receipt.Date,
                 Amount = receipt.Amount,
                 Notes = receipt.Notes,
+                PaymentMethod = receipt.PaymentMethod,
                 Client = ClientMapper.ToResponse(receipt.Client) ?? null,
                 AuditInfo = AuditMapper.ToResponse(receipt.AuditInfo)
             };

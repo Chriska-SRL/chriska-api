@@ -1,11 +1,11 @@
 ﻿CREATE TABLE [dbo].[Receipts]
 (
 	-- Clave primaria
-    [Id] INT NOT NULL PRIMARY KEY, 
+    [Id] INT NOT NULL PRIMARY KEY IDENTITY, 
 
     -- Campos de la entidad
     [Date] DATETIME NOT NULL, 
-    [Amount] NVARCHAR(255) NULL,
+    [Amount] DECIMAL(18,2) NULL,
     [Notes] NVARCHAR(255) NOT NULL,
     [PaymentMethod] NVARCHAR(50) NULL,
     [ClientId] INT NOT NULL,

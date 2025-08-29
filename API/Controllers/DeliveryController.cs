@@ -51,7 +51,7 @@ namespace API.Controllers
 
         [HttpPut("changestatus/{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_DELIVERIES))]
-        public async Task<ActionResult<DeliveryResponse>> ChangeStatusDeliveryAsync(int id, [FromBody] DocumentClientChangeStatusRequest request)
+        public async Task<ActionResult<DeliveryResponse>> ChangeStatusDeliveryAsync(int id, [FromBody] DeliveryChangeStatusRequest request)
         {
             request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.ChangeStatusDeliveryAsync(id, request);
