@@ -76,7 +76,6 @@
     <Build Include="Tables\Vehicles\Vehicles.sql" />
     <Build Include="Tables\Vehicles\VehicleCosts.sql" />
     <Build Include="Tables\Clients\Clients.sql" />
-    <Build Include="Tables\Clients\Receipts.sql" />
     <Build Include="Tables\Clients\Zones.sql" />
     <Build Include="Tables\Products\Products.sql" />
     <Build Include="Tables\Products\Categories.sql" />
@@ -110,6 +109,7 @@
     <Build Include="Tables\Orders\Distributions.sql" />
     <Build Include="Tables\Orders\Relations\Distributions_Deliveries.sql" />
     <Build Include="Tables\Orders\Relations\Distributions_Zones.sql" />
+    <Build Include="Tables\Clients\Receipts.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Database.refactorlog" />

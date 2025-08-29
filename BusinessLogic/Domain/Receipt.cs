@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Enums;
 
 namespace BusinessLogic.Domain
 {
@@ -8,18 +9,32 @@ namespace BusinessLogic.Domain
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public string Notes { get; set; }
-        public Delivery Delivery { get; set; }
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+        public PaymentMethod PaymentMethod {  get; set; }
+        public AuditInfo? AuditInfo { get; set; }
+        public Client? Client { get; set; }
 
-        public Receipt(int id,DateTime date, decimal amount, string notes, Delivery delivery, AuditInfo auditInfo)
+
+        //Constructor de creacion
+        public Receipt(DateTime date, decimal amount, string notes,PaymentMethod paymentMethod, Client client)
+        {
+            Date = date;
+            Amount = amount;
+            Notes = notes;
+            PaymentMethod = paymentMethod;
+            Client = client;
+            AuditInfo =  new AuditInfo();
+            Validate();
+        }
+        //Constructor de lectura
+        public Receipt(int id, DateTime date, decimal amount, string notes, PaymentMethod paymentMethod, Client? client, AuditInfo? auditInfo)
         {
             Id = id;
             Date = date;
             Amount = amount;
             Notes = notes;
-            Delivery = delivery;
-            AuditInfo = auditInfo ?? new AuditInfo();
-            Validate();
+            PaymentMethod = paymentMethod;
+            Client = client;
+            AuditInfo = auditInfo;
         }
 
         public void Validate()
@@ -34,28 +49,20 @@ namespace BusinessLogic.Domain
                 throw new ArgumentOutOfRangeException(nameof(Notes), "Las notas no pueden superar los 250 caracteres.");
 
         }
-        public void Update(UpdatableData updatableData)
+        public void Update(UpdatableData data)
         {
-            Date = updatableData.Date;
-            Amount = updatableData.Amount;
-            Notes = updatableData.Notes;
-            Delivery = updatableData.Delivery;
-            AuditInfo = updatableData.AuditInfo ?? new AuditInfo();
+            Notes = data.Notes ?? Notes;
             Validate();
         }
 
         public void MarkAsDeleted(int? userId, Location? location)
         {
-            throw new NotImplementedException();
+            AuditInfo.SetDeleted(userId, location);
         }
 
-        public class UpdatableData
+        public class UpdatableData: AuditData
         {
-            public DateTime Date { get; set; }
-            public decimal Amount { get; set; }
-            public string Notes { get; set; }
-            public Delivery Delivery { get; set; }
-            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+            public string? Notes { get; set; }
         }
     }
 }
