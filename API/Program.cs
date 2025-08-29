@@ -149,6 +149,7 @@ namespace API
             builder.Services.AddScoped<IDeliveryRepository, DeliveryRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IDistributionRepository, DistributionRepository>();
+            builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
 
             builder.Services.AddScoped<IAzureBlobService, AzureBlobService>();
 
@@ -170,6 +171,7 @@ namespace API
             builder.Services.AddScoped<OrderSubSystem>();
             builder.Services.AddScoped<DeliveriesSubSystem>();
             builder.Services.AddScoped<DistributionSubSystem>();
+            builder.Services.AddScoped<ReceiptSubSystem>();
 
             builder.Services.AddScoped<AuditLogger>();
             builder.Services.AddScoped<Facade>();

@@ -23,7 +23,7 @@ SET IDENTITY_INSERT dbo.Users OFF;
 DECLARE @RoleId INT = 1;
 DECLARE @PermissionId INT = 1;
 
-WHILE @PermissionId <= 85
+WHILE @PermissionId <= 89
 BEGIN
     INSERT INTO dbo.Roles_Permissions (RoleId, PermissionId)
     VALUES (@RoleId, @PermissionId);

@@ -52,6 +52,7 @@ namespace BusinessLogic.Common.Mappers
 
         public static ClientResponse ToResponse(Client client)
         {
+            if (client == null) return null;
             return new ClientResponse
             {
                 Id = client.Id,

@@ -1,10 +1,34 @@
 ﻿CREATE TABLE [dbo].[Receipts]
 (
-	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
-    [Amount] MONEY NOT NULL, 
-    [Notes] NVARCHAR(255) NULL,
+	-- Clave primaria
+    [Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+
+    -- Campos de la entidad
     [Date] DATETIME NOT NULL, 
+    [Amount] DECIMAL(18,2) NULL,
+    [Notes] NVARCHAR(255) NOT NULL,
+    [PaymentMethod] NVARCHAR(50) NULL,
     [ClientId] INT NOT NULL,
-    [PaymentMethod] NCHAR(100) NULL, 
-    CONSTRAINT [FK_Receipts_Clients] FOREIGN KEY ([ClientId]) REFERENCES [Clients]([Id]),
+
+    --Restricciones de la entidad
+    CONSTRAINT [FK_Receipts_ClientId] FOREIGN KEY ([ClientId]) REFERENCES [Clients]([Id]),
+
+    -- Auditoría
+    [CreatedAt] DATETIME2 NOT NULL,
+    [CreatedBy] INT NOT NULL,
+    [CreatedLocation] NVARCHAR(50) NULL,
+    [UpdatedAt] DATETIME2 NULL,
+    [UpdatedBy] INT NULL,
+    [UpdatedLocation] NVARCHAR(50) NULL,
+    [DeletedAt] DATETIME2 NULL,
+    [DeletedBy] INT NULL,
+    [DeletedLocation] NVARCHAR(50) NULL,
+
+    -- Soft delete
+    [IsDeleted] BIT NOT NULL DEFAULT 0,
+
+    --Restricciones Audit
+    CONSTRAINT [FK_Receipts_CreatedBy] FOREIGN KEY ([CreatedBy]) REFERENCES [Users]([Id]),
+    CONSTRAINT [FK_Receipts_UpdatedBy] FOREIGN KEY ([UpdatedBy]) REFERENCES [Users]([Id]),
+    CONSTRAINT [FK_Receipts_DeletedBy] FOREIGN KEY ([DeletedBy]) REFERENCES [Users]([Id])
 )

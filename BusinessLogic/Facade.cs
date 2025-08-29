@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Common;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsCategory;
@@ -12,6 +13,7 @@ using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsOrderRequest;
 using BusinessLogic.DTOs.DTOsProduct;
+using BusinessLogic.DTOs.DTOsReceipt;
 using BusinessLogic.DTOs.DTOsReturnRequest;
 using BusinessLogic.DTOs.DTOsRole;
 using BusinessLogic.DTOs.DTOsShelve;
@@ -46,6 +48,7 @@ namespace BusinessLogic
         private readonly OrderSubSystem Orders;
         private readonly DeliveriesSubSystem Deliveries;
         private readonly DistributionSubSystem Distributions;
+        private readonly ReceiptSubSystem Receipt;
 
         public Facade(
             AuthSubSystem auth,
@@ -65,7 +68,8 @@ namespace BusinessLogic
             OrderRequestSubSystem orderRequests,
             ReturnRequestSubSystem returnRequest,
             DeliveriesSubSystem deliveries,
-            DistributionSubSystem distributions)
+            DistributionSubSystem distributions,
+            ReceiptSubSystem receipt)
         {
             Auth = auth;
             Categories = categories;
@@ -85,6 +89,7 @@ namespace BusinessLogic
             Orders = orders;
             Deliveries = deliveries;
             Distributions = distributions;
+            Receipt = receipt;
         }
 
         // --- Auth ---
@@ -229,7 +234,7 @@ namespace BusinessLogic
         public async Task<DeliveryResponse?> UpdateDeliveryAsync(DeliveryUpdateRequest request) => await Deliveries.UpdateDeliveryAsync(request);
         public async Task<DeliveryResponse?> GetDeliveryByIdAsync(int id) => await Deliveries.GetDeliveryByIdAsync(id);
         public async Task<List<DeliveryResponse?>> GetAllDeliveriesAsync(QueryOptions query) => await Deliveries.GetAllDeliveriesAsync(query);
-        public async Task<DeliveryResponse?> ChangeStatusDeliveryAsync(int id, DocumentClientChangeStatusRequest request)  => await Deliveries.ChangeStatusDeliveryAsync(id, request);
+        public async Task<DeliveryResponse?> ChangeStatusDeliveryAsync(int id, DeliveryChangeStatusRequest request)  => await Deliveries.ChangeStatusDeliveryAsync(id, request);
 
         // --- Distribution ---
         public async Task<DistributionResponse?> AddDistributionAsync(DistributionAddRequest request) => await Distributions.AddDistributionAsync(request);
@@ -238,6 +243,17 @@ namespace BusinessLogic
         public async Task<DistributionResponse?> GetDistributionByIdAsync(int id) => await Distributions.GetDistributionByIdAsync(id);
         public async Task<List<DistributionResponse>?> GetAllDistributionsAsync(QueryOptions query) => await Distributions.GetAllDistributionsAsync(query);
         public async Task<List<DeliveryResponse?>> GetConfirmedDeliveriesByClientIdAsync(int ClientId,QueryOptions query) => await Deliveries.GetConfirmedDeliveriesByClientIdAsync(ClientId,query);
+
+        // --- Receipts ---
+        public async Task<ReceiptResponse> AddReceiptAsync(ReceiptAddRequest request) => await Receipt.AddReceiptAsync(request);
+
+        public async Task<ReceiptResponse> UpdateReceiptAsync(ReceiptUpdateRequest request) => await Receipt.UpdateReceiptAsync(request);
+
+        public async Task<ReceiptResponse> DeleteReceiptAsync(DeleteRequest request) => await Receipt.DeleteReceiptAsync(request);
+
+        public async Task<ReceiptResponse> GetReceiptByIdAsync(int id) => await Receipt.GetReceiptByIdAsync(id);
+
+        public async Task<List<ReceiptResponse>> GetAllReceiptsAsync(QueryOptions options) => await Receipt.GetAllReceiptsAsync(options);
 
     }
 }
