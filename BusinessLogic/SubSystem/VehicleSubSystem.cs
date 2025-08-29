@@ -50,6 +50,9 @@ public class VehicleSubSystem
         var vehicle = await _vehicleRepository.GetByIdAsync(request.Id)
             ?? throw new ArgumentException("No se encontró el vehículo seleccionado.");
 
+        if (vehicle.VehicleCosts.Any())
+            throw new InvalidOperationException("No se puede eliminar un vehículo con costos asociados activos.");
+
         vehicle.MarkAsDeleted(request.getUserId(), request.AuditLocation);
         await _vehicleRepository.DeleteAsync(vehicle);
         return VehicleMapper.ToResponse(vehicle);

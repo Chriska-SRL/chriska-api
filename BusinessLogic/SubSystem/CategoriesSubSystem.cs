@@ -57,6 +57,21 @@ namespace BusinessLogic.SubSystem
             var deleted = await _categoryRepository.GetByIdAsync(request.Id)
                           ?? throw new ArgumentException("Categoría no encontrada.");
 
+            var options = new QueryOptions
+            {
+                Filters = new Dictionary<string, string>
+                {
+                    { "CategoryId", request.Id.ToString() }
+                }
+            };
+
+            var subCategories = await _subCategoryRepository.GetAllAsync(options);
+
+            if (subCategories.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar la categoria porque tiene subcategorias asociados.");
+            }
+
             deleted.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _categoryRepository.DeleteAsync(deleted);
             return CategoryMapper.ToResponse(deleted);
@@ -113,9 +128,20 @@ namespace BusinessLogic.SubSystem
             var deleted = await _subCategoryRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("Subcategoría no encontrada.");
 
-            //var associatedProducts = await _productRepository.GetBySubCategoryIdAsync(request.Id);
-            //if (associatedProducts.Any())
-                //throw new InvalidOperationException("No se puede eliminar una subcategoría que tiene productos asociados.");
+            var options = new QueryOptions
+            {
+                Filters = new Dictionary<string, string>
+                {
+                    { "SubCategoryId", request.Id.ToString() }
+                }
+            };
+
+            var products = await _productRepository.GetAllAsync(options);
+
+            if (products.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar la subcategoria porque tiene productos asociados.");
+            }
 
             deleted.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _subCategoryRepository.DeleteAsync(deleted);
