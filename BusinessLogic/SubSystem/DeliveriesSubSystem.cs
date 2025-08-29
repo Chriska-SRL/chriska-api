@@ -102,7 +102,7 @@ namespace BusinessLogic.SubSystem
                 {
                     int clientId = delivery.Client?.Id ?? throw new ArgumentException("No se pudo obtener el idel cliente asociado a la entrega para ajustar los cajones.");
                     Client client = await _clientRepository.GetByIdAsync(clientId) ?? throw new ArgumentException($"no se encontro el cliente de id {clientId}");
-                    client.LoanedCrates -= crates;
+                    client.LoanedCrates += crates - delivery.Order.Crates;
                     client.AuditInfo.SetUpdated(userId, request.AuditLocation);
                     _clientRepository.UpdateAsync(client).Wait();
 

@@ -13,11 +13,13 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IZoneRepository _zoneRepository;
         private readonly IAzureBlobService _blobService;
+        private readonly IProductRepository _productRepository;
 
-        public ZonesSubSystem(IZoneRepository zoneRepository,IAzureBlobService azureBlobService)
+        public ZonesSubSystem(IZoneRepository zoneRepository,IAzureBlobService azureBlobService, IProductRepository productRepository)
         {
             _zoneRepository = zoneRepository;
             _blobService = azureBlobService;
+            _productRepository = productRepository;
         }
 
         public async Task<ZoneResponse> AddZoneAsync(AddZoneRequest request)
@@ -53,6 +55,25 @@ namespace BusinessLogic.SubSystem
         {
             var zone = await _zoneRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la zona seleccionada.");
+
+            var options = new QueryOptions
+            {
+                Filters = new Dictionary<string, string>
+                {
+                    { "ZoneId", request.Id.ToString() }
+                }
+            };
+
+            var products = await _productRepository.GetAllAsync(options);
+
+            if (products.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar la subcategoria porque tiene productos asociados.");
+            }
+            if (zone.Clients.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar la zona porque tiene clientes asociados.");
+            }
 
             zone.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _zoneRepository.DeleteAsync(zone);
