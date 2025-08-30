@@ -3,7 +3,6 @@ using BusinessLogic.Common.Enums;
 using BusinessLogic.Domain;
 using BusinessLogic.Repository;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Options;
 using Repository.Logging;
 using Repository.Mappers;
 
@@ -160,7 +159,7 @@ namespace Repository.EntityRepositories
                         var supplierIdObj = reader["SupplierId"];
                         if (supplierIdObj != DBNull.Value)
                         {
-                            var supplier = SupplierMapper.FromReaderForProduct(reader);
+                            var supplier = SupplierMapper.FromReader(reader, "Supplier");
                             if (!product.Suppliers.Any(s => s.Id == supplier.Id))
                                 product.Suppliers.Add(supplier);
                         }
@@ -220,7 +219,7 @@ namespace Repository.EntityRepositories
                         var supplierIdObj = reader["SupplierId"];
                         if (supplierIdObj != DBNull.Value)
                         {
-                            var supplier = SupplierMapper.FromReaderForProduct(reader);
+                            var supplier = SupplierMapper.FromReader(reader, "Supplier");
                             if (!suppliers.Any(s => s.Id == supplier.Id))
                                 suppliers.Add(supplier);
                         }

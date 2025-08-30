@@ -2,7 +2,7 @@
 
 namespace BusinessLogic.Repository
 {
-    public interface IReceiptRepository : IRepository<Receipt>
+    public interface ISupplierReceiptRepository : IRepository<SupplierReceipt>
     {
     }
 }

@@ -4,9 +4,9 @@ using Microsoft.Data.SqlClient;
 
 namespace Repository.Mappers
 {
-    public static class ReceiptMapper
+    public static class ClientReceiptMapper
     {
-        public static Receipt? FromReader(SqlDataReader r, string? prefix = null)
+        public static ClientReceipt? FromReader(SqlDataReader r, string? prefix = null)
         {
             string Col(string c) => $"{prefix ?? ""}{c}";
             string? GetStringOrNull(string c) => r.IsDBNull(r.GetOrdinal(c)) ? null : r.GetString(r.GetOrdinal(c));
@@ -39,14 +39,14 @@ namespace Repository.Mappers
 
             var client = ClientMapper.FromReader(r, "Client");
 
-            var receipt = new Receipt(
+            var receipt = new ClientReceipt(
                 id,
                 date,
                 amount,
                 notes,
                 paymentMethod,
-                client,
-                prefix is null ? AuditInfoMapper.FromReader(r) : null
+                prefix is null ? AuditInfoMapper.FromReader(r) : null,
+                client
             );
 
             return receipt;

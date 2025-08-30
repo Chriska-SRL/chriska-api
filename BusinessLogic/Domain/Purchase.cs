@@ -1,30 +1,20 @@
 ﻿using BusinessLogic.Common;
-using BusinessLogic.Domain;
-using System.Text.RegularExpressions;
 
 namespace BusinessLogic.Domain
 {
-    public class Purchase:IEntity<Purchase.UpdatableData>, IAuditable
+    public class Purchase : SupplierDocument
     {
-        public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public string Reference { get; set; }
-        public Supplier Supplier { get; set; }
-        public List<Payment> Payments { get; set; } = new List<Payment>();
-        public List<ProductDocument> ProductDocument { get; set; } 
-        public AuditInfo AuditInfo { get; set; } = new AuditInfo();
+        public string? InvoiceNumber { get; set; }
 
-        public Purchase(int id,DateTime date, string referece, Supplier supplier,List<Payment> payments,AuditInfo auditInfo)
+        public Purchase(string? observation, User user, List<ProductItem>? productItems, Supplier supplier, string? invoiceNumber = null)
+            : base(observation, user, productItems, supplier)
         {
-            Id = id;
-            Date = date;
-            Reference = referece;
-            Supplier = supplier;
-            Payments = payments ?? new List<Payment>();
-            AuditInfo = auditInfo ?? new AuditInfo();
+            InvoiceNumber = invoiceNumber;
+            Validate();
         }
 
-        public void Validate()
+        public Purchase(int id, DateTime date, string observations, User? user, List<ProductItem> productItems, Supplier? supplier, AuditInfo? auditInfo, string? invoiceNumber = null)
+            : base(id, date, observations, user, productItems, supplier, auditInfo)
         {
             if (Date == default)
                 throw new ArgumentNullException("La fecha es obligatoria.");
@@ -35,26 +25,30 @@ namespace BusinessLogic.Domain
                 throw new ArgumentNullException("El proveedor es obligatorio."); 
         }
 
+        public override void Validate()
+        {
+            if (!string.IsNullOrWhiteSpace(Observations) && Observations.Length > 255)
+                throw new ArgumentOutOfRangeException("La observación no puede superar los 255 caracteres.");
+            if (Supplier == null) throw new ArgumentNullException("El proveedor es obligatorio.");
+            if (!string.IsNullOrWhiteSpace(InvoiceNumber) && InvoiceNumber.Length > 30)
+                throw new ArgumentOutOfRangeException("El número de factura no puede superar los 30 caracteres.");
+        }
+
+        public class UpdatableData : AuditData
+        {
+            public string? Observations { get; set; }
+            public string? InvoiceNumber { get; set; }
+            public List<ProductItem>? ProductItems { get; set; }
+        }
 
         public void Update(UpdatableData data)
         {
-            Date = data.Date ?? Date;
-            Supplier = data.Supplier ?? Supplier;
-            AuditInfo = data.AuditInfo ?? new AuditInfo();
+            Observations = data.Observations ?? Observations;
+            InvoiceNumber = data.InvoiceNumber ?? InvoiceNumber;
+            if (data.ProductItems != null)
+                ProductItems = data.ProductItems;
+            AuditInfo?.SetUpdated(data.UserId, data.Location);
             Validate();
-        }
-
-        public void MarkAsDeleted(int? userId, Location? location)
-        {
-            throw new NotImplementedException();
-        }
-
-        public class UpdatableData
-        {
-            public DateTime? Date { get; set; }
-            public string? Status { get; set; }
-            public Supplier? Supplier { get; set; }
-            public AuditInfo AuditInfo { get; set; } = new AuditInfo();
         }
     }
 }
