@@ -27,12 +27,12 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (Date == default)
-                throw new ArgumentNullException(nameof(Date), "La fecha es obligatoria.");
+                throw new ArgumentNullException("La fecha es obligatoria.");
             if (Date > DateTime.Now)
-                throw new ArgumentException("La fecha no puede ser en el futuro.", nameof(Date));
+                throw new ArgumentException("La fecha no puede ser en el futuro.");
 
             if (Supplier == null)
-                throw new ArgumentNullException(nameof(Supplier), "El proveedor es obligatorio."); 
+                throw new ArgumentNullException("El proveedor es obligatorio."); 
         }
 
 

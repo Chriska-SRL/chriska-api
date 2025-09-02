@@ -64,10 +64,10 @@ namespace BusinessLogic.Domain
         public void Update(UpdatableData data)
         {
             if (data == null)
-                throw new ArgumentNullException(nameof(data), "Los datos de actualización no pueden ser nulos.");
+                throw new ArgumentNullException("Los datos de actualización no pueden ser nulos.");
 
             if (data.Permissions == null)
-                throw new ArgumentNullException(nameof(data.Permissions), "La lista de permisos no puede ser nula.");
+                throw new ArgumentNullException("La lista de permisos no puede ser nula.");
 
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;

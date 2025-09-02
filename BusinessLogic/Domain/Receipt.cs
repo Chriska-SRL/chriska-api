@@ -40,13 +40,13 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (Date == default)
-                throw new ArgumentNullException(nameof(Date), "La fecha es obligatoria.");
+                throw new ArgumentNullException("La fecha es obligatoria.");
 
             if (Amount <= 0)
-                throw new ArgumentOutOfRangeException(nameof(Amount), "El monto debe ser mayor a cero.");
+                throw new ArgumentOutOfRangeException("El monto debe ser mayor a cero.");
 
             if (!string.IsNullOrWhiteSpace(Notes) && Notes.Length > 250)
-                throw new ArgumentOutOfRangeException(nameof(Notes), "Las notas no pueden superar los 250 caracteres.");
+                throw new ArgumentOutOfRangeException("Las notas no pueden superar los 250 caracteres.");
 
         }
         public void Update(UpdatableData data)

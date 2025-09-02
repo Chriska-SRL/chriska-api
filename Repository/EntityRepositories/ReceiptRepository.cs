@@ -69,7 +69,7 @@ namespace Repository.EntityRepositories
         public async Task<Receipt> DeleteAsync(Receipt receipt)
         {
             if (receipt == null)
-                throw new ArgumentNullException(nameof(receipt), "El recibo no puede ser nulo.");
+                throw new ArgumentNullException("El recibo no puede ser nulo.");
 
             int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE Receipts SET IsDeleted = 1 WHERE Id = @Id",
