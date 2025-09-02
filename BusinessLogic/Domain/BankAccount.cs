@@ -18,16 +18,16 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(AccountName))
-                throw new ArgumentNullException(nameof(AccountName), "El nombre de la cuenta es obligatorio.");
+                throw new ArgumentNullException("El nombre de la cuenta es obligatorio.");
 
             if (string.IsNullOrWhiteSpace(AccountNumber))
-                throw new ArgumentNullException(nameof(AccountNumber), "El número de cuenta es obligatorio.");
+                throw new ArgumentNullException("El número de cuenta es obligatorio.");
 
             if (!AccountNumber.All(char.IsDigit))
                 throw new ArgumentException("El número de cuenta debe contener solo dígitos.");
 
             if (AccountNumber.Length < 10 || AccountNumber.Length > 14)
-                throw new ArgumentOutOfRangeException(nameof(AccountNumber), "El número de cuenta debe tener entre 10 y 14 dígitos.");
+                throw new ArgumentOutOfRangeException("El número de cuenta debe tener entre 10 y 14 dígitos.");
         }
 
     }

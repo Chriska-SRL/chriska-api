@@ -69,42 +69,42 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentNullException(nameof(Name), "El nombre es obligatorio.");
+                throw new ArgumentNullException("El nombre es obligatorio.");
             if (Name.Length > 50)
-                throw new ArgumentOutOfRangeException(nameof(Name), "El nombre no puede superar los 50 caracteres.");
+                throw new ArgumentOutOfRangeException("El nombre no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(RUT))
-                throw new ArgumentNullException(nameof(RUT), "El RUT es obligatorio.");
+                throw new ArgumentNullException("El RUT es obligatorio.");
             if (RUT.Length != 12 || !RUT.All(char.IsDigit))
-                throw new ArgumentException("El RUT debe tener exactamente 12 dígitos numéricos.", nameof(RUT));
+                throw new ArgumentException("El RUT debe tener exactamente 12 dígitos numéricos.");
 
             if (string.IsNullOrWhiteSpace(RazonSocial))
-                throw new ArgumentNullException(nameof(RazonSocial), "La razón social es obligatorio"); ;
+                throw new ArgumentNullException("La razón social es obligatorio"); ;
             if (RazonSocial.Length > 50)
-                throw new ArgumentOutOfRangeException(nameof(RazonSocial), "El nombre no puede superar los 50 caracteres.");
+                throw new ArgumentOutOfRangeException("El nombre no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(Address))
-                throw new ArgumentNullException(nameof(Address), "La dirección es obligatoria"); ;
+                throw new ArgumentNullException("La dirección es obligatoria"); ;
             if (RazonSocial.Length > 50)
-                throw new ArgumentOutOfRangeException(nameof(Address), "La dirección no puede superar los 50 caracteres.");
+                throw new ArgumentOutOfRangeException("La dirección no puede superar los 50 caracteres.");
             if (string.IsNullOrWhiteSpace(Phone))
-                throw new ArgumentNullException(nameof(Phone), "El teléfono es obligatorio.");
+                throw new ArgumentNullException("El teléfono es obligatorio.");
             if (!Phone.All(char.IsDigit))
-                throw new ArgumentException("El teléfono debe contener solo números.", nameof(Phone));
+                throw new ArgumentException("El teléfono debe contener solo números.");
             if (Phone.Length < 8 || Phone.Length > 9)
-                throw new ArgumentOutOfRangeException(nameof(Phone), "El teléfono debe tener entre 8 y 9 dígitos.");
+                throw new ArgumentOutOfRangeException("El teléfono debe tener entre 8 y 9 dígitos.");
 
             if (string.IsNullOrWhiteSpace(ContactName))
-                throw new ArgumentNullException(nameof(ContactName), "El nombre de contacto es obligatorio.");
+                throw new ArgumentNullException("El nombre de contacto es obligatorio.");
 
             if (string.IsNullOrWhiteSpace(Email))
                 throw new ArgumentNullException(nameof(Email), "El email es obligatorio.");
             var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
             if (!Regex.IsMatch(Email, emailRegex))
-                throw new ArgumentException("El email tiene un formato inválido.", nameof(Email));
+                throw new ArgumentException("El email tiene un formato inválido.");
 
             if (Observations.Length > 255)
-                throw new ArgumentOutOfRangeException(nameof(Observations), "Las observaciones no pueden superar los 255 caracteres.");
+                throw new ArgumentOutOfRangeException("Las observaciones no pueden superar los 255 caracteres.");
         }
         public void Update(UpdatableData data)
         {
