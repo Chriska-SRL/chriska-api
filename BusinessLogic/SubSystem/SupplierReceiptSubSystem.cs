@@ -1,8 +1,9 @@
-﻿using BusinessLogic.Repository;
-using BusinessLogic.DTOs.DTOsReceipt;
-using BusinessLogic.DTOs;
-using BusinessLogic.Common;
+﻿using BusinessLogic.Common;
 using BusinessLogic.Common.Mappers;
+using BusinessLogic.Domain;
+using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsReceipt;
+using BusinessLogic.Repository;
 
 namespace BusinessLogic.SubSystem
 {
@@ -10,11 +11,13 @@ namespace BusinessLogic.SubSystem
     {
         private readonly ISupplierReceiptRepository _supplierReceiptRepository;
         private readonly ISupplierRepository _supplierRepository;
+        private readonly ISupplierBalanceItemRepository _supplierBalanceItemRepository;
 
-        public SupplierReceiptSubSystem(ISupplierReceiptRepository receiptRepository, ISupplierRepository supplierRepository)
+        public SupplierReceiptSubSystem(ISupplierReceiptRepository receiptRepository, ISupplierRepository supplierRepository, ISupplierBalanceItemRepository supplierBalanceItemRepository)
         {
             _supplierReceiptRepository = receiptRepository;
             _supplierRepository = supplierRepository;
+            _supplierBalanceItemRepository = supplierBalanceItemRepository;
         }
 
         public async Task<SupplierReceiptResponse> AddReceiptAsync(SupplierReceiptAddRequest request)
@@ -22,12 +25,26 @@ namespace BusinessLogic.SubSystem
             var supplier = await _supplierRepository.GetByIdAsync(request.SupplierId)
                 ?? throw new ArgumentException("No se encontró el proveedor especificado.");
 
+            // 1) Estado de cuenta del proveedor
+            List<BalanceItem> balanceItems =
+                await _supplierBalanceItemRepository.GetBySupplierIdAsync(request.SupplierId);
+            var accountStatement = new SupplierAccountStatement(supplier, balanceItems);
+
+            // 2) Mapear y validar recibo
             var newReceipt = SupplierReceiptMapper.ToDomain(request, supplier);
             newReceipt.Validate();
 
+            // 3) Persistir recibo
             var added = await _supplierReceiptRepository.AddAsync(newReceipt);
+
+            // 4) Actualizar balance del proveedor
+            var balanceItem = new ReceiptBalanceItem(added, accountStatement);
+            await _supplierBalanceItemRepository.AddAsync(balanceItem);
+
+            // 5) Respuesta
             return SupplierReceiptMapper.ToResponse(added);
         }
+
 
         public async Task<SupplierReceiptResponse> UpdateReceiptAsync(ReceiptUpdateRequest request)
         {

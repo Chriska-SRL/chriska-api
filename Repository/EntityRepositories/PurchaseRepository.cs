@@ -14,67 +14,93 @@ namespace Repository.EntityRepositories
         #region Query (base)
 
         private readonly string baseQuery = @"
-            SELECT
-                -- Purchase
-                p.*,
+    SELECT
+        -- Purchase
+        p.*,
 
-                -- Supplier (prefijo Supplier)
-                s.Id              AS SupplierId,
-                s.Name            AS SupplierName,
-                s.RUT             AS SupplierRUT,
-                s.RazonSocial     AS SupplierRazonSocial,
-                s.Address         AS SupplierAddress,
-                s.Location        AS SupplierLocation,
-                s.Phone           AS SupplierPhone,
-                s.ContactName     AS SupplierContactName,
-                s.Email           AS SupplierEmail,
-                s.Observations    AS SupplierObservations,
+        -- Supplier de la compra (prefijo Supplier)
+        s.Id                   AS SupplierId,
+        s.Name                 AS SupplierName,
+        s.RUT                  AS SupplierRUT,
+        s.RazonSocial          AS SupplierRazonSocial,
+        s.Address              AS SupplierAddress,
+        s.Location             AS SupplierLocation,
+        s.Phone                AS SupplierPhone,
+        s.ContactName          AS SupplierContactName,
+        s.Email                AS SupplierEmail,
+        s.Observations         AS SupplierObservations,
 
-                -- User (prefijo User)
-                u.Id              AS UserId,
-                u.Name            AS UserName,
-                u.Username        AS UserUsername,
-                u.Password        AS UserPassword,
-                u.IsEnabled       AS UserIsEnabled,
-                u.NeedsPasswordChange AS UserNeedsPasswordChange,
+        -- User (prefijo User)
+        u.Id                   AS UserId,
+        u.Name                 AS UserName,
+        u.Username             AS UserUsername,
+        u.Password             AS UserPassword,
+        u.IsEnabled            AS UserIsEnabled,
+        u.NeedsPasswordChange  AS UserNeedsPasswordChange,
 
-                -- Role (prefijo UserRole)
-                r.Id              AS UserRoleId,
-                r.Name            AS UserRoleName,
-                r.Description     AS UserRoleDescription,
+        -- Role (prefijo UserRole)
+        r.Id                   AS UserRoleId,
+        r.Name                 AS UserRoleName,
+        r.Description          AS UserRoleDescription,
 
-                -- Items (prefijo PP_)
-                pp.PurchaseId     AS PP_PurchaseId,
-                pp.Quantity       AS PP_Quantity,
-                pp.UnitPrice      AS PP_UnitPrice,
-                pp.Discount       AS PP_Discount,
-                pp.Weight         AS PP_Weight,
+        -- Items (prefijo PP_)
+        pp.PurchaseId          AS PP_PurchaseId,
+        pp.Quantity            AS PP_Quantity,
+        pp.UnitPrice           AS PP_UnitPrice,
+        pp.Discount            AS PP_Discount,
+        pp.Weight              AS PP_Weight,
 
-                -- Product (prefijo Product)
-                pr.Id             AS ProductId,
-                pr.Name           AS ProductName,
-                pr.Description    AS ProductDescription,
-                pr.InternalCode   AS ProductInternalCode,
-                pr.Barcode        AS ProductBarcode,
-                pr.UnitType       AS ProductUnitType,
-                pr.Price          AS ProductPrice,
-                pr.TemperatureCondition AS ProductTemperatureCondition,
-                pr.EstimatedWeight AS ProductEstimatedWeight,
-                pr.Stock          AS ProductStock,
-                pr.AvailableStock AS ProductAvailableStock,
-                pr.Observations   AS ProductObservations,
-                pr.ImageUrl       AS ProductImageUrl,
-                pr.SubCategoryId  AS SubCategoryId,
-                pr.BrandId        AS BrandId,
-                pr.ShelveId       AS ProductShelveId
+        -- Product (prefijo Product)
+        pr.Id                  AS ProductId,
+        pr.Name                AS ProductName,
+        pr.Description         AS ProductDescription,
+        pr.InternalCode        AS ProductInternalCode,
+        pr.Barcode             AS ProductBarcode,
+        pr.UnitType            AS ProductUnitType,
+        pr.Price               AS ProductPrice,
+        pr.TemperatureCondition AS ProductTemperatureCondition,
+        pr.EstimatedWeight     AS ProductEstimatedWeight,
+        pr.Stock               AS ProductStock,
+        pr.AvailableStock      AS ProductAvailableStock,
+        pr.Observations        AS ProductObservations,
+        pr.ImageUrl            AS ProductImageUrl,
 
-            FROM Purchases p
-            LEFT JOIN Suppliers s      ON s.Id = p.SupplierId
-            LEFT JOIN Users u          ON u.Id = p.CreatedBy
-            LEFT JOIN Roles r          ON r.Id = u.RoleId
-            LEFT JOIN Purchases_Products pp ON pp.PurchaseId = p.Id
-            LEFT JOIN Products pr      ON pr.Id = pp.ProductId
-        ";
+        -- Dimensiones del producto (mismos alias que en baseQuery de Products)
+        sc.Id                  AS SubCategoryId,
+        sc.Name                AS SubCategoryName,
+        sc.Description         AS SubCategoryDescription,
+
+        b.Id                   AS BrandId,
+        b.Name                 AS BrandName,
+        b.Description          AS BrandDescription,
+
+        c.Id                   AS CategoryId,
+        c.Name                 AS CategoryName,
+        c.Description          AS CategoryDescription,
+
+        sh.Id                  AS ShelveId,
+        sh.Name                AS ShelveName,
+        sh.Description         AS ShelveDescription,
+
+        w.Id                   AS WarehouseId,
+        w.Name                 AS WarehouseName,
+        w.Description          AS WarehouseDescription
+
+    FROM Purchases p
+    LEFT JOIN Suppliers s              ON s.Id = p.SupplierId
+    LEFT JOIN Users u                  ON u.Id = p.CreatedBy
+    LEFT JOIN Roles r                  ON r.Id = u.RoleId
+    LEFT JOIN Purchases_Products pp    ON pp.PurchaseId = p.Id
+    LEFT JOIN Products pr              ON pr.Id = pp.ProductId
+
+    -- Joins para que el mapeo de Product sea consistente con tu baseQuery de Products
+    INNER JOIN SubCategories sc        ON pr.SubCategoryId = sc.Id
+    INNER JOIN Categories c            ON sc.CategoryId = c.Id
+    INNER JOIN Brands b                ON pr.BrandId = b.Id
+    INNER JOIN Shelves sh              ON pr.ShelveId = sh.Id
+    INNER JOIN Warehouses w            ON sh.WarehouseId = w.Id
+";
+
 
         #endregion
 
@@ -83,8 +109,8 @@ namespace Repository.EntityRepositories
         public async Task<Purchase> AddAsync(Purchase purchase)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-                "INSERT INTO Purchases (Date, Observations, SupplierId, InvoiceNumber, CreatedAt, CreatedBy, CreatedLocation, IsDeleted) " +
-                "OUTPUT INSERTED.Id VALUES (@Date, @Observations, @SupplierId, @InvoiceNumber, @CreatedAt, @CreatedBy, @CreatedLocation, 0)",
+                "INSERT INTO Purchases (Date, Observations, SupplierId, InvoiceNumber) " +
+                "OUTPUT INSERTED.Id VALUES (@Date, @Observations, @SupplierId, @InvoiceNumber)",
                 purchase,
                 AuditAction.Insert,
                 configureCommand: cmd =>
@@ -93,9 +119,6 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Observations", (object?)purchase.Observations ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@SupplierId", purchase.Supplier?.Id ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@InvoiceNumber", (object?)purchase.InvoiceNumber ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@CreatedAt", DateTime.UtcNow);
-                    cmd.Parameters.AddWithValue("@CreatedBy", purchase.User?.Id ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@CreatedLocation", (object?)purchase.AuditInfo?.CreatedLocation?.ToString() ?? DBNull.Value);
                 },
                 async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
             );
