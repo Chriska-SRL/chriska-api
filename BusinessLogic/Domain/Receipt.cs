@@ -3,7 +3,7 @@ using BusinessLogic.Common.Enums;
 
 namespace BusinessLogic.Domain
 {
-    public class Receipt : IEntity<Receipt.UpdatableData>, IAuditable
+    public abstract class Receipt : IEntity<Receipt.UpdatableData>, IAuditable
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
@@ -11,29 +11,26 @@ namespace BusinessLogic.Domain
         public string Notes { get; set; }
         public PaymentMethod PaymentMethod {  get; set; }
         public AuditInfo? AuditInfo { get; set; }
-        public Client? Client { get; set; }
 
 
         //Constructor de creacion
-        public Receipt(DateTime date, decimal amount, string notes,PaymentMethod paymentMethod, Client client)
+        public Receipt(DateTime date, decimal amount, string notes,PaymentMethod paymentMethod)
         {
             Date = date;
             Amount = amount;
             Notes = notes;
             PaymentMethod = paymentMethod;
-            Client = client;
             AuditInfo =  new AuditInfo();
             Validate();
         }
         //Constructor de lectura
-        public Receipt(int id, DateTime date, decimal amount, string notes, PaymentMethod paymentMethod, Client? client, AuditInfo? auditInfo)
+        public Receipt(int id, DateTime date, decimal amount, string notes, PaymentMethod paymentMethod, AuditInfo? auditInfo)
         {
             Id = id;
             Date = date;
             Amount = amount;
             Notes = notes;
             PaymentMethod = paymentMethod;
-            Client = client;
             AuditInfo = auditInfo;
         }
 

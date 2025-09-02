@@ -3,26 +3,26 @@ using BusinessLogic.DTOs.DTOsReceipt;
 
 namespace BusinessLogic.Common.Mappers
 {
-    public static class ReceiptMapper
+    public static class SupplierReceiptMapper
     {
-        public static Receipt ToDomain(ReceiptAddRequest request, Client client)
+        public static SupplierReceipt ToDomain(SupplierReceiptAddRequest request, Supplier supplier)
         {
-            var receipt = new Receipt
+            var receipt = new SupplierReceipt
             (
                 request.Date,
                 request.Amount,
                 request.Notes ?? string.Empty,
                 request.PaymentMethod,
-                client
+                supplier
             );
             receipt.AuditInfo?.SetCreated(request.getUserId(), request.AuditLocation);
 
             return receipt;
         }
 
-        public static Receipt.UpdatableData ToUpdatableData(ReceiptUpdateRequest request)
+        public static SupplierReceipt.UpdatableData ToUpdatableData(ReceiptUpdateRequest request)
         {
-            return new Receipt.UpdatableData
+            return new SupplierReceipt.UpdatableData
             {
                 Notes = request.Notes,
                 UserId = request.getUserId(),
@@ -30,18 +30,18 @@ namespace BusinessLogic.Common.Mappers
             };
         }
 
-        public static ReceiptResponse? ToResponse(Receipt? receipt)
+        public static SupplierReceiptResponse? ToResponse(SupplierReceipt? receipt)
         {
             if (receipt == null) return null;
 
-            return new ReceiptResponse
+            return new SupplierReceiptResponse
             {
                 Id = receipt.Id,
                 Date = receipt.Date,
                 Amount = receipt.Amount,
                 Notes = receipt.Notes,
                 PaymentMethod = receipt.PaymentMethod,
-                Client = ClientMapper.ToResponse(receipt.Client) ?? null,
+                Supplier = SupplierMapper.ToResponse(receipt.Supplier) ?? null,
                 AuditInfo = AuditMapper.ToResponse(receipt.AuditInfo)
             };
         }
