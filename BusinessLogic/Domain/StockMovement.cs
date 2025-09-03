@@ -43,25 +43,25 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (Quantity <= 0)
-                throw new ArgumentOutOfRangeException(nameof(Quantity), "La cantidad debe ser mayor a cero.");
+                throw new ArgumentOutOfRangeException("La cantidad debe ser mayor a cero.");
 
             if (!Enum.IsDefined(typeof(StockMovementType), Type))
-                throw new ArgumentOutOfRangeException(nameof(Type), "Tipo de unidad inválido.");
+                throw new ArgumentOutOfRangeException("Tipo de unidad inválido.");
 
             if (Quantity % 0.5m != 0)
-                throw new ArgumentOutOfRangeException(nameof(Quantity), "La cantidad debe ser múltiplo de 0.5 (ej: 0.5, 1, 1.5, 2...).");
+                throw new ArgumentOutOfRangeException("La cantidad debe ser múltiplo de 0.5 (ej: 0.5, 1, 1.5, 2...).");
 
             if (string.IsNullOrWhiteSpace(Reason))
-                throw new ArgumentNullException(nameof(Reason), "El motivo del movimiento no puede estar vacío.");
+                throw new ArgumentNullException("El motivo del movimiento no puede estar vacío.");
 
             if (Reason.Length > 255)
-                throw new ArgumentOutOfRangeException(nameof(Reason), "El motivo del movimiento no puede superar los 255 caracteres.");
+                throw new ArgumentOutOfRangeException("El motivo del movimiento no puede superar los 255 caracteres.");
 
             if (User == null)
-                throw new ArgumentNullException(nameof(User), "El usuario no puede estar vacío.");
+                throw new ArgumentNullException("El usuario no puede estar vacío.");
 
             if (Product == null)
-                throw new ArgumentNullException(nameof(Product), "El producto no puede estar vacío.");
+                throw new ArgumentNullException("El producto no puede estar vacío.");
         }
 
         public void Update(UpdatableData data)

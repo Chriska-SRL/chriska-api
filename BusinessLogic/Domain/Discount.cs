@@ -77,13 +77,13 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Description))
-                throw new ArgumentNullException(nameof(Description), "La descripción es obligatoria.");
+                throw new ArgumentNullException("La descripción es obligatoria.");
             if (ExpirationDate <= DateTime.Now)
-                throw new ArgumentOutOfRangeException(nameof(ExpirationDate), "La fecha de expiración debe ser futura.");
+                throw new ArgumentOutOfRangeException("La fecha de expiración debe ser futura.");
             if (ProductQuantity <= 0)
-                throw new ArgumentOutOfRangeException(nameof(ProductQuantity), "La cantidad de productos debe ser mayor a cero.");
+                throw new ArgumentOutOfRangeException("La cantidad de productos debe ser mayor a cero.");
             if (Percentage < 0 || Percentage > 100)
-                throw new ArgumentOutOfRangeException(nameof(Percentage), "El porcentaje debe estar entre 0 y 100.");
+                throw new ArgumentOutOfRangeException("El porcentaje debe estar entre 0 y 100.");
 
             // Integridad: cliente/zona
             bool hasClients = Clients.Count > 0;

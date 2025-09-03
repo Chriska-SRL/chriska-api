@@ -13,6 +13,7 @@ using BusinessLogic.DTOs.DTOsImage;
 using BusinessLogic.DTOs.DTOsOrder;
 using BusinessLogic.DTOs.DTOsOrderRequest;
 using BusinessLogic.DTOs.DTOsProduct;
+using BusinessLogic.DTOs.DTOsPurchase;
 using BusinessLogic.DTOs.DTOsReceipt;
 using BusinessLogic.DTOs.DTOsReturnRequest;
 using BusinessLogic.DTOs.DTOsRole;
@@ -48,7 +49,9 @@ namespace BusinessLogic
         private readonly OrderSubSystem Orders;
         private readonly DeliveriesSubSystem Deliveries;
         private readonly DistributionSubSystem Distributions;
-        private readonly ReceiptSubSystem Receipt;
+        private readonly ClientReceiptSubSystem ClientReceipt;
+        private readonly SupplierReceiptSubSystem SupplierReceipt;
+        private readonly PurchaseSubSystem _purchaseSubSystem;
 
         public Facade(
             AuthSubSystem auth,
@@ -69,7 +72,9 @@ namespace BusinessLogic
             ReturnRequestSubSystem returnRequest,
             DeliveriesSubSystem deliveries,
             DistributionSubSystem distributions,
-            ReceiptSubSystem receipt)
+            ClientReceiptSubSystem receipt,
+            SupplierReceiptSubSystem supplierReceipt,
+            PurchaseSubSystem purchaseSubSystem)
         {
             Auth = auth;
             Categories = categories;
@@ -89,7 +94,9 @@ namespace BusinessLogic
             Orders = orders;
             Deliveries = deliveries;
             Distributions = distributions;
-            Receipt = receipt;
+            ClientReceipt = receipt;
+            SupplierReceipt = supplierReceipt;
+            _purchaseSubSystem = purchaseSubSystem;
         }
 
         // --- Auth ---
@@ -244,16 +251,54 @@ namespace BusinessLogic
         public async Task<List<DistributionResponse>?> GetAllDistributionsAsync(QueryOptions query) => await Distributions.GetAllDistributionsAsync(query);
         public async Task<List<DeliveryResponse?>> GetConfirmedDeliveriesByClientIdAsync(int ClientId,QueryOptions query) => await Deliveries.GetConfirmedDeliveriesByClientIdAsync(ClientId,query);
 
-        // --- Receipts ---
-        public async Task<ReceiptResponse> AddReceiptAsync(ReceiptAddRequest request) => await Receipt.AddReceiptAsync(request);
+        // --- Client Receipts ---
+        public async Task<ClientReceiptResponse> AddReceiptAsync(ClientReceiptAddRequest request)
+            => await ClientReceipt.AddReceiptAsync(request);
 
-        public async Task<ReceiptResponse> UpdateReceiptAsync(ReceiptUpdateRequest request) => await Receipt.UpdateReceiptAsync(request);
+        public async Task<ClientReceiptResponse> UpdateReceiptAsync(ReceiptUpdateRequest request)
+            => await ClientReceipt.UpdateReceiptAsync(request);
 
-        public async Task<ReceiptResponse> DeleteReceiptAsync(DeleteRequest request) => await Receipt.DeleteReceiptAsync(request);
+        public async Task<ClientReceiptResponse> DeleteReceiptAsync(DeleteRequest request)
+            => await ClientReceipt.DeleteReceiptAsync(request);
 
-        public async Task<ReceiptResponse> GetReceiptByIdAsync(int id) => await Receipt.GetReceiptByIdAsync(id);
+        public async Task<ClientReceiptResponse> GetReceiptByIdAsync(int id)
+            => await ClientReceipt.GetReceiptByIdAsync(id);
 
-        public async Task<List<ReceiptResponse>> GetAllReceiptsAsync(QueryOptions options) => await Receipt.GetAllReceiptsAsync(options);
+        public async Task<List<ClientReceiptResponse>> GetAllReceiptsAsync(QueryOptions options)
+            => await ClientReceipt.GetAllReceiptsAsync(options);
 
+
+        // --- Supplier Receipts ---
+        public async Task<SupplierReceiptResponse> AddSupplierReceiptAsync(SupplierReceiptAddRequest request)
+            => await SupplierReceipt.AddReceiptAsync(request);
+
+        public async Task<SupplierReceiptResponse> UpdateSupplierReceiptAsync(ReceiptUpdateRequest request)
+            => await SupplierReceipt.UpdateReceiptAsync(request);
+
+        public async Task<SupplierReceiptResponse> DeleteSupplierReceiptAsync(DeleteRequest request)
+            => await SupplierReceipt.DeleteReceiptAsync(request);
+
+        public async Task<SupplierReceiptResponse> GetSupplierReceiptByIdAsync(int id)
+            => await SupplierReceipt.GetReceiptByIdAsync(id);
+
+        public async Task<List<SupplierReceiptResponse>> GetAllSupplierReceiptsAsync(QueryOptions options)
+            => await SupplierReceipt.GetAllReceiptsAsync(options);
+
+
+        // --- Purchases ---
+        public async Task<PurchaseResponse> AddPurchaseAsync(PurchaseAddRequest request)
+            => await _purchaseSubSystem.AddPurchaseAsync(request);
+
+        public async Task<PurchaseResponse> UpdatePurchaseAsync(PurchaseUpdateRequest request)
+            => await _purchaseSubSystem.UpdatePurchaseAsync(request);
+
+        public async Task DeletePurchaseAsync(DeleteRequest request)
+            => await _purchaseSubSystem.DeletePurchaseAsync(request);
+
+        public async Task<PurchaseResponse> GetPurchaseByIdAsync(int id)
+            => await _purchaseSubSystem.GetPurchaseByIdAsync(id);
+
+        public async Task<List<PurchaseResponse>> GetAllPurchasesAsync(QueryOptions options)
+            => await _purchaseSubSystem.GetAllPurchasesAsync(options);
     }
 }

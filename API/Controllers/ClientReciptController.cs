@@ -12,12 +12,12 @@ namespace API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class ReceiptsController : ControllerBase
+    public class ClientReceiptsController : ControllerBase
     {
         private readonly Facade _facade;
         private readonly TokenUtils _tokenUtils;
 
-        public ReceiptsController(Facade facade, TokenUtils tokenUtils)
+        public ClientReceiptsController(Facade facade, TokenUtils tokenUtils)
         {
             _facade = facade;
             _tokenUtils = tokenUtils;
@@ -25,7 +25,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize(Policy = nameof(Permission.CREATE_RECEIPTS))]
-        public async Task<ActionResult<ReceiptResponse>> AddReceiptAsync([FromBody] ReceiptAddRequest request)
+        public async Task<ActionResult<ClientReceiptResponse>> AddReceiptAsync([FromBody] ClientReceiptAddRequest request)
         {
             request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.AddReceiptAsync(request);
@@ -34,7 +34,7 @@ namespace API.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Policy = nameof(Permission.EDIT_RECEIPTS))]
-        public async Task<ActionResult<ReceiptResponse>> UpdateReceiptAsync(int id, [FromBody] ReceiptUpdateRequest request)
+        public async Task<ActionResult<ClientReceiptResponse>> UpdateReceiptAsync(int id, [FromBody] ReceiptUpdateRequest request)
         {
             request.Id = id;
             request.setUserId(_tokenUtils.GetUserId());
@@ -54,7 +54,7 @@ namespace API.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_RECEIPTS))]
-        public async Task<ActionResult<ReceiptResponse>> GetReceiptByIdAsync(int id)
+        public async Task<ActionResult<ClientReceiptResponse>> GetReceiptByIdAsync(int id)
         {
             var result = await _facade.GetReceiptByIdAsync(id);
             return Ok(result); // 200 OK
@@ -62,7 +62,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Authorize(Policy = nameof(Permission.VIEW_RECEIPTS))]
-        public async Task<ActionResult<List<ReceiptResponse>>> GetAllReceiptsAsync([FromQuery] QueryOptions options)
+        public async Task<ActionResult<List<ClientReceiptResponse>>> GetAllReceiptsAsync([FromQuery] QueryOptions options)
         {
             var result = await _facade.GetAllReceiptsAsync(options);
             return Ok(result); // 200 OK

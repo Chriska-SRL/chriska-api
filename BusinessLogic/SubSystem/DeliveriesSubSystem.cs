@@ -16,9 +16,9 @@ namespace BusinessLogic.SubSystem
         private readonly IUserRepository _userRepository;
         private readonly  IProductRepository _productRepository;
         private readonly IClientRepository _clientRepository;
-        private readonly ReceiptSubSystem _receiptSubSystem;
+        private readonly ClientReceiptSubSystem _receiptSubSystem;
 
-        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository,IProductRepository productRepository, ReceiptSubSystem receiptSubSystem, IClientRepository clientRepository)
+        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository,IProductRepository productRepository, ClientReceiptSubSystem receiptSubSystem, IClientRepository clientRepository)
         {
             _deliveryRepository = deliveryRepository;
             _userRepository = userRepository;
@@ -115,7 +115,7 @@ namespace BusinessLogic.SubSystem
 
                 if (paymentMethod != null) { 
 
-                    var receiptAddRequest = new ReceiptAddRequest
+                    var receiptAddRequest = new ClientReceiptAddRequest
                     {
                         Date = DateTime.Now,
                         Amount = amount,
