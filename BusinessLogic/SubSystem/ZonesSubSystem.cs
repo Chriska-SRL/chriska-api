@@ -13,13 +13,11 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IZoneRepository _zoneRepository;
         private readonly IAzureBlobService _blobService;
-        private readonly IProductRepository _productRepository;
 
-        public ZonesSubSystem(IZoneRepository zoneRepository,IAzureBlobService azureBlobService, IProductRepository productRepository)
+        public ZonesSubSystem(IZoneRepository zoneRepository,IAzureBlobService azureBlobService)
         {
             _zoneRepository = zoneRepository;
             _blobService = azureBlobService;
-            _productRepository = productRepository;
         }
 
         public async Task<ZoneResponse> AddZoneAsync(AddZoneRequest request)
@@ -64,12 +62,6 @@ namespace BusinessLogic.SubSystem
                 }
             };
 
-            var products = await _productRepository.GetAllAsync(options);
-
-            if (products.Any())
-            {
-                throw new InvalidOperationException("No se puede eliminar la subcategoria porque tiene productos asociados.");
-            }
             if (zone.Clients.Any())
             {
                 throw new InvalidOperationException("No se puede eliminar la zona porque tiene clientes asociados.");
