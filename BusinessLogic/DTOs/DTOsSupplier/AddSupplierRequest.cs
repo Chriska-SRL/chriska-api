@@ -6,15 +6,15 @@ namespace BusinessLogic.DTOs.DTOsSupplier
 {
     public class AddSupplierRequest : AuditableRequest
     {
-        public string Name { get; set; }
-        public string RUT { get; set; }
-        public string RazonSocial { get; set; }
-        public string Address { get; set; }
-        public Location Location { get; set; }
-        public string Phone { get; set; }
-        public string ContactName { get; set; }
-        public string Email { get; set; }
-        public string Observations { get; set; }
-        public List<BankAccountAddRequest> BankAccounts { get; set; }
+        public required string Name { get; set; }
+        public required string RUT { get; set; }
+        public required string RazonSocial { get; set; }
+        public string? Address { get; set; }
+        public Location? Location { get; set; }
+        public required string Phone { get; set; }
+        public required string ContactName { get; set; }
+        public string? Email { get; set; }
+        public string? Observations { get; set; }
+        public List<BankAccountAddRequest>? BankAccounts { get; set; }
     }
 }

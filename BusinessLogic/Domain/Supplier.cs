@@ -10,7 +10,7 @@ namespace BusinessLogic.Domain
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
         public string Address { get; set; }
-        public Location Location { get; set; }
+        public Location? Location { get; set; }
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
@@ -20,7 +20,7 @@ namespace BusinessLogic.Domain
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Supplier(string name, string rut, string razonSocial, string address, Location location, string phone, string contactName, string email,string observations, List<BankAccount> bankAccounts)
+        public Supplier(string name, string rut, string razonSocial, string address, Location? location, string phone, string contactName, string email,string observations, List<BankAccount> bankAccounts)
         {
             Name = name;
             RUT = rut;
@@ -34,7 +34,7 @@ namespace BusinessLogic.Domain
             BankAccounts = bankAccounts ?? new List<BankAccount>();
             AuditInfo = new AuditInfo();
         }
-        public Supplier(int id, string name, string rut, string razonSocial, string address, Location location, string phone, string contactName, string email, string observations, List<BankAccount> bankAccounts, AuditInfo auditInfo)
+        public Supplier(int id, string name, string rut, string razonSocial, string address, Location? location, string phone, string contactName, string email, string observations, List<BankAccount> bankAccounts, AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
@@ -81,12 +81,8 @@ namespace BusinessLogic.Domain
             if (string.IsNullOrWhiteSpace(RazonSocial))
                 throw new ArgumentNullException("La razón social es obligatorio"); ;
             if (RazonSocial.Length > 50)
-                throw new ArgumentOutOfRangeException("El nombre no puede superar los 50 caracteres.");
+                throw new ArgumentOutOfRangeException("El razón social  no puede superar los 50 caracteres.");
 
-            if (string.IsNullOrWhiteSpace(Address))
-                throw new ArgumentNullException("La dirección es obligatoria"); ;
-            if (RazonSocial.Length > 50)
-                throw new ArgumentOutOfRangeException("La dirección no puede superar los 50 caracteres.");
             if (string.IsNullOrWhiteSpace(Phone))
                 throw new ArgumentNullException("El teléfono es obligatorio.");
             if (!Phone.All(char.IsDigit))
@@ -97,10 +93,8 @@ namespace BusinessLogic.Domain
             if (string.IsNullOrWhiteSpace(ContactName))
                 throw new ArgumentNullException("El nombre de contacto es obligatorio.");
 
-            if (string.IsNullOrWhiteSpace(Email))
-                throw new ArgumentNullException(nameof(Email), "El email es obligatorio.");
             var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            if (!Regex.IsMatch(Email, emailRegex))
+            if (!string.IsNullOrEmpty(Email) && !Regex.IsMatch(Email, emailRegex))
                 throw new ArgumentException("El email tiene un formato inválido.");
 
             if (Observations.Length > 255)
