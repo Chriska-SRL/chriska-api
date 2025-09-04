@@ -106,6 +106,7 @@ namespace BusinessLogic.Domain
 
         internal void SetPassword(string password)
         {
+            ValidatePassword(password);
             Password = BCrypt.Net.BCrypt.HashPassword(password) ?? throw new ArgumentNullException("La contraseña no puede ser nula.");
         }
 
