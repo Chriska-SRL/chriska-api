@@ -3,6 +3,7 @@ using BusinessLogic.DTOs.DTOsReceipt;
 using BusinessLogic.DTOs;
 using BusinessLogic.Common;
 using BusinessLogic.Common.Mappers;
+using BusinessLogic.Domain;
 
 namespace BusinessLogic.SubSystem
 {
@@ -10,22 +11,29 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IClientReceiptRepository _clientReceiptRepository;
         private readonly IClientRepository _clientRepository;
+        private readonly IClientBalanceItemRepository _clientBalanceItemRepository;
 
-        public ClientReceiptSubSystem(IClientReceiptRepository receiptRepository, IClientRepository clientRepository)
+        public ClientReceiptSubSystem(IClientReceiptRepository receiptRepository, IClientRepository clientRepository, IClientBalanceItemRepository clientBalanceItemRepository)
         {
             _clientReceiptRepository = receiptRepository;
             _clientRepository = clientRepository;
+            _clientBalanceItemRepository = clientBalanceItemRepository;
         }
 
         public async Task<ClientReceiptResponse> AddReceiptAsync(ClientReceiptAddRequest request)
         {
             var client = await _clientRepository.GetByIdAsync(request.ClientId)
                 ?? throw new ArgumentException("No se encontró el cliente especificado.");
+            List<BalanceItem> balanceItems = await _clientBalanceItemRepository.GetByClientIdAsync(request.ClientId);
+            ClientAccountStatement accountStatement = new ClientAccountStatement(client, balanceItems);
 
             var newReceipt = ClientReceiptMapper.ToDomain(request, client);
             newReceipt.Validate();
 
             var added = await _clientReceiptRepository.AddAsync(newReceipt);
+            // Actualizar el balance del cliente
+            var balanceItem = new ReceiptBalanceItem(added, accountStatement);
+            await _clientBalanceItemRepository.AddAsync(balanceItem);
             return ClientReceiptMapper.ToResponse(added);
         }
 

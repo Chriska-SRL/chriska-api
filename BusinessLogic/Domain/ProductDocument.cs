@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Enums;
 
 namespace BusinessLogic.Domain
 {
@@ -45,6 +46,23 @@ namespace BusinessLogic.Domain
             ProductItems = data.ProductItems ?? ProductItems;
             AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();
+        }
+
+        public decimal getAmount()
+        {
+            if (ProductItems == null || !ProductItems.Any())
+                return 0m;
+
+            return ProductItems.Sum(pi =>
+            {
+                decimal weight = pi.Weight ?? 0m;
+
+                decimal baseValue = pi.Product.UnitType == UnitType.Unit
+                    ? pi.UnitPrice * pi.Quantity
+                    : pi.UnitPrice * (weight / 1000m);
+
+                return baseValue * (1 - (pi.Discount / 100m));
+            });
         }
 
         public class UpdatableData : AuditData
