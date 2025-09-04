@@ -39,7 +39,7 @@ namespace BusinessLogic.SubSystem
             {
                 var product = await _productRepository.GetByIdAsync(item.ProductId)
                     ?? throw new ArgumentException($"El producto con ID {item.ProductId} no existe.");
-                productItems.Add(new ProductItem(item.Quantity, null, item.UnitPrice, item.Discount, product));
+                productItems.Add(new ProductItem(item.Quantity, item.Weight, item.UnitPrice, item.Discount, product));
             }
 
             var purchase = PurchaseMapper.ToDomain(request,supplier, productItems, user);

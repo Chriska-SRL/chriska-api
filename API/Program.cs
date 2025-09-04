@@ -152,6 +152,10 @@ namespace API
             builder.Services.AddScoped<IClientReceiptRepository, ClientReceiptRepository>();
             builder.Services.AddScoped<ISupplierReceiptRepository, SupplierReceiptRepository>();
             builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+            builder.Services.AddScoped<IClientBalanceItemRepository, ClientBalanceItemRepository>();
+            builder.Services.AddScoped<ISupplierBalanceItemRepository, SupplierBalanceItemRepository>();
+
+           
 
             builder.Services.AddScoped<IAzureBlobService, AzureBlobService>();
 
@@ -176,6 +180,8 @@ namespace API
             builder.Services.AddScoped<ClientReceiptSubSystem>();
             builder.Services.AddScoped<SupplierReceiptSubSystem>();
             builder.Services.AddScoped<PurchaseSubSystem>();
+            builder.Services.AddScoped<ClientAccountStatementSubSystem>();
+            builder.Services.AddScoped<SupplierAccountStatementSubSystem>();
 
             builder.Services.AddScoped<AuditLogger>();
             builder.Services.AddScoped<Facade>();

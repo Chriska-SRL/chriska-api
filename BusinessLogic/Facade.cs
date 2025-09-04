@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Common;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsAccountStatement;
 using BusinessLogic.DTOs.DTOsBrand;
 using BusinessLogic.DTOs.DTOsCategory;
 using BusinessLogic.DTOs.DTOsClient;
@@ -52,6 +53,8 @@ namespace BusinessLogic
         private readonly ClientReceiptSubSystem ClientReceipt;
         private readonly SupplierReceiptSubSystem SupplierReceipt;
         private readonly PurchaseSubSystem _purchaseSubSystem;
+        private readonly ClientAccountStatementSubSystem _clientAccountStatementSubSystem;
+        private readonly SupplierAccountStatementSubSystem _supplierAccountStatementSubSystem;
 
         public Facade(
             AuthSubSystem auth,
@@ -74,7 +77,10 @@ namespace BusinessLogic
             DistributionSubSystem distributions,
             ClientReceiptSubSystem receipt,
             SupplierReceiptSubSystem supplierReceipt,
-            PurchaseSubSystem purchaseSubSystem)
+            PurchaseSubSystem purchaseSubSystem,
+            ClientAccountStatementSubSystem clientAccountStatementSubSystem,
+            SupplierAccountStatementSubSystem supplierAccountStatementSubSystem
+        )
         {
             Auth = auth;
             Categories = categories;
@@ -97,6 +103,8 @@ namespace BusinessLogic
             ClientReceipt = receipt;
             SupplierReceipt = supplierReceipt;
             _purchaseSubSystem = purchaseSubSystem;
+            _clientAccountStatementSubSystem = clientAccountStatementSubSystem;
+            _supplierAccountStatementSubSystem = supplierAccountStatementSubSystem;
         }
 
         // --- Auth ---
@@ -300,5 +308,13 @@ namespace BusinessLogic
 
         public async Task<List<PurchaseResponse>> GetAllPurchasesAsync(QueryOptions options)
             => await _purchaseSubSystem.GetAllPurchasesAsync(options);
+
+        // Estado de cuenta de cliente
+        public async Task<ClientAccountStatementResponse?> GetClientAccountStatementAsync(AccountStatementRequest request)
+            => await _clientAccountStatementSubSystem.GetAccountStatementAsync(request);
+
+        // Estado de cuenta de proveedor
+        public async Task<SupplierAccountStatementResponse?> GetSupplierAccountStatementAsync(AccountStatementRequest request)
+            => await _supplierAccountStatementSubSystem.GetAccountStatementAsync(request);
     }
 }

@@ -7,6 +7,7 @@ using BusinessLogic.DTOs;
 using BusinessLogic.Repository;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsReceipt;
+using BusinessLogic.DTOs.DTOsAccountStatement;
 
 namespace BusinessLogic.SubSystem
 {
@@ -17,14 +18,18 @@ namespace BusinessLogic.SubSystem
         private readonly  IProductRepository _productRepository;
         private readonly IClientRepository _clientRepository;
         private readonly ClientReceiptSubSystem _receiptSubSystem;
+        private readonly ClientAccountStatementSubSystem _accountStatementSubSystem;
+        private readonly IClientBalanceItemRepository _clientBalanceItemRepository;
 
-        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository,IProductRepository productRepository, ClientReceiptSubSystem receiptSubSystem, IClientRepository clientRepository)
+        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository,IProductRepository productRepository, ClientReceiptSubSystem receiptSubSystem, IClientRepository clientRepository, ClientAccountStatementSubSystem accountStatementSubSystem, IClientBalanceItemRepository clientBalanceItemRepository)
         {
             _deliveryRepository = deliveryRepository;
             _userRepository = userRepository;
             _productRepository = productRepository;
             _receiptSubSystem = receiptSubSystem;
             _clientRepository = clientRepository;
+            _accountStatementSubSystem = accountStatementSubSystem;
+            _clientBalanceItemRepository = clientBalanceItemRepository;
         }
 
         public async Task<Delivery> AddDeliveryAsync(Order order)
@@ -100,13 +105,17 @@ namespace BusinessLogic.SubSystem
                 int crates = request.Crates;
                 if (crates != 0)
                 {
-                    int clientId = delivery.Client?.Id ?? throw new ArgumentException("No se pudo obtener el idel cliente asociado a la entrega para ajustar los cajones.");
+                    int clientId = delivery.Client?.Id ?? throw new ArgumentException("No se pudo obtener el id del cliente asociado a la entrega para ajustar los cajones.");
                     Client client = await _clientRepository.GetByIdAsync(clientId) ?? throw new ArgumentException($"no se encontro el cliente de id {clientId}");
                     client.LoanedCrates += crates - delivery.Order.Crates;
                     client.AuditInfo.SetUpdated(userId, request.AuditLocation);
                     _clientRepository.UpdateAsync(client).Wait();
 
                 }
+
+                List<BalanceItem> balanceItems = await _clientBalanceItemRepository.GetByClientIdAsync(delivery.Client.Id);
+                ClientAccountStatement accountStatement = new ClientAccountStatement(delivery.Client, balanceItems);
+                await _accountStatementSubSystem.AddBalanceItemAsync(new DocumentBalanceItem(delivery, accountStatement));
 
                 // Crear el recibo (Receipt) asociado a la entrega confirmada
                 PaymentMethod? paymentMethod = request.PaymentMethod;
@@ -126,7 +135,7 @@ namespace BusinessLogic.SubSystem
                     receiptAddRequest.setUserId(userId);
                     receiptAddRequest.AuditLocation = request.AuditLocation;
 
-                    _receiptSubSystem.AddReceiptAsync(receiptAddRequest).Wait();
+                    await _receiptSubSystem.AddReceiptAsync(receiptAddRequest);
                 }
             }
             else if (request.Status == Status.Cancelled)

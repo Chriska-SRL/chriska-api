@@ -110,6 +110,8 @@
     <Build Include="Tables\Orders\Relations\Distributions_Zones.sql" />
     <Build Include="Tables\Clients\ClientReceipts.sql" />
     <Build Include="Tables\Suppliers\SupplierReceipts.sql" />
+    <Build Include="Tables\Clients\ClientBalanceItems.sql" />
+    <Build Include="Tables\Suppliers\SupplierBalanceItems.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Database.refactorlog" />
