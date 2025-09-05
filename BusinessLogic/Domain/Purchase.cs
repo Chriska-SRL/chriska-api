@@ -1,28 +1,26 @@
 ﻿using BusinessLogic.Common;
+using BusinessLogic.Common.Enums;
 
 namespace BusinessLogic.Domain
 {
     public class Purchase : SupplierDocument
     {
         public string? InvoiceNumber { get; set; }
+        public Status Status { get; set; }
 
-        public Purchase(string? observation, User user, List<ProductItem>? productItems, Supplier supplier, string? invoiceNumber = null)
+        public Purchase(string? observation, User user, List<ProductItem> productItems, Supplier supplier, string invoiceNumber, Status status)
             : base(observation, user, productItems, supplier)
         {
             InvoiceNumber = invoiceNumber;
+            Status = status;
             Validate();
         }
 
-        public Purchase(int id, DateTime date, string observations, User? user, List<ProductItem> productItems, Supplier? supplier, AuditInfo? auditInfo, string? invoiceNumber = null)
+        public Purchase(int id, DateTime date, string observations, User? user, List<ProductItem> productItems, Supplier? supplier, AuditInfo? auditInfo, string? invoiceNumber, Status status)
             : base(id, date, observations, user, productItems, supplier, auditInfo)
         {
-            if (Date == default)
-                throw new ArgumentException("La fecha es obligatoria.");
-            if (Date > DateTime.Now)
-                throw new ArgumentException("La fecha no puede ser en el futuro.");
-
-            if (Supplier == null)
-                throw new ArgumentException("El proveedor es obligatorio."); 
+            InvoiceNumber = invoiceNumber;
+            Status = status;
         }
 
         public override void Validate()
@@ -39,16 +37,27 @@ namespace BusinessLogic.Domain
             public string? Observations { get; set; }
             public string? InvoiceNumber { get; set; }
             public List<ProductItem>? ProductItems { get; set; }
+            public Supplier? Supplier { get; set; }
         }
 
         public void Update(UpdatableData data)
         {
             Observations = data.Observations ?? Observations;
             InvoiceNumber = data.InvoiceNumber ?? InvoiceNumber;
-            if (data.ProductItems != null)
-                ProductItems = data.ProductItems;
+            ProductItems = data.ProductItems ?? ProductItems;
+            Supplier = data.Supplier ?? Supplier;
             AuditInfo?.SetUpdated(data.UserId, data.Location);
             Validate();
+        }
+
+        internal void Confirm()
+        {
+            Status = Status.Confirmed;
+        }
+
+        internal void Cancel()
+        {
+            Status = Status.Cancelled;
         }
     }
 }

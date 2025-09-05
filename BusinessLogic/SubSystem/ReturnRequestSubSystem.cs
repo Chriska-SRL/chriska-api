@@ -15,17 +15,20 @@ namespace BusinessLogic.SubSystem
         private readonly IUserRepository _userRepository;
         private readonly IDeliveryRepository _deliveryRepository;
         private readonly IProductRepository _productRepository;
+        private readonly StockSubSystem _stockSubSystem;
 
         public ReturnRequestSubSystem(
             IReturnRequestRepository returnRequestRepository,
             IUserRepository userRepository,
             IDeliveryRepository deliveryRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            StockSubSystem stockSubSystem)
         {
             _returnRequestRepository = returnRequestRepository;
             _userRepository = userRepository;
             _deliveryRepository = deliveryRepository;
             _productRepository = productRepository;
+            _stockSubSystem = stockSubSystem;
         }
 
         public async Task<ReturnRequestResponse> AddReturnRequestAsync(ReturnRequestAddRequest request)
@@ -115,8 +118,10 @@ namespace BusinessLogic.SubSystem
         {
             ReturnRequest? returnRequest = await _returnRequestRepository.GetByIdAsync(id)
                 ?? throw new ArgumentException($"No se encontró una solicitud de pedido con el ID {id}.");
-
-            returnRequest.AuditInfo.SetUpdated(request.getUserId(), request.AuditLocation);
+            int userId = request.getUserId() ?? 0;
+            var user = await _userRepository.GetByIdAsync(userId)
+                ?? throw new ArgumentException("El usuario que realiza el cambio de estado no existe.");
+            returnRequest.AuditInfo.SetUpdated(userId, request.AuditLocation);
 
             if (request.Status == Status.Confirmed)
             {
@@ -127,7 +132,7 @@ namespace BusinessLogic.SubSystem
 
                 foreach (var item in returnRequest.ProductItems)
                 {
-                    await _productRepository.UpdateStockAsync(item.Product.Id, item.Quantity, item.Quantity);
+                    await _stockSubSystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Inbound, RasonType.Return, $"Devolución por solicitud de devolución {returnRequest.Id}", user);
                 }
 
             }

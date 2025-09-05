@@ -8,6 +8,7 @@
 	[Observations] NVARCHAR(255) NULL,
 	[InvoiceNumber] NVARCHAR(30) NULL UNIQUE,
 	[SupplierId] INT NOT NULL,
+	[Status] NVARCHAR(20) NOT NULL, 
 
 	-- Restricciones
 	CONSTRAINT [FK_Purchases_Suppliers] FOREIGN KEY ([SupplierId]) REFERENCES [Suppliers]([Id]),

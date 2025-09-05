@@ -300,14 +300,13 @@ namespace BusinessLogic
         public async Task<PurchaseResponse> UpdatePurchaseAsync(PurchaseUpdateRequest request)
             => await _purchaseSubSystem.UpdatePurchaseAsync(request);
 
-        public async Task DeletePurchaseAsync(DeleteRequest request)
-            => await _purchaseSubSystem.DeletePurchaseAsync(request);
-
         public async Task<PurchaseResponse> GetPurchaseByIdAsync(int id)
             => await _purchaseSubSystem.GetPurchaseByIdAsync(id);
 
         public async Task<List<PurchaseResponse>> GetAllPurchasesAsync(QueryOptions options)
             => await _purchaseSubSystem.GetAllPurchasesAsync(options);
+
+        public async Task<PurchaseResponse?> ChangeStatusPurchaseAsync(int id, DocumentClientChangeStatusRequest request) => await _purchaseSubSystem.ChangeStatusPurchaseAsync(id, request);
 
         // Estado de cuenta de cliente
         public async Task<ClientAccountStatementResponse?> GetClientAccountStatementAsync(AccountStatementRequest request)

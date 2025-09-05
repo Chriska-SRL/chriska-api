@@ -16,12 +16,13 @@ namespace BusinessLogic.SubSystem
         private readonly IDeliveryRepository _deliveryRepository;
         private readonly IUserRepository _userRepository;
         private readonly  IProductRepository _productRepository;
+        private readonly StockSubSystem _stockSubSystem;
         private readonly IClientRepository _clientRepository;
         private readonly ClientReceiptSubSystem _receiptSubSystem;
         private readonly ClientAccountStatementSubSystem _accountStatementSubSystem;
         private readonly IClientBalanceItemRepository _clientBalanceItemRepository;
 
-        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository,IProductRepository productRepository, ClientReceiptSubSystem receiptSubSystem, IClientRepository clientRepository, ClientAccountStatementSubSystem accountStatementSubSystem, IClientBalanceItemRepository clientBalanceItemRepository)
+        public DeliveriesSubSystem(IDeliveryRepository deliveryRepository, IUserRepository userRepository, IOrderRepository orderRepository,IProductRepository productRepository, ClientReceiptSubSystem receiptSubSystem, IClientRepository clientRepository, ClientAccountStatementSubSystem accountStatementSubSystem, IClientBalanceItemRepository clientBalanceItemRepository, StockSubSystem stockSubSystem)
         {
             _deliveryRepository = deliveryRepository;
             _userRepository = userRepository;
@@ -30,6 +31,7 @@ namespace BusinessLogic.SubSystem
             _clientRepository = clientRepository;
             _accountStatementSubSystem = accountStatementSubSystem;
             _clientBalanceItemRepository = clientBalanceItemRepository;
+            _stockSubSystem = stockSubSystem;
         }
 
         public async Task<Delivery> AddDeliveryAsync(Order order)
@@ -145,7 +147,7 @@ namespace BusinessLogic.SubSystem
                 // Devolver el stock a los productos
                 foreach (var item in delivery.ProductItems)
                 {
-                    await _productRepository.UpdateStockAsync(item.Product.Id, item.Quantity, item.Quantity);
+                    await _stockSubSystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Inbound, RasonType.DeliveryCancellation, $"Devolución por cancelación de entrega {delivery.Id}", user);
                 }
             }
             else
