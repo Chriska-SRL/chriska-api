@@ -40,7 +40,7 @@ namespace Repository.EntityRepositories
         public async Task<SupplierReceipt> AddAsync(SupplierReceipt receipt)
         {
             if (receipt.Supplier?.Id == null)
-                throw new ArgumentNullException("SupplierId");
+                throw new ArgumentException("SupplierId");
 
             int newId = await ExecuteWriteWithAuditAsync(
                 @"INSERT INTO SupplierReceipts ([Date], [Amount], [Notes], [PaymentMethod], [SupplierId])
@@ -88,7 +88,7 @@ namespace Repository.EntityRepositories
         #region Delete
         public async Task<SupplierReceipt> DeleteAsync(SupplierReceipt receipt)
         {
-            if (receipt == null) throw new ArgumentNullException(nameof(receipt));
+            if (receipt == null) throw new ArgumentException(nameof(receipt));
 
             int rows = await ExecuteWriteWithAuditAsync(
                 "DELETE FROM SupplierReceipts WHERE Id = @Id",

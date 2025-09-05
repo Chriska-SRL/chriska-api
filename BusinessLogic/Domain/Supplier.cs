@@ -10,7 +10,7 @@ namespace BusinessLogic.Domain
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
         public string Address { get; set; }
-        public Location Location { get; set; }
+        public Location? Location { get; set; }
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }
@@ -20,7 +20,7 @@ namespace BusinessLogic.Domain
         public List<Purchase> Purchases { get; set; } = new List<Purchase>();
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public Supplier(string name, string rut, string razonSocial, string address, Location location, string phone, string contactName, string email,string observations, List<BankAccount> bankAccounts)
+        public Supplier(string name, string rut, string razonSocial, string address, Location? location, string phone, string contactName, string email,string observations, List<BankAccount> bankAccounts)
         {
             Name = name;
             RUT = rut;
@@ -34,7 +34,7 @@ namespace BusinessLogic.Domain
             BankAccounts = bankAccounts ?? new List<BankAccount>();
             AuditInfo = new AuditInfo();
         }
-        public Supplier(int id, string name, string rut, string razonSocial, string address, Location location, string phone, string contactName, string email, string observations, List<BankAccount> bankAccounts, AuditInfo auditInfo)
+        public Supplier(int id, string name, string rut, string razonSocial, string address, Location? location, string phone, string contactName, string email, string observations, List<BankAccount> bankAccounts, AuditInfo auditInfo)
         {
             Id = id;
             Name = name;
@@ -69,42 +69,36 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentNullException("El nombre es obligatorio.");
+                throw new ArgumentException("El nombre es obligatorio.");
             if (Name.Length > 50)
-                throw new ArgumentOutOfRangeException("El nombre no puede superar los 50 caracteres.");
+                throw new ArgumentException("El nombre no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(RUT))
-                throw new ArgumentNullException("El RUT es obligatorio.");
+                throw new ArgumentException("El RUT es obligatorio.");
             if (RUT.Length != 12 || !RUT.All(char.IsDigit))
                 throw new ArgumentException("El RUT debe tener exactamente 12 dígitos numéricos.");
 
             if (string.IsNullOrWhiteSpace(RazonSocial))
-                throw new ArgumentNullException("La razón social es obligatorio"); ;
+                throw new ArgumentException("La razón social es obligatorio"); ;
             if (RazonSocial.Length > 50)
-                throw new ArgumentOutOfRangeException("El nombre no puede superar los 50 caracteres.");
+                throw new ArgumentException("El razón social  no puede superar los 50 caracteres.");
 
-            if (string.IsNullOrWhiteSpace(Address))
-                throw new ArgumentNullException("La dirección es obligatoria"); ;
-            if (RazonSocial.Length > 50)
-                throw new ArgumentOutOfRangeException("La dirección no puede superar los 50 caracteres.");
             if (string.IsNullOrWhiteSpace(Phone))
-                throw new ArgumentNullException("El teléfono es obligatorio.");
+                throw new ArgumentException("El teléfono es obligatorio.");
             if (!Phone.All(char.IsDigit))
                 throw new ArgumentException("El teléfono debe contener solo números.");
             if (Phone.Length < 8 || Phone.Length > 9)
-                throw new ArgumentOutOfRangeException("El teléfono debe tener entre 8 y 9 dígitos.");
+                throw new ArgumentException("El teléfono debe tener entre 8 y 9 dígitos.");
 
             if (string.IsNullOrWhiteSpace(ContactName))
-                throw new ArgumentNullException("El nombre de contacto es obligatorio.");
+                throw new ArgumentException("El nombre de contacto es obligatorio.");
 
-            if (string.IsNullOrWhiteSpace(Email))
-                throw new ArgumentNullException(nameof(Email), "El email es obligatorio.");
             var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            if (!Regex.IsMatch(Email, emailRegex))
+            if (!string.IsNullOrEmpty(Email) && !Regex.IsMatch(Email, emailRegex))
                 throw new ArgumentException("El email tiene un formato inválido.");
 
             if (Observations.Length > 255)
-                throw new ArgumentOutOfRangeException("Las observaciones no pueden superar los 255 caracteres.");
+                throw new ArgumentException("Las observaciones no pueden superar los 255 caracteres.");
         }
         public void Update(UpdatableData data)
         {

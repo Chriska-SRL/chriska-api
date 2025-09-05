@@ -146,7 +146,7 @@ namespace Repository.EntityRepositories
         public async Task<Delivery> DeleteAsync(Delivery delivery)
         {
             if (delivery == null)
-                throw new ArgumentNullException(nameof(delivery), "La entrega no puede ser nula.");
+                throw new ArgumentException(nameof(delivery), "La entrega no puede ser nula.");
 
             int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE Deliveries SET IsDeleted = 1 WHERE Id = @Id",

@@ -16,7 +16,7 @@ namespace BusinessLogic.Domain
         {
             Name = name;
             Description = description;
-            Warehouse = warehouse ?? throw new ArgumentNullException(nameof(warehouse));
+            Warehouse = warehouse ?? throw new ArgumentException(nameof(warehouse));
             AuditInfo = new AuditInfo();
             Validate();
         }
@@ -36,9 +36,9 @@ namespace BusinessLogic.Domain
             Id = id;
             Name = name;
             Description = description;
-            Warehouse = warehouse ?? throw new ArgumentNullException(nameof(warehouse));
-            StockMovements = stockMovements ?? throw new ArgumentNullException(nameof(stockMovements));
-            AuditInfo = auditInfo ?? throw new ArgumentNullException(nameof(auditInfo));
+            Warehouse = warehouse ?? throw new ArgumentException(nameof(warehouse));
+            StockMovements = stockMovements ?? throw new ArgumentException(nameof(stockMovements));
+            AuditInfo = auditInfo ?? throw new ArgumentException(nameof(auditInfo));
 
             Validate();
         }
@@ -47,23 +47,23 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentNullException("El nombre del estante no puede estar vacío.");
+                throw new ArgumentException("El nombre del estante no puede estar vacío.");
 
             if (Name.Length > 50)
-                throw new ArgumentOutOfRangeException("El nombre del estante no puede superar los 50 caracteres.");
+                throw new ArgumentException("El nombre del estante no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(Description))
-                throw new ArgumentNullException("La descripción del estante no puede estar vacía.");
+                throw new ArgumentException("La descripción del estante no puede estar vacía.");
 
             if (Description.Length > 255)
-                throw new ArgumentOutOfRangeException("La descripción del estante no puede superar los 255 caracteres.");
+                throw new ArgumentException("La descripción del estante no puede superar los 255 caracteres.");
 
         }
 
         public void Update(UpdatableData data)
         {
             if (data == null)
-                throw new ArgumentNullException("Los datos de actualización no pueden ser nulos.");
+                throw new ArgumentException("Los datos de actualización no pueden ser nulos.");
 
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;

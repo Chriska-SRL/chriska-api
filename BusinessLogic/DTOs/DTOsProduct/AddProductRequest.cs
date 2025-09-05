@@ -13,9 +13,9 @@ namespace BusinessLogic.DTOs.DTOsProduct
         public int BrandId { get; set; }
         public TemperatureCondition TemperatureCondition { get; set; }
         public UnitType UnitType { get; set; }
-        public int EstimatedWeight { get; set; } //Peso estimado en gramos
-        public required string Observations { get; set; }
+        public int? EstimatedWeight { get; set; } //Peso estimado en gramos
+        public string? Observations { get; set; }
         public int ShelveId { get; set; }
-        public List<int> SupplierIds { get; set; } = new List<int>();
+        public List<int>? SupplierIds { get; set; }
     }
 }

@@ -65,7 +65,7 @@ namespace Repository.EntityRepositories
         public async Task<Brand> DeleteAsync(Brand brand)
         {
             if (brand == null)
-                throw new ArgumentNullException(nameof(brand), "La marca no puede ser nula.");
+                throw new ArgumentException(nameof(brand), "La marca no puede ser nula.");
 
             int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE Brands SET IsDeleted = 1 WHERE Id = @Id",

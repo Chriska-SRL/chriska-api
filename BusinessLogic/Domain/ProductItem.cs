@@ -18,7 +18,7 @@ namespace BusinessLogic.Domain
             Weight = weight;
             UnitPrice = unitPrice;
             Discount = discount;
-            Product = product ?? throw new ArgumentNullException(nameof(product));
+            Product = product ?? throw new ArgumentException(nameof(product));
         }
         internal void Validate()
         {
