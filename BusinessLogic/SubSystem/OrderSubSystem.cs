@@ -13,11 +13,12 @@ namespace BusinessLogic.SubSystem
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderRequestRepository _orderRequestRepository;
         private readonly IProductRepository _productRepository;
+        private readonly StockSubSystem _stockSubsystem;
         private readonly IUserRepository _userRepository;
         private readonly IDeliveryRepository _deliveriesRepository;
         private readonly DeliveriesSubSystem _deliveriesSubSystem;
 
-        public OrderSubSystem(IOrderRepository orderRepository, IProductRepository productRepository, IUserRepository userRepository, DeliveriesSubSystem deliveriesSubSystem, IOrderRequestRepository orderRequestRepository, IDeliveryRepository deliveriesRepository)
+        public OrderSubSystem(IOrderRepository orderRepository, IProductRepository productRepository, IUserRepository userRepository, DeliveriesSubSystem deliveriesSubSystem, IOrderRequestRepository orderRequestRepository, IDeliveryRepository deliveriesRepository, StockSubSystem stockSubSystem)
         {
             _orderRepository = orderRepository;
             _orderRequestRepository = orderRequestRepository;
@@ -25,6 +26,7 @@ namespace BusinessLogic.SubSystem
             _userRepository = userRepository;
             _deliveriesSubSystem = deliveriesSubSystem;
             _deliveriesRepository = deliveriesRepository;
+            _stockSubsystem = stockSubSystem;
         }
 
         public async Task<Order?> AddOrderAsync(OrderRequest orderRequest)
@@ -119,7 +121,7 @@ namespace BusinessLogic.SubSystem
 
                 foreach (var item in order.ProductItems)
                 {
-                    await _productRepository.UpdateStockAsync(item.Product.Id, -item.Quantity, 0);
+                    await _stockSubsystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Outbound, RasonType.Sale, $"Venta por orden {order.Id}", user);
                 }
 
                 delivery = await _deliveriesSubSystem.AddDeliveryAsync(order);
@@ -129,7 +131,7 @@ namespace BusinessLogic.SubSystem
                 order.Cancel();
                 foreach (var item in order.ProductItems)
                 {
-                    await _productRepository.UpdateStockAsync(item.Product.Id, item.Quantity, 0);
+                    await _productRepository.UpdateStockAsync(item.Product.Id, 0, item.Quantity);
                 }
 
             }

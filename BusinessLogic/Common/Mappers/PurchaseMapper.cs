@@ -26,6 +26,7 @@ namespace BusinessLogic.Common.Mappers
                 observation: request.Observations,
                 user: user,
                 productItems: items,
+                status: BusinessLogic.Common.Enums.Status.Pending,
                 supplier: supplier,
                 invoiceNumber: request.InvoiceNumber
             );
@@ -33,13 +34,14 @@ namespace BusinessLogic.Common.Mappers
             return purchase;
         }
 
-        public static Purchase.UpdatableData ToUpdatableData(PurchaseUpdateRequest request, List<ProductItem> items)
+        public static Purchase.UpdatableData ToUpdatableData(PurchaseUpdateRequest request, List<ProductItem> items, Supplier? supplier)
         {
             return new Purchase.UpdatableData
             {
                 Observations = request.Observations,
                 InvoiceNumber = request.InvoiceNumber,
                 ProductItems = items,
+                Supplier = supplier,
                 UserId = request.getUserId(),
                 Location = request.AuditLocation
             };

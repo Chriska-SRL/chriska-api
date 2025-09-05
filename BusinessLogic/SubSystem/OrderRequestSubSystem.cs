@@ -146,14 +146,7 @@ namespace BusinessLogic.SubSystem
 
                 order = await _orderSubSystem.AddOrderAsync(orderRequest);
             }
-            else if (request.Status == Status.Cancelled)
-            {
-                orderRequest.Cancel();
-                foreach (var item in orderRequest.ProductItems)
-                {
-                    await _productRepository.UpdateStockAsync(item.Product.Id, 0, item.Quantity);
-                }
-            }
+          
             else
             {
                 throw new ArgumentException("El estado de la solicitud de pedido no es válido para cambiar.");

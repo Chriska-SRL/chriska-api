@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Domain;
+﻿using BusinessLogic.Common.Enums;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs.DTOsStockMovement;
 
 namespace BusinessLogic.Common.Mappers
@@ -11,6 +12,7 @@ namespace BusinessLogic.Common.Mappers
                 date: request.Date ?? DateTime.Now,
                 quantity: request.Quantity,
                 type: request.Type,
+                rasonType: RasonType.Adjustment,
                 reason: request.Reason,
                 user: user,
                 product: product

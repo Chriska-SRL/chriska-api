@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessLogic.Common.Enums;
 using BusinessLogic.Domain;
 using Microsoft.Data.SqlClient;
 
@@ -28,12 +24,16 @@ namespace Repository.Mappers
                     return null;
                 }
             }
+            // Parse genérico para enums
+            T Parse<T>(string c) where T : struct, Enum
+                => Enum.Parse<T>(S(Col(c)).Trim(), true);
 
             // Mapeo de campos principales
             int id = r.GetInt32(r.GetOrdinal(Col("Id")));
             DateTime date = r.GetDateTime(r.GetOrdinal(Col("Date")));
             string observations = S(Col("Observations"));
             string? invoiceNumber = r.IsDBNull(r.GetOrdinal(Col("InvoiceNumber"))) ? null : r.GetString(r.GetOrdinal(Col("InvoiceNumber")));
+            Status status = Parse<Status>("Status");
 
             // Mapeo de usuario
             var user = UserMapper.FromReader(r, "User");
@@ -51,6 +51,7 @@ namespace Repository.Mappers
                 observations: observations,
                 user: user,
                 productItems: new List<ProductItem>(),
+                status: status,
                 supplier: supplier,
                 auditInfo: auditInfo,
                 invoiceNumber: invoiceNumber

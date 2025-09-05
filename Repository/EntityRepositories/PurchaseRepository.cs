@@ -109,8 +109,8 @@ namespace Repository.EntityRepositories
         public async Task<Purchase> AddAsync(Purchase purchase)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-                "INSERT INTO Purchases (Date, Observations, SupplierId, InvoiceNumber) " +
-                "OUTPUT INSERTED.Id VALUES (@Date, @Observations, @SupplierId, @InvoiceNumber)",
+                "INSERT INTO Purchases (Date, Observations, SupplierId, InvoiceNumber, Status) " +
+                "OUTPUT INSERTED.Id VALUES (@Date, @Observations, @SupplierId, @InvoiceNumber, @Status)",
                 purchase,
                 AuditAction.Insert,
                 configureCommand: cmd =>
@@ -119,6 +119,7 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Observations", (object?)purchase.Observations ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@SupplierId", purchase.Supplier?.Id ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@InvoiceNumber", (object?)purchase.InvoiceNumber ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Status", purchase.Status.ToString());
                 },
                 async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync())
             );
@@ -143,9 +144,6 @@ namespace Repository.EntityRepositories
                         Observations = @Observations,
                         SupplierId = @SupplierId,
                         InvoiceNumber = @InvoiceNumber,
-                        UpdatedAt = @UpdatedAt,
-                        UpdatedBy = @UpdatedBy,
-                        UpdatedLocation = @UpdatedLocation
                   WHERE Id = @Id",
                 purchase,
                 AuditAction.Update,
@@ -155,9 +153,6 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Observations", (object?)purchase.Observations ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@SupplierId", purchase.Supplier?.Id ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@InvoiceNumber", (object?)purchase.InvoiceNumber ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.UtcNow);
-                    cmd.Parameters.AddWithValue("@UpdatedBy", purchase.User?.Id ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@UpdatedLocation", (object?)purchase.AuditInfo?.UpdatedLocation?.ToString() ?? DBNull.Value);
                 }
             );
 
@@ -311,5 +306,25 @@ namespace Repository.EntityRepositories
         }
 
         #endregion
+        public async Task<Purchase> ChangeStatusPurchase(Purchase purchase)
+        {
+            int rows = await ExecuteWriteWithAuditAsync(
+                @"UPDATE Purchases SET 
+                    Status = @Status
+                WHERE Id = @Id",
+                purchase,
+                AuditAction.Update,
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Id", purchase.Id);
+                    cmd.Parameters.AddWithValue("@Status", purchase.Status.ToString());
+                }
+            );
+
+            if (rows == 0)
+                throw new InvalidOperationException($"No se pudo actualizar la compra con Id {purchase.Id}");
+
+            return purchase;
+        }
     }
 }
