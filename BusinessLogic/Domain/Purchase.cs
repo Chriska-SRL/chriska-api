@@ -17,21 +17,21 @@ namespace BusinessLogic.Domain
             : base(id, date, observations, user, productItems, supplier, auditInfo)
         {
             if (Date == default)
-                throw new ArgumentNullException("La fecha es obligatoria.");
+                throw new ArgumentException("La fecha es obligatoria.");
             if (Date > DateTime.Now)
                 throw new ArgumentException("La fecha no puede ser en el futuro.");
 
             if (Supplier == null)
-                throw new ArgumentNullException("El proveedor es obligatorio."); 
+                throw new ArgumentException("El proveedor es obligatorio."); 
         }
 
         public override void Validate()
         {
             if (!string.IsNullOrWhiteSpace(Observations) && Observations.Length > 255)
-                throw new ArgumentOutOfRangeException("La observación no puede superar los 255 caracteres.");
-            if (Supplier == null) throw new ArgumentNullException("El proveedor es obligatorio.");
+                throw new ArgumentException("La observación no puede superar los 255 caracteres.");
+            if (Supplier == null) throw new ArgumentException("El proveedor es obligatorio.");
             if (!string.IsNullOrWhiteSpace(InvoiceNumber) && InvoiceNumber.Length > 30)
-                throw new ArgumentOutOfRangeException("El número de factura no puede superar los 30 caracteres.");
+                throw new ArgumentException("El número de factura no puede superar los 30 caracteres.");
         }
 
         public class UpdatableData : AuditData

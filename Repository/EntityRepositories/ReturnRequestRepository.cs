@@ -156,7 +156,7 @@ namespace Repository.EntityRepositories
         public async Task<ReturnRequest> DeleteAsync(ReturnRequest request)
         {
             if (request == null)
-                throw new ArgumentNullException(nameof(request), "La solicitud no puede ser nula.");
+                throw new ArgumentException(nameof(request), "La solicitud no puede ser nula.");
 
             int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE ReturnRequests SET IsDeleted = 1 WHERE Id = @Id",

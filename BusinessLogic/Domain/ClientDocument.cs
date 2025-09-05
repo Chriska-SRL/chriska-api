@@ -44,8 +44,8 @@ namespace BusinessLogic.Domain
         public override void Validate()
         {
             if (!string.IsNullOrWhiteSpace(Observations) && Observations.Length > 255)
-                throw new ArgumentOutOfRangeException("La observación no puede superar los 255 caracteres.");
-            if (Client == null) throw new ArgumentNullException("El cliente es obligatorio.");
+                throw new ArgumentException("La observación no puede superar los 255 caracteres.");
+            if (Client == null) throw new ArgumentException("El cliente es obligatorio.");
         }
     }
 }

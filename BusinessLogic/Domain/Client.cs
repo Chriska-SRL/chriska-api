@@ -96,7 +96,7 @@ namespace BusinessLogic.Domain
                 throw new ArgumentException("La calificación debe tener el formato n/5 (por ejemplo: 3/5).");
 
             if (LoanedCrates < 0)
-                throw new ArgumentOutOfRangeException("La cantidad de cajones prestados no puede ser negativa.");
+                throw new ArgumentException("La cantidad de cajones prestados no puede ser negativa.");
 
      
         }

@@ -11,13 +11,13 @@ namespace BusinessLogic.Common.Mappers
                 name: request.Name,
                 rut: request.RUT,
                 razonSocial: request.RazonSocial,
-                address: request.Address,
+                address: request.Address ?? "",
                 location: request.Location,
                 phone: request.Phone,
                 contactName: request.ContactName,
-                email: request.Email,
-                observations: request.Observations,
-                bankAccounts: request.BankAccounts.Select(BankAccountMapper.ToDomain).ToList()
+                email: request.Email ?? "",
+                observations: request.Observations ?? "",
+                bankAccounts: request?.BankAccounts?.Select(BankAccountMapper.ToDomain).ToList() ?? new List<BankAccount>()
             );
 
             supplier.AuditInfo.SetCreated(request.getUserId(), request.AuditLocation);

@@ -46,12 +46,15 @@ namespace BusinessLogic.SubSystem
                 ?? throw new ArgumentException("No se encontró la estantería asociada.");
 
             List<Supplier> suppliers = new List<Supplier>();
-            foreach (var supplierId in request.SupplierIds)
+            foreach (var supplierId in request.SupplierIds ?? new List<int>())
             {
                 var supplier = await _supplierRepository.GetByIdAsync(supplierId)
                     ?? throw new ArgumentException($"No se encontró el proveedor con ID {supplierId}.");
                 suppliers.Add(supplier);
             }
+
+            if(request.UnitType == Common.Enums.UnitType.Kilo && (request.EstimatedWeight == null || request.EstimatedWeight <= 0))
+                throw new ArgumentException("El peso estimado es obligatorio para productos vendidos por kilo.");
 
             var product = ProductMapper.ToDomain(request, subCategory, brand, suppliers, shelve);
             product.Validate();
@@ -65,17 +68,17 @@ namespace BusinessLogic.SubSystem
             var existing = await _productRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró el producto seleccionado.");
 
-            var subCategory = await _subCategoryRepository.GetByIdAsync(request.SubCategoryId)
+            var subCategory = await _subCategoryRepository.GetByIdAsync(request.SubCategoryId ?? existing.SubCategory.Id)
                 ?? throw new ArgumentException("No se encontró la subcategoría asociada.");
 
-            var brand = await _brandRepository.GetByIdAsync(request.BrandId)
+            var brand = await _brandRepository.GetByIdAsync(request.BrandId ?? existing.Brand.Id)
                 ?? throw new ArgumentException("No se encontró la marca asociada.");
 
-            var shelve = await _shelveRepository.GetByIdAsync(request.ShelveId)
+            var shelve = await _shelveRepository.GetByIdAsync(request.ShelveId ?? existing.Shelve.Id)
                 ?? throw new ArgumentException("No se encontró la estantería asociada.");
 
             List<Supplier> suppliers = new List<Supplier>();
-            foreach (var supplierId in request.SupplierIds)
+            foreach (var supplierId in request.SupplierIds ?? new List<int>())
             {
                 var supplier = await _supplierRepository.GetByIdAsync(supplierId)
                     ?? throw new ArgumentException($"No se encontró el proveedor con ID {supplierId}.");

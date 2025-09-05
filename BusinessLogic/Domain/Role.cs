@@ -16,7 +16,7 @@ namespace BusinessLogic.Domain
         {
             Name = name;
             Description = description;
-            Permissions = permissions ?? throw new ArgumentNullException(nameof(permissions));
+            Permissions = permissions ?? throw new ArgumentException(nameof(permissions));
             AuditInfo = new AuditInfo();
             Validate();
         }
@@ -42,16 +42,16 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentNullException("El nombre del rol no puede estar vacío.");
+                throw new ArgumentException("El nombre del rol no puede estar vacío.");
 
             if (Name.Length > 50)
-                throw new ArgumentOutOfRangeException("El nombre del rol no puede superar los 50 caracteres.");
+                throw new ArgumentException("El nombre del rol no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(Description))
-                throw new ArgumentNullException("La descripción del rol no puede estar vacía.");
+                throw new ArgumentException("La descripción del rol no puede estar vacía.");
 
             if (Description.Length > 255)
-                throw new ArgumentOutOfRangeException("La descripción del rol no puede superar los 255 caracteres.");
+                throw new ArgumentException("La descripción del rol no puede superar los 255 caracteres.");
         }
 
         public void MarkAsDeleted(int? userId, Location? location)
@@ -64,10 +64,10 @@ namespace BusinessLogic.Domain
         public void Update(UpdatableData data)
         {
             if (data == null)
-                throw new ArgumentNullException("Los datos de actualización no pueden ser nulos.");
+                throw new ArgumentException("Los datos de actualización no pueden ser nulos.");
 
             if (data.Permissions == null)
-                throw new ArgumentNullException("La lista de permisos no puede ser nula.");
+                throw new ArgumentException("La lista de permisos no puede ser nula.");
 
             Name = data.Name ?? Name;
             Description = data.Description ?? Description;

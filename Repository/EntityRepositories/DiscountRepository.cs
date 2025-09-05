@@ -55,7 +55,7 @@ namespace Repository.EntityRepositories
         public async Task<Discount> DeleteAsync(Discount discount)
         {
             if (discount == null)
-                throw new ArgumentNullException(nameof(discount), "El descuento no puede ser nulo.");
+                throw new ArgumentException(nameof(discount), "El descuento no puede ser nulo.");
 
             int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE Discounts SET IsDeleted = 1 WHERE Id = @Id",
@@ -184,8 +184,8 @@ namespace Repository.EntityRepositories
         }
         public async Task<Discount?> GetBestByProductAndClientAsync(Product product, Client client)
         {
-            if (product == null) throw new ArgumentNullException(nameof(product));
-            if (client == null) throw new ArgumentNullException(nameof(client));
+            if (product == null) throw new ArgumentException(nameof(product));
+            if (client == null) throw new ArgumentException(nameof(client));
 
             int? bestDiscountId = null;
 

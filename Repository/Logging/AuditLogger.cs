@@ -15,7 +15,7 @@ namespace Repository.Logging
         public async Task LogAsync(string entityName, int entityId, string action, AuditInfo auditInfo)
         {
             if (auditInfo == null)
-                throw new ArgumentNullException(nameof(auditInfo), "AuditInfo no puede ser null.");
+                throw new ArgumentException(nameof(auditInfo), "AuditInfo no puede ser null.");
 
             await using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
