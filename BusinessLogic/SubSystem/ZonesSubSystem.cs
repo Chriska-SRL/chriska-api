@@ -13,11 +13,17 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IZoneRepository _zoneRepository;
         private readonly IAzureBlobService _blobService;
+        private readonly IClientRepository _clientRepository;
+        private readonly IDistributionRepository _distributionRepository;
+        private readonly IDiscountRepository _discountRepository;
 
-        public ZonesSubSystem(IZoneRepository zoneRepository,IAzureBlobService azureBlobService)
+        public ZonesSubSystem(IZoneRepository zoneRepository,IAzureBlobService azureBlobService, IClientRepository clientRepository, IDistributionRepository distributionRepository, IDiscountRepository discountRepository)
         {
             _zoneRepository = zoneRepository;
             _blobService = azureBlobService;
+            _clientRepository = clientRepository;
+            _distributionRepository = distributionRepository;
+            _discountRepository = discountRepository;
         }
 
         public async Task<ZoneResponse> AddZoneAsync(AddZoneRequest request)
@@ -61,10 +67,21 @@ namespace BusinessLogic.SubSystem
                     { "ZoneId", request.Id.ToString() }
                 }
             };
-
-            if (zone.Clients.Any())
+            List<Client> clientsInZone = await _clientRepository.GetAllAsync(options);
+            if (clientsInZone.Any())
             {
                 throw new InvalidOperationException("No se puede eliminar la zona porque tiene clientes asociados.");
+            }
+            List<Discount> discounts = await _discountRepository.GetAllAsync(options);
+            if (discounts.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar la zona porque tiene descuentos asociados.");
+            }
+
+            List<Distribution> distributions = await _distributionRepository.GetAllAsync(new QueryOptions());
+            if (distributions.Any(d => d.Zones.Any(z => z.Id == request.Id)))
+            {
+                throw new InvalidOperationException("No se puede eliminar la zona porque tiene repartos asociados.");
             }
 
             zone.MarkAsDeleted(request.getUserId(), request.AuditLocation);

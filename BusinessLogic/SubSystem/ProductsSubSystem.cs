@@ -17,6 +17,10 @@ namespace BusinessLogic.SubSystem
         private readonly ISupplierRepository _supplierRepository;
         private readonly IShelveRepository _shelveRepository;
         private readonly IAzureBlobService _blobService;
+        private readonly IDiscountRepository _discountRepository;
+        private readonly IOrderRequestRepository _orderRequestRepository;
+        private readonly IDeliveryRepository _deliveriesRepository;
+        private readonly IOrderRepository _orderRepository;
 
         public ProductsSubSystem(
             IProductRepository productRepository,
@@ -24,7 +28,11 @@ namespace BusinessLogic.SubSystem
             IBrandRepository brandRepository,
             ISupplierRepository supplierRepository,
             IShelveRepository shelveRepository,
-            IAzureBlobService blobService)
+            IAzureBlobService blobService,
+            IDiscountRepository discountRepository,
+            IOrderRequestRepository orderRequestRepository,
+            IDeliveryRepository deliveriesRepository,
+            IOrderRepository orderRepository)
         {
             _productRepository = productRepository;
             _subCategoryRepository = subCategoryRepository;
@@ -32,6 +40,10 @@ namespace BusinessLogic.SubSystem
             _supplierRepository = supplierRepository;
             _shelveRepository = shelveRepository;
             _blobService = blobService;
+            _discountRepository = discountRepository;
+            _orderRequestRepository = orderRequestRepository;
+            _deliveriesRepository = deliveriesRepository;
+            _orderRepository = orderRepository;
         }
 
         public async Task<ProductResponse> AddProductAsync(ProductAddRequest request)
@@ -96,6 +108,34 @@ namespace BusinessLogic.SubSystem
         {
             var product = await _productRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró el producto seleccionado.");
+
+            var options = new QueryOptions
+            {
+                Filters = new Dictionary<string, string>
+                {
+                    { "ProductId", request.Id.ToString() }
+                }
+            };
+            List<Discount> discounts = await _discountRepository.GetAllAsync(options);
+            if (discounts.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar el producto porque tiene descuentos asociados.");
+            }
+            List<OrderRequest> orderRequests = await _orderRequestRepository.GetAllAsync(options);
+            if (orderRequests.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar el producto porque tiene pedidos asociados.");
+            }
+            List<Order> orders = await _orderRepository.GetAllAsync(options);
+            if (orders.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar el producto porque tiene ordenes asociadas.");
+            }
+            List<Delivery> deliveries = await _deliveriesRepository.GetAllAsync(options);
+            if (deliveries.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar el producto porque tiene entregas asociadas.");
+            }
 
             product.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _productRepository.DeleteAsync(product);

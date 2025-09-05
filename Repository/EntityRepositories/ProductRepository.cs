@@ -26,7 +26,7 @@ namespace Repository.EntityRepositories
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@InternalCode", product.InternalCode);
-                    cmd.Parameters.AddWithValue("@BarCode", product.Barcode ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@BarCode", product.Barcode);
                     cmd.Parameters.AddWithValue("@Name", product.Name);
                     cmd.Parameters.AddWithValue("@UnitType", product.UnitType.ToString());
                     cmd.Parameters.AddWithValue("@Price", product.Price);
