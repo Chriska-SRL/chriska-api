@@ -30,10 +30,10 @@ namespace BusinessLogic.Domain
         {
             Name = name;
             Username = username;
-            Password = password ?? throw new ArgumentNullException(nameof(password));
+            Password = password ?? throw new ArgumentException(nameof(password));
             IsEnabled = isEnabled;
             NeedsPasswordChange = needsPasswordChange;
-            Role = role ?? throw new ArgumentNullException(nameof(role));
+            Role = role ?? throw new ArgumentException(nameof(role));
             AuditInfo = new AuditInfo();
             Validate();
         }
@@ -52,25 +52,25 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentNullException("El nombre es obligatorio.");
+                throw new ArgumentException("El nombre es obligatorio.");
 
             if (Name.Length > 50)
-                throw new ArgumentOutOfRangeException("El nombre no puede superar los 50 caracteres.");
+                throw new ArgumentException("El nombre no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(Username))
-                throw new ArgumentNullException("El nombre de usuario es obligatorio.");
+                throw new ArgumentException("El nombre de usuario es obligatorio.");
 
             if (Username.Length > 50)
-                throw new ArgumentOutOfRangeException("El nombre de usuario no puede superar los 50 caracteres.");
+                throw new ArgumentException("El nombre de usuario no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(Password))
-                throw new ArgumentNullException("La contraseña hash es obligatoria.");
+                throw new ArgumentException("La contraseña hash es obligatoria.");
 
             if (Password.Length < 8 || Password.Length > 255)
-                throw new ArgumentOutOfRangeException("La contraseña hash debe tener entre 8 y 255 caracteres.");
+                throw new ArgumentException("La contraseña hash debe tener entre 8 y 255 caracteres.");
 
             if (Role == null)
-                throw new ArgumentNullException("El rol es obligatorio.");
+                throw new ArgumentException("El rol es obligatorio.");
         }
 
         public void MarkAsDeleted(int? userId, Location? location)
@@ -81,10 +81,10 @@ namespace BusinessLogic.Domain
         public void Update(UpdatableData data)
         {
             if (data == null)
-                throw new ArgumentNullException("Los datos de actualización no pueden ser nulos.");
+                throw new ArgumentException("Los datos de actualización no pueden ser nulos.");
 
             if (data.Role == null)
-                throw new ArgumentNullException("El rol es obligatorio.");
+                throw new ArgumentException("El rol es obligatorio.");
 
             Name = data.Name ?? Name;
             Username = data.Username ?? Username;
@@ -97,7 +97,7 @@ namespace BusinessLogic.Domain
         public static void ValidatePassword(string password)
         {
             if (string.IsNullOrWhiteSpace(password))
-                throw new ArgumentNullException("La contraseña es obligatoria.");
+                throw new ArgumentException("La contraseña es obligatoria.");
 
             var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,30}$");
             if (!regex.IsMatch(password))
@@ -107,7 +107,7 @@ namespace BusinessLogic.Domain
         internal void SetPassword(string password)
         {
             ValidatePassword(password);
-            Password = BCrypt.Net.BCrypt.HashPassword(password) ?? throw new ArgumentNullException("La contraseña no puede ser nula.");
+            Password = BCrypt.Net.BCrypt.HashPassword(password) ?? throw new ArgumentException("La contraseña no puede ser nula.");
         }
 
         public class UpdatableData : AuditData

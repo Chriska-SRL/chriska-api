@@ -64,7 +64,7 @@ namespace Repository.EntityRepositories
         public async Task<Category> DeleteAsync(Category category)
         {
             if (category == null)
-                throw new ArgumentNullException(nameof(category), "La categoría no puede ser nula.");
+                throw new ArgumentException(nameof(category), "La categoría no puede ser nula.");
 
             int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE Categories SET IsDeleted = 1 WHERE Id = @Id",

@@ -38,10 +38,10 @@ namespace BusinessLogic.Domain
             TemperatureCondition = temperatureCondition;
             EstimatedWeight = estimatedWeight;
             Observation = observations;
-            SubCategory = subCategory ?? throw new ArgumentNullException(nameof(subCategory));
-            Brand = brand ?? throw new ArgumentNullException(nameof(brand));
-            Suppliers = suppliers ?? throw new ArgumentNullException(nameof(suppliers));
-            Shelve = shelve ?? throw new ArgumentNullException(nameof(suppliers));
+            SubCategory = subCategory ?? throw new ArgumentException(nameof(subCategory));
+            Brand = brand ?? throw new ArgumentException(nameof(brand));
+            Suppliers = suppliers ?? throw new ArgumentException(nameof(suppliers));
+            Shelve = shelve ?? throw new ArgumentException(nameof(suppliers));
             AuditInfo = new AuditInfo();
             Validate();
         }
@@ -76,38 +76,38 @@ namespace BusinessLogic.Domain
             }
 
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentNullException("El nombre es obligatorio.");
+                throw new ArgumentException("El nombre es obligatorio.");
             if (Name.Length > 50)
-                throw new ArgumentOutOfRangeException("El nombre no puede superar los 50 caracteres.");
+                throw new ArgumentException("El nombre no puede superar los 50 caracteres.");
 
             if (Price <= 0)
-                throw new ArgumentOutOfRangeException("El precio debe ser mayor a 0.");
+                throw new ArgumentException("El precio debe ser mayor a 0.");
 
             if (string.IsNullOrWhiteSpace(Description))
-                throw new ArgumentNullException("La descripción es obligatoria.");
+                throw new ArgumentException("La descripción es obligatoria.");
             if (Description.Length > 255)
-                throw new ArgumentOutOfRangeException("La descripción no puede superar los 255 caracteres.");
+                throw new ArgumentException("La descripción no puede superar los 255 caracteres.");
 
             if (!Enum.IsDefined(typeof(UnitType), UnitType))
-                throw new ArgumentOutOfRangeException("Tipo de unidad inválido.");
+                throw new ArgumentException("Tipo de unidad inválido.");
 
             if (!Enum.IsDefined(typeof(TemperatureCondition), TemperatureCondition))
-                throw new ArgumentOutOfRangeException("Condición de temperatura inválida.");
+                throw new ArgumentException("Condición de temperatura inválida.");
 
             if (EstimatedWeight < 0)
-                throw new ArgumentOutOfRangeException("El peso estimado no puede ser negativo.");
+                throw new ArgumentException("El peso estimado no puede ser negativo.");
 
             if (!string.IsNullOrWhiteSpace(ImageUrl) && ImageUrl.Length > 255)
-                throw new ArgumentOutOfRangeException("La ruta de imagen no puede superar los 255 caracteres.");
+                throw new ArgumentException("La ruta de imagen no puede superar los 255 caracteres.");
 
             if (!string.IsNullOrWhiteSpace(Observation) && Observation.Length > 255)
-                throw new ArgumentOutOfRangeException("La observación no puede superar los 255 caracteres.");
+                throw new ArgumentException("La observación no puede superar los 255 caracteres.");
         }
 
         public void Update(UpdatableData data)
         {
             if (data == null)
-                throw new ArgumentNullException("Los datos de actualización no pueden ser nulos.");
+                throw new ArgumentException("Los datos de actualización no pueden ser nulos.");
 
 
             Name = data.Name ?? Name;
@@ -166,7 +166,7 @@ namespace BusinessLogic.Domain
 
         internal Discount? GetBestDiscount(Client client)
         {
-            if (client == null) throw new ArgumentNullException(nameof(client));
+            if (client == null) throw new ArgumentException(nameof(client));
             var now = DateTime.UtcNow;
 
             bool AppliesToClient(Discount d)

@@ -98,7 +98,7 @@ namespace Repository.EntityRepositories
         public async Task<Product> DeleteAsync(Product product)
         {
             if (product == null)
-                throw new ArgumentNullException(nameof(product), "El producto no puede ser nulo.");
+                throw new ArgumentException(nameof(product), "El producto no puede ser nulo.");
 
             int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE Products SET IsDeleted = 1 WHERE Id = @Id",

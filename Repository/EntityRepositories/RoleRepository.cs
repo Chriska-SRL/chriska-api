@@ -70,7 +70,7 @@ namespace Repository.EntityRepositories
         public async Task<Role> DeleteAsync(Role role)
         {
             if (role == null)
-                throw new ArgumentNullException(nameof(role), "El rol no puede ser nulo.");
+                throw new ArgumentException(nameof(role), "El rol no puede ser nulo.");
 
             int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE dbo.Roles SET IsDeleted = 1 WHERE Id = @Id",

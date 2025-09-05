@@ -52,7 +52,7 @@ namespace BusinessLogic.Domain
         public void Update(UpdatableData data)
         {
             if (data == null)
-                throw new ArgumentNullException("Los datos de actualización no pueden ser nulos.");
+                throw new ArgumentException("Los datos de actualización no pueden ser nulos.");
 
             Type = data.Type ?? Type;
             Description = data.Description ?? Description;

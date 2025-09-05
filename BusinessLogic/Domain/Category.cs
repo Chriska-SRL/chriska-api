@@ -33,22 +33,22 @@ namespace BusinessLogic.Domain
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentNullException("El nombre no puede estar vacío.");
+                throw new ArgumentException("El nombre no puede estar vacío.");
 
             if (Name.Length > 50)
-                throw new ArgumentOutOfRangeException("El nombre no puede superar los 50 caracteres.");
+                throw new ArgumentException("El nombre no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(Description))
-                throw new ArgumentNullException("La descripción no puede estar vacía.");
+                throw new ArgumentException("La descripción no puede estar vacía.");
 
             if (Description.Length > 255)
-                throw new ArgumentOutOfRangeException("La descripción no puede superar los 255 caracteres.");
+                throw new ArgumentException("La descripción no puede superar los 255 caracteres.");
         }
 
         public void Update(UpdatableData data)
         {
             if (data == null)
-                throw new ArgumentNullException("Los datos de actualización no pueden ser nulos.");
+                throw new ArgumentException("Los datos de actualización no pueden ser nulos.");
 
             Name = data.Name;
             Description = data.Description;

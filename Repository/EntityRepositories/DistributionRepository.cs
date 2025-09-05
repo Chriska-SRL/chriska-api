@@ -41,7 +41,7 @@ namespace Repository.EntityRepositories
         public async Task<Distribution> UpdateAsync(Distribution distribution)
         {
             if (distribution == null)
-                throw new ArgumentNullException(nameof(distribution), "La distribución no puede ser nula.");
+                throw new ArgumentException(nameof(distribution), "La distribución no puede ser nula.");
 
             int rows = await ExecuteWriteWithAuditAsync(
                 @"UPDATE Distributions SET
@@ -79,7 +79,7 @@ namespace Repository.EntityRepositories
         public async Task<Distribution> DeleteAsync(Distribution distribution)
         {
             if (distribution == null)
-                throw new ArgumentNullException(nameof(distribution), "La distribucion no puede ser nula.");
+                throw new ArgumentException(nameof(distribution), "La distribucion no puede ser nula.");
 
             int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE Distributions SET IsDeleted = 1 WHERE Id = @Id",

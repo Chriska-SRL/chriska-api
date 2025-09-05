@@ -64,7 +64,7 @@ namespace Repository.EntityRepositories
         public async Task<Warehouse> DeleteAsync(Warehouse warehouse)
         {
             if (warehouse == null)
-                throw new ArgumentNullException(nameof(warehouse), "El almacén no puede ser nulo.");
+                throw new ArgumentException(nameof(warehouse), "El almacén no puede ser nulo.");
 
             int rows = await ExecuteWriteWithAuditAsync(
                 "UPDATE dbo.Warehouses SET IsDeleted = 1 WHERE Id = @Id",
