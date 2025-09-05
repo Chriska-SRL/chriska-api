@@ -83,12 +83,6 @@ namespace BusinessLogic.Domain
             if (Price <= 0)
                 throw new ArgumentOutOfRangeException("El precio debe ser mayor a 0.");
 
-            if (Stock < 0)
-                throw new ArgumentOutOfRangeException("El stock no puede ser negativo.");
-
-            if (AvailableStocks < 0)
-                throw new ArgumentOutOfRangeException("El stock disponible no puede ser negativo.");
-
             if (string.IsNullOrWhiteSpace(Description))
                 throw new ArgumentNullException("La descripción es obligatoria.");
             if (Description.Length > 255)
@@ -102,12 +96,6 @@ namespace BusinessLogic.Domain
 
             if (EstimatedWeight < 0)
                 throw new ArgumentOutOfRangeException("El peso estimado no puede ser negativo.");
-
-            if (UnitType == UnitType.Kilo && EstimatedWeight == 0)
-                throw new ArgumentOutOfRangeException("El peso estimado es obligatorio para productos por kilo.");
-
-            if (UnitType == UnitType.Unit &&  EstimatedWeight != 0)
-                throw new ArgumentOutOfRangeException("Los productos por unidad no se les puede ingresar el peso.");
 
             if (!string.IsNullOrWhiteSpace(ImageUrl) && ImageUrl.Length > 255)
                 throw new ArgumentOutOfRangeException("La ruta de imagen no puede superar los 255 caracteres.");
@@ -126,7 +114,6 @@ namespace BusinessLogic.Domain
             Barcode = data.Barcode ?? Barcode;
             Price = data.Price ?? Price;
             Description = data.Description ?? Description;
-            UnitType = data.UnitType ?? UnitType;
             TemperatureCondition = data.TemperatureCondition ?? TemperatureCondition;
             EstimatedWeight = data.EstimatedWeight ?? EstimatedWeight;
             Observation = data.Observation ?? Observation;
@@ -143,18 +130,17 @@ namespace BusinessLogic.Domain
 
         public class UpdatableData:AuditData
         {
-            public string? Name { get; set; } = string.Empty;
-            public string? Barcode { get; set; } = string.Empty;
+            public string? Name { get; set; }
+            public string? Barcode { get; set; }
             public decimal? Price { get; set; }
-            public string? Description { get; set; } = string.Empty;
-            public UnitType? UnitType { get; set; }
+            public string? Description { get; set; }
             public TemperatureCondition? TemperatureCondition { get; set; }
             public int? EstimatedWeight { get; set; }
-            public string? Observation { get; set; } = string.Empty;
-            public SubCategory? SubCategory { get; set; } = null!;
-            public Brand? Brand { get; set; } = null!;
-            public Shelve? Shelve { get; set; } = null!;
-            public List<Supplier>? Suppliers { get; set; } = null!;
+            public string? Observation { get; set; }
+            public SubCategory? SubCategory { get; set; }
+            public Brand? Brand { get; set; }
+            public Shelve? Shelve { get; set; }
+            public List<Supplier>? Suppliers { get; set; }
         }
 
         public void SetInternalCode()
