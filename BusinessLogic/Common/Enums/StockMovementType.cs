@@ -5,4 +5,13 @@
         Inbound = 1,
         Outbound = 2
     }
+
+    public enum RasonType
+    {
+        Purchase = 1,
+        Sale = 2,
+        Return = 3,
+        Adjustment = 4,
+        DeliveryCancellation = 5
+    }
 }

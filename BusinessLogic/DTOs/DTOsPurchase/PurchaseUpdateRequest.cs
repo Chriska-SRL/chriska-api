@@ -7,7 +7,7 @@ namespace BusinessLogic.DTOs.DTOsPurchase
     {
         public int Id { get; set; }
         public string? Observations { get; set; }
-        public int SupplierId { get; set; }
+        public int? SupplierId { get; set; }
         public string? InvoiceNumber { get; set; }
         public List<ProductItemRequestForPurchase> ProductItems { get; set; } = new();
     }

@@ -31,7 +31,7 @@ namespace Repository.Mappers
                 name: reader.GetString(reader.GetOrdinal("CategoryName")),
                 description: reader.GetString(reader.GetOrdinal("CategoryDescription")),
                 subCategories: new List<SubCategory>(),
-                auditInfo: new AuditInfo()
+                auditInfo: null
             );
 
             var subCategory = new SubCategory(
@@ -39,13 +39,13 @@ namespace Repository.Mappers
                 name: reader.GetString(reader.GetOrdinal("SubCategoryName")),
                 description: reader.GetString(reader.GetOrdinal("SubCategoryDescription")),
                 category: category,
-                auditInfo: new AuditInfo()
+                auditInfo: null
             );
             var brand = new Brand(
                 id: reader.GetInt32(reader.GetOrdinal("BrandId")),
                 name: reader.GetString(reader.GetOrdinal("BrandName")),
                 description: reader.GetString(reader.GetOrdinal("BrandDescription")),
-                auditInfo: new AuditInfo()
+                auditInfo: null
             );
 
 
@@ -55,7 +55,7 @@ namespace Repository.Mappers
                 name: reader.GetString(reader.GetOrdinal("WarehouseName")),
                 description: reader.GetString(reader.GetOrdinal("WarehouseDescription")),
                 shelves: new List<Shelve>(), 
-                auditInfo: new AuditInfo()
+                auditInfo: null
             );
 
             var shelve = new Shelve(
@@ -105,7 +105,7 @@ namespace Repository.Mappers
                 brand: brand,
                 shelve: shelve,
                 suppliers: new List<Supplier>(),
-                auditInfo: new AuditInfo()
+                auditInfo: null
             );
 
             var stockMovement = new StockMovement(
@@ -113,6 +113,7 @@ namespace Repository.Mappers
                 date: reader.GetDateTime(reader.GetOrdinal("Date")),
                 quantity: reader.GetDecimal(reader.GetOrdinal("Quantity")),
                 type: ParseType(reader.GetString(reader.GetOrdinal("Type")).Trim()),
+                rasonType: ParseRasonType(reader.GetString(reader.GetOrdinal("RasonType")).Trim()),
                 reason: reader.GetString(reader.GetOrdinal("Reason")),
                 user: user,
                 product: product,
@@ -131,5 +132,15 @@ namespace Repository.Mappers
                 _ => throw new InvalidOperationException($"Tipo de movimiento desconocido: {typeCode}")
             };
         }
+
+        private static RasonType ParseRasonType(string reasonCode) => reasonCode switch
+        {
+            "Purchase" => RasonType.Purchase,
+            "Sale" => RasonType.Sale,
+            "Return" => RasonType.Return,
+            "Adjustment" => RasonType.Adjustment,
+            "DeliveryCancellation" => RasonType.DeliveryCancellation,
+            _ => throw new InvalidOperationException($"RasonType desconocido: {reasonCode}")
+        };
     }
 }

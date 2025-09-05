@@ -13,18 +13,18 @@ namespace Repository.EntityRepositories
 
         public async Task<StockMovement> AddAsync(StockMovement stockMovement)
         {
-
             int newId = await ExecuteWriteWithAuditAsync(
-                 @"INSERT INTO StockMovements (ProductId, Quantity, Type, Date, Reason)
-                   VALUES (@ProductId, @Quantity, @Type, @Date, @Reason);
-                   SELECT SCOPE_IDENTITY();",
-            stockMovement,
+                @"INSERT INTO StockMovements (ProductId, Quantity, Type, RasonType, Date, Reason)
+                  VALUES (@ProductId, @Quantity, @Type, @RasonType, @Date, @Reason);
+                  SELECT SCOPE_IDENTITY();",
+                stockMovement,
                 AuditAction.Insert,
                 configureCommand: cmd =>
                 {
                     cmd.Parameters.AddWithValue("@ProductId", stockMovement.Product.Id);
                     cmd.Parameters.AddWithValue("@Quantity", stockMovement.Quantity);
                     cmd.Parameters.AddWithValue("@Type", stockMovement.Type.ToString());
+                    cmd.Parameters.AddWithValue("@RasonType", stockMovement.RasonType.ToString());
                     cmd.Parameters.AddWithValue("@Date", stockMovement.Date);
                     cmd.Parameters.AddWithValue("@Reason", stockMovement.Reason);
                 },
@@ -43,7 +43,7 @@ namespace Repository.EntityRepositories
 
         public async Task<List<StockMovement>> GetAllAsync(QueryOptions options)
         {
-            var allowedFilters = new[] { "Date", "ProductId", "CreatedBy", "Type" };
+            var allowedFilters = new[] { "Date", "ProductId", "CreatedBy", "Type", "RasonType" }; 
 
             return await ExecuteReadAsync(
                 baseQuery: @"SELECT sm.*,  
@@ -61,15 +61,15 @@ namespace Repository.EntityRepositories
                                 s.Name AS ShelveName, s.Description AS ShelveDescription,
                                 w.Name AS WarehouseName, w.Description AS WarehouseDescription,
                                 u.Id As UserId, u.Name AS UserName, u.Username AS UserUsername, u.IsEnabled AS UserIsEnabled, u.NeedsPasswordChange AS UserNeedsPasswordChange
-                                FROM StockMovements sm
-                            INNER JOIN Products p ON p.Id = sm.ProductId    
-                            INNER JOIN Shelves s ON s.Id = p.ShelveId
-                            INNER JOIN Warehouses w ON w.Id = s.WarehouseId
-                            INNER JOIN Users u ON u.Id = sm.CreatedBy
-                            INNER JOIN Roles r ON r.Id = u.RoleId
-                            INNER JOIN Brands b ON b.Id = p.BrandId
-                            INNER JOIN SubCategories sb ON sb.Id = p.SubCategoryId
-                            INNER JOIN Categories c ON c.Id = sb.CategoryId",
+                              FROM StockMovements sm
+                              INNER JOIN Products p ON p.Id = sm.ProductId    
+                              INNER JOIN Shelves s ON s.Id = p.ShelveId
+                              INNER JOIN Warehouses w ON w.Id = s.WarehouseId
+                              INNER JOIN Users u ON u.Id = sm.CreatedBy
+                              INNER JOIN Roles r ON r.Id = u.RoleId
+                              INNER JOIN Brands b ON b.Id = p.BrandId
+                              INNER JOIN SubCategories sb ON sb.Id = p.SubCategoryId
+                              INNER JOIN Categories c ON c.Id = sb.CategoryId",
                 map: reader =>
                 {
                     var list = new List<StockMovement>();
@@ -103,16 +103,16 @@ namespace Repository.EntityRepositories
                                 s.Name AS ShelveName, s.Description AS ShelveDescription,
                                 w.Name AS WarehouseName, w.Description AS WarehouseDescription,
                                 u.Id As UserId, u.Name AS UserName, u.Username AS UserUsername, u.IsEnabled AS UserIsEnabled, u.NeedsPasswordChange AS UserNeedsPasswordChange
-                                FROM StockMovements sm
-                            INNER JOIN Products p ON p.Id = sm.ProductId    
-                            INNER JOIN Shelves s ON s.Id = p.ShelveId
-                            INNER JOIN Warehouses w ON w.Id = s.WarehouseId
-                            INNER JOIN Users u ON u.Id = sm.CreatedBy
-                            INNER JOIN Roles r ON r.Id = u.RoleId
-                            INNER JOIN Brands b ON b.Id = p.BrandId
-                            INNER JOIN SubCategories sb ON sb.Id = p.SubCategoryId
-                            INNER JOIN Categories c ON c.Id = sb.CategoryId
-                            WHERE sm.Id = @Id",
+                              FROM StockMovements sm
+                              INNER JOIN Products p ON p.Id = sm.ProductId    
+                              INNER JOIN Shelves s ON s.Id = p.ShelveId
+                              INNER JOIN Warehouses w ON w.Id = s.WarehouseId
+                              INNER JOIN Users u ON u.Id = sm.CreatedBy
+                              INNER JOIN Roles r ON r.Id = u.RoleId
+                              INNER JOIN Brands b ON b.Id = p.BrandId
+                              INNER JOIN SubCategories sb ON sb.Id = p.SubCategoryId
+                              INNER JOIN Categories c ON c.Id = sb.CategoryId
+                              WHERE sm.Id = @Id",
                 map: reader =>
                 {
                     if (reader.Read())
@@ -121,10 +121,7 @@ namespace Repository.EntityRepositories
                 },
                 options: new QueryOptions(),
                 tableAlias: "sm",
-                configureCommand: cmd =>
-                {
-                    cmd.Parameters.AddWithValue("@Id", id);
-                }
+                configureCommand: cmd => cmd.Parameters.AddWithValue("@Id", id)
             );
         }
 

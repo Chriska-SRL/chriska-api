@@ -92,7 +92,6 @@
     <Build Include="Tables\Orders\ReturnRequests.sql" />
     <Build Include="Tables\Orders\Deliveries.sql" />
     <Build Include="Tables\Orders\Invoices.sql" />
-    <Build Include="Tables\Stock\Relaciones\ProductsStock.sql" />
     <Build Include="Tables\Orders\Relations\Orders_Products.sql" />
     <Build Include="Tables\Products\Brands.sql" />
     <Build Include="Tables\Clients\ClientBankAccounts.sql" />

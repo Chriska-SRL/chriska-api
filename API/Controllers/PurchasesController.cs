@@ -3,6 +3,8 @@ using BusinessLogic;
 using BusinessLogic.Common;
 using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.DTOsDocumentClient;
+using BusinessLogic.DTOs.DTOsOrderRequest;
 using BusinessLogic.DTOs.DTOsPurchase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,16 +44,6 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{id}")]
-        [Authorize(Policy = nameof(Permission.DELETE_PURCHASES))]
-        public async Task<IActionResult> DeletePurchaseAsync(int id)
-        {
-            var request = new DeleteRequest(id);
-            request.setUserId(_tokenUtils.GetUserId());
-            await _facade.DeletePurchaseAsync(request);
-            return NoContent();
-        }
-
         [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_PURCHASES))]
         public async Task<ActionResult<PurchaseResponse>> GetPurchaseByIdAsync(int id)
@@ -66,6 +58,16 @@ namespace API.Controllers
         {
             var result = await _facade.GetAllPurchasesAsync(options);
             return Ok(result);
+        }
+
+
+        [HttpPut("changestatus/{id}")]
+        [Authorize(Policy = nameof(Permission.EDIT_PURCHASES))]
+        public async Task<ActionResult<PurchaseResponse>> ChangeStatusPurchaseAsync(int id, DocumentClientChangeStatusRequest request)
+        {
+            request.setUserId(_tokenUtils.GetUserId());
+            var result = await _facade.ChangeStatusPurchaseAsync(id, request);
+            return Ok(result); // 200 OK
         }
     }
 }
