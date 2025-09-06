@@ -132,7 +132,7 @@ namespace BusinessLogic.SubSystem
             List<Delivery> deliveries = new List<Delivery>();
             deliveries = await _deliveryRepository.GetDeliveriesByDistributionIdAsync(id);
 
-            distribution.distributionDeliveries = deliveries.Select((delivery, index) => new DistributionDelivery(delivery, index + 1)).ToList();
+            distribution.DistributionDeliveries = deliveries.Select((delivery, index) => new DistributionDelivery(delivery, index + 1)).ToList();
             return DistributionMapper.ToResponse(distribution);
         }
 
@@ -142,7 +142,7 @@ namespace BusinessLogic.SubSystem
             foreach (var distribution in distributions)
             {
                 List<Delivery> deliveries = await _deliveryRepository.GetDeliveriesByDistributionIdAsync(distribution.Id);
-                distribution.distributionDeliveries = deliveries.Select((delivery, index) => new DistributionDelivery(delivery, index + 1)).ToList();
+                distribution.DistributionDeliveries = deliveries.Select((delivery, index) => new DistributionDelivery(delivery, index + 1)).ToList();
             }
             return distributions.Select(DistributionMapper.ToResponse).ToList();
         }

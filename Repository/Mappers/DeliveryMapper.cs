@@ -31,6 +31,7 @@ namespace Repository.Mappers
              productItems: new List<ProductItem>(),
              auditInfo: AuditInfoMapper.FromReader(r),
              crates: r.IsDBNull(r.GetOrdinal(Col("Crates"))) ? 0 : r.GetInt32(r.GetOrdinal(Col("Crates"))),
+             payment: r.GetDecimal(r.GetOrdinal(Col("Payment"))),
              order: OrderMapper.FromReader(r, "Order")
          );
 

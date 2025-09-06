@@ -25,9 +25,9 @@ namespace Repository.EntityRepositories
             await connection.OpenAsync();
 
             var cmd = new SqlCommand(
-                @"INSERT INTO SupplierBalanceItems (SupplierId, Date, Description, Amount, Balance, DocumentType)
+                @"INSERT INTO SupplierBalanceItems (SupplierId, Date, Description, Amount, Balance, DocumentType, DocumentId)
                   OUTPUT INSERTED.Id
-                  VALUES (@SupplierId, @Date, @Description, @Amount, @Balance, @DocumentType)", connection);
+                  VALUES (@SupplierId, @Date, @Description, @Amount, @Balance, @DocumentType, @DocumentId)", connection);
 
             cmd.Parameters.AddWithValue("@SupplierId", item.EntityId);
             cmd.Parameters.AddWithValue("@Date", item.Date);
@@ -35,6 +35,7 @@ namespace Repository.EntityRepositories
             cmd.Parameters.AddWithValue("@Amount", item.Amount);
             cmd.Parameters.AddWithValue("@Balance", item.Balance);
             cmd.Parameters.AddWithValue("@DocumentType", item.DocumentType.ToString());
+            cmd.Parameters.AddWithValue("@DocumentId", item.DocumentId);
 
             item.Id = Convert.ToInt32(await cmd.ExecuteScalarAsync());
             return item;
@@ -95,8 +96,8 @@ namespace Repository.EntityRepositories
 
         private BalanceItem Map(SqlDataReader reader)
         {
-            var documentType = Enum.Parse<DocumentType>(reader["DocumentType"].ToString() ?? "ClientPayment");
-            int relatedId = reader.GetInt32(reader.GetOrdinal("EntityId"));
+            var documentType = Enum.Parse<DocumentType>(reader["DocumentType"].ToString() ?? "SupplierPayment");
+            int relatedId = reader.GetInt32(reader.GetOrdinal("SupplierId"));
 
             switch (documentType)
             {

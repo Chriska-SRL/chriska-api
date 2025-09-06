@@ -103,6 +103,8 @@ namespace BusinessLogic.SubSystem
             if (request.Status == Status.Confirmed)
             {
                 delivery.Confirm();
+                delivery.setPayment(request.Amount ?? 0);
+                delivery.Crates = request.Crates;
 
                 int crates = request.Crates;
                 if (crates != 0)
