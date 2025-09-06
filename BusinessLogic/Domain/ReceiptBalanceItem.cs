@@ -18,6 +18,7 @@ namespace BusinessLogic.Domain
             Balance = accountStatement.getBalance() + amount;
             DocumentType = type;
             Receipt = receipt;
+            DocumentId = receipt.Id;
         }
 
         public ReceiptBalanceItem(int id, int entityId, DateTime date, string description, decimal amount, decimal balance, DocumentType documentType)

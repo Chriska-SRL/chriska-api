@@ -256,7 +256,9 @@ namespace Repository.EntityRepositories
             int rows = await ExecuteWriteWithAuditAsync(
                 @"UPDATE Deliveries SET 
                     Status = @Status,
-                    ConfirmedDate = @ConfirmedDate
+                    ConfirmedDate = @ConfirmedDate,
+                    Payment = @Payment,
+                    Crates = @Crates
                 WHERE Id = @Id",
                 delivery,
                 AuditAction.Update,
@@ -266,6 +268,8 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@Status", delivery.Status.ToString());
                     var p = cmd.Parameters.Add("@ConfirmedDate", System.Data.SqlDbType.DateTime2);
                     p.Value = (object?)delivery.ConfirmedDate ?? DBNull.Value;
+                    cmd.Parameters.AddWithValue("@Payment", delivery.Payment);
+                    cmd.Parameters.AddWithValue("@Crates", delivery.Crates);
                 }
             );
 

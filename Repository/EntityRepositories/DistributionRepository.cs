@@ -33,7 +33,7 @@ namespace Repository.EntityRepositories
                 throw new InvalidOperationException("No se pudo obtener el Id insertado.");
 
             await AddDistributionZonesAsync(newId, distribution.Zones);
-            await AddDistributionDeliveriesAsync(newId, distribution.distributionDeliveries);
+            await AddDistributionDeliveriesAsync(newId, distribution.DistributionDeliveries);
             distribution.Id = newId;
             return distribution;
         }
@@ -70,7 +70,7 @@ namespace Repository.EntityRepositories
             await AddDistributionZonesAsync(distribution.Id, distribution.Zones ?? new List<Zone>());
 
             await DeleteDistributionDeliveriesAsync(distribution.Id);
-            await AddDistributionDeliveriesAsync(distribution.Id, distribution.distributionDeliveries ?? new List<DistributionDelivery>());
+            await AddDistributionDeliveriesAsync(distribution.Id, distribution.DistributionDeliveries ?? new List<DistributionDelivery>());
 
             return distribution;
         }

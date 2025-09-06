@@ -29,6 +29,7 @@ namespace BusinessLogic.Domain
             Amount = amount;
             Balance = accountStatement.getBalance() + amount;
             DocumentType = type;
+            DocumentId = document.Id;
             Document = document;
         }
 

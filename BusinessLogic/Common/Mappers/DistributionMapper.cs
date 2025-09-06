@@ -35,9 +35,13 @@ namespace BusinessLogic.Common.Mappers
                 User = UserMapper.ToResponse(distribution.User),
                 Vehicle = VehicleMapper.ToResponse(distribution.Vehicle),
                 Zones = distribution.Zones.Select(z => ZoneMapper.ToResponse(z)).ToList(),
-                Deliveries = distribution.distributionDeliveries
+                Deliveries = distribution.DistributionDeliveries
                     .Select(dd => DeliveryMapper.ToResponse(dd.Delivery))
-                    .ToList()
+                    .ToList(),
+                Total = distribution.getTotal(),
+                Payments = distribution.getPayments(),
+                Creates = distribution.getCrates(),
+                ReturnCreates = distribution.getReturnCrates()
             };
         }
 
