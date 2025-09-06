@@ -14,5 +14,10 @@ namespace BusinessLogic.DTOs.DTOsDistribution
         public VehicleResponse? Vehicle { get; set; }
         public List<ZoneResponse>? Zones { get; set; }
         public List<DeliveryResponse>? Deliveries { get; set; }
+        public decimal Total {  get; set; }
+        public decimal Payments { get; set; }
+        public int Creates { get; set; }
+        public int ReturnCreates { get; set; }
+
     }
 }

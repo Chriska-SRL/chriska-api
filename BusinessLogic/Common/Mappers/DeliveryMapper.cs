@@ -32,6 +32,7 @@ namespace BusinessLogic.Common.Mappers
                 User = UserMapper.ToResponse(delivery.User),
                 ProductItems = delivery.ProductItems.Select(ProductItemMapper.ToResponse).ToList(),
                 Crates = delivery.Crates,
+                Payment = delivery.Payment,
                 Order = notBucle ? null : (delivery.Order != null ? OrderMapper.ToResponse(delivery.Order) : null),
                 AuditInfo = AuditMapper.ToResponse(delivery.AuditInfo)
             };

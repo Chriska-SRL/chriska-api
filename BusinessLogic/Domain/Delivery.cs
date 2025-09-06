@@ -5,6 +5,7 @@ namespace BusinessLogic.Domain
     public class Delivery : ClientDocument
     {
         public int Crates { get; set; }
+        public decimal Payment { get; set; } = 0;
         public Order? Order { get; set; }
         public Delivery(
                   Order order
@@ -25,10 +26,12 @@ namespace BusinessLogic.Domain
             List<ProductItem> productItems,
             AuditInfo auditInfo,
             int crates,
+            decimal payment,
             Order order
         ) : base(id, client, status, confirmedDate, date, observation, user, productItems, auditInfo)
         {
             Crates = crates;
+            Payment = payment;
             Order = order;
         }
         public override void Validate()
@@ -44,6 +47,10 @@ namespace BusinessLogic.Domain
         internal void Cancel()
         {
             Status = Status.Cancelled;
+        }
+        internal void setPayment(decimal payment)
+        {
+            this.Payment = payment;
         }
     }
 }

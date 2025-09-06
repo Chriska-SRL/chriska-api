@@ -10,8 +10,26 @@ namespace BusinessLogic.Domain
         public User User { get; set; }
         public Vehicle Vehicle { get; set; }
         public List<Zone> Zones { get; set; }
-        public List<DistributionDelivery> distributionDeliveries { get; set; } = new List<DistributionDelivery>();
+        public List<DistributionDelivery> DistributionDeliveries { get; set; } = new List<DistributionDelivery>();
         public AuditInfo? AuditInfo { get; set; }
+
+        public decimal getTotal()
+        {
+            return DistributionDeliveries.Sum(dd => dd.Delivery.getAmount());
+        }
+        public decimal getPayments()
+        {
+            return DistributionDeliveries.Sum(dd => dd.Delivery.Payment);
+        }
+        public int getCrates()
+        {
+            return DistributionDeliveries.Sum(dd => dd.Delivery.Order.Crates);
+        }
+        public int getReturnCrates()
+        {
+            return DistributionDeliveries.Sum(dd => dd.Delivery.Crates);
+        }
+
 
         public Distribution(string observations, User user, Vehicle? vehicle, List<Zone> zones, List<DistributionDelivery> distributionDeliveries)
         {
@@ -20,7 +38,7 @@ namespace BusinessLogic.Domain
             User = user;
             Vehicle = vehicle;
             Zones = zones ?? new List<Zone>();
-            this.distributionDeliveries = distributionDeliveries ?? new List<DistributionDelivery>();
+            this.DistributionDeliveries = distributionDeliveries ?? new List<DistributionDelivery>();
             AuditInfo = new AuditInfo();
         }
         public Distribution(int id, string observations, DateTime date, User user, Vehicle vehicle, List<Zone> zones, List<DistributionDelivery> distributionDeliveries, AuditInfo? auditInfo)
@@ -31,7 +49,7 @@ namespace BusinessLogic.Domain
             User = user;
             Vehicle = vehicle;
             Zones = zones ?? new List<Zone>();
-            this.distributionDeliveries = distributionDeliveries ?? new List<DistributionDelivery>();
+            this.DistributionDeliveries = distributionDeliveries ?? new List<DistributionDelivery>();
             AuditInfo = auditInfo;
         }
 
@@ -47,7 +65,7 @@ namespace BusinessLogic.Domain
             User = data.User ?? User;
             Vehicle = data.Vehicle ?? Vehicle;
             Zones = data.Zones ?? Zones;
-            distributionDeliveries = data.DistributionDeliveries ?? distributionDeliveries;
+            DistributionDeliveries = data.DistributionDeliveries ?? DistributionDeliveries;
 
             AuditInfo.SetUpdated(data.UserId, data.Location);
             Validate();

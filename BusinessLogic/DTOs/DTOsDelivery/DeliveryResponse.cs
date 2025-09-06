@@ -18,6 +18,7 @@ namespace BusinessLogic.DTOs.DTOsDelivery
         public UserResponse User { get; set; } = default!;
         public List<ProductItemResponse> ProductItems { get; set; } = new();
         public int Crates { get; set; }
+        public decimal Payment {  get; set; }
         public OrderResponse? Order { get; set; }
     }
 }

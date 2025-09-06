@@ -11,6 +11,7 @@ namespace BusinessLogic.Domain
         public decimal Amount { get; set; }
         public decimal Balance { get; set; }
         public DocumentType DocumentType { get; set; }
+        public int DocumentId { get; set; }
 
 
     }
