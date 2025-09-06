@@ -14,6 +14,7 @@ namespace BusinessLogic.Common.Mappers
                 Date = purchase.Date,
                 Observations = purchase.Observations,
                 InvoiceNumber = purchase.InvoiceNumber,
+                Status = purchase.Status,
                 Supplier = SupplierMapper.ToResponse(purchase.Supplier),
                 ProductItems = purchase.ProductItems?.Select(ProductItemMapper.ToResponse).ToList(),
                 AuditInfo = AuditMapper.ToResponse(purchase.AuditInfo)
