@@ -1,6 +1,4 @@
-using API.Utils;
 using BusinessLogic;
-using BusinessLogic.DTOs;
 using BusinessLogic.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,12 +19,26 @@ namespace API.Controllers
         }
 
 
-        [HttpPost]
+        [HttpGet("{id}")]
         [Authorize(Policy = nameof(Permission.VIEW_CLIENTS))]
-        public async Task<ActionResult<ClientAccountStatementResponse>> GetAccountStatementAsync([FromBody] AccountStatementRequest request)
+        public async Task<ActionResult<ClientAccountStatementResponse>> GetAccountStatementAsync(
+        [FromRoute] int id,
+        [FromQuery(Name = "from")] DateTime? from,
+        [FromQuery(Name = "to")] DateTime? to)
         {
-            var result = await _facade.GetClientAccountStatementAsync(request);
+            if (from.HasValue && to.HasValue && from > to)
+                return BadRequest("'from' debe ser <= 'to'.");
+
+            var accountStatementRequest = new AccountStatementRequest
+            {
+                EntityId = id,
+                From = from,
+                To = to
+            };
+
+            var result = await _facade.GetClientAccountStatementAsync(accountStatementRequest);
             return Ok(result);
         }
+
     }
 }
