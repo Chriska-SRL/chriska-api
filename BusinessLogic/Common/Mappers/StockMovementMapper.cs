@@ -31,6 +31,7 @@ namespace BusinessLogic.Common.Mappers
                 Quantity = movement.Quantity,
                 Type = movement.Type,
                 Reason = movement.Reason,
+                RasonType = movement.RasonType,
                 User = UserMapper.ToResponse(movement.User),
                 Product = ProductMapper.ToResponse(movement.Product),
                 AuditInfo = AuditMapper.ToResponse(movement.AuditInfo)

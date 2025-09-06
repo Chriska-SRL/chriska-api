@@ -1,7 +1,6 @@
 ﻿using BusinessLogic.Common.Enums;
 using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsProduct;
-using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsUser;
 namespace BusinessLogic.DTOs.DTOsStockMovement
 {
@@ -12,6 +11,7 @@ namespace BusinessLogic.DTOs.DTOsStockMovement
         public decimal Quantity { get; set; }
         public StockMovementType Type { get; set; }
         public string Reason { get; set; }
+        public RasonType RasonType { get; set; }
         public UserResponse User { get; set; }
         public ProductResponse Product { get; set; }
     }
