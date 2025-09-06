@@ -47,31 +47,33 @@ namespace Repository.Utils
 
                 if (_allowedFilterColumns != null &&
                     !_allowedFilterColumns.Contains(baseKey.ToLowerInvariant()))
-                {
-                    continue; // Filtro no permitido
-                }
+                    continue;
 
                 var paramName = $"@p{Parameters.Count}";
                 var columnSql = tableAlias is null ? baseKey : $"{tableAlias}.{baseKey}";
 
-                string condition =
-                    rawKey.EndsWith("From", StringComparison.OrdinalIgnoreCase) ? $"{columnSql} >= {paramName}" :
-                    rawKey.EndsWith("To", StringComparison.OrdinalIgnoreCase) ? $"{columnSql} <= {paramName}" :
-                    $"{columnSql} LIKE {paramName}";
+                bool isFrom = rawKey.EndsWith("From", StringComparison.OrdinalIgnoreCase);
+                bool isTo = rawKey.EndsWith("To", StringComparison.OrdinalIgnoreCase);
+                bool isIdEq = baseKey.EndsWith("Id", StringComparison.OrdinalIgnoreCase) && !isFrom && !isTo;
 
-                InsertWhereCondition(condition);
+                string condition =
+                    isFrom ? $"{columnSql} >= {paramName}" :
+                    isTo ? $"{columnSql} <= {paramName}" :
+                    isIdEq ? $"{columnSql} = {paramName}" :
+                             $"{columnSql} LIKE {paramName}";
 
                 var paramValue =
-                    rawKey.EndsWith("From", StringComparison.OrdinalIgnoreCase) ||
-                    rawKey.EndsWith("To", StringComparison.OrdinalIgnoreCase)
-                        ? value
-                        : $"%{value}%";
+                    (isFrom || isTo) ? value :
+                    isIdEq ? value :
+                    $"%{value}%";
 
+                InsertWhereCondition(condition);
                 Parameters.Add(new SqlParameter(paramName, paramValue));
             }
 
             return this;
         }
+
 
 
         public QueryBuilder ApplySorting(string? sortBy, string? sortDirection)
