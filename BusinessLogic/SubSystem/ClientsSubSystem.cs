@@ -11,11 +11,19 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IClientRepository _clientRepository;
         private readonly IZoneRepository _zoneRepository;
+        private readonly IDeliveryRepository _deliveryRepository;
+        private readonly IDiscountRepository _discountRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderRequestRepository _orderRequestRepository;
 
-        public ClientsSubSystem(IClientRepository clientRepository, IZoneRepository zoneRepository)
+        public ClientsSubSystem(IClientRepository clientRepository, IZoneRepository zoneRepository, IDeliveryRepository deliveryRepository, IDiscountRepository discountRepository, IOrderRepository orderRepository, IOrderRequestRepository orderRequestRepository)
         {
             _clientRepository = clientRepository;
             _zoneRepository = zoneRepository;
+            _deliveryRepository = deliveryRepository;
+            _discountRepository = discountRepository;
+            _orderRepository = orderRepository;
+            _orderRequestRepository = orderRequestRepository;
         }
 
         public async Task<ClientResponse> AddClientAsync(AddClientRequest request)
@@ -59,6 +67,35 @@ namespace BusinessLogic.SubSystem
         {
             var client = await _clientRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró el cliente seleccionado.", nameof(request.Id));
+
+            var options = new QueryOptions
+            {
+                Filters = new Dictionary<string, string>
+                {
+                    { "ClientId", request.Id.ToString() }
+                }
+            };
+
+            List<Discount> discounts = await _discountRepository.GetAllAsync(new QueryOptions());
+            if (discounts.Any(d => d.Clients.Any(c => c.Id == request.Id)))
+            {
+                throw new InvalidOperationException("No se puede eliminar la zona porque tiene repartos asociados.");
+            }
+            List<OrderRequest> orderRequests = await _orderRequestRepository.GetAllAsync(options);
+            if (orderRequests.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar el cliente porque tiene pedidos asociados");
+            }
+            List<Order> order = await _orderRepository.GetAllAsync(options);
+            if (order.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar el cliente porque tiene ordenes asociados");
+            }
+            List<Delivery> deliveries = await _deliveryRepository.GetAllAsync(options);
+            if (deliveries.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar el cliente porque tiene entregas asociadas");
+            }
 
             client.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _clientRepository.DeleteAsync(client);

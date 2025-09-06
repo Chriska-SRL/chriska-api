@@ -10,10 +10,12 @@ namespace BusinessLogic.SubSystem
     public class SuppliersSubSystem
     {
         private readonly ISupplierRepository _supplierRepository;
+        private readonly IProductRepository _productRepository;
 
-        public SuppliersSubSystem(ISupplierRepository supplierRepository)
+        public SuppliersSubSystem(ISupplierRepository supplierRepository, IProductRepository productRepository)
         {
             _supplierRepository = supplierRepository;
+            _productRepository = productRepository;
         }
 
         public async Task<SupplierResponse> AddSupplierAsync(AddSupplierRequest request)
@@ -53,6 +55,19 @@ namespace BusinessLogic.SubSystem
         {
             var supplier = await _supplierRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró el proveedor seleccionado.");
+
+            var options = new QueryOptions
+            {
+                Filters = new Dictionary<string, string>
+                {
+                    { "SupplierId", request.Id.ToString() }
+                }
+            };
+            List<Product> products = await _productRepository.GetAllAsync(options);
+            if (products.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar el proveedor con productos asociados.");
+            }
 
             supplier.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _supplierRepository.DeleteAsync(supplier);
