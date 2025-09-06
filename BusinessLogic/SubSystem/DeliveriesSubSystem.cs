@@ -160,7 +160,6 @@ namespace BusinessLogic.SubSystem
             return DeliveryMapper.ToResponse(delivery);
         }
 
-
         public async Task<List<DeliveryResponse>> GetConfirmedDeliveriesByClientIdAsync(int clientId, QueryOptions? options = null)
         {
 
