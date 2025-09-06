@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Common;
 using BusinessLogic.Common.Mappers;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsShelve;
 using BusinessLogic.DTOs.DTOsWarehouse;
@@ -11,11 +12,13 @@ namespace BusinessLogic.SubSystem
     {
         private readonly IWarehouseRepository _warehouseRepository;
         private readonly IShelveRepository _shelveRepository;
+        private readonly IProductRepository _productRepository;
 
-        public WarehousesSubSystem(IWarehouseRepository warehouseRepository, IShelveRepository shelveRepository)
+        public WarehousesSubSystem(IWarehouseRepository warehouseRepository, IShelveRepository shelveRepository, IProductRepository productRepository)
         {
             _warehouseRepository = warehouseRepository;
             _shelveRepository = shelveRepository;
+            _productRepository = productRepository;
         }
 
         // Warehouses
@@ -112,6 +115,19 @@ namespace BusinessLogic.SubSystem
         {
             var shelve = await _shelveRepository.GetByIdAsync(request.Id)
                 ?? throw new ArgumentException("No se encontró la estantería seleccionada.");
+
+            var options = new QueryOptions
+            {
+                Filters = new Dictionary<string, string>
+                {
+                    { "ShelveId", request.Id.ToString() }
+                }
+            };
+            List<Product> products = await _productRepository.GetAllAsync(options);
+            if (products.Any())
+            {
+                throw new InvalidOperationException("No se puede eliminar la estanteria porque tiene productos asociados.");
+            }
 
             shelve.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _shelveRepository.DeleteAsync(shelve);

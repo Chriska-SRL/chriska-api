@@ -146,7 +146,6 @@ namespace BusinessLogic.SubSystem
             {
                 delivery.Cancel();
 
-                // Devolver el stock a los productos
                 foreach (var item in delivery.ProductItems)
                 {
                     await _stockSubSystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Inbound, RasonType.DeliveryCancellation, $"Devolución por cancelación de entrega {delivery.Id}", user);

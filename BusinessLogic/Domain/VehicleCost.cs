@@ -42,6 +42,9 @@ namespace BusinessLogic.Domain
             if (string.IsNullOrWhiteSpace(Description))
                 throw new ArgumentException("La descripción no puede estar vacía.");
 
+            if (Description.Length > 255)
+                throw new ArgumentException("La descripción no puede superar los 255 caracteres");
+
             if (Description.Length < 3)
                 throw new ArgumentException("La descripción debe tener al menos 3 caracteres.");
 

@@ -32,7 +32,6 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@ExpirationDate", discount.ExpirationDate);
                     cmd.Parameters.AddWithValue("@Status", discount.Status.ToString());
                     cmd.Parameters.AddWithValue("@ProductQuantity", discount.ProductQuantity);
-
                     cmd.Parameters.AddWithValue("@BrandId", (object?)discount.Brand?.Id ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@SubCategoryId", (object?)discount.SubCategory?.Id ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@ZoneId", (object?)discount.Zone?.Id ?? DBNull.Value);

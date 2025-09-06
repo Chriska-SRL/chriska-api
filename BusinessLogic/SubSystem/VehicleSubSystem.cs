@@ -1,10 +1,8 @@
 ﻿using BusinessLogic.Common;
-using BusinessLogic.Common.Enums;
 using BusinessLogic.Common.Mappers;
+using BusinessLogic.Domain;
 using BusinessLogic.DTOs;
 using BusinessLogic.DTOs.DTOsCost;
-using BusinessLogic.DTOs.DTOsDelivery;
-using BusinessLogic.DTOs.DTOsDocumentClient;
 using BusinessLogic.DTOs.DTOsVehicle;
 using BusinessLogic.Repository;
 
@@ -14,11 +12,13 @@ public class VehicleSubSystem
 {
     private readonly IVehicleRepository _vehicleRepository;
     private readonly IVehicleCostRepository _costRepository;
+    private readonly IDistributionRepository _distributionRepository;
 
-    public VehicleSubSystem(IVehicleRepository vehicleRepository, IVehicleCostRepository costRepository)
+    public VehicleSubSystem(IVehicleRepository vehicleRepository, IVehicleCostRepository costRepository, IDeliveryRepository deliveryRepository,IDistributionRepository distributionRepository)
     {
         _vehicleRepository = vehicleRepository;
         _costRepository = costRepository;
+        _distributionRepository = distributionRepository;
     }
 
     // VEHICLE
@@ -52,6 +52,24 @@ public class VehicleSubSystem
 
         if (vehicle.VehicleCosts.Any())
             throw new InvalidOperationException("No se puede eliminar un vehículo con costos asociados activos.");
+
+        var options = new QueryOptions
+        {
+            Filters = new Dictionary<string, string>
+                {
+                    { "VehicleId", request.Id.ToString() }
+                }
+        };
+        List<Distribution> distributions = await _distributionRepository.GetAllAsync(options);
+        if (distributions.Any())
+        {
+            throw new InvalidOperationException("No se puede eliminar la el vehiculo porque tiene repartos asociados.");
+        }
+        List<VehicleCost> costs = await _costRepository.GetAllAsync(options);
+        if (costs.Any())
+        {
+            throw new InvalidOperationException("No se puede eliminar la el vehiculo porque tiene costos asociados.");
+        }
 
         vehicle.MarkAsDeleted(request.getUserId(), request.AuditLocation);
         await _vehicleRepository.DeleteAsync(vehicle);
