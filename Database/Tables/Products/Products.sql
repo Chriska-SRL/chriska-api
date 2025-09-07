@@ -41,9 +41,6 @@
     CONSTRAINT [FK_Products_CreatedBy] FOREIGN KEY ([CreatedBy]) REFERENCES [Users]([Id]),
     CONSTRAINT [FK_Products_UpdatedBy] FOREIGN KEY ([UpdatedBy]) REFERENCES [Users]([Id]),
     CONSTRAINT [FK_Products_DeletedBy] FOREIGN KEY ([DeletedBy]) REFERENCES [Users]([Id]),
-    CONSTRAINT [CHK_Product_Price] CHECK ([Price] > 0),
-    CONSTRAINT [CHK_Product_Stock] CHECK ([Stock] >= 0),
-    CONSTRAINT [CHK_Product_BarcodeFormat] CHECK ([BarCode] IS NULL OR [BarCode] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
 )
 
 GO

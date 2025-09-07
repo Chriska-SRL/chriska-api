@@ -52,6 +52,11 @@ namespace BusinessLogic.SubSystem
             var user = await _userRepository.GetByIdAsync(userId)
                 ?? throw new ArgumentException("El usuario que realiza la modificación no existe.");
 
+            foreach(var item in existing.ProductItems)
+            {
+                await _productRepository.UpdateStockAsync(item.Product.Id, 0, item.Quantity);
+            }
+
             var productItems = new List<ProductItem>();
             foreach (var item in request.ProductItems)
             {
@@ -61,6 +66,7 @@ namespace BusinessLogic.SubSystem
                     // Si el producto ya existe, actualizamos la cantidad y peso
                     productitem.Quantity = item.Quantity;
                     productitem.Weight = item.Weight ?? 0;
+                    productitem.Validate();
                     productItems.Add(productitem);
                 }
                 else
@@ -71,6 +77,10 @@ namespace BusinessLogic.SubSystem
                     decimal discountPercentage = discount?.Percentage ?? 0;
                     productItems.Add(new ProductItem(item.Quantity, item.Weight ?? 0, product.Price, discountPercentage, product));
                 }
+            }
+            foreach (var item in productItems)
+            {
+                await _productRepository.UpdateStockAsync(item.Product.Id, 0, -item.Quantity);
             }
 
             Order.UpdatableData updatedData = OrderMapper.ToUpdatableData(request, user, productItems);

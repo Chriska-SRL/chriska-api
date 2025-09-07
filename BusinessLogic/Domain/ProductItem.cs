@@ -18,22 +18,23 @@ namespace BusinessLogic.Domain
             Weight = weight;
             UnitPrice = unitPrice;
             Discount = discount;
-            Product = product ?? throw new ArgumentException(nameof(product));
+            Product = product;
+            Validate();
         }
         internal void Validate()
         {
-            if (Product.UnitType == Common.Enums.UnitType.Kilo && Quantity % 0.5m != 0)
+            if (Product.UnitType == Common.Enums.UnitType.Kilo && Quantity % 0.25m != 0)
             {
                 throw new InvalidOperationException(
                     $"El producto '{Product.Name}' tiene una cantidad inválida ({Quantity}). " +
-                    "Solo se permiten múltiplos de 0.5 al preparar una orden por peso."
+                    "Solo se permiten múltiplos de 0.25 en las cantidades de productos por peso."
                 );
             }
             if (Product.UnitType == Common.Enums.UnitType.Unit && Quantity % 1 != 0)
             {
                 throw new InvalidOperationException(
                     $"El producto '{Product.Name}' tiene una cantidad inválida ({Quantity}). " +
-                    "Solo se permiten numeros enteros al preparar una orden de unidades."
+                    "Solo se permiten numeros enteros en las cantidades de productos por unidad"
                 );
             }
 
