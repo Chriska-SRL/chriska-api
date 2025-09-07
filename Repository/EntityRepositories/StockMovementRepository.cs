@@ -24,7 +24,7 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@ProductId", stockMovement.Product.Id);
                     cmd.Parameters.AddWithValue("@Quantity", stockMovement.Quantity);
                     cmd.Parameters.AddWithValue("@Type", stockMovement.Type.ToString());
-                    cmd.Parameters.AddWithValue("@RasonType", stockMovement.RasonType.ToString());
+                    cmd.Parameters.AddWithValue("@RasonType", stockMovement.ReasonType.ToString());
                     cmd.Parameters.AddWithValue("@Date", stockMovement.Date);
                     cmd.Parameters.AddWithValue("@Reason", stockMovement.Reason);
                 },

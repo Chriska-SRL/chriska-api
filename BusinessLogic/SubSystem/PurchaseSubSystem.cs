@@ -126,7 +126,7 @@ namespace BusinessLogic.SubSystem
                     purchase.Confirm();
                     foreach (var item in purchase.ProductItems)
                     {
-                        await _stockSubSystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Inbound, RasonType.Purchase, $"Compra por factura {purchase.InvoiceNumber}", user);
+                        await _stockSubSystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Inbound, ReasonType.Purchase, $"Compra por factura {purchase.InvoiceNumber}", user);
                     }
                 }
                 else if (request.Status == Status.Cancelled)
@@ -145,7 +145,7 @@ namespace BusinessLogic.SubSystem
                     purchase.Cancel();
                     foreach (var item in purchase.ProductItems)
                     {
-                        await _stockSubSystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Outbound, RasonType.Purchase, $"Cancelacion de compra {purchase.Id}", user);
+                        await _stockSubSystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Outbound, ReasonType.Purchase, $"Cancelacion de compra {purchase.Id}", user);
                     }
                 }
             }

@@ -121,7 +121,7 @@ namespace BusinessLogic.SubSystem
 
                 foreach (var item in order.ProductItems)
                 {
-                    await _stockSubsystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Outbound, RasonType.Sale, $"Venta por orden {order.Id}", user);
+                    await _stockSubsystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Outbound, ReasonType.Sale, $"Venta por orden {order.Id}", user);
                 }
 
                 delivery = await _deliveriesSubSystem.AddDeliveryAsync(order);

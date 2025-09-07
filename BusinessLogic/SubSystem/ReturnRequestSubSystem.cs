@@ -132,7 +132,7 @@ namespace BusinessLogic.SubSystem
 
                 foreach (var item in returnRequest.ProductItems)
                 {
-                    await _stockSubSystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Inbound, RasonType.Return, $"Devolución por solicitud de devolución {returnRequest.Id}", user);
+                    await _stockSubSystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Inbound, ReasonType.Return, $"Devolución por solicitud de devolución {returnRequest.Id}", user);
                 }
 
             }

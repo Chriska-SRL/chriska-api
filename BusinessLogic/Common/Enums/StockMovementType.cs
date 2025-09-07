@@ -6,7 +6,7 @@
         Outbound = 2
     }
 
-    public enum RasonType
+    public enum ReasonType
     {
         Purchase = 1,
         Sale = 2,
