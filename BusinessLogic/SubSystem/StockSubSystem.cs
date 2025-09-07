@@ -35,9 +35,9 @@ namespace BusinessLogic.SubSystem
             return StockMovementMapper.ToResponse(stockMovement);
 
         }
-        public async Task<StockMovement> AddStockMovementAsync(DateTime date, Product product, decimal quantity, StockMovementType stockMovementType, ReasonType reasonType, string Rason, User user)
+        public async Task<StockMovement> AddStockMovementAsync(DateTime date, Product product, decimal quantity, StockMovementType stockMovementType, ReasonType reasonType, string Reason, User user)
         {
-            StockMovement stockMovement = new StockMovement(date, quantity, stockMovementType, reasonType, Rason, user, product);
+            StockMovement stockMovement = new StockMovement(date, quantity, stockMovementType, reasonType, Reason, user, product);
             stockMovement.AuditInfo.SetCreated(user.Id, null);
             var added = await _stockMovementRepository.AddAsync(stockMovement);
             if (stockMovement.Type == Common.Enums.StockMovementType.Inbound)
