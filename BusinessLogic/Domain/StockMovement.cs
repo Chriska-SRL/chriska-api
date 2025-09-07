@@ -9,31 +9,31 @@ namespace BusinessLogic.Domain
         public DateTime Date { get; set; }
         public decimal Quantity { get; set; }
         public StockMovementType Type { get; set; }
-        public RasonType RasonType { get; set; }
+        public ReasonType ReasonType { get; set; }
         public string Reason { get; set; } = string.Empty;
         public User User { get; set; }
         public Product Product { get; set; }
         public AuditInfo AuditInfo { get; set; } = new AuditInfo();
 
-        public StockMovement(DateTime date, decimal quantity, StockMovementType type, RasonType rasonType, string reason, User user, Product product)
+        public StockMovement(DateTime date, decimal quantity, StockMovementType type, ReasonType reasonType, string reason, User user, Product product)
         {
             Date = date;
             Quantity = quantity;
             Type = type;
-            RasonType = rasonType;
+            ReasonType = reasonType;
             Reason = reason;
             User = user ?? throw new ArgumentException(nameof(user));
             Product = product ?? throw new ArgumentException(nameof(product));
             AuditInfo = new AuditInfo();
             Validate();
         }
-        public StockMovement(int id, DateTime date, decimal quantity, StockMovementType type, RasonType rasonType, string reason, User user, Product product,AuditInfo auditInfo)
+        public StockMovement(int id, DateTime date, decimal quantity, StockMovementType type, ReasonType reasonType, string reason, User user, Product product,AuditInfo auditInfo)
         {
             Id = id;
             Date = date;
             Quantity = quantity;
             Type = type;
-            RasonType = rasonType;
+            ReasonType = reasonType;
             Reason = reason;
             User = user;
             Product = product;

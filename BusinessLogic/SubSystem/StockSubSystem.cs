@@ -30,14 +30,14 @@ namespace BusinessLogic.SubSystem
             var user = await _userRepository.GetByIdAsync(userId) ?? throw new InvalidOperationException("Usuario no encontrado.");
             var product = await _productRepository.GetByIdAsync(request.ProductId) ?? throw new InvalidOperationException("Producto no encontrado.");
 
-            StockMovement stockMovement = await AddStockMovementAsync(request.Date ?? DateTime.Now, product, request.Quantity, request.Type, RasonType.Adjustment, request.Reason, user);
+            StockMovement stockMovement = await AddStockMovementAsync(request.Date ?? DateTime.Now, product, request.Quantity, request.Type, ReasonType.Adjustment, request.Reason, user);
 
             return StockMovementMapper.ToResponse(stockMovement);
 
         }
-        public async Task<StockMovement> AddStockMovementAsync(DateTime date, Product product, decimal quantity, StockMovementType stockMovementType, RasonType rasonType, string Rason, User user)
+        public async Task<StockMovement> AddStockMovementAsync(DateTime date, Product product, decimal quantity, StockMovementType stockMovementType, ReasonType reasonType, string Rason, User user)
         {
-            StockMovement stockMovement = new StockMovement(date, quantity, stockMovementType, rasonType, Rason, user, product);
+            StockMovement stockMovement = new StockMovement(date, quantity, stockMovementType, reasonType, Rason, user, product);
             stockMovement.AuditInfo.SetCreated(user.Id, null);
             var added = await _stockMovementRepository.AddAsync(stockMovement);
             if (stockMovement.Type == Common.Enums.StockMovementType.Inbound)
@@ -46,7 +46,7 @@ namespace BusinessLogic.SubSystem
             }
             else
             {
-                if(rasonType == RasonType.Adjustment) 
+                if(reasonType == ReasonType.Adjustment) 
                     await _productRepository.UpdateStockAsync(product.Id, -quantity, -quantity);
                 else
                     await _productRepository.UpdateStockAsync(product.Id, -quantity, 0);

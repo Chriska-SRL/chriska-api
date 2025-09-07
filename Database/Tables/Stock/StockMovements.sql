@@ -5,7 +5,7 @@
 
     [Quantity] DECIMAL (18, 2) NOT NULL, 
     [Type]  NVARCHAR(50) NOT NULL, 
-    [RasonType] NVARCHAR(50) NOT NULL,
+    [ReasonType] NVARCHAR(50) NOT NULL,
     [Reason] NVARCHAR(255) NOT NULL, 
     [Date] DATETIME NOT NULL, 
     [ProductId] INT NOT NULL,

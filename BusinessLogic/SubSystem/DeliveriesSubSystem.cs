@@ -148,7 +148,7 @@ namespace BusinessLogic.SubSystem
 
                 foreach (var item in delivery.ProductItems)
                 {
-                    await _stockSubSystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Inbound, RasonType.DeliveryCancellation, $"Devolución por cancelación de entrega {delivery.Id}", user);
+                    await _stockSubSystem.AddStockMovementAsync(DateTime.Now, item.Product, item.Quantity, StockMovementType.Inbound, ReasonType.DeliveryCancellation, $"Devolución por cancelación de entrega {delivery.Id}", user);
                 }
             }
             else

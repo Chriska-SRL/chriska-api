@@ -12,7 +12,7 @@ namespace BusinessLogic.Common.Mappers
                 date: request.Date ?? DateTime.Now,
                 quantity: request.Quantity,
                 type: request.Type,
-                rasonType: RasonType.Adjustment,
+                reasonType: ReasonType.Adjustment,
                 reason: request.Reason,
                 user: user,
                 product: product
@@ -31,7 +31,7 @@ namespace BusinessLogic.Common.Mappers
                 Quantity = movement.Quantity,
                 Type = movement.Type,
                 Reason = movement.Reason,
-                RasonType = movement.RasonType,
+                ReasonType = movement.ReasonType,
                 User = UserMapper.ToResponse(movement.User),
                 Product = ProductMapper.ToResponse(movement.Product),
                 AuditInfo = AuditMapper.ToResponse(movement.AuditInfo)

@@ -11,7 +11,7 @@ namespace BusinessLogic.DTOs.DTOsStockMovement
         public decimal Quantity { get; set; }
         public StockMovementType Type { get; set; }
         public string Reason { get; set; }
-        public RasonType RasonType { get; set; }
+        public ReasonType ReasonType { get; set; }
         public UserResponse User { get; set; }
         public ProductResponse Product { get; set; }
     }

@@ -113,7 +113,7 @@ namespace Repository.Mappers
                 date: reader.GetDateTime(reader.GetOrdinal("Date")),
                 quantity: reader.GetDecimal(reader.GetOrdinal("Quantity")),
                 type: ParseType(reader.GetString(reader.GetOrdinal("Type")).Trim()),
-                rasonType: ParseRasonType(reader.GetString(reader.GetOrdinal("RasonType")).Trim()),
+                reasonType: ParseReasonType(reader.GetString(reader.GetOrdinal("ReasonType")).Trim()),
                 reason: reader.GetString(reader.GetOrdinal("Reason")),
                 user: user,
                 product: product,
@@ -133,13 +133,13 @@ namespace Repository.Mappers
             };
         }
 
-        private static RasonType ParseRasonType(string reasonCode) => reasonCode switch
+        private static ReasonType ParseReasonType(string reasonCode) => reasonCode switch
         {
-            "Purchase" => RasonType.Purchase,
-            "Sale" => RasonType.Sale,
-            "Return" => RasonType.Return,
-            "Adjustment" => RasonType.Adjustment,
-            "DeliveryCancellation" => RasonType.DeliveryCancellation,
+            "Purchase" => ReasonType.Purchase,
+            "Sale" => ReasonType.Sale,
+            "Return" => ReasonType.Return,
+            "Adjustment" => ReasonType.Adjustment,
+            "DeliveryCancellation" => ReasonType.DeliveryCancellation,
             _ => throw new InvalidOperationException($"RasonType desconocido: {reasonCode}")
         };
     }
