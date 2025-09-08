@@ -39,7 +39,7 @@ namespace API.Controllers
         public async Task<ActionResult<ReturnRequestResponse>> UpdateReturnRequestAsync(int id, [FromBody] ReturnRequestUpdateRequest request)
         {
             request.Id = id;
-            request.setUserId(_tokenUtils.GetUserId());
+           request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.UpdateReturnRequestAsync(request);
             return Ok(result); // 200 OK
         }
@@ -73,6 +73,7 @@ namespace API.Controllers
         [Authorize(Policy = nameof(Permission.EDIT_RETURN_REQUESTS))]
         public async Task<ActionResult<ReturnRequestResponse>> ChangeStatusReturnRequestAsync(int id, DocumentClientChangeStatusRequest request)
         {
+            request.setUserId(_tokenUtils.GetUserId());
             var result = await _facade.ChangeStatusReturnRequestAsync(id, request);
             return Ok(result); // 200 OK
         }
