@@ -14,8 +14,8 @@ namespace Repository.EntityRepositories
         public async Task<StockMovement> AddAsync(StockMovement stockMovement)
         {
             int newId = await ExecuteWriteWithAuditAsync(
-                @"INSERT INTO StockMovements (ProductId, Quantity, Type, RasonType, Date, Reason)
-                  VALUES (@ProductId, @Quantity, @Type, @RasonType, @Date, @Reason);
+                @"INSERT INTO StockMovements (ProductId, Quantity, Type, ReasonType, Date, Reason)
+                  VALUES (@ProductId, @Quantity, @Type, @ReasonType, @Date, @Reason);
                   SELECT SCOPE_IDENTITY();",
                 stockMovement,
                 AuditAction.Insert,
@@ -24,7 +24,7 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@ProductId", stockMovement.Product.Id);
                     cmd.Parameters.AddWithValue("@Quantity", stockMovement.Quantity);
                     cmd.Parameters.AddWithValue("@Type", stockMovement.Type.ToString());
-                    cmd.Parameters.AddWithValue("@RasonType", stockMovement.ReasonType.ToString());
+                    cmd.Parameters.AddWithValue("@ReasonType", stockMovement.ReasonType.ToString());
                     cmd.Parameters.AddWithValue("@Date", stockMovement.Date);
                     cmd.Parameters.AddWithValue("@Reason", stockMovement.Reason);
                 },
@@ -43,7 +43,7 @@ namespace Repository.EntityRepositories
 
         public async Task<List<StockMovement>> GetAllAsync(QueryOptions options)
         {
-            var allowedFilters = new[] { "Date", "ProductId", "CreatedBy", "Type", "RasonType" }; 
+            var allowedFilters = new[] { "Date", "ProductId", "CreatedBy", "Type", "ReasonType" }; 
 
             return await ExecuteReadAsync(
                 baseQuery: @"SELECT sm.*,  
