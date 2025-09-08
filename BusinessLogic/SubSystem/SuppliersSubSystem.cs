@@ -64,9 +64,9 @@ namespace BusinessLogic.SubSystem
                 }
             };
             List<Product> products = await _productRepository.GetAllAsync(options);
-            if (products.Any())
+            if (products.Any(p => p.Suppliers.Any(s => s.Id == request.Id)))
             {
-                throw new InvalidOperationException("No se puede eliminar el proveedor con productos asociados.");
+                throw new InvalidOperationException("No se puede eliminar el proveedor porque tiene productos asociados.");
             }
 
             supplier.MarkAsDeleted(request.getUserId(), request.AuditLocation);

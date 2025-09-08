@@ -179,7 +179,7 @@ namespace Repository.EntityRepositories
                     cmd.Parameters.AddWithValue("@RUT", supplier.RUT);
                     cmd.Parameters.AddWithValue("@RazonSocial", supplier.RazonSocial);
                     cmd.Parameters.AddWithValue("@Address", supplier.Address);
-                    cmd.Parameters.AddWithValue("@Location", (object?)supplier.Location?.ToString() ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Location", (object?)supplier.Location?.ToString() ?? "");
                     cmd.Parameters.AddWithValue("@Phone", supplier.Phone);
                     cmd.Parameters.AddWithValue("@ContactName", supplier.ContactName);
                     cmd.Parameters.AddWithValue("@Email", supplier.Email);

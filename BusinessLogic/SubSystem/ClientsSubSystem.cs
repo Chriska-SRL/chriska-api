@@ -79,23 +79,29 @@ namespace BusinessLogic.SubSystem
             List<Discount> discounts = await _discountRepository.GetAllAsync(new QueryOptions());
             if (discounts.Any(d => d.Clients.Any(c => c.Id == request.Id)))
             {
-                throw new InvalidOperationException("No se puede eliminar la zona porque tiene repartos asociados.");
+                throw new InvalidOperationException("No se puede eliminar el cliente porque tiene descuentos asociados.");
             }
+
             List<OrderRequest> orderRequests = await _orderRequestRepository.GetAllAsync(options);
-            if (orderRequests.Any())
+            if (orderRequests.Any(or => or.Status == Common.Enums.Status.Pending))
             {
-                throw new InvalidOperationException("No se puede eliminar el cliente porque tiene pedidos asociados");
+                throw new InvalidOperationException("No se puede eliminar el cliente porque tiene pedidos pendientes asociados.");
             }
-            List<Order> order = await _orderRepository.GetAllAsync(options);
-            if (order.Any())
+
+            
+            List<Order> orders = await _orderRepository.GetAllAsync(options);
+            if (orders.Any(o => o.Status == Common.Enums.Status.Pending))
             {
-                throw new InvalidOperationException("No se puede eliminar el cliente porque tiene ordenes asociados");
+                throw new InvalidOperationException("No se puede eliminar el cliente porque tiene órdenes pendientes asociadas.");
             }
+
+           
             List<Delivery> deliveries = await _deliveryRepository.GetAllAsync(options);
-            if (deliveries.Any())
+            if (deliveries.Any(d => d.Status == Common.Enums.Status.Pending))
             {
-                throw new InvalidOperationException("No se puede eliminar el cliente porque tiene entregas asociadas");
+                throw new InvalidOperationException("No se puede eliminar el cliente porque tiene entregas pendientes asociadas.");
             }
+
 
             client.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _clientRepository.DeleteAsync(client);
