@@ -121,21 +121,21 @@ namespace BusinessLogic.SubSystem
             {
                 throw new InvalidOperationException("No se puede eliminar el producto porque tiene descuentos asociados.");
             }
+
             List<OrderRequest> orderRequests = await _orderRequestRepository.GetAllAsync(options);
-            if (orderRequests.Any())
-            {
-                throw new InvalidOperationException("No se puede eliminar el producto porque tiene pedidos asociados.");
-            }
+            if (orderRequests.Any(or => or.Status == Common.Enums.Status.Pending))
+                throw new InvalidOperationException("No se puede eliminar el producto porque tiene pedidos pendientes asociados.");
+
+            
             List<Order> orders = await _orderRepository.GetAllAsync(options);
-            if (orders.Any())
-            {
-                throw new InvalidOperationException("No se puede eliminar el producto porque tiene ordenes asociadas.");
-            }
+            if (orders.Any(o => o.Status == Common.Enums.Status.Pending))
+                throw new InvalidOperationException("No se puede eliminar el producto porque tiene órdenes pendientes asociadas.");
+
+           
             List<Delivery> deliveries = await _deliveriesRepository.GetAllAsync(options);
-            if (deliveries.Any())
-            {
-                throw new InvalidOperationException("No se puede eliminar el producto porque tiene entregas asociadas.");
-            }
+            if (deliveries.Any(d => d.Status == Common.Enums.Status.Pending))
+                throw new InvalidOperationException("No se puede eliminar el producto porque tiene entregas pendientes asociadas.");
+
 
             product.MarkAsDeleted(request.getUserId(), request.AuditLocation);
             await _productRepository.DeleteAsync(product);

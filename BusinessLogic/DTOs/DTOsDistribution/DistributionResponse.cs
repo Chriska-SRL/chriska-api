@@ -16,8 +16,8 @@ namespace BusinessLogic.DTOs.DTOsDistribution
         public List<DeliveryResponse>? Deliveries { get; set; }
         public decimal Total {  get; set; }
         public decimal Payments { get; set; }
-        public int Creates { get; set; }
-        public int ReturnCreates { get; set; }
+        public int Crates { get; set; }
+        public int ReturnCrates { get; set; }
 
     }
 }

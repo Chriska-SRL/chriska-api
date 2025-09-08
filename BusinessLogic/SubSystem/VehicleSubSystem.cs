@@ -26,6 +26,8 @@ public class VehicleSubSystem
 
     public async Task<VehicleResponse> AddVehicleAsync(AddVehicleRequest request)
     {
+        if (await _vehicleRepository.GetByPlateAsync(request.Plate) != null)
+            throw new ArgumentException("Ya existe un vehiculo con la misma matricula.");
         var newVehicle = VehicleMapper.ToDomain(request);
         newVehicle.Validate();
 
@@ -35,6 +37,10 @@ public class VehicleSubSystem
 
     public async Task<VehicleResponse> UpdateVehicleAsync(UpdateVehicleRequest request)
     {
+
+        if (await _vehicleRepository.GetByPlateAsync(request.Plate) != null)
+            throw new ArgumentException("Ya existe un vehiculo con la misma matricula.");
+
         var existingVehicle = await _vehicleRepository.GetByIdAsync(request.Id)
             ?? throw new ArgumentException("No se encontró el vehículo seleccionado.");
 
