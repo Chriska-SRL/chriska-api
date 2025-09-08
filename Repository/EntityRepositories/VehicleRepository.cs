@@ -136,6 +136,31 @@ namespace Repository.EntityRepositories
         }
 
         #endregion
+        #region GetByPlate
+
+        public async Task<Vehicle?> GetByPlateAsync(string plate)
+        {
+            return await ExecuteReadAsync(
+                baseQuery: "SELECT v.* FROM Vehicles v WHERE v.Plate = @Plate",
+                map: reader =>
+                {
+                    Vehicle? vehicle = null;
+                    if (reader.Read())
+                    {
+                        vehicle = VehicleMapper.FromReader(reader);
+                    }
+                    return vehicle;
+                },
+                options: new QueryOptions(),
+                tableAlias: "v",
+                configureCommand: cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@Plate", plate);
+                }
+            );
+        }
+
+        #endregion
 
 
     }

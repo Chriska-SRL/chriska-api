@@ -40,8 +40,8 @@ namespace BusinessLogic.Common.Mappers
                     .ToList(),
                 Total = distribution.getTotal(),
                 Payments = distribution.getPayments(),
-                Creates = distribution.getCrates(),
-                ReturnCreates = distribution.getReturnCrates()
+                Crates = distribution.getCrates(),
+                ReturnCrates = distribution.getReturnCrates()
             };
         }
 
