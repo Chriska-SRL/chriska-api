@@ -49,6 +49,8 @@ namespace BusinessLogic.Domain
         {
             if (string.IsNullOrEmpty(Name)) throw new Exception("El nombre es obligatorio");
             if (string.IsNullOrEmpty(Description)) throw new Exception("La descripcion es obligatoria");
+            if(Name.Length > 50) throw new Exception("El nombre no puede superar los 50 caracteres");
+            if (Description.Length > 255) throw new Exception("La descripcion no puede superar los 255 caracteres");
         }
 
         public void Update(UpdatableData data)

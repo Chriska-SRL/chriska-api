@@ -61,6 +61,8 @@ namespace Repository.EntityRepositories
     d.Date            AS DeliveryDate,
     d.Observations    AS DeliveryObservations,
     d.OrderId AS OrderId,
+    d.Payment AS DeliveryPayment,
+
 
     --Order
     o.Id             AS OrderId,
