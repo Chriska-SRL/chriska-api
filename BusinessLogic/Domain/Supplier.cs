@@ -81,7 +81,11 @@ namespace BusinessLogic.Domain
             if (string.IsNullOrWhiteSpace(RazonSocial))
                 throw new ArgumentException("La razón social es obligatorio"); ;
             if (RazonSocial.Length > 50)
-                throw new ArgumentException("El razón social  no puede superar los 50 caracteres.");
+                throw new ArgumentException("El razón social no puede superar los 50 caracteres.");
+            if (Address.Length > 100)
+                throw new ArgumentException("La direccion no puede superar los 100 caracteres.");
+            if (ContactName.Length > 100)
+                throw new ArgumentException("La persona de contacto no puede superar los 50 caracteres.");
 
             if (string.IsNullOrWhiteSpace(Phone))
                 throw new ArgumentException("El teléfono es obligatorio.");
