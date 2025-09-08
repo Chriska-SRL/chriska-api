@@ -39,6 +39,12 @@ namespace BusinessLogic.Domain
             if (string.IsNullOrWhiteSpace(Plate))
                 throw new ArgumentException("La matrícula no puede estar vacía.");
 
+            if (Model.Length > 50)
+                throw new ArgumentException("El modelo no puede superar los 50 caracteres.");
+            if (Brand.Length > 50)
+                throw new ArgumentException("La marca no puede superar los 50 caracteres.");
+
+
             var plateRegex = new Regex(@"^[A-Z]{3} ?\d{3,4}$");
             if (!plateRegex.IsMatch(Plate))
                 throw new ArgumentException("La matrícula tiene un formato inválido. Formato esperado: ABC 1234.");
