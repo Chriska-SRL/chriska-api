@@ -79,7 +79,6 @@ namespace BusinessLogic.Domain
         {
             if (string.IsNullOrWhiteSpace(Description))
                 throw new ArgumentException("La descripción es obligatoria.");
-                throw new ArgumentNullException("La descripción es obligatoria.");
             if (Description.Length > 255)
                 throw new ArgumentException("La descripción no puede superar los 255 caracteres.");
             if (ExpirationDate <= DateTime.Now)
