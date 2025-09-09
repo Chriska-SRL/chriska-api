@@ -34,11 +34,16 @@ namespace BusinessLogic.SubSystem
 
         public async Task<PurchaseResponse> AddPurchaseAsync(PurchaseAddRequest request)
         {
+            var purchaseWithSameInvoice = await _purchaseRepository.GetPurchaseByInvoiceNumberAsync(request.InvoiceNumber);
+            if (purchaseWithSameInvoice != null)
+                throw new ArgumentException("Ya existe una compra con ese número de factura.");
+
             var user = await _userRepository.GetByIdAsync(request.getUserId() ?? 0)
                 ?? throw new ArgumentException("El usuario no existe.");
 
             var supplier = await _supplierRepository.GetByIdAsync(request.SupplierId)
                 ?? throw new ArgumentException("El proveedor no existe.");
+
 
             var productItems = new List<ProductItem>();
             foreach (var item in request.ProductItems)

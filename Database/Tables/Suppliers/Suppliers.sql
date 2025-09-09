@@ -11,7 +11,7 @@
     [Phone] NVARCHAR(15) NOT NULL, 
     [Email] NVARCHAR(50) NOT NULL, 
     [Address] NVARCHAR(100) NOT NULL, 
-    [Location] NVARCHAR(100) NOT NULL, 
+    [Location] NVARCHAR(100)NOT NULL , 
     [Observations] NVARCHAR(255) NOT NULL,
 
     -- Auditoría
