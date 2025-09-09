@@ -6,5 +6,6 @@ namespace BusinessLogic.Repository
     {
         // Métodos adicionales si los necesitas
         Task<Purchase> ChangeStatusPurchase(Purchase purchase);
+        Task<Purchase?> GetPurchaseByInvoiceNumberAsync(string invoiceNumber);
     }
 }
