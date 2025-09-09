@@ -1,12 +1,7 @@
 ﻿using BusinessLogic.Common;
-using BusinessLogic.Common.Enums;
 using BusinessLogic.DTOs.DTOsAudit;
 using BusinessLogic.DTOs.DTOsBankAccount;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BusinessLogic.DTOs.DTOsSupplier
 {
@@ -17,7 +12,7 @@ namespace BusinessLogic.DTOs.DTOsSupplier
         public string RUT { get; set; }
         public string RazonSocial { get; set; }
         public string Address { get; set; }
-        public Location Location { get; set; }
+        public Location? Location { get; set; }
         public string Phone { get; set; }
         public string ContactName { get; set; }
         public string Email { get; set; }

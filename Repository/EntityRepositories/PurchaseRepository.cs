@@ -326,5 +326,35 @@ namespace Repository.EntityRepositories
 
             return purchase;
         }
+        public async Task<Purchase?> GetPurchaseByInvoiceNumberAsync(string invoiceNumber)
+        {
+            var dict = new Dictionary<int, Purchase>();
+
+            return await ExecuteReadAsync(
+                baseQuery: baseQuery + " WHERE p.InvoiceNumber = @InvoiceNumber",
+                map: reader =>
+                {
+                    while (reader.Read())
+                    {
+                        int purId = reader.GetInt32(reader.GetOrdinal("Id"));
+
+                        if (!dict.TryGetValue(purId, out var purchase))
+                        {
+                            purchase = PurchaseMapper.FromReader(reader);
+                            dict.Add(purId, purchase);
+                        }
+
+                        var item = ProductItemMapper.FromReader(reader, "PP_");
+                        if (item is not null) purchase!.ProductItems.Add(item);
+                    }
+
+                    return dict.Values.FirstOrDefault();
+                },
+                options: new QueryOptions(),
+                tableAlias: "p",
+                configureCommand: cmd => cmd.Parameters.AddWithValue("@InvoiceNumber", invoiceNumber)
+            );
+        }
+
     }
 }

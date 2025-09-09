@@ -74,7 +74,8 @@ namespace BusinessLogic.Domain
 
         public void Validate()
         {
-           
+            if (Observations.Length > 255)
+                throw new ArgumentException("La observaciones no puede tener mas de 255 caracteres.");
         }
 
         public class UpdatableData : AuditData
